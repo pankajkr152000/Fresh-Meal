@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.entity.ILoginHistory;
-import com.foodies.freshmeal.common.entity.IUserEntity;
 
 public interface IUserProfile extends IEntity, Authentication, CredentialsContainer, UserDetails {
 	

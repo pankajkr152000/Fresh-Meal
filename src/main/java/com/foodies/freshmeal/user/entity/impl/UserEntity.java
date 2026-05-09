@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.foodies.freshmeal.common.entity.IEntity;
-import com.foodies.freshmeal.common.entity.IUserEntity;
+import com.foodies.freshmeal.user.entity.IUserEntity;
 
 import lombok.Getter;
 import lombok.Setter;

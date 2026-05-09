@@ -1,7 +1,9 @@
-package com.foodies.freshmeal.common.entity;
+package com.foodies.freshmeal.user.entity;
 
 
 import java.util.List;
+
+import com.foodies.freshmeal.common.entity.IEntity;
 
 
 

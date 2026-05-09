@@ -10,7 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.entity.ILoginHistory;
-import com.foodies.freshmeal.common.entity.IUserEntity;
+import com.foodies.freshmeal.user.entity.IUserEntity;
 import com.foodies.freshmeal.user.entity.IUserProfile;
 
 import lombok.Getter;
