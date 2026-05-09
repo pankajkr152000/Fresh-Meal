@@ -1,127 +1,157 @@
 package com.foodies.freshmeal.exception.impl;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.foodies.freshmeal.common.IAppEvent;
 import com.foodies.freshmeal.exception.IError;
 import com.foodies.freshmeal.exception.IErrors;
 
-public class ErrorsImpl implements IErrors {
+import lombok.NoArgsConstructor;
 
+
+@NoArgsConstructor
+public class ErrorsImpl implements IErrors {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8673200077208816921L;
 
+    private String userName;
+
+	private String IPAddress;
+
+	private Long errorCount;
+
+	private Timestamp startTime;
+
+	List<IError> errors = new LinkedList<>();
+
+	private final Map<String, Object> attributeMap = new HashMap<>();
+	
+	private IAppEvent errorEvent;
+     
+	public ErrorsImpl(List<IError> errors) {
+		this.errors = errors;
+	}
+
+
 	@Override
 	public List<IError> getErrors() {
-		// TODO Auto-generated method stub
-		return null;
+		return errors;
 	}
 
 	@Override
 	public void addError(IError error) {
-		// TODO Auto-generated method stub
-		
+		errors.add(error);
 	}
 
 	@Override
 	public void addError(IErrors errors) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Boolean hasErrors() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Timestamp getErrorTimeStamp() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setErrorEvent(IAppEvent errorEvent) {
-		// TODO Auto-generated method stub
-		
+		this.errors.addAll(errors.getErrors());		
 	}
 
 	@Override
 	public void addError(ErrorImpl errorImpl) {
-		// TODO Auto-generated method stub
+		this.errors.add(errorImpl);
+	}
+
+	@Override
+	public Boolean hasErrors() {
+		return !errors.isEmpty();
+	}
+
+	@Override
+	public Timestamp getErrorTimeStamp() {
+		return new Timestamp(System.currentTimeMillis());
+	}
+
+	@Override
+	public void setErrorEvent(IAppEvent errorEvent) {
+		this.errorEvent = errorEvent;
 		
+	}
+
+	public final List<IError> getErrorsList() {
+		return errors;
+	}
+
+	public void addErrorList(List<IError> errorList) {
+		this.errors.addAll(errorList);
 	}
 
 	@Override
 	public void setErrors(List<IError> errors) {
-		// TODO Auto-generated method stub
+		this.errors = errors;
 		
 	}
 
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return errors.isEmpty();
 	}
 
 	@Override
 	public IAppEvent getErrorEvent() {
-		// TODO Auto-generated method stub
-		return null;
+		return errorEvent;
 	}
 
 	@Override
 	public Timestamp getStartTime() {
-		// TODO Auto-generated method stub
-		return null;
+		return startTime;
 	}
 
 	@Override
 	public void setErrorCount(Long errorCount) {
-		// TODO Auto-generated method stub
+		this.errorCount = errorCount;
 		
 	}
 
 	@Override
 	public void setIPAddress(String address) {
-		// TODO Auto-generated method stub
+		this.IPAddress = address;
 		
 	}
 
 	@Override
 	public String getIPAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		return IPAddress;
 	}
 
 	@Override
 	public Long getErrorCount() {
-		// TODO Auto-generated method stub
-		return null;
+		return errorCount;
 	}
 
 	@Override
 	public void setUserName(String userName) {
-		// TODO Auto-generated method stub
-		
+		this.userName = userName;	
 	}
 
 	@Override
 	public void setStartTime(Timestamp startTime) {
-		// TODO Auto-generated method stub
+		this.startTime = startTime;
 		
 	}
 
 	@Override
 	public String getUserName() {
-		// TODO Auto-generated method stub
-		return null;
+		return userName;
 	}
 
-	
+	public Map<String, Object> getAttributeMap() {
+		return attributeMap;
+	}
+
+	public Object getAttribute(String attributeName) {
+		return attributeMap.get(attributeName);
+	}
+
+	public void setAttribute(String attributeName, Object attributeValue) {
+		attributeMap.put(attributeName, attributeValue);
+	}
 
 }

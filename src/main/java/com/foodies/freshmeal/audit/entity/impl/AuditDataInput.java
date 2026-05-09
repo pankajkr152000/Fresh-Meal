@@ -20,6 +20,7 @@ public class AuditDataInput implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	
 	private String txnUserId;
 	
 	private Long txnIdLong;
@@ -31,7 +32,7 @@ public class AuditDataInput implements Serializable {
 	private List<IAuditLog> auditLog;
 	
 	public AuditDataInput() {
-		auditLog = new ArrayList<IAuditLog>();
+		auditLog = new ArrayList<>();
 	}
 
 	public AuditDataInput(String txnUserId, Long txnIdLong, Long txnInstanceIdLong, Timestamp timestamp,

@@ -3,6 +3,7 @@ package com.foodies.freshmeal.exception;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,8 @@ public class ExceptionCollection extends Exception implements  IErrors {
 	
 	private Set<String> bypassErrorCode = null;
 	
+	public final static List<IError> errorList = new ArrayList<>();
+	
 	/**
 	 * 
 	 * @param errors
@@ -36,7 +39,7 @@ public class ExceptionCollection extends Exception implements  IErrors {
 
 	public ExceptionCollection() {
 
-		this.errorsDelegate = new ErrorsImpl();
+		this.errorsDelegate = new ErrorsImpl(errorList);
 	}
 	
 	public ExceptionCollection(String RuleCd, Map<String, Serializable> objectMap, String... concessionCode) {
@@ -54,17 +57,18 @@ public class ExceptionCollection extends Exception implements  IErrors {
 				if (errorSet != null && !errorSet.isEmpty()) {
 
 					if (bypassErrorCode == null)
-						bypassErrorCode = new HashSet<String>();
+						bypassErrorCode = new HashSet<>();
 
 					bypassErrorCode.addAll(errorSet);
 				}
 			}
 		}
-		this.errorsDelegate = new ErrorsImpl();
+		this.errorsDelegate = new ErrorsImpl(errorList);
 	}
 
 	public ExceptionCollection(ParseException e) {
-		// TODO Auto-generated constructor stub
+		this.errorsDelegate = new ErrorsImpl();
+		this.errorsDelegate.addError(new ErrorImpl(e));
 	}
 
 	/**
@@ -212,13 +216,11 @@ public class ExceptionCollection extends Exception implements  IErrors {
 	
 	@Override
 	public IAppEvent getErrorEvent() {
-		// TODO Auto-generated method stub
 		return this.errorsDelegate.getErrorEvent();
 	}
 
 	@Override
 	public void setErrorEvent(IAppEvent errorEvent) {
-		// TODO Auto-generated method stub
 		this.errorsDelegate.setErrorEvent(errorEvent);
 	}
 	
@@ -240,19 +242,17 @@ public class ExceptionCollection extends Exception implements  IErrors {
 
 	@Override
 	public Boolean hasErrors() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.errorsDelegate.hasErrors();
 	}
 
 	@Override
 	public Timestamp getErrorTimeStamp() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.errorsDelegate.getErrorTimeStamp();
 	}
 
 	@Override
 	public void addError(ErrorImpl errorImpl) {
-		// TODO Auto-generated method stub
+		this.errorsDelegate.addError(errorImpl);
 		
 	}
 

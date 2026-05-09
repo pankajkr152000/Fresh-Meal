@@ -26,9 +26,9 @@ import com.foodies.freshmeal.exception.SystemConfigBean;
 public final class AppCalendar {
 
     private static final Logger log = LoggerFactory.getLogger(AppCalendar.class);
+    
+    private static AppCalendar instance;
 
-    private AppCalendar() {
-    }
 
     // =====================================================
     // TIMEZONE
@@ -59,6 +59,29 @@ public final class AppCalendar {
     public static final int YEAR = 3;
     public static final int WEEK = 4;
 
+    // =====================================================
+    // CURRENT DATE METHODS
+    // =====================================================
+    
+    
+    private AppCalendar() {
+        instance = this;
+        if(log.isTraceEnabled()) {
+            log.trace("AppCalendar instance created");
+        }
+
+    }
+
+    public static AppCalendar getInstance() {
+    	if(instance == null) {
+    		if(log.isTraceEnabled()) {
+    			log.trace("Creating new instance of AppCalendar");
+                instance = new AppCalendar();
+    		}
+    	}
+    	return instance;
+    }
+    
     // =====================================================
     // CURRENT DATE METHODS
     // =====================================================
@@ -376,23 +399,23 @@ public final class AppCalendar {
     // =====================================================
     // BUSINESS DATE
     // =====================================================
-    public static Date getBusinessDate() {
+    public Date getBusinessDate() {
         return getCurrentDate();
     }
 
-    public static Timestamp getBusinessSqlDateTime() {
+    public Timestamp getBusinessSqlDateTime() {
 
         return new Timestamp(
                 getBusinessDate().getTime());
     }
 
-    public static java.sql.Date getBusinessSqlDate() {
+    public java.sql.Date getBusinessSqlDate() {
 
         return new java.sql.Date(
                 getBusinessDate().getTime());
     }
 
-    public static String getBusinessDateString() {
+    public String getBusinessDateString() {
 
         return formatDate(getBusinessDate());
     }

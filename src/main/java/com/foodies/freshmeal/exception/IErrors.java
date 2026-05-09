@@ -31,7 +31,7 @@ public interface IErrors extends Serializable {
 
 	/**
 	 * @return
-	 * @see com.tcs.iims.exception.core.IErrors#getStartTime()
+	 * 
 	 */
 	Timestamp getStartTime();
 
@@ -45,19 +45,16 @@ public interface IErrors extends Serializable {
 
 	/**
 	 * @param userName
-	 * @see com.tcs.iims.exception.core.IErrors#setUserName(java.lang.String)
 	 */
 	void setUserName(String userName);
 
 	/**
 	 * @param startTime
-	 * @see com.tcs.iims.exception.core.IErrors#setStartTime(java.lang.String)
 	 */
 	void setStartTime(Timestamp startTime);
 
 	/**
 	 * @return
-	 * @see com.tcs.iims.exception.core.IErrors#getUserName()
 	 */
 	String getUserName();
 }
