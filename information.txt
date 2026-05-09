@@ -1,0 +1,27 @@
+first i have created the application from spring.io initializer website
+
+create a database in mongodb meal under which i have created a collection named foodmeal
+
+next i have configured this db in application.properties file
+
+created an aws account for s3 bucket
+
+created a bucket in aws s3 fresh-meal
+
+created the access token or say access key from profile-> security credentials -> create access key -> i can have two access for same bucket
+
+next i have configured this access key and secret key in application.properties
+but these are highly sensitive data which cannot be shared with any people so  i am going to store this data inside .env file and from there i will pick up these data or we can configured these in eclipse by going to 
+in ecipse 1) run -> run configurations -> java application -> new configuration -> environment :-> we can add any number of key-value pair data ::::: then apply and run
+          2) 
+in vs code 1) click on 3 dots ... just beside Go choose run -> add configuration -> select Java for java application -> then launch.json file will open or created here -> after mainClass we can add
+                            "env" : {
+                                "ACCESS_KEY" : "value1",
+                                "SECRET_KEY" : "value2",
+                                "region" : "value3"
+                            }
+                            
+we have created bean for S3Client to upload our images to AWS
+
+
+                            
