@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.entity.ILoginHistory;
+import com.foodies.freshmeal.image.entity.impl.ImageEntity;
 import com.foodies.freshmeal.user.entity.IUserEntity;
 import com.foodies.freshmeal.user.entity.IUserProfile;
 
@@ -33,7 +34,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Document(collection = "user_profiles")
+@Document(collection = "fm_user_profiles")
 public class UserProfile implements IUserProfile {
 
 	/**
@@ -91,6 +92,8 @@ public class UserProfile implements IUserProfile {
 	private IUserEntity userEntity;
 
 	private ILoginHistory loginHistory;
+	
+	private ImageEntity profileImage;
 
 	/**
 	 * =====================================================
@@ -204,16 +207,26 @@ public class UserProfile implements IUserProfile {
 	}
 
 	@Override
-	public void setLoginHistory(
-			ILoginHistory loginHistory) {
+	public void setLoginHistory(ILoginHistory loginHistory) {
 
 		this.loginHistory = loginHistory;
 	}
 
 	@Override
-	public void setUserEntity(
-			IUserEntity userEntity) {
+	public void setUserEntity(IUserEntity userEntity) {
 
 		this.userEntity = userEntity;
 	}
+
+	public ImageEntity getProfileImage() {
+		return profileImage;
+	}
+
+	public void setProfileImage(ImageEntity profileImage) {
+		this.profileImage = profileImage;
+	}
+	
+	
+	
+	
 }

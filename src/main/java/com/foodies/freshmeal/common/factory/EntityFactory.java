@@ -1,8 +1,10 @@
 package com.foodies.freshmeal.common.factory;
 
 import com.foodies.freshmeal.common.entity.IEntity;
+import com.foodies.freshmeal.common.entity.impl.LoginHistory;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
+import com.foodies.freshmeal.image.entity.impl.ImageEntity;
 import com.foodies.freshmeal.user.entity.impl.UserEntity;
 import com.foodies.freshmeal.user.entity.impl.UserProfile;
 
@@ -24,6 +26,13 @@ public final class EntityFactory {
             case USER_ENTITY -> {
                 return UserEntity.create();
             }
+            case IMAGE_ENTITY -> {
+                return ImageEntity.create();
+            }
+            case LOGIN_HISTORY -> {
+            	return LoginHistory.create();
+            }
+
 
             default -> throw new IllegalArgumentException(
                     "Unsupported entity type : " + entityType);

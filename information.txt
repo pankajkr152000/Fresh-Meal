@@ -20,8 +20,17 @@ in vs code 1) click on 3 dots ... just beside Go choose run -> add configuration
                                 "SECRET_KEY" : "value2",
                                 "region" : "value3"
                             }
+in intellij 1) 
                             
 we have created bean for S3Client to upload our images to AWS
 
 
-                            
+entity name 
+    1) LoginHistory -> fm_login_history
+    2) AuditLog -> fm_api_audit_logs
+    3) DatabaseSequence -> fm_database_sequences  
+    4) ImageEntity -> fm_image
+    5) UserEntity -> fm_users
+    6) UserProfile -> fm_user_profiles
+    7) 
+                           

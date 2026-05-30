@@ -24,12 +24,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  *
  * =====================================================
  */
-public abstract class BaseRepositoryImpl<
-        T,
-        ID extends Serializable> {
+public abstract class BaseRepositoryImpl<T,ID extends Serializable> {
 
-    protected final Logger LOGGER =
-            LoggerFactory.getLogger(getClass());
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     protected final MongoRepository<T, ID> repository;
 

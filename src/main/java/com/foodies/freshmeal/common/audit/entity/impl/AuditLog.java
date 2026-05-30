@@ -1,11 +1,13 @@
-package com.foodies.freshmeal.common.audit.entity;
+package com.foodies.freshmeal.common.audit.entity.impl;
 
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "api_audit_logs")
+import com.foodies.freshmeal.common.audit.entity.IAuditLog;
+
+@Document(collection = "fm_api_audit_logs")
 public class AuditLog implements IAuditLog {
 
     private static final long serialVersionUID = 1L;
@@ -51,6 +53,7 @@ public class AuditLog implements IAuditLog {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -60,6 +63,7 @@ public class AuditLog implements IAuditLog {
         return api;
     }
 
+    @Override
     public void setApi(String api) {
         this.api = api;
     }
@@ -69,6 +73,7 @@ public class AuditLog implements IAuditLog {
         return method;
     }
 
+    @Override
     public void setMethod(String method) {
         this.method = method;
     }
@@ -78,6 +83,7 @@ public class AuditLog implements IAuditLog {
         return requestBody;
     }
 
+    @Override
     public void setRequestBody(String requestBody) {
         this.requestBody = requestBody;
     }
@@ -87,6 +93,7 @@ public class AuditLog implements IAuditLog {
         return responseBody;
     }
 
+    @Override
     public void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
     }
@@ -96,6 +103,7 @@ public class AuditLog implements IAuditLog {
         return responseStatus;
     }
 
+    @Override
     public void setResponseStatus(Integer responseStatus) {
         this.responseStatus = responseStatus;
     }
@@ -105,6 +113,7 @@ public class AuditLog implements IAuditLog {
         return executionTimeMs;
     }
 
+    @Override
     public void setExecutionTimeMs(Long executionTimeMs) {
         this.executionTimeMs = executionTimeMs;
     }
@@ -114,6 +123,7 @@ public class AuditLog implements IAuditLog {
         return ipAddress;
     }
 
+    @Override
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
@@ -123,6 +133,7 @@ public class AuditLog implements IAuditLog {
         return createdAt;
     }
 
+    @Override
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }

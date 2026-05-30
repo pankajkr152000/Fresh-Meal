@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.sequence.entity.IDatabaseSequence;
 
-@Document(collection = "database_sequences")
+@Document(collection = "fm_database_sequences")
 public class DatabaseSequence implements IDatabaseSequence {
 
     private static final long serialVersionUID = -4030816117428671912L;

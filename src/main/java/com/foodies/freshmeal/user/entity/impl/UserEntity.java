@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Document(collection = "users")
+@Document(collection = "fm_users")
 public class UserEntity implements IUserEntity {
 
     /**

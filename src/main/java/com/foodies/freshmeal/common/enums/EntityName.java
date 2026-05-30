@@ -10,5 +10,9 @@ public enum EntityName {
 
     PRODUCT,
 
-    USER_ENTITY
+    USER_ENTITY,
+
+    IMAGE_ENTITY,
+    
+    LOGIN_HISTORY
 }

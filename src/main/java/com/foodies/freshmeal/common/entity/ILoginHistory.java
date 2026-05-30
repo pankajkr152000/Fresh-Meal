@@ -22,20 +22,20 @@ public interface ILoginHistory extends IEntity {
 
 	String getLoginServerName();
 
-	String setIpAddress(String ipAddress);
+	void setIpAddress(String ipAddress);
 
-	String setLoginStatus(String loginStatus);
+	void setLoginStatus(String loginStatus);
 
-	String setLoginSuccessFlag(String loginSuccessFlag);
+	void setLoginSuccessFlag(String loginSuccessFlag);
 
-	Timestamp setLoginTime(Timestamp loginTime);
+	void setLoginTime(Timestamp loginTime);
 
-	Timestamp setLogoutTime(Timestamp logoutTime);
+	void setLogoutTime(Timestamp logoutTime);
 
-	String setSessionId(String sessionId);
+	void setSessionId(String sessionId);
 
-	long setUsrUserId(long usrUserId);
+	void setUsrUserId(long usrUserId);
 
-	String setLoginServerName(String loginServerName);
+	void setLoginServerName(String loginServerName);
 
 }
