@@ -1,7 +1,7 @@
 package com.foodies.freshmeal.common.exception;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public interface IError extends Serializable {
 
@@ -27,7 +27,7 @@ public interface IError extends Serializable {
 
 	public abstract StackTraceElement[] getErrorStackTrace();
 
-	public Timestamp getErrorTimeStamp();
+	public LocalDateTime getErrorTimeStamp();
 
 	public String getFixedMessage();
 

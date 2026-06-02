@@ -92,7 +92,7 @@ public class DataFormatUtil {
 
     public static final String DATE_TIME_DATEFORMAT_XML_KEY = "//Config/EnvComCalendar/DateFormat";
 
-    public static final String DATE_TIME_TIMESTAMPFORMAT_XML_KEY = "//Config/EnvComCalendar/TimestampFormat";
+    public static final String DATE_TIME_TIMESTAMPFORMAT_XML_KEY = "//Config/EnvComCalendar/LocalDateTimeFormat";
 
     public static final String DATE_TIMESTAMPFORMAT_XML_KEY = "//Config/EnvComCalendar/DateTimeFormat";
 

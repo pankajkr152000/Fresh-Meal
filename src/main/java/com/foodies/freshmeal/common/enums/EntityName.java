@@ -8,6 +8,8 @@ public enum EntityName {
 
     ORDER,
 
+    FOOD_ENTITY,
+
     PRODUCT,
 
     USER_ENTITY,

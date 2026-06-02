@@ -32,5 +32,16 @@ entity name
     4) ImageEntity -> fm_image
     5) UserEntity -> fm_users
     6) UserProfile -> fm_user_profiles
-    7) 
+    7) FoodEntity -> fm_food
+
+
+
+
+
+
+
+
+
+
+
                            

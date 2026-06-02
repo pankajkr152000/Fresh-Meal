@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.common.exception.impl;
 
-import java.sql.Timestamp;
+
+import java.time.LocalDateTime;
 
 import com.foodies.freshmeal.common.exception.IError;
 
@@ -25,7 +26,7 @@ public class ErrorImpl implements IError {
 
     private StackTraceElement[] errorStackTrace;
 
-    private Timestamp errorTimeStamp = new Timestamp(System.currentTimeMillis());
+    private LocalDateTime errorTimeStamp = LocalDateTime.now();
 
     private String fixedMessage;
 
@@ -86,7 +87,7 @@ public class ErrorImpl implements IError {
     }
 
     @Override
-    public Timestamp getErrorTimeStamp() {
+    public LocalDateTime getErrorTimeStamp() {
         return errorTimeStamp;
     }
 

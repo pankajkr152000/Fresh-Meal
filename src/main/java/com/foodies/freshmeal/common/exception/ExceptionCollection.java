@@ -1,8 +1,8 @@
 package com.foodies.freshmeal.common.exception;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -141,7 +141,7 @@ public class ExceptionCollection extends Exception implements  IErrors {
 	 * @see com.tcs.iims.exception.core.IErrors#getStartTime()
 	 */
 	@Override
-	public Timestamp getStartTime() {
+	public LocalDateTime getStartTime() {
 
 		return this.errorsDelegate.getStartTime();
 	}
@@ -161,7 +161,7 @@ public class ExceptionCollection extends Exception implements  IErrors {
 	 * @see com.tcs.iims.exception.core.IErrors#setStartTime(java.lang.String)
 	 */
 	@Override
-	public void setStartTime(Timestamp startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 
 		this.errorsDelegate.setStartTime(startTime);
 	}
@@ -246,8 +246,8 @@ public class ExceptionCollection extends Exception implements  IErrors {
 	}
 
 	@Override
-	public Timestamp getErrorTimeStamp() {
-		return this.errorsDelegate.getErrorTimeStamp();
+	public LocalDateTime getErrorLocalDateTime() {
+		return this.errorsDelegate.getErrorLocalDateTime();
 	}
 
 	@Override

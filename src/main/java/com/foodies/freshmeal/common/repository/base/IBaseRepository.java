@@ -5,21 +5,29 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-public interface IBaseRepository<T, ID extends Serializable> {
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
-    T save(T entity);
+@NoRepositoryBean
+public interface IBaseRepository<T, ID extends Serializable> extends MongoRepository<T, ID> {
+    @Override
+    <S extends T> S save(S entity);
 
-    List<T> saveAll(List<T> entities);
-
+    @Override
     Optional<T> findById(ID id);
 
+    @Override
     List<T> findAll();
 
+    @Override
     void deleteById(ID id);
 
+    @Override
     void delete(T entity);
 
+    @Override
     boolean existsById(ID id);
 
+    @Override
     long count();
 }

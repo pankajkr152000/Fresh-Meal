@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.common.io.service;
 
-import java.sql.Timestamp;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
@@ -15,7 +16,7 @@ public interface IServiceContext extends IDataContext {
 
     public AuditDataInput getAuditDataInput();
 
-    public Timestamp getRequestReceivedTime();
+    public LocalDateTime getRequestReceivedTime();
 
     public ApplicationContext getApplicationContext();
 
@@ -30,4 +31,35 @@ public interface IServiceContext extends IDataContext {
     public Boolean hasOverridentErrors();
 
     public void addOverridentError(List<IError> errors);
+
+    public String getRequestId();
+
+    public AuditDataInput getAuditData();
+
+    public List<IError> getValidationErrors();
+
+    public String getCorrelationId();
+
+    public void setAuditDataInput(AuditDataInput auditDataInput);
+
+    public void setRequestReceivedTime(LocalDateTime requestReceivedTime);
+
+    public void setApplicationContext(ApplicationContext applicationContext);
+
+    public void setUserProfile(IUserProfile userProfile);
+
+    public void setCorrelationId(String correlationId);
+
+    public void setValidationErrors(List<IError> validationErrors);
+
+    public void setOverridentErrors(List<IError> overridentErrors);
+
+    public void setOverridentErrors(IErrors overridentErrors);
+
+    public void setOverridentError(IError overridentError);
+
+    public void setOverridentError(List<IError> overridentErrors);
+
+    public void setRequestId(String requestId);
+
 }

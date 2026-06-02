@@ -1,6 +1,6 @@
 package com.foodies.freshmeal.common.exception.impl;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +12,6 @@ import com.foodies.freshmeal.common.exception.IErrors;
 
 import lombok.NoArgsConstructor;
 
-
 @NoArgsConstructor
 public class ErrorsImpl implements IErrors {
 	/**
@@ -20,24 +19,23 @@ public class ErrorsImpl implements IErrors {
 	 */
 	private static final long serialVersionUID = -8673200077208816921L;
 
-    private String userName;
+	private String userName;
 
 	private String IPAddress;
 
 	private Long errorCount;
 
-	private Timestamp startTime;
+	private LocalDateTime startTime;
 
 	List<IError> errors = new LinkedList<>();
 
 	private final Map<String, Object> attributeMap = new HashMap<>();
-	
+
 	private IAppEvent errorEvent;
-     
+
 	public ErrorsImpl(List<IError> errors) {
 		this.errors = errors;
 	}
-
 
 	@Override
 	public List<IError> getErrors() {
@@ -51,7 +49,7 @@ public class ErrorsImpl implements IErrors {
 
 	@Override
 	public void addError(IErrors errors) {
-		this.errors.addAll(errors.getErrors());		
+		this.errors.addAll(errors.getErrors());
 	}
 
 	@Override
@@ -65,14 +63,14 @@ public class ErrorsImpl implements IErrors {
 	}
 
 	@Override
-	public Timestamp getErrorTimeStamp() {
-		return new Timestamp(System.currentTimeMillis());
+	public LocalDateTime getErrorLocalDateTime() {
+		return startTime;
 	}
 
 	@Override
 	public void setErrorEvent(IAppEvent errorEvent) {
 		this.errorEvent = errorEvent;
-		
+
 	}
 
 	public final List<IError> getErrorsList() {
@@ -86,7 +84,7 @@ public class ErrorsImpl implements IErrors {
 	@Override
 	public void setErrors(List<IError> errors) {
 		this.errors = errors;
-		
+
 	}
 
 	@Override
@@ -100,20 +98,20 @@ public class ErrorsImpl implements IErrors {
 	}
 
 	@Override
-	public Timestamp getStartTime() {
+	public LocalDateTime getStartTime() {
 		return startTime;
 	}
 
 	@Override
 	public void setErrorCount(Long errorCount) {
 		this.errorCount = errorCount;
-		
+
 	}
 
 	@Override
 	public void setIPAddress(String address) {
 		this.IPAddress = address;
-		
+
 	}
 
 	@Override
@@ -128,13 +126,13 @@ public class ErrorsImpl implements IErrors {
 
 	@Override
 	public void setUserName(String userName) {
-		this.userName = userName;	
+		this.userName = userName;
 	}
 
 	@Override
-	public void setStartTime(Timestamp startTime) {
+	public void setStartTime(LocalDateTime startTime) {
 		this.startTime = startTime;
-		
+
 	}
 
 	@Override

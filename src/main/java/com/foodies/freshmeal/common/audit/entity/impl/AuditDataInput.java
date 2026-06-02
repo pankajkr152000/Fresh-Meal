@@ -1,7 +1,7 @@
 package com.foodies.freshmeal.common.audit.entity.impl;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class AuditDataInput implements Serializable {
 	
 	private Long txnInstanceIdLong;
 	
-	private Timestamp timestamp;
+	private LocalDateTime localDateTime;
 	
 	private List<IAuditLog> auditLog;
 	
@@ -35,13 +35,13 @@ public class AuditDataInput implements Serializable {
 		auditLog = new ArrayList<>();
 	}
 
-	public AuditDataInput(String txnUserId, Long txnIdLong, Long txnInstanceIdLong, Timestamp timestamp,
+	public AuditDataInput(String txnUserId, Long txnIdLong, Long txnInstanceIdLong, LocalDateTime localDateTime,
 			List<IAuditLog> auditLog) {
 		super();
 		this.txnUserId = txnUserId;
 		this.txnIdLong = txnIdLong;
 		this.txnInstanceIdLong = txnInstanceIdLong;
-		this.timestamp = timestamp;
+		this.localDateTime = localDateTime;
 		this.auditLog = auditLog;
 	}
 	

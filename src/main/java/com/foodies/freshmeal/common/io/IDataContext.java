@@ -18,5 +18,7 @@ public interface IDataContext extends Serializable {
 	public Date getAsOfBusinessDate();
 	
 	public void setAsOfBusinessDate(Date asOfBusinessDate);
+
+    public Date getAsOfDateBusiness();
 	
 }

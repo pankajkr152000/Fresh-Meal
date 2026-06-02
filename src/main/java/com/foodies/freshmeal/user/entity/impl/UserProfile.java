@@ -53,7 +53,8 @@ public class UserProfile implements IUserProfile {
 	 * =====================================================
 	 */
 	UserProfile() {
-
+		// Package-private constructor.
+		// Entity creation should happen only through factory.
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class UserProfile implements IUserProfile {
 	private IUserEntity userEntity;
 
 	private ILoginHistory loginHistory;
-	
+
 	private ImageEntity profileImage;
 
 	/**
@@ -225,8 +226,5 @@ public class UserProfile implements IUserProfile {
 	public void setProfileImage(ImageEntity profileImage) {
 		this.profileImage = profileImage;
 	}
-	
-	
-	
-	
+
 }

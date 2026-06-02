@@ -1,6 +1,8 @@
 package com.foodies.freshmeal.common.entity.impl;
 
-import java.sql.Timestamp;
+
+
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,27 +24,28 @@ public class LoginHistory implements ILoginHistory {
 	long loginHistoryId;
 	String loginStatus;
 	String loginSuccessFlag;
-	Timestamp loginTime;
-	Timestamp logoutTime;
+	LocalDateTime loginTime;
+	LocalDateTime logoutTime;
 	String sessionId;
 	long usrUserId;
 	String loginServerName;
 
-	public LoginHistory() {
-
+	LoginHistory() {
+		// Package-private constructor.
+		// Entity creation should happen only through factory.
 	}
-	
+
 	public static IEntity create() {
 		return new LoginHistory();
 	}
-	
+
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
-	}	
+	}
 
 	@Override
 	public String getIpAddress() {
@@ -65,12 +68,12 @@ public class LoginHistory implements ILoginHistory {
 	}
 
 	@Override
-	public Timestamp getLoginTime() {
+	public LocalDateTime getLoginTime() {
 		return this.loginTime;
 	}
 
 	@Override
-	public Timestamp getLogoutTime() {
+	public LocalDateTime getLogoutTime() {
 		return this.logoutTime;
 	}
 
@@ -105,12 +108,12 @@ public class LoginHistory implements ILoginHistory {
 	}
 
 	@Override
-	public void setLoginTime(Timestamp loginTime) {
+	public void setLoginTime(LocalDateTime loginTime) {
 		this.loginTime = loginTime;
 	}
 
 	@Override
-	public void setLogoutTime(Timestamp logoutTime) {
+	public void setLogoutTime(LocalDateTime logoutTime) {
 		this.logoutTime = logoutTime;
 	}
 

@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
 /**
  * =====================================================
@@ -24,6 +25,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  *
  * =====================================================
  */
+@NoRepositoryBean
 public abstract class BaseRepositoryImpl<T,ID extends Serializable> {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());

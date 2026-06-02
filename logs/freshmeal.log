@@ -1,0 +1,140 @@
+2026-06-03T00:35:48.915+05:30  INFO 9796 --- [freshmeal] [restartedMain] c.f.freshmeal.FreshmealApplication       : Starting FreshmealApplication using Java 21.0.8 with PID 9796 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-06-03T00:35:48.929+05:30  INFO 9796 --- [freshmeal] [restartedMain] c.f.freshmeal.FreshmealApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-06-03T00:35:49.045+05:30  INFO 9796 --- [freshmeal] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-06-03T00:35:49.047+05:30  INFO 9796 --- [freshmeal] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-06-03T00:35:50.257+05:30  INFO 9796 --- [freshmeal] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-06-03T00:35:50.585+05:30  INFO 9796 --- [freshmeal] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 315 ms. Found 5 MongoDB repository interfaces.
+2026-06-03T00:35:51.771+05:30  INFO 9796 --- [freshmeal] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8030 (http)
+2026-06-03T00:35:51.795+05:30  INFO 9796 --- [freshmeal] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-06-03T00:35:51.797+05:30  INFO 9796 --- [freshmeal] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-03T00:35:51.870+05:30  INFO 9796 --- [freshmeal] [restartedMain] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 2822 ms
+2026-06-03T00:35:52.185+05:30  INFO 9796 --- [freshmeal] [restartedMain] org.mongodb.driver.client                : MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@18d15553], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@875f9dc, com.mongodb.Jep395RecordCodecProvider@7ca9949b, com.mongodb.KotlinCodecProvider@6b3aaab9, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-06-03T00:35:52.286+05:30  INFO 9796 --- [freshmeal] [cluster-ClusterId{value='6a1f2990f6819f194168a830', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=69024000, minRoundTripTimeNanos=0}
+2026-06-03T00:36:01.043+05:30  WARN 9796 --- [freshmeal] [restartedMain] .s.a.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 754c7250-da83-4b3e-9235-fc78618cb431
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-06-03T00:36:01.053+05:30  INFO 9796 --- [freshmeal] [restartedMain] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-06-03T00:36:01.919+05:30  INFO 9796 --- [freshmeal] [restartedMain] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8030 (http) with context path '/'
+2026-06-03T00:36:01.927+05:30  INFO 9796 --- [freshmeal] [restartedMain] c.f.freshmeal.FreshmealApplication       : Started FreshmealApplication in 13.785 seconds (process running for 14.812)
+2026-06-03T00:36:27.050+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-03T00:36:27.051+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-06-03T00:36:27.053+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-06-03T00:36:27.169+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.common.audit.util.AuditAspect      : AUDIT STARTED | RequestId=376d73f9-56b3-49d5-8f4e-b0b94865bc64 | API=/api/foods/add | Method=POST
+2026-06-03T00:36:42.968+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] .f.f.c.s.s.i.DatabaseSequenceServiceImpl : Generating next sequence for [food_sequence]
+2026-06-03T00:36:43.000+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] o.s.data.mongodb.core.MongoTemplate      : findAndModify using query: { "_id" : "food_sequence"} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence and update: { "$inc" : { "seq" : 1}} in collection: fm_database_sequences
+2026-06-03T00:36:43.084+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "findAndModify" started on database "test" using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 10 and the operation ID is 15. Command: {"findAndModify": "fm_database_sequences", "query": {"_id": "food_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}}
+2026-06-03T00:36:43.089+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : findAndModify
+QUERY   : {"findAndModify": "fm_database_sequences", "query": {"_id": "food_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}}
+====================================================
+2026-06-03T00:36:43.127+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "findAndModify" succeeded on database "test" in 49.773 ms using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 10 and the operation ID is 15. Command reply: {"lastErrorObject": {"n": 1, "updatedExisting": true}, "value": {"_id": "food_sequence", "sequenceValue": 4, "seq": 8}, "ok": 1.0}
+2026-06-03T00:36:43.128+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : findAndModify
+DURATION : 49 ms
+====================================================
+2026-06-03T00:36:43.157+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] .f.f.c.s.s.i.DatabaseSequenceServiceImpl : Generated sequence [food_sequence] value [8]
+2026-06-03T00:36:43.158+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.i.service.impl.ImageServiceImpl    : Generated food ID: FOD01_8
+2026-06-03T00:36:53.294+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] .f.f.c.s.s.i.DatabaseSequenceServiceImpl : Generating next sequence for [image_sequence]
+2026-06-03T00:36:53.297+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] o.s.data.mongodb.core.MongoTemplate      : findAndModify using query: { "_id" : "image_sequence"} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence and update: { "$inc" : { "seq" : 1}} in collection: fm_database_sequences
+2026-06-03T00:36:53.299+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "findAndModify" started on database "test" using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 12 and the operation ID is 18. Command: {"findAndModify": "fm_database_sequences", "query": {"_id": "image_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}}
+2026-06-03T00:36:53.300+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : findAndModify
+QUERY   : {"findAndModify": "fm_database_sequences", "query": {"_id": "image_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}}
+====================================================
+2026-06-03T00:36:53.303+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "findAndModify" succeeded on database "test" in 4.8339 ms using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 12 and the operation ID is 18. Command reply: {"lastErrorObject": {"n": 1, "updatedExisting": true}, "value": {"_id": "image_sequence", "sequenceValue": 8, "seq": 19}, "ok": 1.0}
+2026-06-03T00:36:53.304+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : findAndModify
+DURATION : 4 ms
+====================================================
+2026-06-03T00:36:53.305+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] .f.f.c.s.s.i.DatabaseSequenceServiceImpl : Generated sequence [image_sequence] value [19]
+2026-06-03T00:36:53.305+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.i.service.impl.ImageServiceImpl    : Generated image ID: IMG07_19
+2026-06-03T00:36:53.306+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.i.service.impl.ImageServiceImpl    : Generated image name: IMG07_0000019.jpg
+2026-06-03T00:36:58.132+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] o.s.data.mongodb.core.MongoTemplate      : Saving Document containing fields: [_id, imageName, originalFileName, contentType, fileSize, imageUrl, thumbnailUrl, storagePath, extension, width, height, active, uploadedTime, _class]
+2026-06-03T00:36:58.162+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "update" started on database "test" using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 13 and the operation ID is 19. Command: {"update": "fm_image", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}, "updates": [{"q": {"_id": "IMG07_0000019.jpg"}, "u": {"_id": "IMG07_0000019.jpg", "imageName": "IMG07_0000019.jpg", "originalFileName": "wallpaperflare.com_wallpaper.jpg", "contentType": "image/jpeg", "fileSize": 1140866, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "thumbnailUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "storagePath": "IMG07_0000019.jpg", "extension": "jpg", "width": 0, "height": 0, "active": true, "uploadedTime": {"$date": "2026-06-02T19:06:58.112Z"}, "_class": "com.foodies.freshmeal.image.entity.impl.ImageEntity"}, "upsert": true}]}
+2026-06-03T00:36:58.163+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_image", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}, "updates": [{"q": {"_id": "IMG07_0000019.jpg"}, "u": {"_id": "IMG07_0000019.jpg", "imageName": "IMG07_0000019.jpg", "originalFileName": "wallpaperflare.com_wallpaper.jpg", "contentType": "image/jpeg", "fileSize": 1140866, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "thumbnailUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "storagePath": "IMG07_0000019.jpg", "extension": "jpg", "width": 0, "height": 0, "active": true, "uploadedTime": {"$date": "2026-06-02T19:06:58.112Z"}, "_class": "com.foodies.freshmeal.image.entity.impl.ImageEntity"}, "upsert": true}]}
+====================================================
+2026-06-03T00:36:58.184+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "update" succeeded on database "test" in 28.2392 ms using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 13 and the operation ID is 19. Command reply: {"n": 1, "upserted": [{"index": 0, "_id": "IMG07_0000019.jpg"}], "nModified": 0, "ok": 1.0}
+2026-06-03T00:36:58.185+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 28 ms
+====================================================
+2026-06-03T00:37:04.073+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] o.s.data.mongodb.core.MongoTemplate      : findOne using query: { "id" : "IMG07_0000019.jpg"} fields: Document{{}} for class: class com.foodies.freshmeal.image.entity.impl.ImageEntity in collection: fm_image
+2026-06-03T00:37:04.585+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "find" started on database "test" using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 15 and the operation ID is 22. Command: {"find": "fm_image", "filter": {"_id": "IMG07_0000019.jpg"}, "limit": 1, "singleBatch": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}}
+2026-06-03T00:37:04.612+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_image", "filter": {"_id": "IMG07_0000019.jpg"}, "limit": 1, "singleBatch": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}}
+====================================================
+2026-06-03T00:37:04.700+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "find" succeeded on database "test" in 77.569001 ms using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 15 and the operation ID is 22. Command reply: {"cursor": {"firstBatch": [{"_id": "IMG07_0000019.jpg", "imageName": "IMG07_0000019.jpg", "originalFileName": "wallpaperflare.com_wallpaper.jpg", "contentType": "image/jpeg", "fileSize": 1140866, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "thumbnailUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "storagePath": "IMG07_0000019.jpg", "extension": "jpg", "width": 0, "height": 0, "active": true, "uploadedTime": {"$date": "2026-06-02T19:06:58.112Z"}, "_class": "com.foodies.freshmeal.image.entity.impl.ImageEntity"}], "id": 0, "ns": "test.fm_image"}, "ok": 1.0}
+2026-06-03T00:37:04.709+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 77 ms
+====================================================
+2026-06-03T00:37:31.897+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] o.s.data.mongodb.core.MongoTemplate      : Saving Document containing fields: [_id, imageName, foodName, description, price, category, imageUrl, _class]
+2026-06-03T00:37:31.909+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "update" started on database "test" using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 18 and the operation ID is 27. Command: {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00008"}, "u": {"_id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "foodName": "potato", "description": "vegetables orgainic aalu", "price": 20.0, "category": "veg food potato", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "_class": "com.foodies.freshmeal.food.entity.impl.FoodEntity"}, "upsert": true}]}
+2026-06-03T00:37:31.913+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00008"}, "u": {"_id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "foodName": "potato", "description": "vegetables orgainic aalu", "price": 20.0, "category": "veg food potato", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "_class": "com.foodies.freshmeal.food.entity.impl.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-06-03T00:37:31.969+05:30 DEBUG 9796 --- [freshmeal] [http-nio-8030-exec-1] org.mongodb.driver.protocol.command      : Command "update" succeeded on database "test" in 63.8182 ms using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 18 and the operation ID is 27. Command reply: {"n": 1, "upserted": [{"index": 0, "_id": "FOOD01_00008"}], "nModified": 0, "ok": 1.0}
+2026-06-03T00:37:31.970+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 63 ms
+====================================================
+2026-06-03T00:37:32.054+05:30  INFO 9796 --- [freshmeal] [http-nio-8030-exec-1] c.f.f.common.audit.util.AuditAspect      : AUDIT SUCCESS | RequestId=376d73f9-56b3-49d5-8f4e-b0b94865bc64 | Duration=64882 ms
+2026-06-03T00:37:32.062+05:30 DEBUG 9796 --- [freshmeal] [task-1] o.s.data.mongodb.core.MongoTemplate      : Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-06-03T00:37:32.080+05:30 DEBUG 9796 --- [freshmeal] [task-1] org.mongodb.driver.protocol.command      : Command "insert" started on database "test" using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 19 and the operation ID is 28. Command: {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a1f29f4f6819f194168a831"}, "api": "/api/foods/add", "method": "POST", "requestBody": {"foodRequest": {"foodName": "potato", "description": "vegetables orgainic aalu", "price": 20.0, "category": "veg food potato"}, "file": {"fileName": "wallpaperflare.com_wallpaper.jpg", "contentType": "image/jpeg", "fileSize": 1140866}}, "responseBody": {"headers": {"origin": null, "range": [], "contentDisposition": {"type": "", "name": null, "filename": null, "charset": null, "attachment": false, "inline": false, "formData": false}, "location": null, "acceptCharset": [], "host": null, "cacheControl": null, "accept": [], "contentLanguage": null, "etag": null, "allow": [], "ifMatch": [], "vary": [], "upgrade": null, "pragma": null, "expires": -1, "acceptLanguage": [], "acceptPatch": [], "ifNoneMatch": [], "connection": [],  ...
+2026-06-03T00:37:32.082+05:30  INFO 9796 --- [freshmeal] [task-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a1f29f4f6819f194168a831"}, "api": "/api/foods/add", "method": "POST", "requestBody": {"foodRequest": {"foodName": "potato", "description": "vegetables orgainic aalu", "price": 20.0, "category": "veg food potato"}, "file": {"fileName": "wallpaperflare.com_wallpaper.jpg", "contentType": "image/jpeg", "fileSize": 1140866}}, "responseBody": {"headers": {"origin": null, "range": [], "contentDisposition": {"type": "", "name": null, "filename": null, "charset": null, "attachment": false, "inline": false, "formData": false}, "location": null, "acceptCharset": [], "host": null, "cacheControl": null, "accept": [], "contentLanguage": null, "etag": null, "allow": [], "ifMatch": [], "vary": [], "upgrade": null, "pragma": null, "expires": -1, "acceptLanguage": [], "acceptPatch": [], "ifNoneMatch": [], "connection": [], "accessControlRequestMethod": null, "accessControlAllowOrigin": null, "accessControlExposeHeaders": [], "accessControlRequestHeaders": [], "accessControlAllowHeaders": [], "accessControlAllowMethods": [], "accessControlAllowCredentials": false, "accessControlMaxAge": -1, "acceptLanguageAsLocales": [], "ifUnmodifiedSince": -1, "ifModifiedSince": -1, "contentType": null, "contentLength": -1, "empty": true, "lastModified": -1, "date": -1}, "body": {"success": true, "message": "Food created successfully", "errors": null, "data": {"id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "category": "veg food potato", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg"}}, "statusCode": "CREATED"}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 64882, "requestId": "376d73f9-56b3-49d5-8f4e-b0b94865bc64", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-06-02T19:06:27.17Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-06-03T00:37:32.092+05:30 DEBUG 9796 --- [freshmeal] [task-1] org.mongodb.driver.protocol.command      : Command "insert" succeeded on database "test" in 13.934901 ms using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 19 and the operation ID is 28. Command reply: {"n": 1, "ok": 1.0}
+2026-06-03T00:37:32.093+05:30  INFO 9796 --- [freshmeal] [task-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 13 ms
+====================================================
+2026-06-03T00:40:48.426+05:30  INFO 9796 --- [freshmeal] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-06-03T00:40:48.459+05:30  INFO 9796 --- [freshmeal] [Thread-1] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-06-03T00:40:48.557+05:30  INFO 9796 --- [freshmeal] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-06-03T00:40:48.593+05:30 DEBUG 9796 --- [freshmeal] [Thread-1] org.mongodb.driver.protocol.command      : Command "endSessions" started on database "admin" using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 40 and the operation ID is 1. Command: {"endSessions": [{"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}], "$db": "admin", "$readPreference": {"mode": "primaryPreferred"}}
+2026-06-03T00:40:48.603+05:30  INFO 9796 --- [freshmeal] [Thread-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : endSessions
+QUERY   : {"endSessions": [{"id": {"$binary": {"base64": "2cuRPX5CRWCEx0xlJoHNpw==", "subType": "04"}}}], "$db": "admin", "$readPreference": {"mode": "primaryPreferred"}}
+====================================================
+2026-06-03T00:40:48.607+05:30 DEBUG 9796 --- [freshmeal] [Thread-1] org.mongodb.driver.protocol.command      : Command "endSessions" succeeded on database "admin" in 14.9549 ms using a connection with driver-generated ID 3 and server-generated ID 140 to localhost:27017. The request ID is 40 and the operation ID is 1. Command reply: {"ok": 1.0}
+2026-06-03T00:40:48.612+05:30  INFO 9796 --- [freshmeal] [Thread-1] c.f.f.c.config.MongoLoggingListener      : 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : endSessions
+DURATION : 14 ms
+====================================================

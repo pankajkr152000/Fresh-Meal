@@ -15,7 +15,9 @@ public class DatabaseSequence implements IDatabaseSequence {
     private String id;
     private long seq;
 
-    public DatabaseSequence() {
+    DatabaseSequence() {
+        	// Package-private constructor.
+        	// Entity creation should happen only through factory.
     }
 
     public static IEntity create() {

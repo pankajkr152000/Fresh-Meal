@@ -2,6 +2,8 @@ package com.foodies.freshmeal.common.audit.entity;
 
 import java.time.LocalDateTime;
 
+import org.bson.Document;
+
 import com.foodies.freshmeal.common.entity.IEntity;
 
 public interface IAuditLog extends IEntity  {
@@ -12,11 +14,13 @@ public interface IAuditLog extends IEntity  {
 	
     public String getMethod();
 
-    public String getRequestBody();
+    public Document getRequestBody();
 
-    public String getResponseBody();
+    public Document getResponseBody();
 
     public Integer getResponseStatus();
+
+    public String getResponseMessage();
 
     public Long getExecutionTimeMs();
 
@@ -24,17 +28,21 @@ public interface IAuditLog extends IEntity  {
 
     public LocalDateTime getCreatedAt();
 
+
+
     public void setId(String id);
 
     public void setApi(String api);
 
     public void setMethod(String method);
 
-    public void setRequestBody(String requestBody);
+    public void setRequestBody(Document requestBody);
 
-    public void setResponseBody(String responseBody);
+    public void setResponseBody(Document responseBody);
 
     public void setResponseStatus(Integer responseStatus);
+
+    public void setResponseMessage(String message);
 
     public void setExecutionTimeMs(Long executionTimeMs);
 

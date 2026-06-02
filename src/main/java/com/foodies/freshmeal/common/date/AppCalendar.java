@@ -3,6 +3,7 @@ package com.foodies.freshmeal.common.date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
@@ -102,6 +103,9 @@ public final class AppCalendar {
         return formatDate(getCurrentDate());
     }
 
+    public static LocalDateTime getCurrentLocaleDateTime() {
+        return LocalDateTime.now(DEFAULT_ZONE);
+    }
     // =====================================================
     // FORMAT METHODS
     // =====================================================

@@ -1,6 +1,8 @@
 package com.foodies.freshmeal.image.entity.impl;
 
-import java.sql.Timestamp;
+
+
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -25,7 +27,7 @@ public class ImageEntity implements IImageEntity {
 	Integer width;
 	Integer height;
 	Boolean active;
-	Timestamp uploadedTime;
+	LocalDateTime uploadedTime;
 	String uploadedBy;
 
 	ImageEntity() {
@@ -162,12 +164,12 @@ public class ImageEntity implements IImageEntity {
 	}
 
 	@Override
-	public Timestamp getUploadedTime() {
+	public LocalDateTime getUploadedTime() {
 		return this.uploadedTime;
 	}
 
 	@Override
-	public void setUploadedTime(Timestamp uploadedTime) {
+	public void setUploadedTime(LocalDateTime uploadedTime) {
 		this.uploadedTime = uploadedTime;
 	}
 

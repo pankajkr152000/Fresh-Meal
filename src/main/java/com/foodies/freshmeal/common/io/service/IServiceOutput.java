@@ -14,8 +14,6 @@ public interface IServiceOutput<T> extends Serializable {
 
     public void setServiceContext(IServiceContext serviceContext);
 
-    public IDataContext getDataContext();
-
-    public void setDataContext(IDataContext dataContext);
+    public void setServiceContext(IDataContext dataContext);
 
 }

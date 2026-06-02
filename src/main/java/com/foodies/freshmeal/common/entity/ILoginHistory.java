@@ -1,6 +1,6 @@
 package com.foodies.freshmeal.common.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public interface ILoginHistory extends IEntity {
 
@@ -12,9 +12,9 @@ public interface ILoginHistory extends IEntity {
 
 	String getLoginSuccessFlag();
 
-	Timestamp getLoginTime();
+	LocalDateTime getLoginTime();
 
-	Timestamp getLogoutTime();
+	LocalDateTime getLogoutTime();
 
 	String getSessionId();
 
@@ -28,9 +28,9 @@ public interface ILoginHistory extends IEntity {
 
 	void setLoginSuccessFlag(String loginSuccessFlag);
 
-	void setLoginTime(Timestamp loginTime);
+	void setLoginTime(LocalDateTime loginTime);
 
-	void setLogoutTime(Timestamp logoutTime);
+	void setLogoutTime(LocalDateTime logoutTime);
 
 	void setSessionId(String sessionId);
 

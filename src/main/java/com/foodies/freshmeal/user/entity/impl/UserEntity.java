@@ -12,47 +12,48 @@ import com.foodies.freshmeal.user.entity.IUserEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @Document(collection = "fm_users")
 public class UserEntity implements IUserEntity {
 
     /**
-	 *
-	 */
-	private static final long serialVersionUID = 4377183688839034088L;
+     *
+     */
+    private static final long serialVersionUID = 4377183688839034088L;
 
-	/**
-	 * =====================================================
-	 * Constructor
-	 * =====================================================
-	 *
-	 * Package-private constructor.
-	 * Entity creation should happen only through factory.
-	 *
-	 * =====================================================
-	 */
-	UserEntity() {
+    /**
+     * =====================================================
+     * Constructor
+     * =====================================================
+     *
+     * Package-private constructor.
+     * Entity creation should happen only through factory.
+     *
+     * =====================================================
+     */
+    UserEntity() {
+        // Package-private constructor.
+        // Entity creation should happen only through factory.
 
-	}
+    }
 
-	/**
-	 * =====================================================
-	 * Factory Method
-	 * =====================================================
-	 */
-	public static IEntity create() {
-		return new UserEntity();
-	}
+    /**
+     * =====================================================
+     * Factory Method
+     * =====================================================
+     */
+    public static IEntity create() {
+        return new UserEntity();
+    }
 
-	/**
-	 * =====================================================
-	 * Mongo Primary Key
-	 * =====================================================
-	 */
-	@Id
-	private String id;
+    /**
+     * =====================================================
+     * Mongo Primary Key
+     * =====================================================
+     */
+    @Id
+    private String id;
     private String username;
     private String password;
     private String email;
@@ -72,11 +73,11 @@ public class UserEntity implements IUserEntity {
     private String updatedAt;
     private String deletedAt;
 
-
     @Override
     public String getId() {
         return id;
     }
+
     @Override
     public void setId(String id) {
         this.id = id;
@@ -114,35 +115,35 @@ public class UserEntity implements IUserEntity {
 
     @Override
     public List<String> getAddress() {
-    	if(address == null) {
-    		return new ArrayList<>();
-    	}
+        if (address == null) {
+            return new ArrayList<>();
+        }
         return this.address;
     }
 
     public String getUpdatedBy() {
-		return updatedBy;
-	}
+        return updatedBy;
+    }
 
-	public void setUpdatedBy(String updatedBy) {
-		this.updatedBy = updatedBy;
-	}
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 
-	public String getUpdatedAt() {
-		return updatedAt;
-	}
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
 
-	public void setUpdatedAt(String updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-	public String getCreatedBy() {
-		return createdBy;
-	}
+    public String getCreatedBy() {
+        return createdBy;
+    }
 
-	@Override
+    @Override
     public List<String> getRoles() {
-        if(roles == null) {
+        if (roles == null) {
             return new ArrayList<>();
         }
         return this.roles;
@@ -179,7 +180,7 @@ public class UserEntity implements IUserEntity {
     }
 
     @Override
-    public void  setUsername(String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -243,26 +244,24 @@ public class UserEntity implements IUserEntity {
         this.createdAt = createdAt;
     }
 
-	@Override
-	public String getDeletedAt() {
-		return this.deletedAt;
-	}
+    @Override
+    public String getDeletedAt() {
+        return this.deletedAt;
+    }
 
-	@Override
-	public String getCreatedAt() {
-		return this.createdAt;
-	}
+    @Override
+    public String getCreatedAt() {
+        return this.createdAt;
+    }
 
-	@Override
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-		
-	}
+    @Override
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+
+    }
 
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
-
-	
 
 }

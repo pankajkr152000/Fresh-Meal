@@ -1,6 +1,8 @@
 package com.foodies.freshmeal.image.entity;
 
-import java.sql.Timestamp;
+
+
+import java.time.LocalDateTime;
 
 import com.foodies.freshmeal.common.entity.IEntity;
 
@@ -54,9 +56,9 @@ public interface IImageEntity extends IEntity {
 
     void setActive(Boolean active);
 
-    Timestamp getUploadedTime();
+    LocalDateTime getUploadedTime();
 
-    void setUploadedTime(Timestamp uploadedTime);
+    void setUploadedTime(LocalDateTime uploadedTime);
 
     String getUploadedBy();
 

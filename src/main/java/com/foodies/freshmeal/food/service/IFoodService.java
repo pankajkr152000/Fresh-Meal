@@ -1,9 +1,17 @@
 package com.foodies.freshmeal.food.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.foodies.freshmeal.common.io.service.IServiceInput;
+import com.foodies.freshmeal.common.io.service.IServiceOutput;
+import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
+import com.foodies.freshmeal.food.dto.FoodResponse;
+import com.foodies.freshmeal.food.entity.IFoodEntity;
 
 public interface IFoodService {
 
-    String uploadImageFile(MultipartFile file);
+    IServiceOutput<IFoodEntity> createFoodEntity(IServiceInput<CreateFoodInputDTO> input);
+
+    IServiceOutput<String> generateFoodId(IServiceInput<CreateFoodInputDTO> input);
+
+    IServiceOutput<FoodResponse> addFood(IServiceInput<CreateFoodInputDTO> input);
 
 }

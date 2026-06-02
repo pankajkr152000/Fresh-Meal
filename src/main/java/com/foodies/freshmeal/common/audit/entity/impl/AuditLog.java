@@ -3,10 +3,16 @@ package com.foodies.freshmeal.common.audit.entity.impl;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.foodies.freshmeal.common.audit.entity.IAuditLog;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @Document(collection = "fm_api_audit_logs")
 public class AuditLog implements IAuditLog {
 
@@ -18,24 +24,33 @@ public class AuditLog implements IAuditLog {
     private String api;
     private String method;
 
-    private String requestBody; // Input JSON
-    private String responseBody; // Output JSON
+    private org.bson.Document requestBody; // Input JSON
+    private org.bson.Document responseBody; // Output JSON
 
     private Integer responseStatus;
+    private String responseMessage;
 
     private Long executionTimeMs;
+    @Indexed
+    private String requestId;
+
+    private String queryParams;
+    @Indexed
+    private String userId;
+
+    private String exceptionMessage;
 
     private String ipAddress;
-
+    @Indexed
     private LocalDateTime createdAt;
 
     // Default constructor
-    public AuditLog() {
-        this.createdAt = LocalDateTime.now();
-    }
+     public AuditLog() {
+         
+     }
 
     // Constructor with parameters
-    public AuditLog(String api, String method, String requestBody, String responseBody,
+    public AuditLog(String api, String method, org.bson.Document requestBody, org.bson.Document responseBody,
             Integer responseStatus, Long executionTimeMs, String ipAddress) {
         this.api = api;
         this.method = method;
@@ -79,22 +94,22 @@ public class AuditLog implements IAuditLog {
     }
 
     @Override
-    public String getRequestBody() {
+    public org.bson.Document getRequestBody() {
         return requestBody;
     }
 
     @Override
-    public void setRequestBody(String requestBody) {
+    public void setRequestBody(org.bson.Document requestBody) {
         this.requestBody = requestBody;
     }
 
     @Override
-    public String getResponseBody() {
+    public org.bson.Document getResponseBody() {
         return responseBody;
     }
 
     @Override
-    public void setResponseBody(String responseBody) {
+    public void setResponseBody(org.bson.Document responseBody) {
         this.responseBody = responseBody;
     }
 
@@ -106,6 +121,16 @@ public class AuditLog implements IAuditLog {
     @Override
     public void setResponseStatus(Integer responseStatus) {
         this.responseStatus = responseStatus;
+    }
+
+    @Override
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    @Override
+    public void setResponseMessage(String message) {
+        this.responseMessage = message;
     }
 
     @Override
@@ -152,4 +177,38 @@ public class AuditLog implements IAuditLog {
                 ", createdAt=" + createdAt +
                 '}';
     }
+
+	public String getRequestId() {
+		return requestId;
+	}
+
+	public void setRequestId(String requestId) {
+		this.requestId = requestId;
+	}
+
+	public String getQueryParams() {
+		return queryParams;
+	}
+
+	public void setQueryParams(String queryParams) {
+		this.queryParams = queryParams;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getExceptionMessage() {
+		return exceptionMessage;
+	}
+
+	public void setExceptionMessage(String exceptionMessage) {
+		this.exceptionMessage = exceptionMessage;
+	}
+    
+    
 }

@@ -1,7 +1,7 @@
 package com.foodies.freshmeal.common.exception;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.foodies.freshmeal.common.IAppEvent;
@@ -17,7 +17,7 @@ public interface IErrors extends Serializable {
 
     public abstract Boolean hasErrors();
 
-    public Timestamp getErrorTimeStamp();
+    public LocalDateTime getErrorLocalDateTime();
 
 	public abstract void setErrorEvent(IAppEvent errorEvent);
 
@@ -33,7 +33,7 @@ public interface IErrors extends Serializable {
 	 * @return
 	 * 
 	 */
-	Timestamp getStartTime();
+	LocalDateTime getStartTime();
 
 	void setErrorCount(Long errorCount);
 
@@ -51,7 +51,7 @@ public interface IErrors extends Serializable {
 	/**
 	 * @param startTime
 	 */
-	void setStartTime(Timestamp startTime);
+	void setStartTime(LocalDateTime startTime);
 
 	/**
 	 * @return
