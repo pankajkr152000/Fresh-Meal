@@ -1,5 +1,7 @@
 package com.foodies.freshmeal.food.service;
 
+import java.util.List;
+
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
@@ -13,5 +15,7 @@ public interface IFoodService {
     IServiceOutput<String> generateFoodId(IServiceInput<CreateFoodInputDTO> input);
 
     IServiceOutput<FoodResponse> addFood(IServiceInput<CreateFoodInputDTO> input);
+
+    IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input);
 
 }

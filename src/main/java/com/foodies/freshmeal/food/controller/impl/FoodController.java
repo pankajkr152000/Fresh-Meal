@@ -1,7 +1,10 @@
 package com.foodies.freshmeal.food.controller.impl;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -36,6 +39,7 @@ public class FoodController implements IFoodController {
         this.objectMapper = objectMapper;
     }
 
+    @Override
     @AuditApi
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<FoodResponse>> addFood(
@@ -61,5 +65,14 @@ public class FoodController implements IFoodController {
         IServiceOutput<FoodResponse> output = foodService.addFood(input);
         
         return ApiResponses.created("Food created successfully", output.getOutput());
+    }
+
+    @AuditApi
+    @Override
+    @GetMapping("/readAllFoods")
+    public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
+        IServiceInput<Void> input = new ServiceInput<>();
+        IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
+        return ApiResponses.ok("Foods retrieved successfully", output.getOutput());
     }
 }

@@ -1,5 +1,8 @@
 package com.foodies.freshmeal.food.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -135,6 +138,25 @@ public class FoodServiceImpl implements IFoodService {
         IServiceOutput<IFoodEntity> output = new ServiceOutput<>();
         output.setOutput(foodEntity);
         return output;
+    }
+
+    @Override
+    public IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input) {
+        List<FoodResponse> foodResponses = new ArrayList<>();
+
+        foodRepository.findAll().stream().forEach(foodEntity -> {
+            LOGGER.info("Food ID: {}, Food Name: {}, Description: {}, Price: {}, Category: {}, Image URL: {}",
+                    foodEntity.getId(),
+                    foodEntity.getFoodName(),
+                    foodEntity.getDescription(),
+                    foodEntity.getPrice(),
+                    foodEntity.getCategory(),
+                    foodEntity.getImageUrl());
+            FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
+            foodResponses.add(foodResponse);
+        });
+
+        return new ServiceOutput<>(foodResponses);
     }
 
 

@@ -85,6 +85,7 @@ private static final String HTTP_511 = "NETWORK AUTHENTICATION REQUIRED";
 
     
     private static final Map<Integer, String> HTTP_STATUS_MAP;
+    public static final Integer INTERNAL_SERVER_ERROR = null;
 
     static {
         Map<Integer, String> map = new LinkedHashMap<>();

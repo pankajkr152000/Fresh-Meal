@@ -11,8 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -29,6 +31,7 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 
 public class SystemConfigBean {
@@ -85,7 +88,7 @@ public class SystemConfigBean {
 	
 	private Document startupModeDoc;
 	
-	private static final Boolean isMapBasedCacheEnabled = true;
+	private static final Boolean IS_MAP_BASED_CACHE_ENABLED = true;
 	
 	static {
 		getInstance();
@@ -99,7 +102,7 @@ public class SystemConfigBean {
 			if (systemConfigXmlDoc == null) {
 				
 				// Added by Alok, CR# - COM#03220
-				systemConfigMap = new HashMap<String, Object>(512);
+				systemConfigMap = new HashMap<>(512);
 				// Added by Amit, To Enable Startup Mode
 				systemConfigBean.initStartupMode();
 			}
@@ -117,6 +120,7 @@ public class SystemConfigBean {
 	 * mode[3]={'Build','Production','Test'};
 	 * Profile[3]={'Startup-Mode-BUID.xml','Startup-Mode-PRODUCTION.xml','Startup-Mode-TEST.xml'};
 	 */
+	@SuppressWarnings("CallToPrintStackTrace")
 	private void initStartupMode() {
 		InputStream inputStream = null;
 		String startupFileName = getAttribute(STARTUP_MODE_FILE);
@@ -158,7 +162,7 @@ public class SystemConfigBean {
 		try {
 			startupModeDoc = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder().parse(inputStream);
-		} catch (Exception ex) {
+		} catch (IOException | ParserConfigurationException | SAXException ex) {
 			String err = "Error occured while parsing Input stream or creating Document";
 			logger.fatal(err);
 			ex.printStackTrace();
@@ -188,7 +192,7 @@ public class SystemConfigBean {
 			tf.setOutputProperty(OutputKeys.INDENT, "yes");
 			tf.transform(new DOMSource(systemConfigXmlDoc), sr);
 		}
-		catch (Exception e) {
+		catch (SystemConfigurationException | IOException | IllegalArgumentException | TransformerException e) {
 			e.printStackTrace();
 		}
 	}
@@ -199,8 +203,8 @@ public class SystemConfigBean {
 			throws SystemConfigurationException {
 		// Added by Alok, CR# - COM#03220
 		if (systemConfigMap.containsKey(key)) {
-			if (systemConfigMap.get(key) instanceof String) {
-				return (String) systemConfigMap.get(key);
+			if (systemConfigMap.get(key) instanceof String string) {
+				return string;
 			}
 		}
 		try {
@@ -213,7 +217,7 @@ public class SystemConfigBean {
 					// Added by Alok, CR# - COM#03220
 					systemConfigMap.put(key, node);
 					return node;
-		} catch (Exception ex) {
+		} catch (XPathExpressionException ex) {
 					//XPathExpressionException ex
 					throw new SystemConfigurationException(ex);
 		}		
@@ -261,12 +265,12 @@ public class SystemConfigBean {
 
 	public static Boolean isMapBasedCacheEnabled()
 	{
-		return isMapBasedCacheEnabled;
+		return IS_MAP_BASED_CACHE_ENABLED;
 	}
 	
 	public static List<String> getAttributeValueList(String key)
 	throws SystemConfigurationException {
-		List<String> valueList = new ArrayList<String>();
+		List<String> valueList = new ArrayList<>();
 		NodeList nodeList = getNodeList(key);
 		if(nodeList != null) {
 			for(int i=0;i < nodeList.getLength();i++) {
@@ -295,8 +299,8 @@ public class SystemConfigBean {
 			throws SystemConfigurationException {
 		// Added by Alok, CR# - COM#03220
 		if (systemConfigMap.containsKey(key)) {
-			if (systemConfigMap.get(key) instanceof String[]) {
-				return (String[]) systemConfigMap.get(key);
+			if (systemConfigMap.get(key) instanceof String[] strings) {
+				return strings;
 			}
 		}
 		NodeList nodelist = getNodeList(key);
@@ -446,12 +450,7 @@ public class SystemConfigBean {
 	{
 		String prospectivePriceValue = SystemConfigBean.getAttribute(new MessageFormat(PROSPECTIVE_PRICE_FILESYSTEM_BEAN_KEY).format(new String[]{siteCode}));
 		
-		if("Y".equalsIgnoreCase(prospectivePriceValue))
-		{
-			return true;
-		}
-		
-		return false;
+		return "Y".equalsIgnoreCase(prospectivePriceValue);
 	}
 	public static String getSystemUser(String tenantCode)
 	{
@@ -466,22 +465,14 @@ public class SystemConfigBean {
 	{
 		String fundStatusMatrixApplValue = SystemConfigBean.getAttribute(new MessageFormat(FUND_STATUS_MATRIX_APPL_FILESYSTEM_BEAN_KEY).format(new String[]{siteCode}));
 		
-		if("Y".equalsIgnoreCase(fundStatusMatrixApplValue))
-		{
-			return true;
-		}
-		return false;
+		return "Y".equalsIgnoreCase(fundStatusMatrixApplValue);
 	}
 	public static boolean isMultiCurrencyEnabled(String tenantCode)
 	{
 		//Need to check whether the tenant is available
 		String multiCurrencyEnabled = SystemConfigBean.getAttribute(new MessageFormat(MULTICURRENCY_ENABLED_FILESYSTEM_BEAN_KEY).format(new String[]{tenantCode}));
 		
-		if("Y".equalsIgnoreCase(multiCurrencyEnabled))
-		{
-			return true;
-		}
-		return false;
+		return "Y".equalsIgnoreCase(multiCurrencyEnabled);
 	}
 	
 	public static String getDefaultRepositoryId(String tenantCode)
@@ -513,7 +504,7 @@ public class SystemConfigBean {
 	
 	public static File getExecutable(String executable) {
 
-		File executableFile = null;
+		File executableFile;
 
 		File file = new File(executable);
 		if (file.isFile()) {

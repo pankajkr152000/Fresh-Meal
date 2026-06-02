@@ -1,6 +1,5 @@
 package com.foodies.freshmeal.common.date;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -30,8 +29,6 @@ import org.springframework.util.StringUtils;
 
 import com.foodies.freshmeal.common.exception.SystemConfigBean;
 
-
-
 public class DataFormatUtil {
     /**
      * Default date and time format. Used to format date.
@@ -51,6 +48,8 @@ public class DataFormatUtil {
     private static final String DEFAULT_12_HR_DATE_TIME_FORMAT = "dd/MM/yyyy hh:mm:ss a";
 
     public static final String DEFAULT_24_HR_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+
+    public static final DateTimeFormatter LOG_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Used to concatenate array of String where comma(, ) is the separator.
@@ -96,7 +95,12 @@ public class DataFormatUtil {
 
     public static final String DATE_TIMESTAMPFORMAT_XML_KEY = "//Config/EnvComCalendar/DateTimeFormat";
 
-    private static String DATE_FORMAT = SystemConfigBean.getAttribute(DATE_TIME_DATEFORMAT_XML_KEY);
+    // public static final String DATE_FORMAT =
+    // SystemConfigBean.getAttribute(DATE_TIME_DATEFORMAT_XML_KEY);
+
+    public static String getDateFormat() {
+        return SystemConfigBean.getAttribute(DATE_TIME_DATEFORMAT_XML_KEY);
+    }
 
     public static final Long SEGMENT_NO_DIGIT_COUNT = 3L;
 
@@ -169,13 +173,13 @@ public class DataFormatUtil {
     public static String concatStrings(String[] strings, String separator) {
         StringBuilder sb = new StringBuilder();
         boolean appendSeparator = false;
-        for (int i = 0; i < strings.length; i++) {
-            if (org.springframework.util.StringUtils.hasText(strings[i])) {
+        for (String string : strings) {
+            if (org.springframework.util.StringUtils.hasText(string)) {
                 if (appendSeparator) {
                     sb.append(separator);
                 }
                 appendSeparator = true;
-                sb.append(strings[i]);
+                sb.append(string);
             }
         }
         return sb.toString();
@@ -186,8 +190,8 @@ public class DataFormatUtil {
         return strArr[1] + sep + strArr[0] + sep + strArr[2];
     }
 
-    
-	public static Date getDateFromString(String str) {
+    @SuppressWarnings("CallToPrintStackTrace")
+    public static Date getDateFromString(String str) {
         Date date = null;
         try {
             if (StringUtils.hasText(str)) {
@@ -235,6 +239,8 @@ public class DataFormatUtil {
             return false;
         }
     }
+
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Date getDateTimeFormString(String str) {
         Date date = null;
         try {
@@ -247,6 +253,7 @@ public class DataFormatUtil {
         return date;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Date getDateTimeFormStringMcb(String str) {
         Date date = null;
         try {
@@ -259,10 +266,11 @@ public class DataFormatUtil {
         return date;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Date getDateFormString(String str) {
         Date date = null;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+            SimpleDateFormat sdf = new SimpleDateFormat(DataFormatUtil.getDateFormat());
             sdf.setLenient(false);
             date = sdf.parse(str);
         } catch (ParseException parseException) {
@@ -272,7 +280,7 @@ public class DataFormatUtil {
     }
 
     public static String getPackedDecimal(String s) {
-        return getPackedDecimal(Double.parseDouble(s));
+        return getPackedDecimal(Double.valueOf(s));
     }
 
     public static String getPackedDecimal(Double d) {
@@ -284,7 +292,7 @@ public class DataFormatUtil {
     }
 
     public static String getPackedIntegral(String s) {
-        return getPackedIntegral(Long.parseLong(s));
+        return getPackedIntegral(Long.valueOf(s));
     }
 
     public static String getPackedIntegral(Long l) {
@@ -387,10 +395,10 @@ public class DataFormatUtil {
     }
 
     public static Long encodeUnitTimeFormat(String unitTime) {
-        long totalSecondCount = 0;
-        Integer hoursCount = Integer.parseInt(unitTime.substring(0, 2));
-        Integer minuteCount = Integer.parseInt(unitTime.substring(3, 5));
-        Long secondCount = Long.parseLong(unitTime.substring(6, 8));
+        long totalSecondCount;
+        Integer hoursCount = Integer.valueOf(unitTime.substring(0, 2));
+        Integer minuteCount = Integer.valueOf(unitTime.substring(3, 5));
+        Long secondCount = Long.valueOf(unitTime.substring(6, 8));
         totalSecondCount = hoursCount * 3600 + minuteCount * 60 + secondCount;
         return totalSecondCount;
 
@@ -400,7 +408,7 @@ public class DataFormatUtil {
             Integer[] weekendHolidaysArray, String[] yearlyHolidaysArray)
             throws Exception {
 
-        long noOfDays = 0;
+        long noOfDays;
 
         noOfDays = (endDate.getTime() - startDate.getTime()) / 86400000l;
 
@@ -420,8 +428,8 @@ public class DataFormatUtil {
         if (weekendHolidaysArray != null) {
             while (startCalDate.before(endCalDate)) {
                 int dayOfWeek = startCalDate.get(Calendar.DAY_OF_WEEK);
-                for (int index = 0; index < weekendHolidaysArray.length; index++) {
-                    if (weekendHolidaysArray[index].intValue() == dayOfWeek) {
+                for (Integer weekendHolidaysArray1 : weekendHolidaysArray) {
+                    if (weekendHolidaysArray1 == dayOfWeek) {
                         noOfWeekends++;
                         break;
                     }
@@ -439,19 +447,16 @@ public class DataFormatUtil {
         int endYear = endCalDate.get(Calendar.YEAR);
 
         if (yearlyHolidaysArray != null) {
-            for (int index = 0; index < yearlyHolidaysArray.length; index++) {
+            for (String yearlyHolidaysArray1 : yearlyHolidaysArray) {
                 if (startYear == endYear) {
-                    Date holiday = sdf_DD_MM_YYYY
-                            .parse(yearlyHolidaysArray[index] + "/" + startYear);
+                    Date holiday = sdf_DD_MM_YYYY.parse(yearlyHolidaysArray1 + "/" + startYear);
                     if (!holiday.before(startDate) && !holiday.after(endDate)) {
                         noOfYearlyHolidays++;
                     }
-
                 } else {
                     for (int year = startCalDate.get(Calendar.YEAR); year <= endCalDate
                             .get(Calendar.YEAR); year++) {
-                        Date holiday = sdf_DD_MM_YYYY
-                                .parse(yearlyHolidaysArray[index] + "/" + year);
+                        Date holiday = sdf_DD_MM_YYYY.parse(yearlyHolidaysArray1 + "/" + year);
                         Calendar date = new GregorianCalendar();
                         date.setTime(holiday);
                         if (isWeekend(date, weekendHolidaysArray)
@@ -473,8 +478,8 @@ public class DataFormatUtil {
 
     private static boolean isWeekend(Calendar checkDate, Integer[] weekendArray) {
         if (null != weekendArray) {
-            for (int index = 0; index < weekendArray.length; index++) {
-                if (weekendArray[index] == checkDate.get(Calendar.DAY_OF_WEEK)) {
+            for (Integer weekendArray1 : weekendArray) {
+                if (weekendArray1 == checkDate.get(Calendar.DAY_OF_WEEK)) {
                     return true;
                 }
             }
@@ -526,6 +531,7 @@ public class DataFormatUtil {
 
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Date getDateFromString(String str, String format) {
         Date date = null;
         try {
@@ -539,6 +545,7 @@ public class DataFormatUtil {
         return date;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Date getDateTimeFromString(String str, String format) {
         Date date = null;
         try {
@@ -588,10 +595,10 @@ public class DataFormatUtil {
         if (StringUtils.hasText(number))
             return null;
         String finalNumberString = "";
-        String numberString = number.toString();
-        Integer noOfDigitOfNumber = (Integer) number.toString().length();
+        String numberString = number;
+        Integer noOfDigitOfNumber = (Integer) numberString.length();
         if (noOfDigitOfNumber >= Integer.valueOf(noOfDigit.toString())) {
-            return number.toString();
+            return number;
         }
         Long noOfZerosRequired = noOfDigit - noOfDigitOfNumber;
         if (noOfZerosRequired > 0) {
@@ -722,7 +729,7 @@ public class DataFormatUtil {
         StringWriter writer = new StringWriter();
 
         try (Reader reader = clobData.getCharacterStream();
-             BufferedReader br = new BufferedReader(reader)) {
+                BufferedReader br = new BufferedReader(reader)) {
 
             char[] buffer = new char[1024];
             int length;
@@ -905,7 +912,7 @@ public class DataFormatUtil {
 
     public static Map<String, String> getUrlDataMap(String transportableData) {
 
-        Map<String, String> urlDataMap = new HashMap<String, String>();
+        Map<String, String> urlDataMap = new HashMap<>();
 
         String[] parameters = StringUtils.hasText(transportableData) ? transportableData
                 .split(TILDA_SEPARATOR) : null;
@@ -927,7 +934,7 @@ public class DataFormatUtil {
      */
     public static final List<String> getMaxLenAllowListFromCommaSepdStr(String inputValue) {
 
-        List<String> returnValue = new ArrayList<String>();
+        List<String> returnValue = new ArrayList<>();
         if (StringUtils.hasText(inputValue)) {
             /**
              * Replace all single quotes(') with empty value, if present in the input string
@@ -937,8 +944,8 @@ public class DataFormatUtil {
              */
             inputValue = inputValue.replace("'", "");
             if (inputValue.length() >= 3999) {
-                String lengthAllowableInputValue = null;
-                String lengthAllowableCorrectInputValue = null;
+                String lengthAllowableInputValue;
+                String lengthAllowableCorrectInputValue;
                 do {
                     lengthAllowableInputValue = inputValue.substring(0, 3999);
                     lengthAllowableCorrectInputValue = lengthAllowableInputValue.substring(0,
@@ -947,9 +954,9 @@ public class DataFormatUtil {
                             inputValue.length());
                     returnValue.add(lengthAllowableCorrectInputValue);
                 } while (inputValue.length() >= 3999);
-                if (inputValue != null) {
-                    returnValue.add(inputValue);
-                }
+
+                returnValue.add(inputValue);
+
             } else {
                 returnValue.add(inputValue);
             }
@@ -959,6 +966,7 @@ public class DataFormatUtil {
     }
 
     // Added during LTA protection implementation
+    @SuppressWarnings("CallToPrintStackTrace")
     public static boolean isGraterThanToday(String inputDate, Date today) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date input;
@@ -973,6 +981,7 @@ public class DataFormatUtil {
     // End LTA protection implementation
 
     // for Date Format dd-mmm-yy as input
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Date getDateFromStringInDifferentDtFormt(String str) {
         Date date = null;
         try {
@@ -986,6 +995,7 @@ public class DataFormatUtil {
         return date;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Date getDateFromStringDDMMYYYY(String str) {
         Date date = null;
         try {
@@ -999,6 +1009,7 @@ public class DataFormatUtil {
         return date;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public static LocalDate getLocalDateFromStringDDMMUUUU(String givenDateString) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DDMMUUUU)

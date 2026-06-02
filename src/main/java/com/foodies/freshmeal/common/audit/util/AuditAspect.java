@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodies.freshmeal.common.audit.entity.impl.AuditLog;
 import com.foodies.freshmeal.common.audit.service.IAuditService;
 import com.foodies.freshmeal.common.constants.HttpStatusCode;
+import com.foodies.freshmeal.common.date.DataFormatUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -82,7 +84,8 @@ public class AuditAspect {
 
                 String requestId = UUID.randomUUID().toString();
 
-                LOGGER.info("AUDIT STARTED | RequestId={} | API={} | Method={}", requestId, httpRequest.getRequestURI(), httpRequest.getMethod());
+                LOGGER.info("AUDIT STARTED | RequestId={} | API={} | Method={}", requestId, httpRequest.getRequestURI(),
+                                httpRequest.getMethod());
 
                 AuditLog auditLog = new AuditLog();
                 auditLog.setRequestId(requestId);
@@ -96,36 +99,129 @@ public class AuditAspect {
 
                         auditLog.setRequestBody(buildRequestDocument(joinPoint.getArgs()));
 
+                        LOGGER.info(
+                                        """ 
+
+                                                        \n ================= REQUEST =================
+                                                        Timestamp : {}
+                                                        RequestId : {}
+                                                        Method    : {}
+                                                        URL       : {}
+                                                        Payload   :
+                                                        {}
+                                                        ==========================================
+                                                        """,
+                                        auditLog.getCreatedAt().format(DataFormatUtil.LOG_DATE_FORMATTER),
+                                        requestId,
+                                        httpRequest.getMethod(),
+                                        httpRequest.getRequestURI(),
+                                        toPrettyJson(auditLog.getRequestBody()));
+
                         Object response = joinPoint.proceed();
 
-                        auditLog.setResponseBody(convertToDocument(response));
-                        auditLog.setResponseStatus(httpResponse.getStatus());
-                        auditLog.setResponseMessage(HttpStatusCode.getDescription(httpResponse.getStatus()));
-                        auditLog.setExecutionTimeMs(System.currentTimeMillis() - startTime);
+                        Object responseBody = response;
 
+                        if (response instanceof ResponseEntity<?> entity) {
+
+                                auditLog.setResponseStatus(
+                                                entity.getStatusCode().value());
+
+                                auditLog.setResponseMessage(
+                                                HttpStatusCode.getDescription(
+                                                                entity.getStatusCode().value()));
+
+                                responseBody = entity.getBody();
+
+                        } else {
+
+                                auditLog.setResponseStatus(
+                                                httpResponse.getStatus());
+
+                                auditLog.setResponseMessage(
+                                                HttpStatusCode.getDescription(
+                                                                httpResponse.getStatus()));
+                        }
+
+                        auditLog.setResponseBody(
+                                        convertToDocument(responseBody));
+
+                        auditLog.setExecutionTimeMs(
+                                        System.currentTimeMillis() - startTime);
+
+                        LOGGER.info(
+                                        """
+                                                        \n ================= RESPONSE =================
+                                                        RequestId    : {}
+                                                        Status       : {}
+                                                        Duration(ms) : {}
+                                                        Payload      :
+                                                        {}
+                                                        ============================================
+                                                        """,
+                                        requestId,
+                                        auditLog.getResponseStatus(),
+                                        auditLog.getExecutionTimeMs(),
+                                        toPrettyJson(responseBody));
                         try {
                                 auditService.saveAuditLogAsync(auditLog);
+
                         } catch (Exception e) {
                                 LOGGER.error("Failed to save audit log. RequestId={}", requestId, e);
                         }
 
-                        LOGGER.info("AUDIT SUCCESS | RequestId={} | Duration={} ms", requestId, auditLog.getExecutionTimeMs());
+                        LOGGER.info("AUDIT SUCCESS | RequestId={} | Duration={} ms", requestId,
+                                        auditLog.getExecutionTimeMs());
 
                         return response;
 
                 } catch (Throwable ex) {
 
-                        auditLog.setResponseStatus(httpResponse.getStatus());
-                        auditLog.setResponseMessage(HttpStatusCode.getDescription(httpResponse.getStatus()));
+                        if (httpResponse.getStatus() > 0) {
+
+                                auditLog.setResponseStatus(
+                                                httpResponse.getStatus());
+
+                                auditLog.setResponseMessage(
+                                                HttpStatusCode.getDescription(
+                                                                httpResponse.getStatus()));
+
+                        } else {
+
+                                auditLog.setResponseStatus(
+                                                HttpStatusCode.INTERNAL_SERVER_ERROR);
+
+                                auditLog.setResponseMessage(
+                                                HttpStatusCode.getDescription(
+                                                                HttpStatusCode.INTERNAL_SERVER_ERROR));
+                        }
                         auditLog.setExceptionMessage(ex.getMessage());
                         auditLog.setExecutionTimeMs(System.currentTimeMillis() - startTime);
+                        LOGGER.error(
+                                        """
+                                                        \n ================= ERROR =================
+                                                        RequestId    : {}
+                                                        Method       : {}
+                                                        URL          : {}
+                                                        Duration(ms) : {}
+                                                        Error       :
+                                                        {}
+                                                        ============================================
+                                                        """,
+                                        requestId,
+                                        httpRequest.getMethod(),
+                                        httpRequest.getRequestURI(),
+                                        auditLog.getExecutionTimeMs(),
+                                        ex.getMessage(),
+                                        ex);
                         try {
                                 auditService.saveAuditLogAsync(auditLog);
+
                         } catch (Exception e) {
                                 LOGGER.error("Failed to save audit log. RequestId={}", requestId, e);
                         }
 
-                        LOGGER.error("AUDIT FAILURE | RequestId={} | Duration={} ms | Error={}", requestId, auditLog.getExecutionTimeMs(), ex.getMessage(), ex);
+                        LOGGER.error("AUDIT FAILURE | RequestId={} | Duration={} ms | Error={}", requestId,
+                                        auditLog.getExecutionTimeMs(), ex.getMessage(), ex);
 
                         throw ex;
                 }
@@ -152,27 +248,26 @@ public class AuditAspect {
                                 continue;
                         }
                         try {
-                                if (arg instanceof MultipartFile file) {
-                                        requestDoc.append("file", new Document()
-                                                .append("fileName", file.getOriginalFilename())
-                                                .append("contentType", file.getContentType())
-                                                .append("fileSize", file.getSize()));
-
-                                } else if (arg instanceof String str) {
-                                        try {
-                                                requestDoc.append("foodRequest", Document.parse(str));
-
-                                        } catch (Exception ex) {
-                                                requestDoc.append("foodRequest", str);
-                                        }
-                                } else {
-
-                                        requestDoc.append(arg.getClass().getSimpleName(),Document.parse(objectMapper.writeValueAsString(arg)));
+                            switch (arg) {
+                                case MultipartFile file -> requestDoc.append("file", new Document()
+                                        .append("fileName", file.getOriginalFilename())
+                                        .append("contentType", file.getContentType())
+                                        .append("fileSize", file.getSize()));
+                                case String str -> {
+                                    try {
+                                        requestDoc.append("foodRequest", Document.parse(str));
+                                        
+                                    } catch (org.bson.json.JsonParseException | IllegalArgumentException ex) {
+                                        requestDoc.append("foodRequest", str);
+                                    }
                                 }
+                                default -> requestDoc.append(arg.getClass().getSimpleName(),
+                                        Document.parse(objectMapper.writeValueAsString(arg)));
+                            }
 
                         } catch (JsonProcessingException e) {
                                 LOGGER.error("Failed to serialize request argument : {}", e.getMessage(), e);
-                                requestDoc.append( "serializationError", e.getMessage());
+                                requestDoc.append("serializationError", e.getMessage());
                         }
                 }
                 return requestDoc;
@@ -198,8 +293,26 @@ public class AuditAspect {
                         return Document.parse(objectMapper.writeValueAsString(object));
 
                 } catch (JsonProcessingException e) {
-                        LOGGER.error("Failed to convert object to document : {}",e.getMessage(), e);
+                        LOGGER.error("Failed to convert object to document : {}", e.getMessage(), e);
                         return new Document().append("error", e.getMessage());
+                }
+        }
+
+        private String toPrettyJson(Object object) {
+
+                if (object == null) {
+                        return "null";
+                }
+
+                try {
+
+                        return objectMapper
+                                        .writerWithDefaultPrettyPrinter()
+                                        .writeValueAsString(object);
+
+                } catch (JsonProcessingException ex) {
+
+                        return String.valueOf(object);
                 }
         }
 }
