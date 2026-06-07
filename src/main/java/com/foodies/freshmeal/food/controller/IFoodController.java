@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.food.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,7 +25,7 @@ public interface IFoodController {
     
     ResponseEntity<ApiResponse<List<String>>> groupCategories() throws JsonProcessingException;
 
-
+    public ResponseEntity<ApiResponse<Map<String,Object>>> foodCategoryMetadata() throws JsonProcessingException;
 
 
 }

@@ -2,7 +2,9 @@ package com.foodies.freshmeal.food.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,6 +215,44 @@ public class FoodServiceImpl implements IFoodService {
                 .toList();
 
         return new ServiceOutput<>(groupCategoriesList);
+    }
+
+
+
+    @Override
+    public IServiceOutput<Map<String, Object>> foodCategoryMetadata(IServiceInput<Void> input) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put(
+            "foodCategories",
+            Arrays.stream(FoodCategory.values())
+                    .map(Enum::name)
+                    .toList()
+        );
+
+        response.put(
+            "dietCategories",
+            Arrays.stream(DietCategory.values())
+                    .map(Enum::name)
+                    .toList()
+        );
+
+        response.put(
+            "cuisineCategories",
+            Arrays.stream(CuisineType.values())
+                    .map(Enum::name)
+                    .toList()
+        );
+
+        response.put(
+            "groupCategories",
+            Arrays.stream(CategoryGroup.values())
+                    .map(Enum::name)
+                    .toList()
+        );
+
+        return new ServiceOutput<>(response);
     }
 
     

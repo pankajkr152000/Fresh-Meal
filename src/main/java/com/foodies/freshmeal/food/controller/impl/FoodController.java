@@ -1,6 +1,8 @@
 package com.foodies.freshmeal.food.controller.impl;
 
+
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -118,6 +120,18 @@ public class FoodController implements IFoodController {
 
         return ApiResponses.ok("Group categories", output.getOutput());
     }
+
+    @AuditApi
+    @Override
+    @GetMapping("/foodCategoryMetadata")
+    public ResponseEntity<ApiResponse<Map<String,Object>>> foodCategoryMetadata() throws JsonProcessingException {
+        IServiceInput<Void> input = new ServiceInput<>();
+
+        IServiceOutput<Map<String,Object>> output = foodService.foodCategoryMetadata(input);
+
+        return ApiResponses.ok("Group categories", output.getOutput());
+    }
+
 
 
 }
