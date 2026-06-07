@@ -17,6 +17,10 @@ public class ApiResponse<T> {
 
     private boolean success;
 
+    private int httpStatusCode;
+
+    private String httpStatusMessage;
+
     private String message;
 
     private List<String> errors;

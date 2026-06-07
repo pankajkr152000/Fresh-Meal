@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodies.freshmeal.common.audit.annotation.AuditApi;
+import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.foodies.freshmeal.common.dto.ApiResponses;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
@@ -23,6 +24,7 @@ import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceContext;
 import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
+import com.foodies.freshmeal.food.constants.FoodApiConstants;
 import com.foodies.freshmeal.food.controller.IFoodController;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodRequest;
@@ -30,7 +32,7 @@ import com.foodies.freshmeal.food.dto.FoodResponse;
 import com.foodies.freshmeal.food.service.IFoodService;
 
 @RestController
-@RequestMapping("/api/foods")
+@RequestMapping(ApiBaseConstants.FOOD_BASE_URL) // /api/foods
 public class FoodController implements IFoodController {
 
     private final IFoodService foodService;
@@ -41,9 +43,12 @@ public class FoodController implements IFoodController {
         this.objectMapper = objectMapper;
     }
 
+        /*  
+        *  ("/add") 
+        */
     @Override
     @AuditApi
-    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = FoodApiConstants.ADD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<FoodResponse>> addFood(
             @RequestPart("food") String foodJson,
             @RequestPart("image") MultipartFile imageFile)
@@ -68,18 +73,25 @@ public class FoodController implements IFoodController {
         return ApiResponses.created("Food created successfully", output.getOutput());
     }
 
+        /*  
+        *  ("/readAllFoods")
+        */
     @AuditApi
     @Override
-    @GetMapping("/readAllFoods")
+    @GetMapping(FoodApiConstants.READ_ALL_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
         IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
         return ApiResponses.ok("Foods retrieved successfully", output.getOutput());
     }
 
+
+        /*  
+        *  ("/metadata/food-categories") 
+        */
     @AuditApi
     @Override
-    @GetMapping("/metadata/food-categories")
+    @GetMapping(FoodApiConstants.FOOD_CATEGORIES)    
     public ResponseEntity<ApiResponse<List<String>>> foodCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
@@ -88,9 +100,12 @@ public class FoodController implements IFoodController {
         return ApiResponses.ok("Foods categories", output.getOutput());
     }
 
+        /*  
+        *  ("/metadata/diet-categories") 
+        */
     @AuditApi
     @Override
-    @GetMapping("/metadata/diet-categories")
+    @GetMapping(FoodApiConstants.DIET_CATEGORIES)
     public ResponseEntity<ApiResponse<List<String>>> dietCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
@@ -99,9 +114,12 @@ public class FoodController implements IFoodController {
         return ApiResponses.ok("Diet categories", output.getOutput());
     }
 
+        /*  
+        *  ("/metadata/cuisine-categories") 
+        */
     @AuditApi
     @Override
-    @GetMapping("/metadata/cuisine-categories")
+    @GetMapping(FoodApiConstants.CUISINE_CATEGORIES)
     public ResponseEntity<ApiResponse<List<String>>> cuisineCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
@@ -110,9 +128,12 @@ public class FoodController implements IFoodController {
         return ApiResponses.ok("Cuisine categories", output.getOutput());
     }
 
+        /*  
+        *  ("/metadata/group-categories") 
+        */
     @AuditApi
     @Override
-    @GetMapping("/metadata/group-categories")
+    @GetMapping(FoodApiConstants.GROUP_CATEGORIES)
     public ResponseEntity<ApiResponse<List<String>>> groupCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
@@ -121,9 +142,12 @@ public class FoodController implements IFoodController {
         return ApiResponses.ok("Group categories", output.getOutput());
     }
 
+        /*  
+        *  ("/foodCategoryMetadata") 
+        */
     @AuditApi
     @Override
-    @GetMapping("/foodCategoryMetadata")
+    @GetMapping(FoodApiConstants.FOOD_CATEGORY_METADATA)
     public ResponseEntity<ApiResponse<Map<String,Object>>> foodCategoryMetadata() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
