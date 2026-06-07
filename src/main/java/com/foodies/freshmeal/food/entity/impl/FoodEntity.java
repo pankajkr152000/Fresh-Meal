@@ -4,6 +4,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.foodies.freshmeal.common.entity.IEntity;
+import com.foodies.freshmeal.food.constants.CategoryGroup;
+import com.foodies.freshmeal.food.constants.CuisineType;
+import com.foodies.freshmeal.food.constants.DietCategory;
+import com.foodies.freshmeal.food.constants.FoodCategory;
 import com.foodies.freshmeal.food.entity.IFoodEntity;
 
 @Document(collection = "fm_food")
@@ -15,8 +19,11 @@ public class FoodEntity implements IFoodEntity {
     private String foodName;
     private String description;
     private double price;
-    private String category;
+    private FoodCategory foodCategory;
     private String imageUrl;
+    private DietCategory dietCategory; // veg or non-veg
+    private CuisineType cuisineType;
+	private CategoryGroup categoryGroup;
 
 	FoodEntity() {
 		// Package-private constructor.
@@ -58,16 +65,6 @@ public class FoodEntity implements IFoodEntity {
     }
 
     @Override
-    public String getCategory() {
-        return category;
-    }
-
-    @Override
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    @Override
     public String getImageUrl() {
         return imageUrl;
     }
@@ -95,5 +92,45 @@ public class FoodEntity implements IFoodEntity {
     @Override
     public void setFoodName(String foodName) {
         this.foodName = foodName;
+    }
+
+    @Override
+    public DietCategory getDietCategory() {
+        return dietCategory;
+    }
+
+    @Override
+    public void setDietCategory(DietCategory dietCategory) {
+        this.dietCategory = dietCategory;
+    }
+
+    @Override
+    public FoodCategory getFoodCategory() {
+        return foodCategory;
+    }
+
+    @Override
+    public CuisineType getCuisineType() {
+        return cuisineType;
+    }
+
+    @Override
+    public CategoryGroup getCategoryGroup() {
+        return categoryGroup;
+    }
+
+    @Override
+    public void setFoodCategory(FoodCategory foodCategory) {
+        this.foodCategory = foodCategory;
+    }
+
+    @Override
+    public void setCuisineType(CuisineType cuisineType) {
+        this.cuisineType = cuisineType;
+    }
+
+    @Override
+    public void setCategoryGroup(CategoryGroup categoryGroup) {
+        this.categoryGroup = categoryGroup;
     }
 }

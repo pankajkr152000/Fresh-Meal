@@ -1,5 +1,10 @@
 package com.foodies.freshmeal.food.dto;
 
+import com.foodies.freshmeal.food.constants.CategoryGroup;
+import com.foodies.freshmeal.food.constants.CuisineType;
+import com.foodies.freshmeal.food.constants.DietCategory;
+import com.foodies.freshmeal.food.constants.FoodCategory;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -17,8 +22,11 @@ public class FoodResponse {
     private String name;
     private String description;
     private double price;
-    private String category;
     private String imageUrl;
+    private FoodCategory foodCategory; 
+	private DietCategory dietCategory; // veg or non-veg
+	private CuisineType cuisineType;
+	private CategoryGroup categoryGroup;
     
     
 	public String getId() {
@@ -51,17 +59,17 @@ public class FoodResponse {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
 	public String getImageUrl() {
 		return imageUrl;
 	}
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+	public DietCategory getDietCategory() {
+		return dietCategory;
+	}
+	public void setDietCategory(DietCategory dietCategory) {
+		this.dietCategory = dietCategory;
 	}
     
 }

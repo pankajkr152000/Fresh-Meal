@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.food.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,6 +18,10 @@ import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceOutput;
 import com.foodies.freshmeal.common.sequence.service.IDatabaseSequenceService;
+import com.foodies.freshmeal.food.constants.CategoryGroup;
+import com.foodies.freshmeal.food.constants.CuisineType;
+import com.foodies.freshmeal.food.constants.DietCategory;
+import com.foodies.freshmeal.food.constants.FoodCategory;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodRequest;
 import com.foodies.freshmeal.food.dto.FoodResponse;
@@ -93,8 +98,12 @@ public class FoodServiceImpl implements IFoodService {
         foodResponse.setImageName(foodEntity.getImageName());
         foodResponse.setDescription(foodEntity.getDescription());
         foodResponse.setPrice(foodEntity.getPrice());
-        foodResponse.setCategory(foodEntity.getCategory());
+        foodResponse.setFoodCategory(foodEntity.getFoodCategory());
         foodResponse.setImageUrl(foodEntity.getImageUrl());
+        foodResponse.setDietCategory(foodEntity.getDietCategory());
+        foodResponse.setCuisineType(foodEntity.getCuisineType());
+        foodResponse.setCategoryGroup(foodEntity.getCategoryGroup());
+        
         return foodResponse;
     }
 
@@ -127,8 +136,11 @@ public class FoodServiceImpl implements IFoodService {
         foodEntity.setFoodName(foodRequest.getFoodName());
         foodEntity.setDescription(foodRequest.getDescription());
         foodEntity.setPrice(foodRequest.getPrice());
-        foodEntity.setCategory(foodRequest.getCategory());
+        foodEntity.setFoodCategory(foodRequest.getFoodCategory());
         foodEntity.setImageUrl(imageEntity.getImageUrl());
+        foodEntity.setDietCategory(foodRequest.getDietCategory());
+        foodEntity.setCuisineType(foodRequest.getCuisineType());
+        foodEntity.setCategoryGroup(foodRequest.getCategoryGroup());
 
         /*
          * Save the food entity to the database
@@ -150,7 +162,7 @@ public class FoodServiceImpl implements IFoodService {
                     foodEntity.getFoodName(),
                     foodEntity.getDescription(),
                     foodEntity.getPrice(),
-                    foodEntity.getCategory(),
+                    foodEntity.getFoodCategory(),
                     foodEntity.getImageUrl());
             FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
             foodResponses.add(foodResponse);
@@ -159,5 +171,50 @@ public class FoodServiceImpl implements IFoodService {
         return new ServiceOutput<>(foodResponses);
     }
 
+
+
+    @Override
+    public IServiceOutput<List<String>> getFoodCategories(IServiceInput<Void> input) {
+        List<String> foodCategoriesList =  Arrays.stream(FoodCategory.values())
+                .map(Enum::name)
+                .toList();
+
+        return new ServiceOutput<>(foodCategoriesList);
+    }
+
+
+
+    @Override
+    public IServiceOutput<List<String>> getDietCategories(IServiceInput<Void> input) {
+        List<String> dietCategoriesList =  Arrays.stream(DietCategory.values())
+                .map(Enum::name)
+                .toList();
+
+        return new ServiceOutput<>(dietCategoriesList);
+    }
+
+
+
+    @Override
+    public IServiceOutput<List<String>> getCuisineCategories(IServiceInput<Void> input) {
+        List<String> cuisineCategoriesList =  Arrays.stream(CuisineType.values())
+                .map(Enum::name)
+                .toList();
+
+        return new ServiceOutput<>(cuisineCategoriesList);
+    }
+
+
+
+    @Override
+    public IServiceOutput<List<String>> getGroupCategories(IServiceInput<Void> input) {
+        List<String> groupCategoriesList =  Arrays.stream(CategoryGroup.values())
+                .map(Enum::name)
+                .toList();
+
+        return new ServiceOutput<>(groupCategoriesList);
+    }
+
+    
 
 }

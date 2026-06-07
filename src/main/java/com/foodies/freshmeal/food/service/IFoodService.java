@@ -18,4 +18,12 @@ public interface IFoodService {
 
     IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input);
 
+    IServiceOutput<List<String>> getFoodCategories(IServiceInput<Void> input);
+
+    IServiceOutput<List<String>> getDietCategories(IServiceInput<Void> input);
+
+    IServiceOutput<List<String>> getCuisineCategories(IServiceInput<Void> input);
+
+    IServiceOutput<List<String>> getGroupCategories(IServiceInput<Void> input);
+
 }

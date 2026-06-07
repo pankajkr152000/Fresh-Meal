@@ -15,6 +15,14 @@ public interface IFoodController {
 
     
     ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException;
+    
+    ResponseEntity<ApiResponse<List<String>>> foodCategories() throws JsonProcessingException;
+    
+    ResponseEntity<ApiResponse<List<String>>> dietCategories() throws JsonProcessingException;
+    
+    ResponseEntity<ApiResponse<List<String>>> cuisineCategories() throws JsonProcessingException;
+    
+    ResponseEntity<ApiResponse<List<String>>> groupCategories() throws JsonProcessingException;
 
 
 

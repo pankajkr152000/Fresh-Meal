@@ -53,9 +53,8 @@ public class FoodController implements IFoodController {
 
         IServiceContext serviceContext = new ServiceContext();
 
-        serviceContext.setAttribute(
-                "foodRequest",
-                foodJson);
+        serviceContext.setAttribute("foodRequest", foodJson);
+                
         IServiceInput<CreateFoodInputDTO> input = new ServiceInput<>();
         CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO();
         createFoodInputDTO.setFoodRequest(foodRequest);
@@ -75,4 +74,50 @@ public class FoodController implements IFoodController {
         IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
         return ApiResponses.ok("Foods retrieved successfully", output.getOutput());
     }
+
+    @AuditApi
+    @Override
+    @GetMapping("/metadata/food-categories")
+    public ResponseEntity<ApiResponse<List<String>>> foodCategories() throws JsonProcessingException {
+        IServiceInput<Void> input = new ServiceInput<>();
+
+        IServiceOutput<List<String>> output = foodService.getFoodCategories(input);
+
+        return ApiResponses.ok("Foods categories", output.getOutput());
+    }
+
+    @AuditApi
+    @Override
+    @GetMapping("/metadata/diet-categories")
+    public ResponseEntity<ApiResponse<List<String>>> dietCategories() throws JsonProcessingException {
+        IServiceInput<Void> input = new ServiceInput<>();
+
+        IServiceOutput<List<String>> output = foodService.getDietCategories(input);
+
+        return ApiResponses.ok("Diet categories", output.getOutput());
+    }
+
+    @AuditApi
+    @Override
+    @GetMapping("/metadata/cuisine-categories")
+    public ResponseEntity<ApiResponse<List<String>>> cuisineCategories() throws JsonProcessingException {
+        IServiceInput<Void> input = new ServiceInput<>();
+
+        IServiceOutput<List<String>> output = foodService.getCuisineCategories(input);
+
+        return ApiResponses.ok("Cuisine categories", output.getOutput());
+    }
+
+    @AuditApi
+    @Override
+    @GetMapping("/metadata/group-categories")
+    public ResponseEntity<ApiResponse<List<String>>> groupCategories() throws JsonProcessingException {
+        IServiceInput<Void> input = new ServiceInput<>();
+
+        IServiceOutput<List<String>> output = foodService.getGroupCategories(input);
+
+        return ApiResponses.ok("Group categories", output.getOutput());
+    }
+
+
 }
