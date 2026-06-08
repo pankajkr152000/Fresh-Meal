@@ -43,25 +43,36 @@ public class FoodController implements IFoodController {
         this.objectMapper = objectMapper;
     }
 
+
+/**
+ * Creates a new food item.
+ *
+ * Supported Request Parts:
+ * - food  : FoodRequest (required)
+ * - image : MultipartFile (optional)
+ *
+ * @param request food details
+ * @param image optional food image
+ * @return created food information
+ */
         /*  
         *  ("/add") 
         */
     @Override
     @AuditApi
     @PostMapping(value = FoodApiConstants.ADD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<FoodResponse>> addFood(
-            @RequestPart("food") String foodJson,
-            @RequestPart("image") MultipartFile imageFile)
+    public ResponseEntity<ApiResponse<FoodResponse>> addFood(@RequestPart("food") String foodJsonRequest,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile)
             throws JsonProcessingException {
 
         FoodRequest foodRequest = objectMapper.readValue(
-                foodJson,
+                foodJsonRequest,
                 FoodRequest.class);
 
         IServiceContext serviceContext = new ServiceContext();
 
-        serviceContext.setAttribute("foodRequest", foodJson);
-                
+        serviceContext.setAttribute("foodRequest", foodJsonRequest);
+
         IServiceInput<CreateFoodInputDTO> input = new ServiceInput<>();
         CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO();
         createFoodInputDTO.setFoodRequest(foodRequest);
@@ -69,7 +80,7 @@ public class FoodController implements IFoodController {
         input.setInput(createFoodInputDTO);
 
         IServiceOutput<FoodResponse> output = foodService.addFood(input);
-        
+
         return ApiResponses.created("Food created successfully", output.getOutput());
     }
 

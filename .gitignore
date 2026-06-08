@@ -34,3 +34,7 @@ build/
 .log
 freshmeal.log
 .logs
+.png
+.svg
+.jpeg
+.jpg
