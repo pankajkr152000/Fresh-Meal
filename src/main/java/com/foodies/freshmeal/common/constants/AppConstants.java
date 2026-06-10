@@ -7,7 +7,7 @@ public final class AppConstants {
     }
 
     public static final String ADMINPANEL_URL = "http://localhost:5173";
-
+ 
 
     
 }

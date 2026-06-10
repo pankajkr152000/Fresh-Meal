@@ -12,3 +12,713 @@ MONGO COMMAND SUCCESS
 COMMAND  : endSessions
 DURATION : 12 ms
 ====================================================
+2026-06-09 01:21:47 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 16824 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-06-09 01:21:47 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-06-09 01:21:47 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-06-09 01:21:47 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-06-09 01:21:48 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-06-09 01:21:49 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 326 ms. Found 5 MongoDB repository interfaces.
+2026-06-09 01:21:50 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-06-09 01:21:50 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-09 01:21:50 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-06-09 01:21:50 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2949 ms
+2026-06-09 01:21:50 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@34b36844], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@3a2e7c42, com.mongodb.Jep395RecordCodecProvider@78eaeb60, com.mongodb.KotlinCodecProvider@776c64a6, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-06-09 01:21:51 [cluster-ClusterId{value='6a271d56a92e4f03ddfc6082', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=34846300, minRoundTripTimeNanos=0}
+2026-06-09 01:21:53 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: dbbf74da-7ed5-4df4-b598-50e605fb70a6
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-06-09 01:21:53 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-06-09 01:21:53 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-06-09 01:21:53 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 7.113 seconds (process running for 8.243)
+2026-06-09 01:22:01 [http-nio-8030-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-09 01:22:01 [http-nio-8030-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-09 01:22:01 [http-nio-8030-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 9 ms
+2026-06-09 01:22:02 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=6a9b39a8-c752-4db0-862c-ea9d918f0cd0 | API=/api/foods/foodCategoryMetadata | Method=GET
+2026-06-09 01:22:02 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-06-09 01:22:02
+RequestId : 6a9b39a8-c752-4db0-862c-ea9d918f0cd0
+Method    : GET
+URL       : /api/foods/foodCategoryMetadata
+Payload   :
+{ }
+==========================================
+
+2026-06-09 01:22:02 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 6a9b39a8-c752-4db0-862c-ea9d918f0cd0
+Status       : 200
+Duration(ms) : 197
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Group categories",
+  "errors" : null,
+  "data" : {
+    "dietCategories" : [ "VEG", "NON_VEG", "VEGAN", "JAIN", "EGGETARIAN" ],
+    "cuisineCategories" : [ "INDIAN", "CHINESE", "ITALIAN", "MEXICAN", "THAI", "JAPANESE", "MEDITERRANEAN", "AMERICAN", "KOREAN", "CONTINENTAL", "OTHER" ],
+    "groupCategories" : [ "MAIN_MEAL", "COURSE_TYPE", "FAST_FOOD", "BEVERAGE", "DESSERT", "BAKERY", "SNACK", "DRINKS", "SALAD", "SOUP", "EXTRA", "ADD_ON" ],
+    "foodCategories" : [ "BREAKFAST", "LUNCH", "DINNER", "STARTER", "MAIN_COURSE", "SIDE_DISH", "PIZZA", "BURGER", "SANDWICH", "DESSERT", "ICE_CREAM", "BREAD", "CAKE", "HOT_BEVERAGE", "COLD_BEVERAGE", "JUICE", "MOCKTAIL", "SMOOTHIE", "SALAD", "SOUP", "SNACK", "FINGER_FOOD" ]
+  }
+}
+============================================
+
+2026-06-09 01:22:02 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=6a9b39a8-c752-4db0-862c-ea9d918f0cd0 | Duration=197 ms
+2026-06-09 01:22:02 [task-1] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-06-09 01:22:02 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a271d62a92e4f03ddfc6083"}, "api": "/api/foods/foodCategoryMetadata", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Group categories", "errors": null, "data": {"dietCategories": ["VEG", "NON_VEG", "VEGAN", "JAIN", "EGGETARIAN"], "cuisineCategories": ["INDIAN", "CHINESE", "ITALIAN", "MEXICAN", "THAI", "JAPANESE", "MEDITERRANEAN", "AMERICAN", "KOREAN", "CONTINENTAL", "OTHER"], "groupCategories": ["MAIN_MEAL", "COURSE_TYPE", "FAST_FOOD", "BEVERAGE", "DESSERT", "BAKERY", "SNACK", "DRINKS", "SALAD", "SOUP", "EXTRA", "ADD_ON"], "foodCategories": ["BREAKFAST", "LUNCH", "DINNER", "STARTER", "MAIN_COURSE", "SIDE_DISH", "PIZZA", "BURGER", "SANDWICH", "DESSERT", "ICE_CREAM", "BREAD", "CAKE", "HOT_BEVERAGE", "COLD_BEVERAGE", "JUICE", "MOCKTAIL", "SMOOTHIE", "SALAD", "SOUP", "SNACK", "FINGER_FOOD"]}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 197, "requestId": "6a9b39a8-c752-4db0-862c-ea9d918f0cd0", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-06-08T19:52:02.287Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-06-09 01:22:02 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 71 ms
+====================================================
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=b09c3aad-1737-4ed3-b617-62e86b7b9b13 | API=/api/foods/add | Method=POST
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-06-09 01:23:36
+RequestId : b09c3aad-1737-4ed3-b617-62e86b7b9b13
+Method    : POST
+URL       : /api/foods/add
+Payload   :
+{
+  "foodRequest" : {
+    "foodName" : "Rice",
+    "description" : "Organic healthy boiled rice",
+    "price" : "30",
+    "foodCategory" : "LUNCH",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN"
+  },
+  "file" : {
+    "fileName" : "food-placeholder.png",
+    "contentType" : "image/png",
+    "fileSize" : 2303829
+  }
+}
+==========================================
+
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generating next sequence for [food_sequence]
+2026-06-09 01:23:36 [http-nio-8030-exec-4] DEBUG o.s.data.mongodb.core.MongoTemplate - findAndModify using query: { "_id" : "food_sequence"} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence and update: { "$inc" : { "seq" : 1}} in collection: fm_database_sequences
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : findAndModify
+QUERY   : {"findAndModify": "fm_database_sequences", "query": {"_id": "food_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}}
+====================================================
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : findAndModify
+DURATION : 35 ms
+====================================================
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generated sequence [food_sequence] value [12]
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Generated food ID: FOD01_12
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generating next sequence for [image_sequence]
+2026-06-09 01:23:36 [http-nio-8030-exec-4] DEBUG o.s.data.mongodb.core.MongoTemplate - findAndModify using query: { "_id" : "image_sequence"} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence and update: { "$inc" : { "seq" : 1}} in collection: fm_database_sequences
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : findAndModify
+QUERY   : {"findAndModify": "fm_database_sequences", "query": {"_id": "image_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}}
+====================================================
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : findAndModify
+DURATION : 2 ms
+====================================================
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generated sequence [image_sequence] value [25]
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Generated image ID: IMG07_25
+2026-06-09 01:23:36 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Generated image name: IMG07_0000025.png
+2026-06-09 01:23:37 [http-nio-8030-exec-4] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, originalFileName, contentType, fileSize, imageUrl, thumbnailUrl, storagePath, extension, width, height, active, uploadedTime, _class]
+2026-06-09 01:23:37 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_image", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}, "updates": [{"q": {"_id": "IMG07_0000025.png"}, "u": {"_id": "IMG07_0000025.png", "imageName": "IMG07_0000025.png", "originalFileName": "food-placeholder.png", "contentType": "image/png", "fileSize": 2303829, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "thumbnailUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "storagePath": "IMG07_0000025.png", "extension": "png", "width": 0, "height": 0, "active": true, "uploadedTime": {"$date": "2026-06-08T19:53:37.987Z"}, "_class": "com.foodies.freshmeal.image.entity.impl.ImageEntity"}, "upsert": true}]}
+====================================================
+2026-06-09 01:23:38 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 11 ms
+====================================================
+2026-06-09 01:23:38 [http-nio-8030-exec-4] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, foodName, description, price, foodCategory, imageUrl, dietCategory, cuisineType, _class]
+2026-06-09 01:23:38 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00012"}, "u": {"_id": "FOOD01_00012", "imageName": "IMG07_0000025.png", "foodName": "Rice", "description": "Organic healthy boiled rice", "price": 30.0, "foodCategory": "LUNCH", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "dietCategory": "VEG", "cuisineType": "INDIAN", "_class": "com.foodies.freshmeal.food.entity.impl.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-06-09 01:23:38 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 9 ms
+====================================================
+2026-06-09 01:23:38 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : b09c3aad-1737-4ed3-b617-62e86b7b9b13
+Status       : 201
+Duration(ms) : 1365
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 201,
+  "httpStatusMessage" : "CREATED",
+  "message" : "Food created successfully",
+  "errors" : null,
+  "data" : {
+    "id" : "FOOD01_00012",
+    "imageName" : "IMG07_0000025.png",
+    "name" : null,
+    "description" : "Organic healthy boiled rice",
+    "price" : 30.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "LUNCH",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }
+}
+============================================
+
+2026-06-09 01:23:38 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=b09c3aad-1737-4ed3-b617-62e86b7b9b13 | Duration=1365 ms
+2026-06-09 01:23:38 [task-2] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-06-09 01:23:38 [task-2] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a271dc2a92e4f03ddfc6084"}, "api": "/api/foods/add", "method": "POST", "requestBody": {"foodRequest": {"foodName": "Rice", "description": "Organic healthy boiled rice", "price": "30", "foodCategory": "LUNCH", "dietCategory": "VEG", "cuisineType": "INDIAN"}, "file": {"fileName": "food-placeholder.png", "contentType": "image/png", "fileSize": 2303829}}, "responseBody": {"success": true, "httpStatusCode": 201, "httpStatusMessage": "CREATED", "message": "Food created successfully", "errors": null, "data": {"id": "FOOD01_00012", "imageName": "IMG07_0000025.png", "name": null, "description": "Organic healthy boiled rice", "price": 30.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "LUNCH", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}}, "responseStatus": 201, "responseMessage": "CREATED", "executionTimeMs": 1365, "requestId": "b09c3aad-1737-4ed3-b617-62e86b7b9b13", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-06-08T19:53:36.673Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-06-09 01:23:38 [task-2] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 4 ms
+====================================================
+2026-06-09 01:24:52 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=04cc7562-75f6-4822-b62f-1e7da55679dd | API=/api/foods/foodCategoryMetadata | Method=GET
+2026-06-09 01:24:52 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-06-09 01:24:52
+RequestId : 04cc7562-75f6-4822-b62f-1e7da55679dd
+Method    : GET
+URL       : /api/foods/foodCategoryMetadata
+Payload   :
+{ }
+==========================================
+
+2026-06-09 01:24:52 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 04cc7562-75f6-4822-b62f-1e7da55679dd
+Status       : 200
+Duration(ms) : 4
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Group categories",
+  "errors" : null,
+  "data" : {
+    "dietCategories" : [ "VEG", "NON_VEG", "VEGAN", "JAIN", "EGGETARIAN" ],
+    "cuisineCategories" : [ "INDIAN", "CHINESE", "ITALIAN", "MEXICAN", "THAI", "JAPANESE", "MEDITERRANEAN", "AMERICAN", "KOREAN", "CONTINENTAL", "OTHER" ],
+    "groupCategories" : [ "MAIN_MEAL", "COURSE_TYPE", "FAST_FOOD", "BEVERAGE", "DESSERT", "BAKERY", "SNACK", "DRINKS", "SALAD", "SOUP", "EXTRA", "ADD_ON" ],
+    "foodCategories" : [ "BREAKFAST", "LUNCH", "DINNER", "STARTER", "MAIN_COURSE", "SIDE_DISH", "PIZZA", "BURGER", "SANDWICH", "DESSERT", "ICE_CREAM", "BREAD", "CAKE", "HOT_BEVERAGE", "COLD_BEVERAGE", "JUICE", "MOCKTAIL", "SMOOTHIE", "SALAD", "SOUP", "SNACK", "FINGER_FOOD" ]
+  }
+}
+============================================
+
+2026-06-09 01:24:52 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=04cc7562-75f6-4822-b62f-1e7da55679dd | Duration=4 ms
+2026-06-09 01:24:52 [task-3] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-06-09 01:24:52 [task-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a271e0ca92e4f03ddfc6085"}, "api": "/api/foods/foodCategoryMetadata", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Group categories", "errors": null, "data": {"dietCategories": ["VEG", "NON_VEG", "VEGAN", "JAIN", "EGGETARIAN"], "cuisineCategories": ["INDIAN", "CHINESE", "ITALIAN", "MEXICAN", "THAI", "JAPANESE", "MEDITERRANEAN", "AMERICAN", "KOREAN", "CONTINENTAL", "OTHER"], "groupCategories": ["MAIN_MEAL", "COURSE_TYPE", "FAST_FOOD", "BEVERAGE", "DESSERT", "BAKERY", "SNACK", "DRINKS", "SALAD", "SOUP", "EXTRA", "ADD_ON"], "foodCategories": ["BREAKFAST", "LUNCH", "DINNER", "STARTER", "MAIN_COURSE", "SIDE_DISH", "PIZZA", "BURGER", "SANDWICH", "DESSERT", "ICE_CREAM", "BREAD", "CAKE", "HOT_BEVERAGE", "COLD_BEVERAGE", "JUICE", "MOCKTAIL", "SMOOTHIE", "SALAD", "SOUP", "SNACK", "FINGER_FOOD"]}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 4, "requestId": "04cc7562-75f6-4822-b62f-1e7da55679dd", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-06-08T19:54:52.443Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-06-09 01:24:52 [task-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 7 ms
+====================================================
+2026-06-09 01:24:55 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=1456578a-586d-42c3-9c6e-86d4de141efa | API=/api/foods/foodCategoryMetadata | Method=GET
+2026-06-09 01:24:55 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-06-09 01:24:55
+RequestId : 1456578a-586d-42c3-9c6e-86d4de141efa
+Method    : GET
+URL       : /api/foods/foodCategoryMetadata
+Payload   :
+{ }
+==========================================
+
+2026-06-09 01:24:55 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 1456578a-586d-42c3-9c6e-86d4de141efa
+Status       : 200
+Duration(ms) : 3
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Group categories",
+  "errors" : null,
+  "data" : {
+    "dietCategories" : [ "VEG", "NON_VEG", "VEGAN", "JAIN", "EGGETARIAN" ],
+    "cuisineCategories" : [ "INDIAN", "CHINESE", "ITALIAN", "MEXICAN", "THAI", "JAPANESE", "MEDITERRANEAN", "AMERICAN", "KOREAN", "CONTINENTAL", "OTHER" ],
+    "groupCategories" : [ "MAIN_MEAL", "COURSE_TYPE", "FAST_FOOD", "BEVERAGE", "DESSERT", "BAKERY", "SNACK", "DRINKS", "SALAD", "SOUP", "EXTRA", "ADD_ON" ],
+    "foodCategories" : [ "BREAKFAST", "LUNCH", "DINNER", "STARTER", "MAIN_COURSE", "SIDE_DISH", "PIZZA", "BURGER", "SANDWICH", "DESSERT", "ICE_CREAM", "BREAD", "CAKE", "HOT_BEVERAGE", "COLD_BEVERAGE", "JUICE", "MOCKTAIL", "SMOOTHIE", "SALAD", "SOUP", "SNACK", "FINGER_FOOD" ]
+  }
+}
+============================================
+
+2026-06-09 01:24:55 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=1456578a-586d-42c3-9c6e-86d4de141efa | Duration=3 ms
+2026-06-09 01:24:55 [task-4] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-06-09 01:24:55 [task-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a271e0fa92e4f03ddfc6086"}, "api": "/api/foods/foodCategoryMetadata", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Group categories", "errors": null, "data": {"dietCategories": ["VEG", "NON_VEG", "VEGAN", "JAIN", "EGGETARIAN"], "cuisineCategories": ["INDIAN", "CHINESE", "ITALIAN", "MEXICAN", "THAI", "JAPANESE", "MEDITERRANEAN", "AMERICAN", "KOREAN", "CONTINENTAL", "OTHER"], "groupCategories": ["MAIN_MEAL", "COURSE_TYPE", "FAST_FOOD", "BEVERAGE", "DESSERT", "BAKERY", "SNACK", "DRINKS", "SALAD", "SOUP", "EXTRA", "ADD_ON"], "foodCategories": ["BREAKFAST", "LUNCH", "DINNER", "STARTER", "MAIN_COURSE", "SIDE_DISH", "PIZZA", "BURGER", "SANDWICH", "DESSERT", "ICE_CREAM", "BREAD", "CAKE", "HOT_BEVERAGE", "COLD_BEVERAGE", "JUICE", "MOCKTAIL", "SMOOTHIE", "SALAD", "SOUP", "SNACK", "FINGER_FOOD"]}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 3, "requestId": "1456578a-586d-42c3-9c6e-86d4de141efa", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-06-08T19:54:55.155Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-06-09 01:24:55 [task-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 40 ms
+====================================================
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=db2d7f21-285f-4869-b2f9-f4a99f9b5c38 | API=/api/foods/add | Method=POST
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-06-09 01:26:17
+RequestId : db2d7f21-285f-4869-b2f9-f4a99f9b5c38
+Method    : POST
+URL       : /api/foods/add
+Payload   :
+{
+  "foodRequest" : {
+    "foodName" : "Chapati",
+    "description" : "whole Atta Roti",
+    "price" : "5",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN"
+  }
+}
+==========================================
+
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generating next sequence for [food_sequence]
+2026-06-09 01:26:17 [http-nio-8030-exec-5] DEBUG o.s.data.mongodb.core.MongoTemplate - findAndModify using query: { "_id" : "food_sequence"} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence and update: { "$inc" : { "seq" : 1}} in collection: fm_database_sequences
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : findAndModify
+QUERY   : {"findAndModify": "fm_database_sequences", "query": {"_id": "food_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}}
+====================================================
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : findAndModify
+DURATION : 1 ms
+====================================================
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generated sequence [food_sequence] value [13]
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Generated food ID: FOD01_13
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generating next sequence for [image_sequence]
+2026-06-09 01:26:17 [http-nio-8030-exec-5] DEBUG o.s.data.mongodb.core.MongoTemplate - findAndModify using query: { "_id" : "image_sequence"} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence and update: { "$inc" : { "seq" : 1}} in collection: fm_database_sequences
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : findAndModify
+QUERY   : {"findAndModify": "fm_database_sequences", "query": {"_id": "image_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}}
+====================================================
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : findAndModify
+DURATION : 4 ms
+====================================================
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generated sequence [image_sequence] value [26]
+2026-06-09 01:26:17 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Generated image ID: IMG07_26
+2026-06-09 01:26:17 [http-nio-8030-exec-5] ERROR c.f.f.common.audit.util.AuditAspect - 
+ ================= ERROR =================
+RequestId    : db2d7f21-285f-4869-b2f9-f4a99f9b5c38
+Method       : POST
+URL          : /api/foods/add
+Duration(ms) : 23
+Error       :
+Cannot invoke "org.springframework.web.multipart.MultipartFile.getOriginalFilename()" because "file" is null
+============================================
+
+java.lang.NullPointerException: Cannot invoke "org.springframework.web.multipart.MultipartFile.getOriginalFilename()" because "file" is null
+	at com.foodies.freshmeal.image.service.impl.ImageServiceImpl.generateImageName(ImageServiceImpl.java:232)
+	at com.foodies.freshmeal.image.service.impl.ImageServiceImpl.uploadImageToS3(ImageServiceImpl.java:76)
+	at com.foodies.freshmeal.food.service.impl.FoodServiceImpl.createFoodEntity(FoodServiceImpl.java:133)
+	at com.foodies.freshmeal.food.service.impl.FoodServiceImpl.addFood(FoodServiceImpl.java:87)
+	at com.foodies.freshmeal.food.controller.impl.FoodController.addFood(FoodController.java:82)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
+	at com.foodies.freshmeal.common.audit.util.AuditAspect.audit(AuditAspect.java:120)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+	at com.foodies.freshmeal.food.controller.impl.FoodController$$SpringCGLIB$$0.addFood(<generated>)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:235)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:376)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilterInternal(BasicAuthenticationFilter.java:198)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1801)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-06-09 01:26:17 [http-nio-8030-exec-5] ERROR c.f.f.common.audit.util.AuditAspect - AUDIT FAILURE | RequestId=db2d7f21-285f-4869-b2f9-f4a99f9b5c38 | Duration=23 ms | Error=Cannot invoke "org.springframework.web.multipart.MultipartFile.getOriginalFilename()" because "file" is null
+java.lang.NullPointerException: Cannot invoke "org.springframework.web.multipart.MultipartFile.getOriginalFilename()" because "file" is null
+	at com.foodies.freshmeal.image.service.impl.ImageServiceImpl.generateImageName(ImageServiceImpl.java:232)
+	at com.foodies.freshmeal.image.service.impl.ImageServiceImpl.uploadImageToS3(ImageServiceImpl.java:76)
+	at com.foodies.freshmeal.food.service.impl.FoodServiceImpl.createFoodEntity(FoodServiceImpl.java:133)
+	at com.foodies.freshmeal.food.service.impl.FoodServiceImpl.addFood(FoodServiceImpl.java:87)
+	at com.foodies.freshmeal.food.controller.impl.FoodController.addFood(FoodController.java:82)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
+	at com.foodies.freshmeal.common.audit.util.AuditAspect.audit(AuditAspect.java:120)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+	at com.foodies.freshmeal.food.controller.impl.FoodController$$SpringCGLIB$$0.addFood(<generated>)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:235)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:376)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilterInternal(BasicAuthenticationFilter.java:198)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1801)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-06-09 01:26:17 [task-5] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseStatus, responseMessage, executionTimeMs, requestId, exceptionMessage, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-06-09 01:26:17 [task-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a271e61a92e4f03ddfc6087"}, "api": "/api/foods/add", "method": "POST", "requestBody": {"foodRequest": {"foodName": "Chapati", "description": "whole Atta Roti", "price": "5", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN"}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 23, "requestId": "db2d7f21-285f-4869-b2f9-f4a99f9b5c38", "exceptionMessage": "Cannot invoke \"org.springframework.web.multipart.MultipartFile.getOriginalFilename()\" because \"file\" is null", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-06-08T19:56:17.551Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-06-09 01:26:17 [task-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 5 ms
+====================================================
+2026-06-09 01:26:17 [http-nio-8030-exec-5] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.NullPointerException: Cannot invoke "org.springframework.web.multipart.MultipartFile.getOriginalFilename()" because "file" is null] with root cause
+java.lang.NullPointerException: Cannot invoke "org.springframework.web.multipart.MultipartFile.getOriginalFilename()" because "file" is null
+	at com.foodies.freshmeal.image.service.impl.ImageServiceImpl.generateImageName(ImageServiceImpl.java:232)
+	at com.foodies.freshmeal.image.service.impl.ImageServiceImpl.uploadImageToS3(ImageServiceImpl.java:76)
+	at com.foodies.freshmeal.food.service.impl.FoodServiceImpl.createFoodEntity(FoodServiceImpl.java:133)
+	at com.foodies.freshmeal.food.service.impl.FoodServiceImpl.addFood(FoodServiceImpl.java:87)
+	at com.foodies.freshmeal.food.controller.impl.FoodController.addFood(FoodController.java:82)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:359)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:190)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:158)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:82)
+	at com.foodies.freshmeal.common.audit.util.AuditAspect.audit(AuditAspect.java:120)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:648)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:630)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:70)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:168)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:96)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:719)
+	at com.foodies.freshmeal.food.controller.impl.FoodController$$SpringCGLIB$$0.addFood(<generated>)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$3(FilterChainProxy.java:235)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:376)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:100)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.www.BasicAuthenticationFilter.doFilterInternal(BasicAuthenticationFilter.java:198)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:385)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1801)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2026-06-09 01:40:27 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-06-09 01:40:28 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-06-09 01:40:28 [SpringApplicationShutdownHook] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : endSessions
+QUERY   : {"endSessions": [{"id": {"$binary": {"base64": "Ls4myAByR16fDv5XkY2VeA==", "subType": "04"}}}], "$db": "admin", "$readPreference": {"mode": "primaryPreferred"}}
+====================================================
+2026-06-09 01:40:28 [SpringApplicationShutdownHook] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : endSessions
+DURATION : 14 ms
+====================================================
