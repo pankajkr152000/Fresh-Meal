@@ -6,7 +6,7 @@ public final class AppConstants {
         // Prevent instantiation
     }
 
-    public static final String ADMINPANEL_URL = "http://localhost:5173";
+    public static final String ADMINPANEL_URL = "http://localhost:5173"; 
  
 
     
