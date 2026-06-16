@@ -6,7 +6,9 @@ import com.foodies.freshmeal.common.io.service.IServiceInput;
 
 public class ServiceInput<T> implements IServiceInput<T> {
 
-    private T input;
+    private static final long serialVersionUID = -6238300946079606943L;
+
+	private T input;
 
     private IServiceContext serviceContext = new ServiceContext();
 

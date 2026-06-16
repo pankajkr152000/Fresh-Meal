@@ -120,7 +120,7 @@ public class SystemConfigBean {
 	 * mode[3]={'Build','Production','Test'};
 	 * Profile[3]={'Startup-Mode-BUID.xml','Startup-Mode-PRODUCTION.xml','Startup-Mode-TEST.xml'};
 	 */
-	@SuppressWarnings("CallToPrintStackTrace")
+	
 	private void initStartupMode() {
 		InputStream inputStream = null;
 		String startupFileName = getAttribute(STARTUP_MODE_FILE);

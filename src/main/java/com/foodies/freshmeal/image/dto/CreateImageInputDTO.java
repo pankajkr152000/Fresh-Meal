@@ -18,4 +18,6 @@ public class CreateImageInputDTO {
     private String fileURL;
     private MultipartFile file;
     private IImageEntity imageEntity;
+    
+    
 }

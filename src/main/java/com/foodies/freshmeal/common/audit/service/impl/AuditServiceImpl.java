@@ -21,8 +21,6 @@ import com.foodies.freshmeal.common.audit.entity.impl.AuditLog;
 import com.foodies.freshmeal.common.audit.repository.IAuditRepository;
 import com.foodies.freshmeal.common.audit.service.IAuditService;
 
-
-
 @Service
 public class AuditServiceImpl implements IAuditService {
 
@@ -52,13 +50,9 @@ public class AuditServiceImpl implements IAuditService {
 
     @Override
     public void saveAuditLog(IAuditLog auditLog) {
-
         try {
-
             repository.save((AuditLog) auditLog);
-
         } catch (Exception e) {
-
             LOGGER.error("Failed to save audit log : {}", e.getMessage());
         }
     }
@@ -66,7 +60,6 @@ public class AuditServiceImpl implements IAuditService {
     @Async
     @Override
     public void saveAuditLogAsync(IAuditLog auditLog) {
-
         saveAuditLog(auditLog);
     }
 
@@ -86,11 +79,9 @@ public class AuditServiceImpl implements IAuditService {
             auditLog.setApi(api);
             auditLog.setMethod(method);
 
-            auditLog.setRequestBody(
-                    convertToDocument(request));
+            auditLog.setRequestBody(convertToDocument(request));
 
-            auditLog.setResponseBody(
-                    convertToDocument(response));
+            auditLog.setResponseBody(convertToDocument(response));
 
             auditLog.setResponseStatus(statusCode);
             auditLog.setExecutionTimeMs(executionTimeMs);
@@ -191,14 +182,12 @@ public class AuditServiceImpl implements IAuditService {
             Iterator<String> fieldNames = objectNode.fieldNames();
 
             while (fieldNames.hasNext()) {
-
                 String fieldName = fieldNames.next();
 
                 JsonNode childNode = objectNode.get(fieldName);
                 if ("cardNumber".equalsIgnoreCase(fieldName)) {
                     objectNode.put(fieldName, maskCard(childNode.asText()));
-}
-                else if (SENSITIVE_FIELDS.contains(fieldName)) {
+                } else if (SENSITIVE_FIELDS.contains(fieldName)) {
 
                     objectNode.put(fieldName, "******");
 
@@ -210,9 +199,7 @@ public class AuditServiceImpl implements IAuditService {
         }
 
         if (node.isArray()) {
-
             ArrayNode arrayNode = (ArrayNode) node;
-
             for (JsonNode child : arrayNode) {
 
                 maskSensitiveData(child);
@@ -223,7 +210,6 @@ public class AuditServiceImpl implements IAuditService {
     }
 
     private String maskCard(String cardNumber) {
-
         if (cardNumber == null || cardNumber.length() < 4) {
             return "****";
         }

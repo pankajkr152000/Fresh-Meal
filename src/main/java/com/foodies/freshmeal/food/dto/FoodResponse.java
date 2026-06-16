@@ -71,5 +71,23 @@ public class FoodResponse {
 	public void setDietCategory(DietCategory dietCategory) {
 		this.dietCategory = dietCategory;
 	}
+	public FoodCategory getFoodCategory() {
+		return foodCategory;
+	}
+	public void setFoodCategory(FoodCategory foodCategory) {
+		this.foodCategory = foodCategory;
+	}
+	public CuisineType getCuisineType() {
+		return cuisineType;
+	}
+	public void setCuisineType(CuisineType cuisineType) {
+		this.cuisineType = cuisineType;
+	}
+	public CategoryGroup getCategoryGroup() {
+		return categoryGroup;
+	}
+	public void setCategoryGroup(CategoryGroup categoryGroup) {
+		this.categoryGroup = categoryGroup;
+	}
     
 }

@@ -6,7 +6,9 @@ import com.foodies.freshmeal.common.io.service.IServiceOutput;
 
 public class ServiceOutput<T> implements IServiceOutput<T> {
 
-    private T output;
+    private static final long serialVersionUID = -2139215904575156011L;
+
+	private T output;
 
     private IServiceContext serviceContext = new ServiceContext();
 

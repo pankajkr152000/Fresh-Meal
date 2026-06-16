@@ -18,7 +18,9 @@ import com.foodies.freshmeal.common.io.service.IDaoContext;
 import com.foodies.freshmeal.user.entity.IUserProfile;
 
 public class DaoContext implements  IDaoContext {
-    private final IDataContext delegate;
+    private static final long serialVersionUID = 1396937515847253810L;
+
+	private final IDataContext delegate;
 	
 	private final Map<String, Object> attributeMap = new LinkedHashMap<>();
 	
@@ -34,7 +36,6 @@ public class DaoContext implements  IDaoContext {
     /**
      *
      */
-    @SuppressWarnings("OverridableMethodCallInConstructor")
     public DaoContext() {
         delegate = this;
         setTcnUpated(false);
@@ -45,7 +46,6 @@ public class DaoContext implements  IDaoContext {
     }
     
     @Override
-    @SuppressWarnings("CallToPrintStackTrace")
     public Object getAttribute(String key) {
     	
     		String absoluteFilePath = (SystemConfigBean.getAttribute("//Config/EnvSystem/DataRoot")).concat("/PolicyDueProbe");
@@ -84,7 +84,7 @@ public class DaoContext implements  IDaoContext {
         return delegate.getAllAttributes().containsKey(key);
     }
     
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     @Override
     public void setAttribute(String key, Object value) {
         

@@ -190,7 +190,7 @@ public class DataFormatUtil {
         return strArr[1] + sep + strArr[0] + sep + strArr[2];
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateFromString(String str) {
         Date date = null;
         try {
@@ -240,7 +240,7 @@ public class DataFormatUtil {
         }
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateTimeFormString(String str) {
         Date date = null;
         try {
@@ -253,7 +253,7 @@ public class DataFormatUtil {
         return date;
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateTimeFormStringMcb(String str) {
         Date date = null;
         try {
@@ -266,7 +266,7 @@ public class DataFormatUtil {
         return date;
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateFormString(String str) {
         Date date = null;
         try {
@@ -531,7 +531,7 @@ public class DataFormatUtil {
 
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateFromString(String str, String format) {
         Date date = null;
         try {
@@ -545,7 +545,7 @@ public class DataFormatUtil {
         return date;
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateTimeFromString(String str, String format) {
         Date date = null;
         try {
@@ -966,7 +966,7 @@ public class DataFormatUtil {
     }
 
     // Added during LTA protection implementation
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static boolean isGraterThanToday(String inputDate, Date today) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date input;
@@ -981,7 +981,7 @@ public class DataFormatUtil {
     // End LTA protection implementation
 
     // for Date Format dd-mmm-yy as input
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateFromStringInDifferentDtFormt(String str) {
         Date date = null;
         try {
@@ -995,7 +995,7 @@ public class DataFormatUtil {
         return date;
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static Date getDateFromStringDDMMYYYY(String str) {
         Date date = null;
         try {
@@ -1009,7 +1009,7 @@ public class DataFormatUtil {
         return date;
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
+     
     public static LocalDate getLocalDateFromStringDDMMUUUU(String givenDateString) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DDMMUUUU)
