@@ -4,10 +4,10 @@ import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.entity.impl.LoginHistory;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
-import com.foodies.freshmeal.food.entity.impl.FoodEntity;
-import com.foodies.freshmeal.image.entity.impl.ImageEntity;
-import com.foodies.freshmeal.user.entity.impl.UserEntity;
-import com.foodies.freshmeal.user.entity.impl.UserProfile;
+import com.foodies.freshmeal.food.entity.FoodEntity;
+import com.foodies.freshmeal.image.entity.ImageEntity;
+import com.foodies.freshmeal.user.entity.UserEntity;
+import com.foodies.freshmeal.user.entity.UserProfile;
 
 public final class EntityFactory {
 

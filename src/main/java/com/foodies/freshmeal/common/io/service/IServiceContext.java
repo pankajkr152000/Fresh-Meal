@@ -10,7 +10,7 @@ import com.foodies.freshmeal.common.audit.entity.impl.AuditDataInput;
 import com.foodies.freshmeal.common.exception.IError;
 import com.foodies.freshmeal.common.exception.IErrors;
 import com.foodies.freshmeal.common.io.IDataContext;
-import com.foodies.freshmeal.user.entity.IUserProfile;
+import com.foodies.freshmeal.user.entity.UserProfile;
 
 public interface IServiceContext extends IDataContext {
 
@@ -20,7 +20,7 @@ public interface IServiceContext extends IDataContext {
 
     public ApplicationContext getApplicationContext();
 
-    public IUserProfile getUserProfile();
+    public UserProfile getUserProfile();
 
     public List<IError> getOverridentErrors();
 
@@ -46,7 +46,7 @@ public interface IServiceContext extends IDataContext {
 
     public void setApplicationContext(ApplicationContext applicationContext);
 
-    public void setUserProfile(IUserProfile userProfile);
+    public void setUserProfile(UserProfile userProfile);
 
     public void setCorrelationId(String correlationId);
 

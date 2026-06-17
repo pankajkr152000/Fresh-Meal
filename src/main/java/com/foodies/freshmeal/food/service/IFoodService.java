@@ -7,11 +7,11 @@ import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodResponse;
-import com.foodies.freshmeal.food.entity.IFoodEntity;
+import com.foodies.freshmeal.food.entity.FoodEntity;
 
 public interface IFoodService {
 
-    IServiceOutput<IFoodEntity> createFoodEntity(IServiceInput<CreateFoodInputDTO> input);
+    IServiceOutput<FoodEntity> createFoodEntity(IServiceInput<CreateFoodInputDTO> input);
 
     IServiceOutput<String> generateFoodId(IServiceInput<CreateFoodInputDTO> input);
 

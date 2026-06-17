@@ -20,8 +20,7 @@ import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceOutput;
 import com.foodies.freshmeal.common.sequence.service.IDatabaseSequenceService;
 import com.foodies.freshmeal.image.dto.CreateImageInputDTO;
-import com.foodies.freshmeal.image.entity.IImageEntity;
-import com.foodies.freshmeal.image.entity.impl.ImageEntity;
+import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.image.repository.IImageRepository;
 import com.foodies.freshmeal.image.service.IImageService;
 
@@ -66,7 +65,7 @@ public class ImageServiceImpl implements IImageService {
     }
 
     @Override
-    public IServiceOutput<IImageEntity> uploadImageToS3(IServiceInput<CreateImageInputDTO> input) {
+    public IServiceOutput<ImageEntity> uploadImageToS3(IServiceInput<CreateImageInputDTO> input) {
 
         CreateImageInputDTO dto = input.getInput();
         MultipartFile file = dto.getFile();
@@ -74,7 +73,7 @@ public class ImageServiceImpl implements IImageService {
          * Generate a unique image name using the image service
          */
         String imageName = generateImageName(input.getServiceContext(), file);
-        IImageEntity imageEntity = (IImageEntity) EntityFactory.createEntity(EntityName.IMAGE_ENTITY);
+        ImageEntity imageEntity = (ImageEntity) EntityFactory.createEntity(EntityName.IMAGE_ENTITY);
         imageEntity.setImageName(imageName);
         /*
          * Upload the image to AWS S3 using the AWSS3Config
@@ -118,7 +117,7 @@ public class ImageServiceImpl implements IImageService {
             throw new RuntimeException("Failed to upload image to S3", ex);
         }
 
-        IServiceOutput<IImageEntity> output = new ServiceOutput<>();
+        IServiceOutput<ImageEntity> output = new ServiceOutput<>();
         output.setOutput(imageEntity);
         return output;
     }
@@ -126,7 +125,7 @@ public class ImageServiceImpl implements IImageService {
     @Override
     public IServiceOutput<String> getImageURLByImageId(IServiceInput<String> input) {
         String imgeId = input.getInput();
-        IImageEntity imageEntity = imageRepository.findById(imgeId)
+        ImageEntity imageEntity = imageRepository.findById(imgeId)
                 .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imgeId));
         String fileURL = imageEntity.getImageUrl();
         IServiceOutput<String> output = new ServiceOutput<>();
@@ -137,7 +136,7 @@ public class ImageServiceImpl implements IImageService {
     @Override
     public IServiceOutput<String> getImageName(IServiceInput<String> input) {
         String imgeId = input.getInput();
-        IImageEntity imageEntity = imageRepository.findById(imgeId)
+        ImageEntity imageEntity = imageRepository.findById(imgeId)
                 .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imgeId));
         String imageName = imageEntity.getImageName();
         IServiceOutput<String> output = new ServiceOutput<>();
@@ -148,7 +147,7 @@ public class ImageServiceImpl implements IImageService {
     @Override
     public IServiceOutput<Boolean> deleteImageFromS3(IServiceInput<String> input) {
         String imageId = input.getInput();
-        IImageEntity imageEntity = imageRepository.findById(imageId)
+        ImageEntity imageEntity = imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imageId));
         String imageName = imageEntity.getImageName();
 
@@ -162,15 +161,15 @@ public class ImageServiceImpl implements IImageService {
     }
 
     @Override
-    public IServiceOutput<IImageEntity> createImageEntity(IServiceInput<CreateImageInputDTO> input) {
+    public IServiceOutput<ImageEntity> createImageEntity(IServiceInput<CreateImageInputDTO> input) {
         CreateImageInputDTO dto = input.getInput();
         MultipartFile file = dto.getFile();
         IServiceContext serviceContext = input.getServiceContext();
 
-        IImageEntity imageEntity;
+        ImageEntity imageEntity;
         String imageName;
         if (dto.getImageEntity() == null) {
-            imageEntity = (IImageEntity) EntityFactory.createEntity(EntityName.IMAGE_ENTITY);
+            imageEntity = (ImageEntity) EntityFactory.createEntity(EntityName.IMAGE_ENTITY);
             imageName = generateImageName(serviceContext, file);
             imageEntity.setImageName(imageName);
         } else {
@@ -190,9 +189,9 @@ public class ImageServiceImpl implements IImageService {
         imageEntity.setFileSize(file.getSize());
         imageEntity.setStoragePath(imageName);
         imageEntity.setActive(true);
-        imageEntity.setUploadedTime(AppCalendar.getCurrentLocaleDateTime());
+        imageEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
         if (serviceContext.getUserProfile() != null) {
-            imageEntity.setUploadedBy(serviceContext.getUserProfile().getId());
+            imageEntity.setCreatedBy(serviceContext.getUserProfile().getId());
         }
         imageEntity.setFileSize(file.getSize());
         imageEntity.setThumbnailUrl(fileURL);
@@ -202,7 +201,7 @@ public class ImageServiceImpl implements IImageService {
 
         imageRepository.save((ImageEntity) imageEntity);
 
-        IServiceOutput<IImageEntity> output = new ServiceOutput<>();
+        IServiceOutput<ImageEntity> output = new ServiceOutput<>();
         output.setOutput(imageEntity);
         return output;
     }
@@ -237,11 +236,11 @@ public class ImageServiceImpl implements IImageService {
     }
 
     @Override
-    public IServiceOutput<IImageEntity> getImageEntityById(IServiceInput<String> input) {
+    public IServiceOutput<ImageEntity> getImageEntityById(IServiceInput<String> input) {
         String imageId = input.getInput();
-        IImageEntity imageEntity = imageRepository.findById(imageId)
+        ImageEntity imageEntity = imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imageId));
-        IServiceOutput<IImageEntity> output = new ServiceOutput<>();
+        IServiceOutput<ImageEntity> output = new ServiceOutput<>();
         output.setOutput(imageEntity);
         return output;
     }

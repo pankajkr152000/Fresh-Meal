@@ -115,7 +115,7 @@ public final class AppCalendar {
         return LocalDateTime.now(AppCalendar.DEFAULT_ZONE)
                 .format(DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT));
     }
-    public static LocalDateTime getBusinessLocalDate() {
+    public static LocalDateTime getBusinessLocalDateTime() {
         // if(true) {
         //     return DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT).toString();
         // }
@@ -130,7 +130,7 @@ public final class AppCalendar {
                 .format(DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT));
     }
 
-   public static LocalDateTime getSystemDate() {
+   public static LocalDateTime getSystemLocalDateTime() {
         return LocalDateTime.now(AppCalendar.DEFAULT_ZONE);
     }
 

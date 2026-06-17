@@ -27,12 +27,11 @@ import com.foodies.freshmeal.food.constants.FoodCategory;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodRequest;
 import com.foodies.freshmeal.food.dto.FoodResponse;
-import com.foodies.freshmeal.food.entity.IFoodEntity;
-import com.foodies.freshmeal.food.entity.impl.FoodEntity;
+import com.foodies.freshmeal.food.entity.FoodEntity;
 import com.foodies.freshmeal.food.repository.IFoodRepository;
 import com.foodies.freshmeal.food.service.IFoodService;
 import com.foodies.freshmeal.image.dto.CreateImageInputDTO;
-import com.foodies.freshmeal.image.entity.IImageEntity;
+import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.image.service.IImageService;
 import com.foodies.freshmeal.image.service.impl.ImageServiceImpl;
 
@@ -84,8 +83,8 @@ public class FoodServiceImpl implements IFoodService {
         /*
          * Create a new food entity using the food request and image file
          */
-        IServiceOutput<IFoodEntity> foodEntityOutput = createFoodEntity(input);
-        IFoodEntity foodEntity = foodEntityOutput.getOutput();
+        IServiceOutput<FoodEntity> foodEntityOutput = createFoodEntity(input);
+        FoodEntity foodEntity = foodEntityOutput.getOutput();
 
         
         FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
@@ -95,7 +94,7 @@ public class FoodServiceImpl implements IFoodService {
         return output;
     }
 
-    private FoodResponse convertToFoodResponse(IFoodEntity foodEntity, FoodResponse foodResponse) {
+    private FoodResponse convertToFoodResponse(FoodEntity foodEntity, FoodResponse foodResponse) {
         foodResponse.setId(foodEntity.getId());
         foodResponse.setImageName(foodEntity.getImageName());
         foodResponse.setDescription(foodEntity.getDescription());
@@ -112,8 +111,8 @@ public class FoodServiceImpl implements IFoodService {
 
 
     @Override
-    public IServiceOutput<IFoodEntity> createFoodEntity(IServiceInput<CreateFoodInputDTO> input) {
-        IFoodEntity foodEntity = (IFoodEntity) EntityFactory.createEntity(EntityName.FOOD_ENTITY);
+    public IServiceOutput<FoodEntity> createFoodEntity(IServiceInput<CreateFoodInputDTO> input) {
+        FoodEntity foodEntity = (FoodEntity) EntityFactory.createEntity(EntityName.FOOD_ENTITY);
         // Map the fields from foodRequest to foodEntity
         FoodRequest foodRequest = input.getInput().getFoodRequest();
         MultipartFile imageFile = input.getInput().getImageFile();
@@ -130,8 +129,8 @@ public class FoodServiceImpl implements IFoodService {
         createImageInputDTO.setFile(imageFile);
         imageServiceInput.setInput(createImageInputDTO);
         
-        IServiceOutput<IImageEntity> imageEntityOutput = imageService.uploadImageToS3(imageServiceInput);
-        IImageEntity imageEntity = imageEntityOutput.getOutput();
+        IServiceOutput<ImageEntity> imageEntityOutput = imageService.uploadImageToS3(imageServiceInput);
+        ImageEntity imageEntity = imageEntityOutput.getOutput();
 
 
         foodEntity.setImageName(imageEntity.getImageName());
@@ -149,7 +148,7 @@ public class FoodServiceImpl implements IFoodService {
          */
         foodRepository.save((FoodEntity)foodEntity);
 
-        IServiceOutput<IFoodEntity> output = new ServiceOutput<>();
+        IServiceOutput<FoodEntity> output = new ServiceOutput<>();
         output.setOutput(foodEntity);
         return output;
     }

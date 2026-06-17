@@ -1,6 +1,5 @@
-package com.foodies.freshmeal.user.entity.impl;
+package com.foodies.freshmeal.user.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -15,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Document(collection = "fm_users")
-public class UserEntity extends ABaseEntity{
+public class UserEntity extends ABaseEntity {
 
     /**
      *

@@ -17,7 +17,7 @@ import com.foodies.freshmeal.common.audit.entity.impl.AuditDataInput;
 import com.foodies.freshmeal.common.exception.IError;
 import com.foodies.freshmeal.common.exception.IErrors;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
-import com.foodies.freshmeal.user.entity.IUserProfile;
+import com.foodies.freshmeal.user.entity.UserProfile;
 
 @Component
 @RequestScope
@@ -31,7 +31,7 @@ public class ServiceContext implements IServiceContext {
 
     private ApplicationContext applicationContext;
 
-    private IUserProfile userProfile;
+    private UserProfile userProfile;
 
     private String requestId;
 
@@ -74,7 +74,7 @@ public class ServiceContext implements IServiceContext {
     }
 
     @Override
-    public IUserProfile getUserProfile() {
+    public UserProfile getUserProfile() {
         return userProfile;
     }
 
@@ -135,7 +135,7 @@ public class ServiceContext implements IServiceContext {
 
     @Override
     public void setUserProfile(
-            IUserProfile userProfile) {
+            UserProfile userProfile) {
 
         this.userProfile = userProfile;
     }

@@ -2,7 +2,7 @@ package com.foodies.freshmeal.image.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.foodies.freshmeal.image.entity.IImageEntity;
+import com.foodies.freshmeal.image.entity.ImageEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +17,7 @@ public class CreateImageInputDTO {
     private String imageName;
     private String fileURL;
     private MultipartFile file;
-    private IImageEntity imageEntity;
+    private ImageEntity imageEntity;
     
     
 }
