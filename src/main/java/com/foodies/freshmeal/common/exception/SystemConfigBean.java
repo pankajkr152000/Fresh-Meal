@@ -101,9 +101,7 @@ public class SystemConfigBean {
 			systemConfigBean = new SystemConfigBean();
 			if (systemConfigXmlDoc == null) {
 				
-				// Added by Alok, CR# - COM#03220
 				systemConfigMap = new HashMap<>(512);
-				// Added by Amit, To Enable Startup Mode
 				systemConfigBean.initStartupMode();
 			}
 		}

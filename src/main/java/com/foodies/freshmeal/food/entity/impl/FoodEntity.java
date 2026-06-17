@@ -3,6 +3,7 @@ package com.foodies.freshmeal.food.entity.impl;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.food.constants.CategoryGroup;
 import com.foodies.freshmeal.food.constants.CuisineType;
@@ -11,7 +12,7 @@ import com.foodies.freshmeal.food.constants.FoodCategory;
 import com.foodies.freshmeal.food.entity.IFoodEntity;
 
 @Document(collection = "fm_food")
-public class FoodEntity implements IFoodEntity {
+public class FoodEntity extends ABaseEntity implements IFoodEntity {
     private static final long serialVersionUID = 9030570160895262180L;
 	@Id
     private String id;

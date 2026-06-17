@@ -37,14 +37,6 @@ public interface IUserEntity extends IEntity {
 
     boolean isEnabled();
 
-    boolean isDeleted();
-
-    String createdBy();
-
-    String getDeletedAt();
-
-    String getCreatedAt();
-
     void setUsername(String username);
 
     void setPassword(String password);
@@ -63,15 +55,6 @@ public interface IUserEntity extends IEntity {
 
     void setEnabled(boolean enabled);
 
-    void setDeleted(boolean deleted);
-
-    void setCreatedBy(String createdBy);
-
     void setPhoneNumber(String phoneNumber);
-
-    void setDeletedAt(String deletedAt);
-
-    void setCreatedAt(String createdAt);
-
 
 }

@@ -2,8 +2,6 @@ package com.foodies.freshmeal.image.entity;
 
 
 
-import java.time.LocalDateTime;
-
 import com.foodies.freshmeal.common.entity.IEntity;
 
 public interface IImageEntity extends IEntity {
@@ -55,12 +53,4 @@ public interface IImageEntity extends IEntity {
     Boolean getActive();
 
     void setActive(Boolean active);
-
-    LocalDateTime getUploadedTime();
-
-    void setUploadedTime(LocalDateTime uploadedTime);
-
-    String getUploadedBy();
-
-    void setUploadedBy(String uploadedBy);
 }

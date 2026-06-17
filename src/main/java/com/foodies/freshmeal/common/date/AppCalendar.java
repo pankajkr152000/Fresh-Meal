@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -49,7 +50,7 @@ public final class AppCalendar {
 
     public static final String DEFAULT_TIMESTAMP_FORMAT = "HH:mm:ss";
 
-    public static final String DEFAULT_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    public static final String DEFAULT_DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
 
     // =====================================================
     // CONSTANTS
@@ -103,9 +104,36 @@ public final class AppCalendar {
         return formatDate(getCurrentDate());
     }
 
-    public static LocalDateTime getCurrentLocaleDateTime() {
-        return LocalDateTime.now(DEFAULT_ZONE);
+    
+    /*
+    * get current date time in dd-mm-yyyy hh:mm:ss format in String
+    */
+    public static String getBusinessLocalDateInString() {
+        // if(true) {
+        //     return DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT).toString();
+        // }
+        return LocalDateTime.now(AppCalendar.DEFAULT_ZONE)
+                .format(DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT));
     }
+    public static LocalDateTime getBusinessLocalDate() {
+        // if(true) {
+        //     return DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT).toString();
+        // }
+        return LocalDateTime.now(AppCalendar.DEFAULT_ZONE);
+    }
+
+    /*
+    * get date time of recording the entity into DB
+    */
+   public static String getSystemDateInString() {
+        return LocalDateTime.now(AppCalendar.DEFAULT_ZONE)
+                .format(DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT));
+    }
+
+   public static LocalDateTime getSystemDate() {
+        return LocalDateTime.now(AppCalendar.DEFAULT_ZONE);
+    }
+
     // =====================================================
     // FORMAT METHODS
     // =====================================================

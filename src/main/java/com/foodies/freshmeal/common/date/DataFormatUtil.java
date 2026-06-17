@@ -12,6 +12,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
@@ -986,7 +987,7 @@ public class DataFormatUtil {
         Date date = null;
         try {
             if (StringUtils.hasText(str)) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy");
                 date = sdf.parse(str);
             }
         } catch (ParseException parseException) {
@@ -996,7 +997,7 @@ public class DataFormatUtil {
     }
 
      
-    public static Date getDateFromStringDDMMYYYY(String str) {
+    public static Date parseStringToDate(String str) {
         Date date = null;
         try {
             if (StringUtils.hasText(str)) {
@@ -1010,7 +1011,7 @@ public class DataFormatUtil {
     }
 
      
-    public static LocalDate getLocalDateFromStringDDMMUUUU(String givenDateString) {
+    public static LocalDate parseStringToLocalDate(String givenDateString) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DDMMUUUU)
                     .withResolverStyle(ResolverStyle.STRICT);
@@ -1020,6 +1021,19 @@ public class DataFormatUtil {
             return null;
         }
     }
+    
+	public static LocalDateTime parseStringToLocalDateTime(String dateTime) {
+
+		if (dateTime == null || dateTime.isBlank()) {
+			return null;
+		}
+
+		try {
+			return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT));
+		} catch (Exception ex) {
+			throw new IllegalArgumentException("Invalid date format. Expected format: " + DEFAULT_DATE_TIME_FORMAT, ex);
+		}
+	}
 
     public static String getFinancialYear(Date date) {
         Calendar cal = Calendar.getInstance();

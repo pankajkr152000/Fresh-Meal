@@ -6,7 +6,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.foodies.freshmeal.common.audit.entity.IAuditLog;
+import com.foodies.freshmeal.common.date.AppCalendar;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +43,9 @@ public class AuditLog implements IAuditLog {
     private String exceptionMessage;
 
     private String ipAddress;
+
     @Indexed
+    @JsonFormat(pattern = AppCalendar.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime createdAt;
 
     // Default constructor
@@ -209,6 +213,5 @@ public class AuditLog implements IAuditLog {
 	public void setExceptionMessage(String exceptionMessage) {
 		this.exceptionMessage = exceptionMessage;
 	}
-    
     
 }

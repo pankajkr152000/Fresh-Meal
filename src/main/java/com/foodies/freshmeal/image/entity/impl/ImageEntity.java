@@ -2,33 +2,31 @@ package com.foodies.freshmeal.image.entity.impl;
 
 
 
-import java.time.LocalDateTime;
-
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.image.entity.IImageEntity;
 
 
 @Document(collection = "fm_image")
-public class ImageEntity implements IImageEntity {
+public class ImageEntity extends ABaseEntity implements IImageEntity {
 	private static final long serialVersionUID = -7738313744978922952L;
 	@Id
-	String id;
-	String imageName;
-	String originalFileName;
-	String contentType;
-	Long fileSize;
-	String imageUrl;
-	String thumbnailUrl;
-	String storagePath;
-	String extension;
-	Integer width;
-	Integer height;
-	Boolean active;
-	LocalDateTime uploadedTime;
-	String uploadedBy;
+	private String id;
+	private String imageName;
+	private String originalFileName;
+	private String contentType;
+	private Long fileSize;
+	private String imageUrl;
+	private String thumbnailUrl;
+	private String storagePath;
+	private String extension;
+	private Integer width;
+	private Integer height;
+	private Boolean active;
+
 
 	ImageEntity() {
 
@@ -160,28 +158,6 @@ public class ImageEntity implements IImageEntity {
 	@Override
 	public void setActive(Boolean active) {
 		this.active = active;
-		
 	}
-
-	@Override
-	public LocalDateTime getUploadedTime() {
-		return this.uploadedTime;
-	}
-
-	@Override
-	public void setUploadedTime(LocalDateTime uploadedTime) {
-		this.uploadedTime = uploadedTime;
-	}
-
-	@Override
-	public String getUploadedBy() {
-		return this.uploadedBy;
-	}
-
-	@Override
-	public void setUploadedBy(String uploadedBy) {
-		this.uploadedBy = uploadedBy;
-	}
-
 
 }

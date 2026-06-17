@@ -3,16 +3,15 @@ package com.foodies.freshmeal.user.entity.impl;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 
+import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.entity.ILoginHistory;
 import com.foodies.freshmeal.image.entity.impl.ImageEntity;
 import com.foodies.freshmeal.user.entity.IUserEntity;
-import com.foodies.freshmeal.user.entity.IUserProfile;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -35,7 +34,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Document(collection = "fm_user_profiles")
-public class UserProfile implements IUserProfile {
+public class UserProfile extends ABaseEntity {
 
 	/**
 	 *
@@ -108,116 +107,14 @@ public class UserProfile implements IUserProfile {
 	 * IEntity
 	 * =====================================================
 	 */
-	@Override
-	public String getId() {
-		return this.id;
-	}
 
-	@Override
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	/**
 	 * =====================================================
 	 * Authentication
 	 * =====================================================
 	 */
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
 
-		return authorities;
-	}
-
-	@Override
-	public @Nullable Object getCredentials() {
-
-		return password;
-	}
-
-	@Override
-	public @Nullable Object getDetails() {
-
-		return userEntity;
-	}
-
-	@Override
-	public @Nullable Object getPrincipal() {
-
-		return this;
-	}
-
-	@Override
-	public boolean isAuthenticated() {
-
-		return authenticated;
-	}
-
-	@Override
-	public void setAuthenticated(
-			boolean isAuthenticated)
-			throws IllegalArgumentException {
-
-		this.authenticated = isAuthenticated;
-	}
-
-	@Override
-	public String getName() {
-
-		return userName;
-	}
-
-	@Override
-	public void eraseCredentials() {
-
-		this.password = null;
-	}
-
-	/**
-	 * =====================================================
-	 * UserDetails
-	 * =====================================================
-	 */
-	@Override
-	public @Nullable String getPassword() {
-
-		return password;
-	}
-
-	@Override
-	public String getUsername() {
-
-		return userName;
-	}
-
-	/**
-	 * =====================================================
-	 * Login History
-	 * =====================================================
-	 */
-	@Override
-	public ILoginHistory getLoginHistory() {
-
-		return loginHistory;
-	}
-
-	@Override
-	public IUserEntity getUserEntity() {
-
-		return userEntity;
-	}
-
-	@Override
-	public void setLoginHistory(ILoginHistory loginHistory) {
-
-		this.loginHistory = loginHistory;
-	}
-
-	@Override
-	public void setUserEntity(IUserEntity userEntity) {
-
-		this.userEntity = userEntity;
-	}
 
 	public ImageEntity getProfileImage() {
 		return profileImage;
