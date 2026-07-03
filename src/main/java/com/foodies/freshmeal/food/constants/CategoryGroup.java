@@ -13,7 +13,8 @@ public enum CategoryGroup {
     SALAD("Salad"),
     SOUP("Soup"),
     EXTRA("Extra"),
-    ADD_ON("Add On");
+    ADD_ON("Add On"),
+    OTHER("Other");
 
     private final String displayName;
 

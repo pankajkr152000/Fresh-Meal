@@ -1,6 +1,5 @@
 package com.foodies.freshmeal.food.constants;
 
-
 public enum FoodCategory {
 
     // Main Meals
@@ -39,7 +38,10 @@ public enum FoodCategory {
 
     // Snacks
     SNACK("Snack", CategoryGroup.SNACK),
-    FINGER_FOOD("Finger Food", CategoryGroup.SNACK);
+    FINGER_FOOD("Finger Food", CategoryGroup.SNACK),
+
+    // Other
+    OTHER("Other", CategoryGroup.OTHER);
 
     private final String displayName;
     private final CategoryGroup group;

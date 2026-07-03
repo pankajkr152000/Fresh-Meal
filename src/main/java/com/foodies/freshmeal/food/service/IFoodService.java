@@ -3,6 +3,7 @@ package com.foodies.freshmeal.food.service;
 import java.util.List;
 import java.util.Map;
 
+import com.foodies.freshmeal.common.dto.DropdownOption;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
@@ -19,14 +20,14 @@ public interface IFoodService {
 
     IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input);
 
-    IServiceOutput<List<String>> getFoodCategories(IServiceInput<Void> input);
+    IServiceOutput<List<DropdownOption>> getFoodCategories(IServiceInput<Void> input);
 
-    IServiceOutput<List<String>> getDietCategories(IServiceInput<Void> input);
+    IServiceOutput<List<DropdownOption>> getDietCategories(IServiceInput<Void> input);
 
-    IServiceOutput<List<String>> getCuisineCategories(IServiceInput<Void> input);
+    IServiceOutput<List<DropdownOption>> getCuisineCategories(IServiceInput<Void> input);
 
-    IServiceOutput<List<String>> getGroupCategories(IServiceInput<Void> input);
+    IServiceOutput<List<DropdownOption>> getGroupCategories(IServiceInput<Void> input);
 
-    IServiceOutput<Map<String,Object>> foodCategoryMetadata(IServiceInput<Void> input);
+    IServiceOutput<Map<String, Object>> foodCategoryMetadata(IServiceInput<Void> input);
 
 }
