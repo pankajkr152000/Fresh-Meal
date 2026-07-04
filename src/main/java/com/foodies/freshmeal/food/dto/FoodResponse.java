@@ -17,77 +17,95 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FoodResponse {
-    private String id;
-    private String imageName;
-    private String name;
-    private String description;
-    private double price;
-    private String imageUrl;
-    private FoodCategory foodCategory; 
+	private String id;
+	private String imageName;
+	private String foodName;
+	private String description;
+	private double price;
+	private String imageUrl;
+	private FoodCategory foodCategory;
 	private DietCategory dietCategory; // veg or non-veg
 	private CuisineType cuisineType;
 	private CategoryGroup categoryGroup;
-    
-    
+
 	public String getId() {
 		return id;
 	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
+
 	public String getImageName() {
 		return imageName;
 	}
+
 	public void setImageName(String imageName) {
 		this.imageName = imageName;
 	}
-	public String getName() {
-		return name;
+
+	public String getFoodName() {
+		return foodName;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setFoodName(String foodName) {
+		this.foodName = foodName;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public double getPrice() {
 		return price;
 	}
+
 	public void setPrice(double price) {
 		this.price = price;
 	}
+
 	public String getImageUrl() {
 		return imageUrl;
 	}
+
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
+
 	public DietCategory getDietCategory() {
 		return dietCategory;
 	}
+
 	public void setDietCategory(DietCategory dietCategory) {
 		this.dietCategory = dietCategory;
 	}
+
 	public FoodCategory getFoodCategory() {
 		return foodCategory;
 	}
+
 	public void setFoodCategory(FoodCategory foodCategory) {
 		this.foodCategory = foodCategory;
 	}
+
 	public CuisineType getCuisineType() {
 		return cuisineType;
 	}
+
 	public void setCuisineType(CuisineType cuisineType) {
 		this.cuisineType = cuisineType;
 	}
+
 	public CategoryGroup getCategoryGroup() {
 		return categoryGroup;
 	}
+
 	public void setCategoryGroup(CategoryGroup categoryGroup) {
 		this.categoryGroup = categoryGroup;
 	}
-    
+
 }

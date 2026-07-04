@@ -94,6 +94,7 @@ public class FoodServiceImpl implements IFoodService {
         private FoodResponse convertToFoodResponse(FoodEntity foodEntity, FoodResponse foodResponse) {
                 foodResponse.setId(foodEntity.getId());
                 foodResponse.setImageName(foodEntity.getImageName());
+                foodResponse.setFoodName(foodEntity.getFoodName());
                 foodResponse.setDescription(foodEntity.getDescription());
                 foodResponse.setPrice(foodEntity.getPrice());
                 foodResponse.setFoodCategory(foodEntity.getFoodCategory());

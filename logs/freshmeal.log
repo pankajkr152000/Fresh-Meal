@@ -3009,3 +3009,1389 @@ MONGO COMMAND SUCCESS
 COMMAND  : endSessions
 DURATION : 41 ms
 ====================================================
+2026-07-04 03:09:50 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 10908 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in d:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 03:09:50 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 03:09:51 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 03:09:51 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 125 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 03:09:52 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 03:09:52 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 03:09:52 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 03:09:52 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1344 ms
+2026-07-04 03:09:52 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@3c1248b6], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@38e3f0df, com.mongodb.Jep395RecordCodecProvider@19ea54ff, com.mongodb.KotlinCodecProvider@3b49d93, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 03:09:52 [cluster-ClusterId{value='6a482c28979f604a0df7d258', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=32597401, minRoundTripTimeNanos=0}
+2026-07-04 03:09:53 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: c222358c-8a9c-4159-8aec-7fee48609070
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 03:09:53 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 03:09:54 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 03:09:54 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 4.207 seconds (process running for 632.035)
+2026-07-04 03:09:54 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 03:36:07 [http-nio-8030-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-04 03:36:07 [http-nio-8030-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-07-04 03:36:08 [http-nio-8030-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 171 ms
+2026-07-04 03:54:07 [http-nio-8030-exec-10] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 03:54:08 [http-nio-8030-exec-10] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "bBgi5NHdSL6Yd8AF9JGXgQ==", "subType": "04"}}}}
+====================================================
+2026-07-04 03:54:08 [http-nio-8030-exec-10] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 100 ms
+====================================================
+2026-07-04 03:54:10 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 03:54:23 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 03:54:24 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 03:54:25 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 03:54:25 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 03:54:26 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 03:54:26 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 03:54:27 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 03:54:27 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 03:54:28 [http-nio-8030-exec-10] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 03:54:54 [http-nio-8030-exec-1] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 03:54:54 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "bBgi5NHdSL6Yd8AF9JGXgQ==", "subType": "04"}}}}
+====================================================
+2026-07-04 03:54:54 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 72 ms
+====================================================
+2026-07-04 03:54:54 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 03:54:55 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 04:00:14 [http-nio-8030-exec-3] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "bBgi5NHdSL6Yd8AF9JGXgQ==", "subType": "04"}}}}
+====================================================
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 183 ms
+====================================================
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 04:00:14 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 04:01:31 [http-nio-8030-exec-4] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "bBgi5NHdSL6Yd8AF9JGXgQ==", "subType": "04"}}}}
+====================================================
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 91 ms
+====================================================
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 04:01:31 [http-nio-8030-exec-4] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 04:07:15 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-07-04 04:07:16 [Thread-5] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 04:07:16 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 04:07:19 [Thread-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : endSessions
+QUERY   : {"endSessions": [{"id": {"$binary": {"base64": "bBgi5NHdSL6Yd8AF9JGXgQ==", "subType": "04"}}}], "$db": "admin", "$readPreference": {"mode": "primaryPreferred"}}
+====================================================
+2026-07-04 04:07:19 [Thread-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : endSessions
+DURATION : 2184 ms
+====================================================
+2026-07-04 04:07:21 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 10908 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in d:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 04:07:21 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 04:07:22 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 04:07:22 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 134 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 04:07:23 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 04:07:23 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 04:07:23 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 04:07:23 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2526 ms
+2026-07-04 04:07:23 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@3539b4e8], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@38e3f0df, com.mongodb.Jep395RecordCodecProvider@19ea54ff, com.mongodb.KotlinCodecProvider@3b49d93, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 04:07:24 [cluster-ClusterId{value='6a4839a3979f604a0df7d259', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=304764800, minRoundTripTimeNanos=0}
+2026-07-04 04:07:25 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 710d7782-bae2-491d-827a-55b989d7a8db
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 04:07:25 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 04:07:25 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 04:07:25 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 5.124 seconds (process running for 4083.688)
+2026-07-04 04:07:25 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 04:08:00 [http-nio-8030-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-04 04:08:00 [http-nio-8030-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-07-04 04:08:00 [http-nio-8030-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 126 ms
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=be3c658d-3d97-416b-9805-17a29226abea | API=/api/foods/readAllFoods | Method=GET
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-04 04:08:06
+RequestId : be3c658d-3d97-416b-9805-17a29226abea
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-04 04:08:06 [http-nio-8030-exec-1] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "FlAAXzz1QgCwk2j4NHUusg==", "subType": "04"}}}}
+====================================================
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 76 ms
+====================================================
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 04:08:06 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : be3c658d-3d97-416b-9805-17a29226abea
+Status       : 200
+Duration(ms) : 891
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00000",
+    "imageName" : "tomato",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00006",
+    "imageName" : "IMG07_0000017.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00008",
+    "imageName" : "IMG07_0000019.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00009",
+    "imageName" : "IMG07_0000020.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00010",
+    "imageName" : "IMG07_0000021.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00011",
+    "imageName" : "IMG07_0000023.png",
+    "name" : null,
+    "description" : "Tomato Sauce",
+    "price" : 2.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png",
+    "foodCategory" : "SMOOTHIE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00012",
+    "imageName" : "IMG07_0000025.png",
+    "name" : null,
+    "description" : "Organic healthy boiled rice",
+    "price" : 30.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "LUNCH",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00014",
+    "imageName" : "IMG07_0000027.png",
+    "name" : null,
+    "description" : "",
+    "price" : 100.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00016",
+    "imageName" : "IMG07_0000029.png",
+    "name" : null,
+    "description" : "South Indian Food Dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00018",
+    "imageName" : "food-placeholder.png",
+    "name" : null,
+    "description" : "Potato French Fries",
+    "price" : 40.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "SNACK",
+    "dietCategory" : "VEG",
+    "cuisineType" : "AMERICAN",
+    "categoryGroup" : null
+  } ]
+}
+============================================
+
+2026-07-04 04:08:07 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=be3c658d-3d97-416b-9805-17a29226abea | Duration=891 ms
+2026-07-04 04:08:07 [task-1] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-04 04:08:07 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "FlAAXzz1QgCwk2j4NHUusg==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a4839cf979f604a0df7d25a"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00000", "imageName": "tomato", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00006", "imageName": "IMG07_0000017.jpg", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00009", "imageName": "IMG07_0000020.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00010", "imageName": "IMG07_0000021.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00011", "imageName": "IMG07_0000023.png", "name": null, "description": "Tomato Sauce", "price": 2.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png", "foodCategory": "SMOOTHIE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00012", "imageName": "IMG07_0000025.png", "name": null, "description": "Organic healthy boiled rice", "price": 30.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "LUNCH", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00014", "imageName": "IMG07_0000027.png", "name": null, "description": "", "price": 100.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00016", "imageName": "IMG07_0000029.png", "name": null, "description": "South Indian Food Dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00018", "imageName": "food-placeholder.png", "name": null, "description": "Potato French Fries", "price": 40.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "SNACK", "dietCategory": "VEG", "cuisineType": "AMERICAN", "categoryGroup": null}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 891, "requestId": "be3c658d-3d97-416b-9805-17a29226abea", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-03T22:38:06.125Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-04 04:08:07 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 243 ms
+====================================================
+2026-07-04 21:46:51 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 21:46:51 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 21:46:51 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-07-04 21:46:51 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-07-04 21:46:52 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 21:46:53 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 303 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 21:46:54 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 21:46:54 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 21:46:54 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 21:46:54 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 3095 ms
+2026-07-04 21:46:54 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@5ecfbcaf], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 21:46:54 [cluster-ClusterId{value='6a4931f6f14edd52d09843a7', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=29038000, minRoundTripTimeNanos=0}
+2026-07-04 21:46:57 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 9594ab78-66e1-43b4-b703-09ba432ebcbd
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 21:46:57 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 21:46:58 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 21:46:58 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 8.2 seconds (process running for 11.253)
+2026-07-04 21:47:38 [http-nio-8030-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-04 21:47:38 [http-nio-8030-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-07-04 21:47:38 [http-nio-8030-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=d9bef053-c1f2-40f3-bb7c-b398b7c670f9 | API=/api/foods/readAllFoods | Method=GET
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-04 21:47:39
+RequestId : d9bef053-c1f2-40f3-bb7c-b398b7c670f9
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-04 21:47:39 [http-nio-8030-exec-1] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "JZaHyD3mQj2tUSmWYvdQQA==", "subType": "04"}}}}
+====================================================
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 149 ms
+====================================================
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : d9bef053-c1f2-40f3-bb7c-b398b7c670f9
+Status       : 200
+Duration(ms) : 680
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00000",
+    "imageName" : "tomato",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00006",
+    "imageName" : "IMG07_0000017.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00008",
+    "imageName" : "IMG07_0000019.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00009",
+    "imageName" : "IMG07_0000020.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00010",
+    "imageName" : "IMG07_0000021.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00011",
+    "imageName" : "IMG07_0000023.png",
+    "name" : null,
+    "description" : "Tomato Sauce",
+    "price" : 2.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png",
+    "foodCategory" : "SMOOTHIE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00012",
+    "imageName" : "IMG07_0000025.png",
+    "name" : null,
+    "description" : "Organic healthy boiled rice",
+    "price" : 30.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "LUNCH",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00014",
+    "imageName" : "IMG07_0000027.png",
+    "name" : null,
+    "description" : "",
+    "price" : 100.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00016",
+    "imageName" : "IMG07_0000029.png",
+    "name" : null,
+    "description" : "South Indian Food Dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00018",
+    "imageName" : "food-placeholder.png",
+    "name" : null,
+    "description" : "Potato French Fries",
+    "price" : 40.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "SNACK",
+    "dietCategory" : "VEG",
+    "cuisineType" : "AMERICAN",
+    "categoryGroup" : null
+  } ]
+}
+============================================
+
+2026-07-04 21:47:39 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=d9bef053-c1f2-40f3-bb7c-b398b7c670f9 | Duration=680 ms
+2026-07-04 21:47:39 [task-1] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-04 21:47:39 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "JZaHyD3mQj2tUSmWYvdQQA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a493223f14edd52d09843a8"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00000", "imageName": "tomato", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00006", "imageName": "IMG07_0000017.jpg", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00009", "imageName": "IMG07_0000020.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00010", "imageName": "IMG07_0000021.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00011", "imageName": "IMG07_0000023.png", "name": null, "description": "Tomato Sauce", "price": 2.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png", "foodCategory": "SMOOTHIE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00012", "imageName": "IMG07_0000025.png", "name": null, "description": "Organic healthy boiled rice", "price": 30.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "LUNCH", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00014", "imageName": "IMG07_0000027.png", "name": null, "description": "", "price": 100.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00016", "imageName": "IMG07_0000029.png", "name": null, "description": "South Indian Food Dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00018", "imageName": "food-placeholder.png", "name": null, "description": "Potato French Fries", "price": 40.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "SNACK", "dietCategory": "VEG", "cuisineType": "AMERICAN", "categoryGroup": null}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 680, "requestId": "d9bef053-c1f2-40f3-bb7c-b398b7c670f9", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-04T16:17:39.067Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-04 21:47:39 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 71 ms
+====================================================
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=386540e4-6ae7-4ad9-8f5d-095cd4267d2d | API=/api/foods/readAllFoods | Method=GET
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-04 21:48:09
+RequestId : 386540e4-6ae7-4ad9-8f5d-095cd4267d2d
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-04 21:48:09 [http-nio-8030-exec-3] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "JZaHyD3mQj2tUSmWYvdQQA==", "subType": "04"}}}}
+====================================================
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 5 ms
+====================================================
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 386540e4-6ae7-4ad9-8f5d-095cd4267d2d
+Status       : 200
+Duration(ms) : 32
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00000",
+    "imageName" : "tomato",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00006",
+    "imageName" : "IMG07_0000017.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00008",
+    "imageName" : "IMG07_0000019.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00009",
+    "imageName" : "IMG07_0000020.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00010",
+    "imageName" : "IMG07_0000021.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00011",
+    "imageName" : "IMG07_0000023.png",
+    "name" : null,
+    "description" : "Tomato Sauce",
+    "price" : 2.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png",
+    "foodCategory" : "SMOOTHIE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00012",
+    "imageName" : "IMG07_0000025.png",
+    "name" : null,
+    "description" : "Organic healthy boiled rice",
+    "price" : 30.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "LUNCH",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00014",
+    "imageName" : "IMG07_0000027.png",
+    "name" : null,
+    "description" : "",
+    "price" : 100.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00016",
+    "imageName" : "IMG07_0000029.png",
+    "name" : null,
+    "description" : "South Indian Food Dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00018",
+    "imageName" : "food-placeholder.png",
+    "name" : null,
+    "description" : "Potato French Fries",
+    "price" : 40.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "SNACK",
+    "dietCategory" : "VEG",
+    "cuisineType" : "AMERICAN",
+    "categoryGroup" : null
+  } ]
+}
+============================================
+
+2026-07-04 21:48:09 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=386540e4-6ae7-4ad9-8f5d-095cd4267d2d | Duration=32 ms
+2026-07-04 21:48:09 [task-2] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-04 21:48:09 [task-2] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "JZaHyD3mQj2tUSmWYvdQQA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a493241f14edd52d09843a9"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00000", "imageName": "tomato", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00006", "imageName": "IMG07_0000017.jpg", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00009", "imageName": "IMG07_0000020.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00010", "imageName": "IMG07_0000021.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00011", "imageName": "IMG07_0000023.png", "name": null, "description": "Tomato Sauce", "price": 2.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png", "foodCategory": "SMOOTHIE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00012", "imageName": "IMG07_0000025.png", "name": null, "description": "Organic healthy boiled rice", "price": 30.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "LUNCH", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00014", "imageName": "IMG07_0000027.png", "name": null, "description": "", "price": 100.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00016", "imageName": "IMG07_0000029.png", "name": null, "description": "South Indian Food Dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00018", "imageName": "food-placeholder.png", "name": null, "description": "Potato French Fries", "price": 40.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "SNACK", "dietCategory": "VEG", "cuisineType": "AMERICAN", "categoryGroup": null}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 32, "requestId": "386540e4-6ae7-4ad9-8f5d-095cd4267d2d", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-04T16:18:09.802Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-04 21:48:09 [task-2] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 22 ms
+====================================================
+2026-07-04 21:49:43 [http-nio-8030-exec-5] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=3e9ec1a1-9bd1-4b5e-ab7f-3325f27bf686 | API=/api/foods/readAllFoods | Method=GET
+2026-07-04 21:49:43 [http-nio-8030-exec-5] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-04 21:49:43
+RequestId : 3e9ec1a1-9bd1-4b5e-ab7f-3325f27bf686
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-04 21:49:43 [http-nio-8030-exec-5] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 21:49:43 [http-nio-8030-exec-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "JZaHyD3mQj2tUSmWYvdQQA==", "subType": "04"}}}}
+====================================================
+2026-07-04 21:49:43 [http-nio-8030-exec-5] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 7 ms
+====================================================
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 3e9ec1a1-9bd1-4b5e-ab7f-3325f27bf686
+Status       : 200
+Duration(ms) : 159
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00000",
+    "imageName" : "tomato",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00006",
+    "imageName" : "IMG07_0000017.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00008",
+    "imageName" : "IMG07_0000019.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00009",
+    "imageName" : "IMG07_0000020.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00010",
+    "imageName" : "IMG07_0000021.jpg",
+    "name" : null,
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00011",
+    "imageName" : "IMG07_0000023.png",
+    "name" : null,
+    "description" : "Tomato Sauce",
+    "price" : 2.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png",
+    "foodCategory" : "SMOOTHIE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00012",
+    "imageName" : "IMG07_0000025.png",
+    "name" : null,
+    "description" : "Organic healthy boiled rice",
+    "price" : 30.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "LUNCH",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00014",
+    "imageName" : "IMG07_0000027.png",
+    "name" : null,
+    "description" : "",
+    "price" : 100.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00016",
+    "imageName" : "IMG07_0000029.png",
+    "name" : null,
+    "description" : "South Indian Food Dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00018",
+    "imageName" : "food-placeholder.png",
+    "name" : null,
+    "description" : "Potato French Fries",
+    "price" : 40.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "SNACK",
+    "dietCategory" : "VEG",
+    "cuisineType" : "AMERICAN",
+    "categoryGroup" : null
+  } ]
+}
+============================================
+
+2026-07-04 21:49:44 [http-nio-8030-exec-5] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=3e9ec1a1-9bd1-4b5e-ab7f-3325f27bf686 | Duration=159 ms
+2026-07-04 21:49:44 [task-3] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-04 21:49:44 [task-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "JZaHyD3mQj2tUSmWYvdQQA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a4932a0f14edd52d09843aa"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00000", "imageName": "tomato", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00006", "imageName": "IMG07_0000017.jpg", "name": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00009", "imageName": "IMG07_0000020.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00010", "imageName": "IMG07_0000021.jpg", "name": null, "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00011", "imageName": "IMG07_0000023.png", "name": null, "description": "Tomato Sauce", "price": 2.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png", "foodCategory": "SMOOTHIE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00012", "imageName": "IMG07_0000025.png", "name": null, "description": "Organic healthy boiled rice", "price": 30.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "LUNCH", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00014", "imageName": "IMG07_0000027.png", "name": null, "description": "", "price": 100.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00016", "imageName": "IMG07_0000029.png", "name": null, "description": "South Indian Food Dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00018", "imageName": "food-placeholder.png", "name": null, "description": "Potato French Fries", "price": 40.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "SNACK", "dietCategory": "VEG", "cuisineType": "AMERICAN", "categoryGroup": null}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 159, "requestId": "3e9ec1a1-9bd1-4b5e-ab7f-3325f27bf686", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-04T16:19:43.977Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-04 21:49:44 [task-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 13 ms
+====================================================
+2026-07-04 21:55:58 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-07-04 21:55:59 [Thread-1] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 21:55:59 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 21:56:00 [Thread-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : endSessions
+QUERY   : {"endSessions": [{"id": {"$binary": {"base64": "JZaHyD3mQj2tUSmWYvdQQA==", "subType": "04"}}}], "$db": "admin", "$readPreference": {"mode": "primaryPreferred"}}
+====================================================
+2026-07-04 21:56:00 [Thread-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : endSessions
+DURATION : 67 ms
+====================================================
+2026-07-04 21:56:02 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 21:56:02 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 21:56:04 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 21:56:04 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 275 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 21:56:05 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 21:56:05 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 21:56:05 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 21:56:05 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 3610 ms
+2026-07-04 21:56:06 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@366a9301], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 21:56:06 [cluster-ClusterId{value='6a49341ef14edd52d09843ab', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=111018900, minRoundTripTimeNanos=0}
+2026-07-04 21:56:07 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: ae0ea9b3-b1f8-4e51-b1af-4603574199ac
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 21:56:07 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 21:56:08 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 21:56:08 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 6.969 seconds (process running for 561.191)
+2026-07-04 21:56:08 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 21:56:54 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-07-04 21:56:55 [Thread-5] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 21:56:55 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 21:57:00 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 21:57:00 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 21:57:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 21:57:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 172 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 21:57:03 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 21:57:03 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 21:57:03 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 21:57:03 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 3102 ms
+2026-07-04 21:57:03 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@2d72c81c], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 21:57:03 [cluster-ClusterId{value='6a493457f14edd52d09843ac', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=48304900, minRoundTripTimeNanos=0}
+2026-07-04 21:57:04 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 8e142d1f-3302-47ac-a1f8-d3b758076656
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 21:57:04 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 21:57:04 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 21:57:04 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 5.125 seconds (process running for 617.331)
+2026-07-04 21:57:04 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 21:57:05 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 5 class path changes (0 additions, 0 deletions, 5 modifications)
+2026-07-04 21:57:05 [Thread-9] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 21:57:05 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 21:57:06 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 21:57:06 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 21:57:07 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 21:57:08 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 280 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 21:57:08 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 21:57:08 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 21:57:08 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 21:57:08 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2206 ms
+2026-07-04 21:57:08 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@5ce13e08], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 21:57:08 [cluster-ClusterId{value='6a49345cf14edd52d09843ad', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=2673700, minRoundTripTimeNanos=0}
+2026-07-04 21:57:09 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 58c56fa5-57d5-4623-8278-b5f96b32414c
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 21:57:09 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 21:57:09 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 21:57:09 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 2.927 seconds (process running for 622.271)
+2026-07-04 21:57:09 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 21:57:10 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 8 class path changes (2 additions, 0 deletions, 6 modifications)
+2026-07-04 21:57:10 [Thread-13] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 21:57:10 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 21:57:10 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 21:57:10 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 21:57:11 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 21:57:11 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 43 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 21:57:11 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 21:57:11 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 21:57:11 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 21:57:11 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 408 ms
+2026-07-04 21:57:11 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@51857ab3], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 21:57:11 [cluster-ClusterId{value='6a49345ff14edd52d09843ae', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=2070700, minRoundTripTimeNanos=0}
+2026-07-04 21:57:11 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 2935e106-0b12-465f-874c-d87c5c800f82
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 21:57:11 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 21:57:11 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 21:57:11 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 0.904 seconds (process running for 624.681)
+2026-07-04 21:57:11 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 21:59:01 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2026-07-04 21:59:01 [Thread-17] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 21:59:01 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 21:59:01 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 21:59:01 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 21:59:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 21:59:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 51 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 21:59:02 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 21:59:02 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 21:59:02 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 21:59:02 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 790 ms
+2026-07-04 21:59:02 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@47b62ef3], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 21:59:02 [cluster-ClusterId{value='6a4934cef14edd52d09843af', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=19533000, minRoundTripTimeNanos=0}
+2026-07-04 21:59:03 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 45cdc257-3dc1-46d0-9042-337f2ce4410f
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 21:59:03 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 21:59:03 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 21:59:03 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 1.5 seconds (process running for 736.173)
+2026-07-04 21:59:03 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 22:00:34 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-07-04 22:00:34 [Thread-21] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 22:00:34 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 22:00:36 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 22:00:36 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 22:00:37 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 22:00:37 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 138 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 22:00:38 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 22:00:38 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 22:00:38 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 22:00:38 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1601 ms
+2026-07-04 22:00:38 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@68fe1194], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 22:00:38 [cluster-ClusterId{value='6a49352ef14edd52d09843b0', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=17203600, minRoundTripTimeNanos=0}
+2026-07-04 22:00:38 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 7b0db3f9-ba78-4b47-b0da-659a8bc50fa5
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 22:00:38 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 22:00:39 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 22:00:39 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 2.851 seconds (process running for 832.001)
+2026-07-04 22:00:39 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 22:00:40 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-07-04 22:00:40 [Thread-25] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 22:00:40 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 22:00:40 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 22:00:40 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 22:00:41 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 22:00:41 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 45 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 22:00:41 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 22:00:41 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 22:00:41 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 22:00:41 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 464 ms
+2026-07-04 22:00:41 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@2a7fa35a], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 22:00:41 [cluster-ClusterId{value='6a493531f14edd52d09843b1', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=21411200, minRoundTripTimeNanos=0}
+2026-07-04 22:00:41 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 6b1591d0-1d4a-47a3-a6f7-fd1ffd6425f8
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 22:00:41 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 22:00:41 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 22:00:41 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 0.993 seconds (process running for 834.542)
+2026-07-04 22:00:41 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 22:00:55 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 97 class path changes (0 additions, 0 deletions, 97 modifications)
+2026-07-04 22:00:55 [Thread-29] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 22:00:55 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 22:00:56 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.8 with PID 7208 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 22:00:56 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 22:00:56 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 22:00:56 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 46 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 22:00:56 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 22:00:56 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 22:00:56 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 22:00:56 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 463 ms
+2026-07-04 22:00:56 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.8+12-LTS-jvmci-23.1-b72"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@3522a7e7], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@6e72f6a1, com.mongodb.Jep395RecordCodecProvider@50a3e6b4, com.mongodb.KotlinCodecProvider@319b24f1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 22:00:56 [cluster-ClusterId{value='6a493540f14edd52d09843b2', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=8217900, minRoundTripTimeNanos=0}
+2026-07-04 22:00:56 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 2702b194-fefd-4dd5-b03e-7c0f3188f70c
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 22:00:56 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 22:00:57 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 22:00:57 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 1.025 seconds (process running for 849.914)
+2026-07-04 22:00:57 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 22:01:55 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.1 with PID 11660 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 22:01:55 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 22:01:55 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-07-04 22:01:55 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-07-04 22:01:56 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 22:01:56 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 287 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 22:01:58 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 22:01:58 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 22:01:58 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 22:01:58 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2756 ms
+2026-07-04 22:01:58 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.1+12-LTS-29"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@13299625], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@3223c567, com.mongodb.Jep395RecordCodecProvider@79dbd6f7, com.mongodb.KotlinCodecProvider@69bd4b81, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 22:01:58 [cluster-ClusterId{value='6a49357e23ecfa751ce57e1e', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=51665400, minRoundTripTimeNanos=0}
+2026-07-04 22:02:01 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: ab7348dc-dd6e-450e-82a5-d8c58d57650e
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 22:02:01 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 22:02:02 [restartedMain] WARN  o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-07-04 22:02:02 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-07-04 22:02:02 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8030 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8030 or configure this application to listen on another port.
+
+2026-07-04 22:02:36 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.1 with PID 21204 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 22:02:36 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 22:02:37 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-07-04 22:02:37 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-07-04 22:02:38 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 22:02:39 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 466 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 22:02:41 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 22:02:41 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 22:02:41 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 22:02:41 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 4351 ms
+2026-07-04 22:02:41 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.1+12-LTS-29"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@72489d75], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@4e851c44, com.mongodb.Jep395RecordCodecProvider@3f17f05e, com.mongodb.KotlinCodecProvider@6a8ea2c1, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 22:02:41 [cluster-ClusterId{value='6a4935a936f8278bb6634728', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=43451900, minRoundTripTimeNanos=0}
+2026-07-04 22:02:44 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 5782d60b-4f33-403b-bbbf-5867b6239d85
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 22:02:44 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 22:02:45 [restartedMain] WARN  o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-07-04 22:02:45 [restartedMain] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-07-04 22:02:45 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8030 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8030 or configure this application to listen on another port.
+
+2026-07-04 22:03:04 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 22:03:04 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 22:03:57 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.1 with PID 25412 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 22:03:57 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 22:03:57 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-07-04 22:03:57 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-07-04 22:03:59 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 22:03:59 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 250 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 22:04:00 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 22:04:00 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 22:04:00 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 22:04:01 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 3078 ms
+2026-07-04 22:04:01 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.1+12-LTS-29"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@77ebc9f0], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@1b6a2d44, com.mongodb.Jep395RecordCodecProvider@15fbad94, com.mongodb.KotlinCodecProvider@1120196f, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 22:04:01 [cluster-ClusterId{value='6a4935f930f1086233a5a1c0', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=53349000, minRoundTripTimeNanos=0}
+2026-07-04 22:04:03 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: fbab1390-9754-4c3a-91a7-6a46871bca91
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 22:04:03 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 22:04:04 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 22:04:04 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 7.691 seconds (process running for 8.793)
+2026-07-04 22:04:19 [http-nio-8030-exec-3] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-04 22:04:19 [http-nio-8030-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-07-04 22:04:19 [http-nio-8030-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 17 ms
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=a6cdb8fd-a47b-4f3f-9b44-3dbb5de2b959 | API=/api/foods/readAllFoods | Method=GET
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-04 22:04:20
+RequestId : a6cdb8fd-a47b-4f3f-9b44-3dbb5de2b959
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-04 22:04:20 [http-nio-8030-exec-3] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "4z8jCY3TQduG7nUOU5tOQA==", "subType": "04"}}}}
+====================================================
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 293 ms
+====================================================
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00000, Food Name: null, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00006, Food Name: tomato, Description: vegetables orgainic, Price: 60.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00008, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00009, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00010, Food Name: potato, Description: vegetables orgainic aalu, Price: 20.0, Category: null, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00011, Food Name: Tomato Chuteny, Description: Tomato Sauce, Price: 2.0, Category: SMOOTHIE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00012, Food Name: Rice, Description: Organic healthy boiled rice, Price: 30.0, Category: LUNCH, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00014, Food Name: Biryani, Description: , Price: 100.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00016, Food Name: Dosa, Description: South Indian Food Dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png
+2026-07-04 22:04:20 [http-nio-8030-exec-3] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00018, Food Name: French Fries, Description: Potato French Fries, Price: 40.0, Category: SNACK, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-04 22:04:21 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : a6cdb8fd-a47b-4f3f-9b44-3dbb5de2b959
+Status       : 200
+Duration(ms) : 796
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00000",
+    "imageName" : "tomato",
+    "foodName" : null,
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00006",
+    "imageName" : "IMG07_0000017.jpg",
+    "foodName" : "tomato",
+    "description" : "vegetables orgainic",
+    "price" : 60.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00008",
+    "imageName" : "IMG07_0000019.jpg",
+    "foodName" : "potato",
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00009",
+    "imageName" : "IMG07_0000020.jpg",
+    "foodName" : "potato",
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00010",
+    "imageName" : "IMG07_0000021.jpg",
+    "foodName" : "potato",
+    "description" : "vegetables orgainic aalu",
+    "price" : 20.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg",
+    "foodCategory" : null,
+    "dietCategory" : null,
+    "cuisineType" : null,
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00011",
+    "imageName" : "IMG07_0000023.png",
+    "foodName" : "Tomato Chuteny",
+    "description" : "Tomato Sauce",
+    "price" : 2.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png",
+    "foodCategory" : "SMOOTHIE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00012",
+    "imageName" : "IMG07_0000025.png",
+    "foodName" : "Rice",
+    "description" : "Organic healthy boiled rice",
+    "price" : 30.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "LUNCH",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00014",
+    "imageName" : "IMG07_0000027.png",
+    "foodName" : "Biryani",
+    "description" : "",
+    "price" : 100.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00016",
+    "imageName" : "IMG07_0000029.png",
+    "foodName" : "Dosa",
+    "description" : "South Indian Food Dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png",
+    "foodCategory" : "MAIN_COURSE",
+    "dietCategory" : "VEG",
+    "cuisineType" : "INDIAN",
+    "categoryGroup" : null
+  }, {
+    "id" : "FOOD01_00018",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "French Fries",
+    "description" : "Potato French Fries",
+    "price" : 40.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : "SNACK",
+    "dietCategory" : "VEG",
+    "cuisineType" : "AMERICAN",
+    "categoryGroup" : null
+  } ]
+}
+============================================
+
+2026-07-04 22:04:21 [http-nio-8030-exec-3] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=a6cdb8fd-a47b-4f3f-9b44-3dbb5de2b959 | Duration=796 ms
+2026-07-04 22:04:21 [task-1] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-04 22:04:21 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "4z8jCY3TQduG7nUOU5tOQA==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a49360d30f1086233a5a1c1"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00000", "imageName": "tomato", "foodName": null, "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000000.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00006", "imageName": "IMG07_0000017.jpg", "foodName": "tomato", "description": "vegetables orgainic", "price": 60.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000017.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00008", "imageName": "IMG07_0000019.jpg", "foodName": "potato", "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000019.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00009", "imageName": "IMG07_0000020.jpg", "foodName": "potato", "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000020.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00010", "imageName": "IMG07_0000021.jpg", "foodName": "potato", "description": "vegetables orgainic aalu", "price": 20.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000021.jpg", "foodCategory": null, "dietCategory": null, "cuisineType": null, "categoryGroup": null}, {"id": "FOOD01_00011", "imageName": "IMG07_0000023.png", "foodName": "Tomato Chuteny", "description": "Tomato Sauce", "price": 2.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000023.png", "foodCategory": "SMOOTHIE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00012", "imageName": "IMG07_0000025.png", "foodName": "Rice", "description": "Organic healthy boiled rice", "price": 30.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "LUNCH", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00014", "imageName": "IMG07_0000027.png", "foodName": "Biryani", "description": "", "price": 100.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000027.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00016", "imageName": "IMG07_0000029.png", "foodName": "Dosa", "description": "South Indian Food Dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000029.png", "foodCategory": "MAIN_COURSE", "dietCategory": "VEG", "cuisineType": "INDIAN", "categoryGroup": null}, {"id": "FOOD01_00018", "imageName": "food-placeholder.png", "foodName": "French Fries", "description": "Potato French Fries", "price": 40.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": "SNACK", "dietCategory": "VEG", "cuisineType": "AMERICAN", "categoryGroup": null}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 796, "requestId": "a6cdb8fd-a47b-4f3f-9b44-3dbb5de2b959", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-04T16:34:20.217Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-04 22:04:21 [task-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 53 ms
+====================================================
+2026-07-04 22:05:58 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-07-04 22:05:58 [Thread-1] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 22:05:59 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-07-04 22:05:59 [Thread-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : endSessions
+QUERY   : {"endSessions": [{"id": {"$binary": {"base64": "4z8jCY3TQduG7nUOU5tOQA==", "subType": "04"}}}], "$db": "admin", "$readPreference": {"mode": "primaryPreferred"}}
+====================================================
+2026-07-04 22:05:59 [Thread-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : endSessions
+DURATION : 17 ms
+====================================================
+2026-07-04 22:06:00 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Starting FreshmealApplication using Java 21.0.1 with PID 25412 (D:\coding\projects\foodiesapi\freshmeal\target\classes started by Pankaj Kumar in D:\coding\projects\foodiesapi\freshmeal)
+2026-07-04 22:06:00 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - No active profile set, falling back to 1 default profile: "default"
+2026-07-04 22:06:01 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-07-04 22:06:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 446 ms. Found 5 MongoDB repository interfaces.
+2026-07-04 22:06:02 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8030 (http)
+2026-07-04 22:06:02 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-07-04 22:06:02 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.21]
+2026-07-04 22:06:03 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2578 ms
+2026-07-04 22:06:03 [restartedMain] INFO  org.mongodb.driver.client - MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync", "version": "5.6.5"}, "os": {"type": "Windows", "name": "Windows 11", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Oracle Corporation/21.0.1+12-LTS-29"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[com.foodies.freshmeal.common.config.MongoLoggingListener@4a1836b6], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@1b6a2d44, com.mongodb.Jep395RecordCodecProvider@15fbad94, com.mongodb.KotlinCodecProvider@1120196f, EnumCodecProvider{}]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-07-04 22:06:03 [cluster-ClusterId{value='6a49367330f1086233a5a1c2', description='null'}-localhost:27017] INFO  org.mongodb.driver.cluster - Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=27, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=23995000, minRoundTripTimeNanos=0}
+2026-07-04 22:06:03 [restartedMain] WARN  o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: fbc8998e-eaa0-4c9c-b91a-5bb510b6a815
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-07-04 22:06:03 [restartedMain] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-07-04 22:06:04 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8030 (http) with context path '/'
+2026-07-04 22:06:04 [restartedMain] INFO  c.f.freshmeal.FreshmealApplication - Started FreshmealApplication in 4.552 seconds (process running for 128.466)
+2026-07-04 22:06:04 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-07-04 22:06:05 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-07-04 22:06:05 [Thread-5] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-07-04 22:06:05 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete

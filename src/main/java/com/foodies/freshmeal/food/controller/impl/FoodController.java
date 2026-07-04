@@ -86,7 +86,7 @@ public class FoodController implements IFoodController {
     /*
      * ("/readAllFoods")
      */
-    // @AuditApi
+    @AuditApi
     @Override
     @GetMapping(FoodApiConstants.READ_ALL_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
