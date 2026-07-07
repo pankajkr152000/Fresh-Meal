@@ -156,4 +156,14 @@ public final class ApiResponses {
                                 errors,
                                 null);
         }
+
+        public static <T> ResponseEntity<ApiResponse<T>> success(String message) {
+
+            return buildResponse(true, HttpStatus.OK, message, null, null);
+        }
+
+        public static <T> ResponseEntity<ApiResponse<T>> success(String message, T data) {
+
+            return buildResponse(true, HttpStatus.OK, message, null, data);
+        }
 }

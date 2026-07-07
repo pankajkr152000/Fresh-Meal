@@ -8,6 +8,8 @@ import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodResponse;
+import com.foodies.freshmeal.food.dto.FoodStatusRequest;
+import com.foodies.freshmeal.food.dto.FoodStatusResponse;
 import com.foodies.freshmeal.food.entity.FoodEntity;
 
 public interface IFoodService {
@@ -29,5 +31,15 @@ public interface IFoodService {
     IServiceOutput<List<DropdownOption>> getGroupCategories(IServiceInput<Void> input);
 
     IServiceOutput<Map<String, Object>> foodCategoryMetadata(IServiceInput<Void> input);
+
+    /**
+     * Updates the lifecycle status of a food item.
+     *
+     * @param foodId  Food Id
+     * @param request Status update request
+     *
+     * @return Updated status details
+     */
+    IServiceOutput<FoodStatusResponse> updateFoodStatus(IServiceInput<FoodStatusRequest> input);
 
 }

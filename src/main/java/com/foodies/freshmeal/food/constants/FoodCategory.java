@@ -6,6 +6,7 @@ public enum FoodCategory {
     BREAKFAST("Breakfast", CategoryGroup.MAIN_MEAL),
     LUNCH("Lunch", CategoryGroup.MAIN_MEAL),
     DINNER("Dinner", CategoryGroup.MAIN_MEAL),
+    BIRYANI("Biryani", CategoryGroup.MAIN_MEAL),
 
     // Course Types
     STARTER("Starter", CategoryGroup.COURSE_TYPE),

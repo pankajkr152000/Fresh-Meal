@@ -6,7 +6,10 @@ import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +32,28 @@ import com.foodies.freshmeal.food.controller.IFoodController;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodRequest;
 import com.foodies.freshmeal.food.dto.FoodResponse;
+import com.foodies.freshmeal.food.dto.FoodStatusRequest;
+import com.foodies.freshmeal.food.dto.FoodStatusResponse;
+import com.foodies.freshmeal.food.dto.UpdateFoodStatusRequest;
 import com.foodies.freshmeal.food.service.IFoodService;
+
+import jakarta.validation.Valid;
+
+/**
+ * ============================================================================
+ * Food Controller
+ * ============================================================================
+ *
+ * Responsibilities
+ * ----------------
+ * • Receive HTTP requests.
+ * • Validate request payload.
+ * • Delegate business logic to the service layer.
+ * • Return standardized ApiResponse.
+ *
+ * The controller should NEVER contain business logic.
+ * ============================================================================
+ */
 
 @RestController
 @RequestMapping(ApiBaseConstants.FOOD_BASE_URL) // /api/foods
@@ -164,5 +188,40 @@ public class FoodController implements IFoodController {
 
         return ApiResponses.ok("Group categories", output.getOutput());
     }
+   
+
+    /**
+     * =========================================================================
+     * Update Food Status
+     * =========================================================================
+     *
+     * PATCH /api/admin/foods/{foodId}/status
+     *
+     * Example Request
+     *
+     * {
+     *     "status":"OUT_OF_STOCK"
+     * }
+     *
+     * =========================================================================
+     */
+    @AuditApi
+    @PatchMapping("/{foodId}/status")
+    public ResponseEntity<ApiResponse<FoodStatusResponse>> updateFoodStatus(@PathVariable String foodId, 
+    		@Valid @RequestBody UpdateFoodStatusRequest updateRequest) {
+
+        IServiceInput<FoodStatusRequest> input = new ServiceInput<>();
+    	FoodStatusRequest request = new FoodStatusRequest();
+    	request.setFoodId(foodId);
+    	request.setUpdateFoodStatusRequest(updateRequest);
+        
+        input.setInput(request);
+
+        IServiceOutput<FoodStatusResponse> output = foodService.updateFoodStatus(input);
+
+        return ApiResponses.success("Group categories", output.getOutput());
+
+    }
+
 
 }
