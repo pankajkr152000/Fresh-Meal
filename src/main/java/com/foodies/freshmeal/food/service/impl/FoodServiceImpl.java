@@ -69,16 +69,15 @@ public class FoodServiceImpl implements IFoodService {
     /*
      * get the food entity using food id
      */
-    @SuppressWarnings("unchecked")
     @Override
     public IServiceOutput<FoodEntity> loadFood(IServiceInput<FoodIdRequest> request) {
 
         FoodIdRequest foodRequest = request.getInput();
-        IServiceOutput<FoodEntity> output = (IServiceOutput<FoodEntity>) foodRepository
+        FoodEntity output = foodRepository
                 .findById(foodRequest.getFoodId()).orElseThrow(
                         () -> new ResourceNotFoundException("Food not found with id : " + foodRequest.getFoodId()));
 
-        return output;
+        return new ServiceOutput<>(output);
 
     }
 
@@ -247,19 +246,19 @@ public class FoodServiceImpl implements IFoodService {
 
     @Override
     public IServiceOutput<FoodMetadataResponse> foodCategoryMetadata(IServiceInput<Void> input) {
-        
-    	FoodMetadataResponse foodMetadataResponse = FoodMetadataResponse.builder()
-                        .foodCategories(DisplayOptionMapperUtil.toDisplayOptions(FoodCategoryConstant.class))
-                        .dietCategories(DisplayOptionMapperUtil.toDisplayOptions(DietCategoryConstant.class))
-                        .cuisineCategories(DisplayOptionMapperUtil.toDisplayOptions(CuisineTypeConstant.class))
-                        .groupCategories(DisplayOptionMapperUtil.toDisplayOptions(CategoryGroupConstant.class))
-                        .foodStatuses(DisplayOptionMapperUtil.toDisplayOptions(FoodStatusConstant.class))
-                        .build();
-    	
-    	IServiceOutput<FoodMetadataResponse> output = new ServiceOutput<>();
-    	output.setOutput(foodMetadataResponse);
-    	
-    	return output;
+
+        FoodMetadataResponse foodMetadataResponse = FoodMetadataResponse.builder()
+                .foodCategories(DisplayOptionMapperUtil.toDisplayOptions(FoodCategoryConstant.class))
+                .dietCategories(DisplayOptionMapperUtil.toDisplayOptions(DietCategoryConstant.class))
+                .cuisineCategories(DisplayOptionMapperUtil.toDisplayOptions(CuisineTypeConstant.class))
+                .groupCategories(DisplayOptionMapperUtil.toDisplayOptions(CategoryGroupConstant.class))
+                .foodStatuses(DisplayOptionMapperUtil.toDisplayOptions(FoodStatusConstant.class))
+                .build();
+
+        IServiceOutput<FoodMetadataResponse> output = new ServiceOutput<>();
+        output.setOutput(foodMetadataResponse);
+
+        return output;
     }
 
     @Override
@@ -295,7 +294,7 @@ public class FoodServiceImpl implements IFoodService {
         IServiceInput<FoodIdRequest> inputFoodId = new ServiceInput<>();
         FoodIdRequest foodIdRequest = new FoodIdRequest();
         foodIdRequest.setFoodId(request.getFoodId());
-
+        inputFoodId.setInput(foodIdRequest);
         IServiceOutput<FoodEntity> output = loadFood(inputFoodId);
 
         FoodEntity food = output.getOutput();
@@ -303,13 +302,14 @@ public class FoodServiceImpl implements IFoodService {
         FoodStatusConstant currentStatus = food.getStatus();
         FoodStatusConstant requestedStatus = null;
         if (request.getUpdateFoodStatusRequest() != null && request.getUpdateFoodStatusRequest().getStatus() != null) {
-            requestedStatus = FoodStatusConstant.valueOf(request.getUpdateFoodStatusRequest().getStatus().label());
+            requestedStatus = DisplayOptionMapperUtil.fromValue(FoodStatusConstant.class,
+                    request.getUpdateFoodStatusRequest().getStatus().label());
         }
-        FoodResponse foodResponse = buildFoodResponse(food, currentStatus, requestedStatus);
-
         validateStatusTransition(currentStatus, requestedStatus);
 
         applyStatus(food, requestedStatus);
+
+        FoodResponse foodResponse = buildFoodResponse(food, currentStatus, requestedStatus);
 
         foodRepository.save(food);
 
@@ -342,7 +342,7 @@ public class FoodServiceImpl implements IFoodService {
                 .build();
 
         response.setPreviousStatus(
-                currentFoodStatus == null ? food.getStatus().getLabel() : currentFoodStatus.getLabel());
+                previousStatus == null ? food.getStatus().getLabel() : previousStatus.getLabel());
 
         return response;
 
