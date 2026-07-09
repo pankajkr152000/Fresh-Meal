@@ -8,11 +8,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
-import com.foodies.freshmeal.food.constants.CategoryGroup;
-import com.foodies.freshmeal.food.constants.CuisineType;
-import com.foodies.freshmeal.food.constants.DietCategory;
-import com.foodies.freshmeal.food.constants.FoodCategory;
-import com.foodies.freshmeal.food.constants.FoodStatus;
+import com.foodies.freshmeal.food.constants.CategoryGroupConstant;
+import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
+import com.foodies.freshmeal.food.constants.DietCategoryConstant;
+import com.foodies.freshmeal.food.constants.FoodCategoryConstant;
+import com.foodies.freshmeal.food.constants.FoodStatusConstant;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +28,11 @@ public class FoodEntity extends ABaseEntity {
     private String foodName;
     private String description;
     private double price;
-    private FoodCategory foodCategory;
+    private FoodCategoryConstant foodCategory;
     private String imageUrl;
-    private DietCategory dietCategory; // veg or non-veg
-    private CuisineType cuisineType;
-    private CategoryGroup categoryGroup;
+    private DietCategoryConstant dietCategory; // veg or non-veg
+    private CuisineTypeConstant cuisineType;
+    private CategoryGroupConstant categoryGroup;
     /**
      * Current lifecycle status of the food.
      *
@@ -72,7 +72,7 @@ public class FoodEntity extends ABaseEntity {
      */
 
     @Field("status")
-    private FoodStatus status = FoodStatus.AVAILABLE;
+    private FoodStatusConstant status = FoodStatusConstant.AVAILABLE;
 
     /**
      * Timestamp of the most recent status change.

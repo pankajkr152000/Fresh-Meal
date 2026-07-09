@@ -2,6 +2,10 @@ package com.foodies.freshmeal.food.constants;
 
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.foodies.freshmeal.common.contract.IDisplayOption;
+import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 
 /**
  * ============================================================================
@@ -64,26 +68,44 @@ import java.util.Set;
  * ============================================================================
  */
 
-public enum FoodStatus {
+public enum FoodStatusConstant implements IDisplayOption {
 
-    AVAILABLE,
+    AVAILABLE("Available"),
 
-    OUT_OF_STOCK,
+    OUT_OF_STOCK("Out of Stock"),
 
-    DISABLED,
+    DISABLED("Disabled"),
 
-    COMING_SOON,
+    COMING_SOON("Coming Soon"),
 
-    SEASONAL,
+    SEASONAL("Seasonal"),
 
-    DISCONTINUED,
+    DISCONTINUED("Discontinued"),
 
-    Deprecated;
+    Deprecated("Deprecated");
+
+    /**
+     * User-friendly display name of the food status.
+     * <p>
+     * This value is intended for API responses and UI rendering,
+     * avoiding the need for clients to format enum names.
+     * </p>
+     */
+    private final String displayName;
+
+    /**
+     * Creates a food status with its corresponding display name.
+     *
+     * @param displayName human-readable status name
+     */
+    FoodStatusConstant(String displayName) {
+        this.displayName = displayName;
+    }
 
     /**
      * Returns all valid next statuses for the current status.
      */
-    public Set<FoodStatus> getAllowedTransitions() {
+    public Set<FoodStatusConstant> getAllowedTransitions() {
 
         return switch (this) {
 
@@ -108,7 +130,7 @@ public enum FoodStatus {
             case DISCONTINUED -> EnumSet.of(
                     COMING_SOON);
 
-            case Deprecated -> EnumSet.noneOf(FoodStatus.class);
+            case Deprecated -> EnumSet.noneOf(FoodStatusConstant.class);
 
         };
 
@@ -117,10 +139,56 @@ public enum FoodStatus {
     /**
      * Returns true if transition is allowed.
      */
-    public boolean canTransitionTo(FoodStatus newStatus) {
+    public boolean canTransitionTo(FoodStatusConstant newStatus) {
 
         return getAllowedTransitions().contains(newStatus);
 
+    }
+
+    /**
+     * Returns all valid next statuses for the current status.
+     *
+     * <p>
+     * The returned values are user-friendly display names intended
+     * for API responses and frontend rendering.
+     * </p>
+     *
+     * @return immutable set of allowed transition display names
+     */
+    public Set<String> getAllowedTransitionsString() {
+
+        return getAllowedTransitions()
+                .stream()
+                .map(status -> status.getLabel())
+                .collect(Collectors.toUnmodifiableSet());
+
+    }
+
+    public Set<DisplayOptionResponse> getAllowedTransitionOptions() {
+
+        return getAllowedTransitions()
+                .stream()
+                .map(status -> new DisplayOptionResponse(
+                        status.getLabel(),
+                        status.name()))
+                .collect(Collectors.toUnmodifiableSet());
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getLabel() {
+        return displayName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getValue() {
+        return name();
     }
 
 }

@@ -2,7 +2,7 @@ package com.foodies.freshmeal.food.dto;
 
 import java.util.List;
 
-import com.foodies.freshmeal.food.constants.FoodStatus;
+import com.foodies.freshmeal.food.constants.FoodStatusConstant;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +35,6 @@ public class BulkUpdateFoodStatusRequest {
     private List<String> foodIds;
 
     @NotNull(message = "Food status is required.")
-    private FoodStatus status;
+    private FoodStatusConstant status;
 
 }

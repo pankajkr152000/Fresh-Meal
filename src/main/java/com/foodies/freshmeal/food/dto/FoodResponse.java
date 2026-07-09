@@ -2,9 +2,10 @@ package com.foodies.freshmeal.food.dto;
 
 import java.util.Set;
 
-import com.foodies.freshmeal.food.constants.FoodStatus;
+import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class FoodResponse {
     private String id;
     private String imageName;
@@ -28,6 +30,9 @@ public class FoodResponse {
     private String categoryGroup;
     private String foodStatus;
     private boolean isAvailable;
-    private Set<FoodStatus> allowedStatuses;
+    private Set<DisplayOptionResponse> allowedStatuses;
+    private String previousStatus;
+    private String updatedAt;
+    private String updatedBy;
 
 }
