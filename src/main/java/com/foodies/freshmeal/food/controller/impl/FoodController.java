@@ -207,7 +207,7 @@ public class FoodController implements IFoodController {
     /*
      * ("/{foodId}/status")
      */
-    // @AuditApi
+    @AuditApi
     @PatchMapping(FoodApiConstants.UPDATE_FOOD_STATUS)
     public ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(@PathVariable String foodId,
             @Valid @RequestBody UpdateFoodStatusRequest updateRequest) {

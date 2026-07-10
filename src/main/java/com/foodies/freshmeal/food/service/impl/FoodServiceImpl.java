@@ -274,13 +274,13 @@ public class FoodServiceImpl implements IFoodService {
          * convert to foodresponse
          */
 
-        FoodStatusConstant currentFoodStatus = null;
-        if (foodRequest.getUpdateFoodStatusRequest() != null
-                && foodRequest.getUpdateFoodStatusRequest().getStatus() != null) {
-            currentFoodStatus = FoodStatusConstant
-                    .valueOf(foodRequest.getUpdateFoodStatusRequest().getStatus().label());
-        }
-        FoodResponse foodResponse = buildFoodResponse(foodEntity, foodEntity.getStatus(), currentFoodStatus);
+        // FoodStatusConstant currentFoodStatus = null;
+        // if (foodRequest.getUpdateFoodStatusRequest() != null
+        // && foodRequest.getUpdateFoodStatusRequest().getStatus() != null) {
+        // currentFoodStatus = FoodStatusConstant
+        // .valueOf(foodRequest.getUpdateFoodStatusRequest().getStatus().label());
+        // }
+        FoodResponse foodResponse = buildFoodResponse(foodEntity, foodEntity.getStatus());
 
         IServiceOutput<FoodResponse> output = new ServiceOutput<>();
         output.setOutput(foodResponse);
@@ -301,15 +301,22 @@ public class FoodServiceImpl implements IFoodService {
 
         FoodStatusConstant currentStatus = food.getStatus();
         FoodStatusConstant requestedStatus = null;
-        if (request.getUpdateFoodStatusRequest() != null && request.getUpdateFoodStatusRequest().getStatus() != null) {
-            requestedStatus = DisplayOptionMapperUtil.fromValue(FoodStatusConstant.class,
-                    request.getUpdateFoodStatusRequest().getStatus().label());
+        if (request.getUpdateFoodStatusRequest() != null
+                && request.getUpdateFoodStatusRequest().getStatus() != null
+                && (request.getUpdateFoodStatusRequest().getStatus().value() != null
+                        || request.getUpdateFoodStatusRequest().getStatus().label() != null)) {
+
+            String requestedFoodStatus = request.getUpdateFoodStatusRequest().getStatus().value() != null
+                    ? request.getUpdateFoodStatusRequest().getStatus().value()
+                    : request.getUpdateFoodStatusRequest().getStatus().label();
+
+            requestedStatus = DisplayOptionMapperUtil.fromValue(FoodStatusConstant.class, requestedFoodStatus);
         }
         validateStatusTransition(currentStatus, requestedStatus);
 
         applyStatus(food, requestedStatus);
 
-        FoodResponse foodResponse = buildFoodResponse(food, currentStatus, requestedStatus);
+        FoodResponse foodResponse = buildFoodResponse(food, currentStatus);
 
         foodRepository.save(food);
 
@@ -320,8 +327,7 @@ public class FoodServiceImpl implements IFoodService {
         return foodResponseOutput;
     }
 
-    private FoodResponse buildFoodResponse(FoodEntity food, FoodStatusConstant previousStatus,
-            FoodStatusConstant currentFoodStatus) {
+    private FoodResponse buildFoodResponse(FoodEntity food, FoodStatusConstant previousStatus) {
 
         FoodResponse response = FoodResponse.builder()
                 .id(food.getId())
