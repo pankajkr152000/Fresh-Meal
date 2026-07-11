@@ -3680,3 +3680,509 @@ MONGO COMMAND SUCCESS
 COMMAND  : insert
 DURATION : 28 ms
 ====================================================
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=d7d085e2-1f2f-45b1-9885-70b75f5b592f | API=/api/foods/readAllFoods | Method=GET
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:24:57
+RequestId : d7d085e2-1f2f-45b1-9885-70b75f5b592f
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-12 01:24:57 [http-nio-8030-exec-1] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 7 ms
+====================================================
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00023, Food Name: Biryani, Description: Chicken Biryani with Aalu Kolkata famous, Price: 500.0, Category: BIRYANI, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00024, Food Name: Dosa, Description: South Indian masala Dosa , butter cheese masla dosa, plain  dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : d7d085e2-1f2f-45b1-9885-70b75f5b592f
+Status       : 200
+Duration(ms) : 51
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00023",
+    "imageName" : "IMG07_0000032.jpg",
+    "foodName" : "Biryani",
+    "description" : "Chicken Biryani with Aalu Kolkata famous",
+    "price" : 500.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg",
+    "foodCategory" : {
+      "label" : "Biryani",
+      "value" : "BIRYANI"
+    },
+    "dietCategory" : {
+      "label" : "Non Veg",
+      "value" : "NON_VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Main Meal",
+      "value" : "MAIN_MEAL"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  }, {
+    "id" : "FOOD01_00024",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "Dosa",
+    "description" : "South Indian masala Dosa , butter cheese masla dosa, plain  dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : {
+      "label" : "Main Course",
+      "value" : "MAIN_COURSE"
+    },
+    "dietCategory" : {
+      "label" : "Veg",
+      "value" : "VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Course Type",
+      "value" : "COURSE_TYPE"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  } ]
+}
+============================================
+
+2026-07-12 01:24:57 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=d7d085e2-1f2f-45b1-9885-70b75f5b592f | Duration=51 ms
+2026-07-12 01:24:57 [task-29] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:24:57 [task-29] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a529f9184cbb26717a9f8fd"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "foodCategory": {"label": "Biryani", "value": "BIRYANI"}, "dietCategory": {"label": "Non Veg", "value": "NON_VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Main Meal", "value": "MAIN_MEAL"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}, {"id": "FOOD01_00024", "imageName": "food-placeholder.png", "foodName": "Dosa", "description": "South Indian masala Dosa , butter cheese masla dosa, plain  dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": {"label": "Main Course", "value": "MAIN_COURSE"}, "dietCategory": {"label": "Veg", "value": "VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Course Type", "value": "COURSE_TYPE"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 51, "requestId": "d7d085e2-1f2f-45b1-9885-70b75f5b592f", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T19:54:57.848Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:24:57 [task-29] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 11 ms
+====================================================
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=1e480c70-01f1-45a5-9bea-52ff8d85fb76 | API=/api/foods/readAllFoods | Method=GET
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:26:15
+RequestId : 1e480c70-01f1-45a5-9bea-52ff8d85fb76
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-12 01:26:15 [http-nio-8030-exec-2] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 3 ms
+====================================================
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00023, Food Name: Biryani, Description: Chicken Biryani with Aalu Kolkata famous, Price: 500.0, Category: BIRYANI, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00024, Food Name: Dosa, Description: South Indian masala Dosa , butter cheese masla dosa, plain  dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 1e480c70-01f1-45a5-9bea-52ff8d85fb76
+Status       : 200
+Duration(ms) : 17
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00023",
+    "imageName" : "IMG07_0000032.jpg",
+    "foodName" : "Biryani",
+    "description" : "Chicken Biryani with Aalu Kolkata famous",
+    "price" : 500.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg",
+    "foodCategory" : {
+      "label" : "Biryani",
+      "value" : "BIRYANI"
+    },
+    "dietCategory" : {
+      "label" : "Non Veg",
+      "value" : "NON_VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Main Meal",
+      "value" : "MAIN_MEAL"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  }, {
+    "id" : "FOOD01_00024",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "Dosa",
+    "description" : "South Indian masala Dosa , butter cheese masla dosa, plain  dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : {
+      "label" : "Main Course",
+      "value" : "MAIN_COURSE"
+    },
+    "dietCategory" : {
+      "label" : "Veg",
+      "value" : "VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Course Type",
+      "value" : "COURSE_TYPE"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  } ]
+}
+============================================
+
+2026-07-12 01:26:15 [http-nio-8030-exec-2] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=1e480c70-01f1-45a5-9bea-52ff8d85fb76 | Duration=17 ms
+2026-07-12 01:26:15 [task-30] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:26:15 [task-30] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a529fdf84cbb26717a9f8fe"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "foodCategory": {"label": "Biryani", "value": "BIRYANI"}, "dietCategory": {"label": "Non Veg", "value": "NON_VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Main Meal", "value": "MAIN_MEAL"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}, {"id": "FOOD01_00024", "imageName": "food-placeholder.png", "foodName": "Dosa", "description": "South Indian masala Dosa , butter cheese masla dosa, plain  dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": {"label": "Main Course", "value": "MAIN_COURSE"}, "dietCategory": {"label": "Veg", "value": "VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Course Type", "value": "COURSE_TYPE"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 17, "requestId": "1e480c70-01f1-45a5-9bea-52ff8d85fb76", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T19:56:15.623Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:26:15 [task-30] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 5 ms
+====================================================
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=efaf809b-a292-4af6-9208-a46af26f9de0 | API=/api/foods/FOOD01_00023/status | Method=PATCH
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:26:24
+RequestId : efaf809b-a292-4af6-9208-a46af26f9de0
+Method    : PATCH
+URL       : /api/foods/FOOD01_00023/status
+Payload   :
+{
+  "foodRequest" : "FOOD01_00023",
+  "UpdateFoodStatusRequest" : {
+    "status" : {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }
+  }
+}
+==========================================
+
+2026-07-12 01:26:24 [http-nio-8030-exec-9] DEBUG o.s.data.mongodb.core.MongoTemplate - findOne using query: { "id" : "FOOD01_00023"} fields: Document{{}} for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {"_id": "FOOD01_00023"}, "limit": 1, "singleBatch": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 10 ms
+====================================================
+2026-07-12 01:26:24 [http-nio-8030-exec-9] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, foodName, description, price, foodCategory, imageUrl, dietCategory, cuisineType, categoryGroup, status, statusUpdatedAt, statusUpdatedBy, food_availability, updatedAt, updatedBy, deletedFlag, _class]
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00023"}, "u": {"_id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "foodCategory": "BIRYANI", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "dietCategory": "NON_VEG", "cuisineType": "INDIAN", "categoryGroup": "MAIN_MEAL", "status": "DISABLED", "statusUpdatedAt": {"$date": "2026-07-11T19:56:24.1Z"}, "statusUpdatedBy": "ADMIN", "food_availability": true, "updatedAt": {"$date": "2026-07-11T19:56:24.1Z"}, "updatedBy": "ADMIN", "deletedFlag": false, "_class": "com.foodies.freshmeal.food.entity.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 15 ms
+====================================================
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : efaf809b-a292-4af6-9208-a46af26f9de0
+Status       : 200
+Duration(ms) : 50
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Food status updated successfully.",
+  "errors" : null,
+  "data" : {
+    "id" : "FOOD01_00023",
+    "imageName" : "IMG07_0000032.jpg",
+    "foodName" : "Biryani",
+    "description" : "Chicken Biryani with Aalu Kolkata famous",
+    "price" : 500.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg",
+    "foodCategory" : {
+      "label" : "Biryani",
+      "value" : "BIRYANI"
+    },
+    "dietCategory" : {
+      "label" : "Non Veg",
+      "value" : "NON_VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Main Meal",
+      "value" : "MAIN_MEAL"
+    },
+    "foodStatus" : {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    } ],
+    "previousStatus" : "Available",
+    "updatedAt" : "2026-07-12T01:26:24.100307500",
+    "updatedBy" : "ADMIN",
+    "available" : false
+  }
+}
+============================================
+
+2026-07-12 01:26:24 [http-nio-8030-exec-9] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=efaf809b-a292-4af6-9208-a46af26f9de0 | Duration=50 ms
+2026-07-12 01:26:24 [task-31] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:26:24 [task-31] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a529fe884cbb26717a9f8ff"}, "api": "/api/foods/FOOD01_00023/status", "method": "PATCH", "requestBody": {"foodRequest": "FOOD01_00023", "UpdateFoodStatusRequest": {"status": {"label": "Disabled", "value": "DISABLED"}}}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Food status updated successfully.", "errors": null, "data": {"id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "foodCategory": {"label": "Biryani", "value": "BIRYANI"}, "dietCategory": {"label": "Non Veg", "value": "NON_VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Main Meal", "value": "MAIN_MEAL"}, "foodStatus": {"label": "Disabled", "value": "DISABLED"}, "allowedStatuses": [{"label": "Available", "value": "AVAILABLE"}], "previousStatus": "Available", "updatedAt": "2026-07-12T01:26:24.100307500", "updatedBy": "ADMIN", "available": false}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 50, "requestId": "efaf809b-a292-4af6-9208-a46af26f9de0", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T19:56:24.077Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:26:24 [task-31] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 8 ms
+====================================================
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=e01d5dfb-7fa8-476c-b75b-4fedcd8d9939 | API=/api/foods/FOOD01_00023/status | Method=PATCH
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:26:35
+RequestId : e01d5dfb-7fa8-476c-b75b-4fedcd8d9939
+Method    : PATCH
+URL       : /api/foods/FOOD01_00023/status
+Payload   :
+{
+  "foodRequest" : "FOOD01_00023",
+  "UpdateFoodStatusRequest" : {
+    "status" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    }
+  }
+}
+==========================================
+
+2026-07-12 01:26:35 [http-nio-8030-exec-8] DEBUG o.s.data.mongodb.core.MongoTemplate - findOne using query: { "id" : "FOOD01_00023"} fields: Document{{}} for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {"_id": "FOOD01_00023"}, "limit": 1, "singleBatch": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 9 ms
+====================================================
+2026-07-12 01:26:35 [http-nio-8030-exec-8] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, foodName, description, price, foodCategory, imageUrl, dietCategory, cuisineType, categoryGroup, status, statusUpdatedAt, statusUpdatedBy, food_availability, updatedAt, updatedBy, deletedFlag, _class]
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00023"}, "u": {"_id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "foodCategory": "BIRYANI", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "dietCategory": "NON_VEG", "cuisineType": "INDIAN", "categoryGroup": "MAIN_MEAL", "status": "AVAILABLE", "statusUpdatedAt": {"$date": "2026-07-11T19:56:35.315Z"}, "statusUpdatedBy": "ADMIN", "food_availability": true, "updatedAt": {"$date": "2026-07-11T19:56:35.315Z"}, "updatedBy": "ADMIN", "deletedFlag": false, "_class": "com.foodies.freshmeal.food.entity.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 4 ms
+====================================================
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : e01d5dfb-7fa8-476c-b75b-4fedcd8d9939
+Status       : 200
+Duration(ms) : 48
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Food status updated successfully.",
+  "errors" : null,
+  "data" : {
+    "id" : "FOOD01_00023",
+    "imageName" : "IMG07_0000032.jpg",
+    "foodName" : "Biryani",
+    "description" : "Chicken Biryani with Aalu Kolkata famous",
+    "price" : 500.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg",
+    "foodCategory" : {
+      "label" : "Biryani",
+      "value" : "BIRYANI"
+    },
+    "dietCategory" : {
+      "label" : "Non Veg",
+      "value" : "NON_VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Main Meal",
+      "value" : "MAIN_MEAL"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : "Disabled",
+    "updatedAt" : "2026-07-12T01:26:35.315764700",
+    "updatedBy" : "ADMIN",
+    "available" : true
+  }
+}
+============================================
+
+2026-07-12 01:26:35 [http-nio-8030-exec-8] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=e01d5dfb-7fa8-476c-b75b-4fedcd8d9939 | Duration=48 ms
+2026-07-12 01:26:35 [task-32] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:26:35 [task-32] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a529ff384cbb26717a9f900"}, "api": "/api/foods/FOOD01_00023/status", "method": "PATCH", "requestBody": {"foodRequest": "FOOD01_00023", "UpdateFoodStatusRequest": {"status": {"label": "Available", "value": "AVAILABLE"}}}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Food status updated successfully.", "errors": null, "data": {"id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "foodCategory": {"label": "Biryani", "value": "BIRYANI"}, "dietCategory": {"label": "Non Veg", "value": "NON_VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Main Meal", "value": "MAIN_MEAL"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": "Disabled", "updatedAt": "2026-07-12T01:26:35.315764700", "updatedBy": "ADMIN", "available": true}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 48, "requestId": "e01d5dfb-7fa8-476c-b75b-4fedcd8d9939", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T19:56:35.282Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:26:35 [task-32] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 2 ms
+====================================================
