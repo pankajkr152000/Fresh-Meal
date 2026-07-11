@@ -113,5 +113,15 @@ public final class DisplayOptionMapperUtil {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No enum constant found for value: " + value));
     }
+    
+   /*
+    * Converts enum to value & label, value->backend, label->UI
+    */
+    public static DisplayOptionResponse from(IDisplayOption option) {
+        return new DisplayOptionResponse(
+                option.getLabel(),
+                option.getValue());
+    }
+    
 
 }

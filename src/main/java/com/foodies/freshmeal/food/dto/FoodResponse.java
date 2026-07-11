@@ -24,11 +24,17 @@ public class FoodResponse {
     private String description;
     private double price;
     private String imageUrl;
-    private String foodCategory;
-    private String dietCategory; // veg or non-veg
-    private String cuisineType;
-    private String categoryGroup;
-    private String foodStatus;
+    
+    private DisplayOptionResponse foodCategory;
+    
+    private DisplayOptionResponse dietCategory;
+
+    private DisplayOptionResponse cuisineType;
+
+    private DisplayOptionResponse categoryGroup;
+
+    private DisplayOptionResponse foodStatus;
+    
     private boolean isAvailable;
     private Set<DisplayOptionResponse> allowedStatuses;
     private String previousStatus;

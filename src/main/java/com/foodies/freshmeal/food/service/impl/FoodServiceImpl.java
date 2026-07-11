@@ -118,12 +118,12 @@ public class FoodServiceImpl implements IFoodService {
         foodResponse.setFoodName(foodEntity.getFoodName());
         foodResponse.setDescription(foodEntity.getDescription());
         foodResponse.setPrice(foodEntity.getPrice());
-        foodResponse.setFoodCategory(foodEntity.getFoodCategory().getLabel());
+        foodResponse.setFoodCategory(DisplayOptionMapperUtil.from(foodEntity.getFoodCategory()));
         foodResponse.setImageUrl(foodEntity.getImageUrl());
-        foodResponse.setDietCategory(foodEntity.getDietCategory().getLabel());
-        foodResponse.setCuisineType(foodEntity.getCuisineType().getLabel());
-        foodResponse.setCategoryGroup(foodEntity.getCategoryGroup().getLabel());
-        foodResponse.setFoodStatus(foodEntity.getStatus().name());
+        foodResponse.setDietCategory(DisplayOptionMapperUtil.from(foodEntity.getDietCategory()));
+        foodResponse.setCuisineType(DisplayOptionMapperUtil.from(foodEntity.getCuisineType()));
+        foodResponse.setCategoryGroup(DisplayOptionMapperUtil.from(foodEntity.getCategoryGroup()));
+        foodResponse.setFoodStatus(DisplayOptionMapperUtil.from(foodEntity.getStatus()));
         foodResponse.setAvailable(foodEntity.isAvailable());
         foodResponse.setAllowedStatuses(foodEntity.getStatus().getAllowedTransitionOptions());
         return foodResponse;
@@ -170,7 +170,7 @@ public class FoodServiceImpl implements IFoodService {
         foodEntity.setDietCategory(foodRequest.getDietCategory());
         foodEntity.setCuisineType(foodRequest.getCuisineType());
         foodEntity.setCategoryGroup(foodRequest.getFoodCategory().getGroup());
-
+        foodEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
         /*
          * Save the food entity to the database
          */
@@ -298,7 +298,9 @@ public class FoodServiceImpl implements IFoodService {
         IServiceOutput<FoodEntity> output = loadFood(inputFoodId);
 
         FoodEntity food = output.getOutput();
-
+        food.setUpdatedBy("ADMIN");
+        food.setUpdatedAt(AppCalendar.getSystemLocalDateTime());
+        
         FoodStatusConstant currentStatus = food.getStatus();
         FoodStatusConstant requestedStatus = null;
         if (request.getUpdateFoodStatusRequest() != null
@@ -336,11 +338,11 @@ public class FoodServiceImpl implements IFoodService {
                 .description(food.getDescription())
                 .price(food.getPrice())
                 .imageUrl(food.getImageUrl())
-                .foodCategory(food.getFoodCategory().getLabel())
-                .dietCategory(food.getDietCategory().getLabel())
-                .cuisineType(food.getCuisineType().getLabel())
-                .categoryGroup(food.getCategoryGroup().getLabel())
-                .foodStatus(food.getStatus().getLabel())
+                .foodCategory(DisplayOptionMapperUtil.from(food.getFoodCategory()))
+                .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
+                .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
+                .categoryGroup(DisplayOptionMapperUtil.from(food.getCategoryGroup()))
+                .foodStatus(DisplayOptionMapperUtil.from(food.getStatus()))
                 .isAvailable(food.getStatus() == FoodStatusConstant.AVAILABLE)
                 .allowedStatuses(food.getStatus().getAllowedTransitionOptions())
                 .updatedAt(food.getStatusUpdatedAt().toString())
