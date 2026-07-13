@@ -4186,3 +4186,650 @@ MONGO COMMAND SUCCESS
 COMMAND  : insert
 DURATION : 2 ms
 ====================================================
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=bf3456a4-975f-4fcd-ab7d-1b5174745bca | API=/api/foods/add | Method=POST
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:32:47
+RequestId : bf3456a4-975f-4fcd-ab7d-1b5174745bca
+Method    : POST
+URL       : /api/foods/add
+Payload   :
+{
+  "foodRequest" : {
+    "foodName" : "Baby Corn",
+    "description" : "",
+    "price" : "320",
+    "foodCategory" : "STARTER",
+    "dietCategory" : "VEG",
+    "cuisineType" : "ITALIAN"
+  }
+}
+==========================================
+
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generating next sequence for [food_sequence]
+2026-07-12 01:32:47 [http-nio-8030-exec-1] DEBUG o.s.data.mongodb.core.MongoTemplate - findAndModify using query: { "_id" : "food_sequence"} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence and update: { "$inc" : { "seq" : 1}} in collection: fm_database_sequences
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : findAndModify
+QUERY   : {"findAndModify": "fm_database_sequences", "query": {"_id": "food_sequence"}, "fields": {}, "new": true, "upsert": true, "update": {"$inc": {"seq": 1}}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : findAndModify
+DURATION : 57 ms
+====================================================
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.c.s.s.i.DatabaseSequenceServiceImpl - Generated sequence [food_sequence] value [25]
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.i.s.impl.ImageServiceImpl - Generated food ID: FOD01_25
+2026-07-12 01:32:47 [http-nio-8030-exec-1] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, foodName, description, price, foodCategory, imageUrl, dietCategory, cuisineType, categoryGroup, status, food_availability, createdAt, deletedFlag, _class]
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00025"}, "u": {"_id": "FOOD01_00025", "imageName": "food-placeholder.png", "foodName": "Baby Corn", "description": "", "price": 320.0, "foodCategory": "STARTER", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "dietCategory": "VEG", "cuisineType": "ITALIAN", "categoryGroup": "COURSE_TYPE", "status": "AVAILABLE", "food_availability": true, "createdAt": {"$date": "2026-07-11T20:02:47.919Z"}, "deletedFlag": false, "_class": "com.foodies.freshmeal.food.entity.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 3 ms
+====================================================
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : bf3456a4-975f-4fcd-ab7d-1b5174745bca
+Status       : 201
+Duration(ms) : 337
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 201,
+  "httpStatusMessage" : "CREATED",
+  "message" : "Food created successfully",
+  "errors" : null,
+  "data" : {
+    "id" : "FOOD01_00025",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "Baby Corn",
+    "description" : "",
+    "price" : 320.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : {
+      "label" : "Starter",
+      "value" : "STARTER"
+    },
+    "dietCategory" : {
+      "label" : "Veg",
+      "value" : "VEG"
+    },
+    "cuisineType" : {
+      "label" : "Italian",
+      "value" : "ITALIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Course Type",
+      "value" : "COURSE_TYPE"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  }
+}
+============================================
+
+2026-07-12 01:32:47 [http-nio-8030-exec-1] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=bf3456a4-975f-4fcd-ab7d-1b5174745bca | Duration=337 ms
+2026-07-12 01:32:47 [task-33] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:32:47 [task-33] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a52a16784cbb26717a9f901"}, "api": "/api/foods/add", "method": "POST", "requestBody": {"foodRequest": {"foodName": "Baby Corn", "description": "", "price": "320", "foodCategory": "STARTER", "dietCategory": "VEG", "cuisineType": "ITALIAN"}}, "responseBody": {"success": true, "httpStatusCode": 201, "httpStatusMessage": "CREATED", "message": "Food created successfully", "errors": null, "data": {"id": "FOOD01_00025", "imageName": "food-placeholder.png", "foodName": "Baby Corn", "description": "", "price": 320.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": {"label": "Starter", "value": "STARTER"}, "dietCategory": {"label": "Veg", "value": "VEG"}, "cuisineType": {"label": "Italian", "value": "ITALIAN"}, "categoryGroup": {"label": "Course Type", "value": "COURSE_TYPE"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}}, "responseStatus": 201, "responseMessage": "CREATED", "executionTimeMs": 337, "requestId": "bf3456a4-975f-4fcd-ab7d-1b5174745bca", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T20:02:47.594Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:32:47 [task-33] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 11 ms
+====================================================
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=fa9a8db4-f138-4b0b-a2d0-5341d55b4d62 | API=/api/foods/readAllFoods | Method=GET
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:32:53
+RequestId : fa9a8db4-f138-4b0b-a2d0-5341d55b4d62
+Method    : GET
+URL       : /api/foods/readAllFoods
+Payload   :
+{ }
+==========================================
+
+2026-07-12 01:32:53 [http-nio-8030-exec-6] DEBUG o.s.data.mongodb.core.MongoTemplate - find using query: {} fields: Document{{}} sort: null for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {}, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 2 ms
+====================================================
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00023, Food Name: Biryani, Description: Chicken Biryani with Aalu Kolkata famous, Price: 500.0, Category: BIRYANI, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00024, Food Name: Dosa, Description: South Indian masala Dosa , butter cheese masla dosa, plain  dosa, Price: 120.0, Category: MAIN_COURSE, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.i.s.impl.ImageServiceImpl - Food ID: FOOD01_00025, Food Name: Baby Corn, Description: , Price: 320.0, Category: STARTER, Image URL: https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : fa9a8db4-f138-4b0b-a2d0-5341d55b4d62
+Status       : 200
+Duration(ms) : 34
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Foods retrieved successfully",
+  "errors" : null,
+  "data" : [ {
+    "id" : "FOOD01_00023",
+    "imageName" : "IMG07_0000032.jpg",
+    "foodName" : "Biryani",
+    "description" : "Chicken Biryani with Aalu Kolkata famous",
+    "price" : 500.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg",
+    "foodCategory" : {
+      "label" : "Biryani",
+      "value" : "BIRYANI"
+    },
+    "dietCategory" : {
+      "label" : "Non Veg",
+      "value" : "NON_VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Main Meal",
+      "value" : "MAIN_MEAL"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  }, {
+    "id" : "FOOD01_00024",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "Dosa",
+    "description" : "South Indian masala Dosa , butter cheese masla dosa, plain  dosa",
+    "price" : 120.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : {
+      "label" : "Main Course",
+      "value" : "MAIN_COURSE"
+    },
+    "dietCategory" : {
+      "label" : "Veg",
+      "value" : "VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Course Type",
+      "value" : "COURSE_TYPE"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  }, {
+    "id" : "FOOD01_00025",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "Baby Corn",
+    "description" : "",
+    "price" : 320.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : {
+      "label" : "Starter",
+      "value" : "STARTER"
+    },
+    "dietCategory" : {
+      "label" : "Veg",
+      "value" : "VEG"
+    },
+    "cuisineType" : {
+      "label" : "Italian",
+      "value" : "ITALIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Course Type",
+      "value" : "COURSE_TYPE"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : null,
+    "updatedAt" : null,
+    "updatedBy" : null,
+    "available" : true
+  } ]
+}
+============================================
+
+2026-07-12 01:32:53 [http-nio-8030-exec-6] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=fa9a8db4-f138-4b0b-a2d0-5341d55b4d62 | Duration=34 ms
+2026-07-12 01:32:53 [task-34] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:32:53 [task-34] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a52a16d84cbb26717a9f902"}, "api": "/api/foods/readAllFoods", "method": "GET", "requestBody": {}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Foods retrieved successfully", "errors": null, "data": [{"id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "foodCategory": {"label": "Biryani", "value": "BIRYANI"}, "dietCategory": {"label": "Non Veg", "value": "NON_VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Main Meal", "value": "MAIN_MEAL"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}, {"id": "FOOD01_00024", "imageName": "food-placeholder.png", "foodName": "Dosa", "description": "South Indian masala Dosa , butter cheese masla dosa, plain  dosa", "price": 120.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": {"label": "Main Course", "value": "MAIN_COURSE"}, "dietCategory": {"label": "Veg", "value": "VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Course Type", "value": "COURSE_TYPE"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}, {"id": "FOOD01_00025", "imageName": "food-placeholder.png", "foodName": "Baby Corn", "description": "", "price": 320.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": {"label": "Starter", "value": "STARTER"}, "dietCategory": {"label": "Veg", "value": "VEG"}, "cuisineType": {"label": "Italian", "value": "ITALIAN"}, "categoryGroup": {"label": "Course Type", "value": "COURSE_TYPE"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": null, "updatedAt": null, "updatedBy": null, "available": true}]}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 34, "requestId": "fa9a8db4-f138-4b0b-a2d0-5341d55b4d62", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T20:02:53.59Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:32:53 [task-34] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 3 ms
+====================================================
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=ee39ba54-4e8c-4de8-a78a-31d36afe6fd9 | API=/api/foods/FOOD01_00025/status | Method=PATCH
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:33:36
+RequestId : ee39ba54-4e8c-4de8-a78a-31d36afe6fd9
+Method    : PATCH
+URL       : /api/foods/FOOD01_00025/status
+Payload   :
+{
+  "foodRequest" : "FOOD01_00025",
+  "UpdateFoodStatusRequest" : {
+    "status" : {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    }
+  }
+}
+==========================================
+
+2026-07-12 01:33:36 [http-nio-8030-exec-4] DEBUG o.s.data.mongodb.core.MongoTemplate - findOne using query: { "id" : "FOOD01_00025"} fields: Document{{}} for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {"_id": "FOOD01_00025"}, "limit": 1, "singleBatch": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 8 ms
+====================================================
+2026-07-12 01:33:36 [http-nio-8030-exec-4] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, foodName, description, price, foodCategory, imageUrl, dietCategory, cuisineType, categoryGroup, status, statusUpdatedAt, statusUpdatedBy, food_availability, createdAt, updatedAt, updatedBy, deletedFlag, _class]
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00025"}, "u": {"_id": "FOOD01_00025", "imageName": "food-placeholder.png", "foodName": "Baby Corn", "description": "", "price": 320.0, "foodCategory": "STARTER", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "dietCategory": "VEG", "cuisineType": "ITALIAN", "categoryGroup": "COURSE_TYPE", "status": "OUT_OF_STOCK", "statusUpdatedAt": {"$date": "2026-07-11T20:03:36.978Z"}, "statusUpdatedBy": "ADMIN", "food_availability": true, "createdAt": {"$date": "2026-07-11T20:02:47.919Z"}, "updatedAt": {"$date": "2026-07-11T20:03:36.978Z"}, "updatedBy": "ADMIN", "deletedFlag": false, "_class": "com.foodies.freshmeal.food.entity.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 3 ms
+====================================================
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : ee39ba54-4e8c-4de8-a78a-31d36afe6fd9
+Status       : 200
+Duration(ms) : 29
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Food status updated successfully.",
+  "errors" : null,
+  "data" : {
+    "id" : "FOOD01_00025",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "Baby Corn",
+    "description" : "",
+    "price" : 320.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : {
+      "label" : "Starter",
+      "value" : "STARTER"
+    },
+    "dietCategory" : {
+      "label" : "Veg",
+      "value" : "VEG"
+    },
+    "cuisineType" : {
+      "label" : "Italian",
+      "value" : "ITALIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Course Type",
+      "value" : "COURSE_TYPE"
+    },
+    "foodStatus" : {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    } ],
+    "previousStatus" : "Available",
+    "updatedAt" : "2026-07-12T01:33:36.978995100",
+    "updatedBy" : "ADMIN",
+    "available" : false
+  }
+}
+============================================
+
+2026-07-12 01:33:36 [http-nio-8030-exec-4] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=ee39ba54-4e8c-4de8-a78a-31d36afe6fd9 | Duration=29 ms
+2026-07-12 01:33:36 [task-35] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:33:36 [task-35] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a52a19884cbb26717a9f903"}, "api": "/api/foods/FOOD01_00025/status", "method": "PATCH", "requestBody": {"foodRequest": "FOOD01_00025", "UpdateFoodStatusRequest": {"status": {"label": "Out of Stock", "value": "OUT_OF_STOCK"}}}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Food status updated successfully.", "errors": null, "data": {"id": "FOOD01_00025", "imageName": "food-placeholder.png", "foodName": "Baby Corn", "description": "", "price": 320.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": {"label": "Starter", "value": "STARTER"}, "dietCategory": {"label": "Veg", "value": "VEG"}, "cuisineType": {"label": "Italian", "value": "ITALIAN"}, "categoryGroup": {"label": "Course Type", "value": "COURSE_TYPE"}, "foodStatus": {"label": "Out of Stock", "value": "OUT_OF_STOCK"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Available", "value": "AVAILABLE"}], "previousStatus": "Available", "updatedAt": "2026-07-12T01:33:36.978995100", "updatedBy": "ADMIN", "available": false}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 29, "requestId": "ee39ba54-4e8c-4de8-a78a-31d36afe6fd9", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T20:03:36.96Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:33:36 [task-35] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 2 ms
+====================================================
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=10b6a72c-af28-411a-b5dc-d661ea075223 | API=/api/foods/FOOD01_00023/status | Method=PATCH
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:35:53
+RequestId : 10b6a72c-af28-411a-b5dc-d661ea075223
+Method    : PATCH
+URL       : /api/foods/FOOD01_00023/status
+Payload   :
+{
+  "foodRequest" : "FOOD01_00023",
+  "UpdateFoodStatusRequest" : {
+    "status" : {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    }
+  }
+}
+==========================================
+
+2026-07-12 01:35:53 [http-nio-8030-exec-10] DEBUG o.s.data.mongodb.core.MongoTemplate - findOne using query: { "id" : "FOOD01_00023"} fields: Document{{}} for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {"_id": "FOOD01_00023"}, "limit": 1, "singleBatch": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 5 ms
+====================================================
+2026-07-12 01:35:53 [http-nio-8030-exec-10] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, foodName, description, price, foodCategory, imageUrl, dietCategory, cuisineType, categoryGroup, status, statusUpdatedAt, statusUpdatedBy, food_availability, updatedAt, updatedBy, deletedFlag, _class]
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00023"}, "u": {"_id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "foodCategory": "BIRYANI", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "dietCategory": "NON_VEG", "cuisineType": "INDIAN", "categoryGroup": "MAIN_MEAL", "status": "OUT_OF_STOCK", "statusUpdatedAt": {"$date": "2026-07-11T20:05:53.899Z"}, "statusUpdatedBy": "ADMIN", "food_availability": true, "updatedAt": {"$date": "2026-07-11T20:05:53.899Z"}, "updatedBy": "ADMIN", "deletedFlag": false, "_class": "com.foodies.freshmeal.food.entity.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 2 ms
+====================================================
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 10b6a72c-af28-411a-b5dc-d661ea075223
+Status       : 200
+Duration(ms) : 49
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Food status updated successfully.",
+  "errors" : null,
+  "data" : {
+    "id" : "FOOD01_00023",
+    "imageName" : "IMG07_0000032.jpg",
+    "foodName" : "Biryani",
+    "description" : "Chicken Biryani with Aalu Kolkata famous",
+    "price" : 500.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg",
+    "foodCategory" : {
+      "label" : "Biryani",
+      "value" : "BIRYANI"
+    },
+    "dietCategory" : {
+      "label" : "Non Veg",
+      "value" : "NON_VEG"
+    },
+    "cuisineType" : {
+      "label" : "Indian",
+      "value" : "INDIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Main Meal",
+      "value" : "MAIN_MEAL"
+    },
+    "foodStatus" : {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    } ],
+    "previousStatus" : "Available",
+    "updatedAt" : "2026-07-12T01:35:53.899561500",
+    "updatedBy" : "ADMIN",
+    "available" : false
+  }
+}
+============================================
+
+2026-07-12 01:35:53 [http-nio-8030-exec-10] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=10b6a72c-af28-411a-b5dc-d661ea075223 | Duration=49 ms
+2026-07-12 01:35:53 [task-36] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:35:53 [task-36] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a52a22184cbb26717a9f904"}, "api": "/api/foods/FOOD01_00023/status", "method": "PATCH", "requestBody": {"foodRequest": "FOOD01_00023", "UpdateFoodStatusRequest": {"status": {"label": "Out of Stock", "value": "OUT_OF_STOCK"}}}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Food status updated successfully.", "errors": null, "data": {"id": "FOOD01_00023", "imageName": "IMG07_0000032.jpg", "foodName": "Biryani", "description": "Chicken Biryani with Aalu Kolkata famous", "price": 500.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000032.jpg", "foodCategory": {"label": "Biryani", "value": "BIRYANI"}, "dietCategory": {"label": "Non Veg", "value": "NON_VEG"}, "cuisineType": {"label": "Indian", "value": "INDIAN"}, "categoryGroup": {"label": "Main Meal", "value": "MAIN_MEAL"}, "foodStatus": {"label": "Out of Stock", "value": "OUT_OF_STOCK"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Available", "value": "AVAILABLE"}], "previousStatus": "Available", "updatedAt": "2026-07-12T01:35:53.899561500", "updatedBy": "ADMIN", "available": false}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 49, "requestId": "10b6a72c-af28-411a-b5dc-d661ea075223", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T20:05:53.862Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:35:53 [task-36] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 5 ms
+====================================================
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT STARTED | RequestId=83564443-d896-45e2-93eb-0624f1990e88 | API=/api/foods/FOOD01_00025/status | Method=PATCH
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - 
+
+ ================= REQUEST =================
+Timestamp : 2026-07-12 01:36:04
+RequestId : 83564443-d896-45e2-93eb-0624f1990e88
+Method    : PATCH
+URL       : /api/foods/FOOD01_00025/status
+Payload   :
+{
+  "foodRequest" : "FOOD01_00025",
+  "UpdateFoodStatusRequest" : {
+    "status" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    }
+  }
+}
+==========================================
+
+2026-07-12 01:36:04 [http-nio-8030-exec-7] DEBUG o.s.data.mongodb.core.MongoTemplate - findOne using query: { "id" : "FOOD01_00025"} fields: Document{{}} for class: class com.foodies.freshmeal.food.entity.FoodEntity in collection: fm_food
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : find
+QUERY   : {"find": "fm_food", "filter": {"_id": "FOOD01_00025"}, "limit": 1, "singleBatch": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}}
+====================================================
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : find
+DURATION : 1 ms
+====================================================
+2026-07-12 01:36:04 [http-nio-8030-exec-7] DEBUG o.s.data.mongodb.core.MongoTemplate - Saving Document containing fields: [_id, imageName, foodName, description, price, foodCategory, imageUrl, dietCategory, cuisineType, categoryGroup, status, statusUpdatedAt, statusUpdatedBy, food_availability, createdAt, updatedAt, updatedBy, deletedFlag, _class]
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : update
+QUERY   : {"update": "fm_food", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "updates": [{"q": {"_id": "FOOD01_00025"}, "u": {"_id": "FOOD01_00025", "imageName": "food-placeholder.png", "foodName": "Baby Corn", "description": "", "price": 320.0, "foodCategory": "STARTER", "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "dietCategory": "VEG", "cuisineType": "ITALIAN", "categoryGroup": "COURSE_TYPE", "status": "AVAILABLE", "statusUpdatedAt": {"$date": "2026-07-11T20:06:04.369Z"}, "statusUpdatedBy": "ADMIN", "food_availability": true, "createdAt": {"$date": "2026-07-11T20:02:47.919Z"}, "updatedAt": {"$date": "2026-07-11T20:06:04.369Z"}, "updatedBy": "ADMIN", "deletedFlag": false, "_class": "com.foodies.freshmeal.food.entity.FoodEntity"}, "upsert": true}]}
+====================================================
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : update
+DURATION : 2 ms
+====================================================
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - 
+ ================= RESPONSE =================
+RequestId    : 83564443-d896-45e2-93eb-0624f1990e88
+Status       : 200
+Duration(ms) : 14
+Payload      :
+{
+  "success" : true,
+  "httpStatusCode" : 200,
+  "httpStatusMessage" : "OK",
+  "message" : "Food status updated successfully.",
+  "errors" : null,
+  "data" : {
+    "id" : "FOOD01_00025",
+    "imageName" : "food-placeholder.png",
+    "foodName" : "Baby Corn",
+    "description" : "",
+    "price" : 320.0,
+    "imageUrl" : "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png",
+    "foodCategory" : {
+      "label" : "Starter",
+      "value" : "STARTER"
+    },
+    "dietCategory" : {
+      "label" : "Veg",
+      "value" : "VEG"
+    },
+    "cuisineType" : {
+      "label" : "Italian",
+      "value" : "ITALIAN"
+    },
+    "categoryGroup" : {
+      "label" : "Course Type",
+      "value" : "COURSE_TYPE"
+    },
+    "foodStatus" : {
+      "label" : "Available",
+      "value" : "AVAILABLE"
+    },
+    "allowedStatuses" : [ {
+      "label" : "Disabled",
+      "value" : "DISABLED"
+    }, {
+      "label" : "Discontinued",
+      "value" : "DISCONTINUED"
+    }, {
+      "label" : "Out of Stock",
+      "value" : "OUT_OF_STOCK"
+    } ],
+    "previousStatus" : "Out of Stock",
+    "updatedAt" : "2026-07-12T01:36:04.369507",
+    "updatedBy" : "ADMIN",
+    "available" : true
+  }
+}
+============================================
+
+2026-07-12 01:36:04 [http-nio-8030-exec-7] INFO  c.f.f.common.audit.util.AuditAspect - AUDIT SUCCESS | RequestId=83564443-d896-45e2-93eb-0624f1990e88 | Duration=14 ms
+2026-07-12 01:36:04 [task-37] DEBUG o.s.data.mongodb.core.MongoTemplate - Inserting Document containing fields: [api, method, requestBody, responseBody, responseStatus, responseMessage, executionTimeMs, requestId, ipAddress, createdAt, _class] in collection: fm_api_audit_logs
+2026-07-12 01:36:04 [task-37] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND STARTED
+COMMAND : insert
+QUERY   : {"insert": "fm_api_audit_logs", "ordered": true, "$db": "test", "lsid": {"id": {"$binary": {"base64": "qZzV2izbTx+k6f7mbLPCNQ==", "subType": "04"}}}, "documents": [{"_id": {"$oid": "6a52a22c84cbb26717a9f905"}, "api": "/api/foods/FOOD01_00025/status", "method": "PATCH", "requestBody": {"foodRequest": "FOOD01_00025", "UpdateFoodStatusRequest": {"status": {"label": "Available", "value": "AVAILABLE"}}}, "responseBody": {"success": true, "httpStatusCode": 200, "httpStatusMessage": "OK", "message": "Food status updated successfully.", "errors": null, "data": {"id": "FOOD01_00025", "imageName": "food-placeholder.png", "foodName": "Baby Corn", "description": "", "price": 320.0, "imageUrl": "https://fresh-meal.s3.ap-south-1.amazonaws.com/IMG07_0000025.png", "foodCategory": {"label": "Starter", "value": "STARTER"}, "dietCategory": {"label": "Veg", "value": "VEG"}, "cuisineType": {"label": "Italian", "value": "ITALIAN"}, "categoryGroup": {"label": "Course Type", "value": "COURSE_TYPE"}, "foodStatus": {"label": "Available", "value": "AVAILABLE"}, "allowedStatuses": [{"label": "Disabled", "value": "DISABLED"}, {"label": "Discontinued", "value": "DISCONTINUED"}, {"label": "Out of Stock", "value": "OUT_OF_STOCK"}], "previousStatus": "Out of Stock", "updatedAt": "2026-07-12T01:36:04.369507", "updatedBy": "ADMIN", "available": true}}, "responseStatus": 200, "responseMessage": "OK", "executionTimeMs": 14, "requestId": "83564443-d896-45e2-93eb-0624f1990e88", "ipAddress": "0:0:0:0:0:0:0:1", "createdAt": {"$date": "2026-07-11T20:06:04.362Z"}, "_class": "com.foodies.freshmeal.common.audit.entity.impl.AuditLog"}]}
+====================================================
+2026-07-12 01:36:04 [task-37] INFO  c.f.f.c.config.MongoLoggingListener - 
+====================================================
+MONGO COMMAND SUCCESS
+COMMAND  : insert
+DURATION : 5 ms
+====================================================

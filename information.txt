@@ -38,6 +38,41 @@ entity name
 
 
 
+Backend Architecture
+food
+│
+├── controller
+│
+│    FoodController
+│
+├── service
+│
+│    addFood()
+│    updateFood()
+│    updateFoodStatus()      ✅
+│    deleteFood()
+│    getFoodById()
+│    readAllFoods()          ✅
+│
+├── dto
+│
+│    FoodRequest
+│    FoodResponse
+│    UpdateFoodRequest
+│    FoodDetailsResponse
+│
+├── mapper
+│
+│    FoodMapper
+│
+└── validator
+
+
+
+
+
+
+
 
 
 
