@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,11 +120,11 @@ public class FoodServiceImpl implements IFoodService {
         foodResponse.setFoodName(foodEntity.getFoodName());
         foodResponse.setDescription(foodEntity.getDescription());
         foodResponse.setPrice(foodEntity.getPrice());
-        foodResponse.setFoodCategory(DisplayOptionMapperUtil.from(foodEntity.getFoodCategory()));
+        foodResponse.setFoodCategory(DisplayOptionMapperUtil.fromSet(foodEntity.getFoodCategory()));
         foodResponse.setImageUrl(foodEntity.getImageUrl());
         foodResponse.setDietCategory(DisplayOptionMapperUtil.from(foodEntity.getDietCategory()));
         foodResponse.setCuisineType(DisplayOptionMapperUtil.from(foodEntity.getCuisineType()));
-        foodResponse.setCategoryGroup(DisplayOptionMapperUtil.from(foodEntity.getCategoryGroup()));
+        foodResponse.setCategoryGroup(DisplayOptionMapperUtil.fromSet(foodEntity.getCategoryGroup()));
         foodResponse.setFoodStatus(DisplayOptionMapperUtil.from(foodEntity.getStatus()));
         foodResponse.setAvailable(foodEntity.isAvailable());
         foodResponse.setAllowedStatuses(foodEntity.getStatus().getAllowedTransitionOptions());
@@ -166,10 +168,13 @@ public class FoodServiceImpl implements IFoodService {
         foodEntity.setFoodName(foodRequest.getFoodName());
         foodEntity.setDescription(foodRequest.getDescription());
         foodEntity.setPrice(foodRequest.getPrice());
-        foodEntity.setFoodCategory(foodRequest.getFoodCategory());
+        foodEntity.setFoodCategory(foodRequest.getFoodCategories());
         foodEntity.setDietCategory(foodRequest.getDietCategory());
         foodEntity.setCuisineType(foodRequest.getCuisineType());
-        foodEntity.setCategoryGroup(foodRequest.getFoodCategory().getGroup());
+        foodEntity.setCategoryGroup(foodRequest.getFoodCategories().stream()
+                .filter(Objects::nonNull)
+                .map(fc -> Objects.requireNonNull(fc).getGroup())
+                .collect(Collectors.toSet()));
         foodEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
         /*
          * Save the food entity to the database
@@ -300,7 +305,7 @@ public class FoodServiceImpl implements IFoodService {
         FoodEntity food = output.getOutput();
         food.setUpdatedBy("ADMIN");
         food.setUpdatedAt(AppCalendar.getSystemLocalDateTime());
-        
+
         FoodStatusConstant currentStatus = food.getStatus();
         FoodStatusConstant requestedStatus = null;
         if (request.getUpdateFoodStatusRequest() != null
@@ -338,10 +343,10 @@ public class FoodServiceImpl implements IFoodService {
                 .description(food.getDescription())
                 .price(food.getPrice())
                 .imageUrl(food.getImageUrl())
-                .foodCategory(DisplayOptionMapperUtil.from(food.getFoodCategory()))
+                .foodCategory(DisplayOptionMapperUtil.fromSet(food.getFoodCategory()))
                 .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
                 .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
-                .categoryGroup(DisplayOptionMapperUtil.from(food.getCategoryGroup()))
+                .categoryGroup(DisplayOptionMapperUtil.fromSet(food.getCategoryGroup()))
                 .foodStatus(DisplayOptionMapperUtil.from(food.getStatus()))
                 .isAvailable(food.getStatus() == FoodStatusConstant.AVAILABLE)
                 .allowedStatuses(food.getStatus().getAllowedTransitionOptions())
@@ -349,8 +354,10 @@ public class FoodServiceImpl implements IFoodService {
                 .updatedBy(food.getStatusUpdatedBy())
                 .build();
 
-        response.setPreviousStatus(
-                previousStatus == null ? food.getStatus().getLabel() : previousStatus.getLabel());
+        // todo
+
+        //
+        response.setPreviousStatus(previousStatus == null ? food.getStatus().getLabel() : previousStatus.getLabel());
 
         return response;
 

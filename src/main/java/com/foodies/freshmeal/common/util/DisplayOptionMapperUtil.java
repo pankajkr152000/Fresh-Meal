@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.common.util;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -117,11 +118,31 @@ public final class DisplayOptionMapperUtil {
    /*
     * Converts enum to value & label, value->backend, label->UI
     */
-    public static DisplayOptionResponse from(IDisplayOption option) {
-        return new DisplayOptionResponse(
-                option.getLabel(),
-                option.getValue());
-    }
+	public static DisplayOptionResponse from(IDisplayOption option) {
+		if (option == null) {
+			return null;
+		}
+
+		return new DisplayOptionResponse(option.getLabel(), option.getValue());
+	}
     
+    /**
+     * ============================================================================
+     * Converts a set of display options into DisplayOptionResponse objects.
+     *
+     * @param <T>       display option type
+     * @param options   source display options
+     *
+     * @return immutable set of display option responses
+     * ============================================================================
+     */
+	public static <T extends IDisplayOption> Set<DisplayOptionResponse> fromSet(Set<T> options) {
+
+		if (options == null || options.isEmpty()) {
+			return Collections.emptySet();
+		}
+
+		return options.stream().map(DisplayOptionMapperUtil::from).collect(Collectors.toUnmodifiableSet());
+	}
 
 }

@@ -1,5 +1,7 @@
 package com.foodies.freshmeal.food.dto;
 
+import java.util.Set;
+
 import com.foodies.freshmeal.food.constants.CategoryGroupConstant;
 import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
 import com.foodies.freshmeal.food.constants.DietCategoryConstant;
@@ -20,10 +22,10 @@ public class FoodRequest {
     private String foodName;
     private String description;
     private double price;
-    private FoodCategoryConstant foodCategory;
+    private Set<FoodCategoryConstant> foodCategories;
     private DietCategoryConstant dietCategory; // veg or non-veg
     private CuisineTypeConstant cuisineType;
-    private CategoryGroupConstant categoryGroup;
+    private Set<CategoryGroupConstant> categoryGroup;
 
     public String getFoodName() {
         return foodName;

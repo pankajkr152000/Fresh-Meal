@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.food.entity;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -28,11 +29,11 @@ public class FoodEntity extends ABaseEntity {
     private String foodName;
     private String description;
     private double price;
-    private FoodCategoryConstant foodCategory;
+    private Set<FoodCategoryConstant> foodCategory;
     private String imageUrl;
     private DietCategoryConstant dietCategory; // veg or non-veg
     private CuisineTypeConstant cuisineType;
-    private CategoryGroupConstant categoryGroup;
+    private Set<CategoryGroupConstant> categoryGroup;
     /**
      * Current lifecycle status of the food.
      *
