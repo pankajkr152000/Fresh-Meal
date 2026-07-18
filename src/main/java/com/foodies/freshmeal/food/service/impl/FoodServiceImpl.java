@@ -350,7 +350,7 @@ public class FoodServiceImpl implements IFoodService {
                 .foodStatus(DisplayOptionMapperUtil.from(food.getStatus()))
                 .isAvailable(food.getStatus() == FoodStatusConstant.AVAILABLE)
                 .allowedStatuses(food.getStatus().getAllowedTransitionOptions())
-                .updatedAt(food.getStatusUpdatedAt().toString())
+                .updatedAt(food.getStatusUpdatedAt() != null ? food.getStatusUpdatedAt().toString() : null)
                 .updatedBy(food.getStatusUpdatedBy())
                 .build();
 

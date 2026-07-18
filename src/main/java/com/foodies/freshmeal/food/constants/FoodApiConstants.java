@@ -24,8 +24,8 @@ public final class FoodApiConstants {
     public static final String ADD = "/add";
     public static final String UPDATE_FOOD_STATUS = "/{foodId}/status";
     public static final String DELETE = "/delete";
-    public static final String READ = "/read";
-    public static final String READ_FOOD_BY_ID = "/getFoodByFoodId";
+    //public static final String GET_FOOD_BY_FOOD_ID = "api/foods/view/{foodId}";
+    public static final String GET_FOOD_BY_FOOD_ID = "/view";
     public static final String READ_ALL_FOODS = "/readAllFoods";
 
     // =========================================================

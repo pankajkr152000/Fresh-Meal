@@ -53,9 +53,11 @@ import jakarta.validation.Valid;
  * The controller should NEVER contain business logic.
  * ============================================================================
  */
-
+/*
+ * {"/api/foods"}
+ */
 @RestController
-@RequestMapping(ApiBaseConstants.FOOD_BASE_URL) // /api/foods
+@RequestMapping(ApiBaseConstants.FOOD_BASE_URL)
 public class FoodController implements IFoodController {
 
     private final IFoodService foodService;
@@ -207,6 +209,7 @@ public class FoodController implements IFoodController {
     /*
      * ("/{foodId}/status")
      */
+    @Override
     @AuditApi
     @PatchMapping(FoodApiConstants.UPDATE_FOOD_STATUS)
     public ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(@PathVariable String foodId,
@@ -225,8 +228,11 @@ public class FoodController implements IFoodController {
         return ApiResponses.success("Food status updated successfully.", output.getOutput());
     }
 
+    /*
+     *  {"/view"}
+     */
     @AuditApi
-    @GetMapping(FoodApiConstants.READ_FOOD_BY_ID)
+    @PostMapping(FoodApiConstants.GET_FOOD_BY_FOOD_ID)
     @Override
     public ResponseEntity<ApiResponse<FoodResponse>> getFoodByFoodId(@RequestBody FoodStatusRequest foodRequest)
             throws JsonProcessingException {
@@ -237,5 +243,7 @@ public class FoodController implements IFoodController {
         return ApiResponses.success("Food retrived successfully", output.getOutput());
 
     }
+    
+    
 
 }

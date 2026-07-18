@@ -11,6 +11,7 @@ import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 import com.foodies.freshmeal.food.dto.FoodMetadataResponse;
 import com.foodies.freshmeal.food.dto.FoodResponse;
 import com.foodies.freshmeal.food.dto.FoodStatusRequest;
+import com.foodies.freshmeal.food.dto.UpdateFoodStatusRequest;
 
 public interface IFoodController {
 
@@ -29,6 +30,10 @@ public interface IFoodController {
 
     ResponseEntity<ApiResponse<FoodResponse>> getFoodByFoodId(FoodStatusRequest foodId) throws JsonProcessingException;
 
-    public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException;
+    ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException;
+    
+    ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(String foodId, UpdateFoodStatusRequest updateRequest) throws JsonProcessingException;
+    
+    //ResponseEntity<ApiResponse<FoodResponse>> getFoodByFoodId(String foodId) throws JsonProcessingException;
 
 }

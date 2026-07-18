@@ -16,83 +16,51 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ApiResponse<T> {
 
-    private boolean success;
+	private boolean success;
 
-    private int httpStatusCode;
+	private int httpStatusCode;
 
-    private String httpStatusMessage;
+	private String httpStatusMessage;
 
-    private String message;
+	private String message;
 
-    private List<String> errors;
+	private List<String> errors;
 
-    private T data;
+	private T data;
 
-    public static <T> ResponseEntity<ApiResponse<T>> error(
-            int statusCode,
-            String message) {
+	public static <T> ResponseEntity<ApiResponse<T>> error(int statusCode, String message) {
 
-        HttpStatus status = HttpStatus.valueOf(statusCode);
+		HttpStatus status = HttpStatus.valueOf(statusCode);
 
-        return buildResponse(
-                false,
-                status,
-                message,
-                List.of(message),
-                null);
-    }
+		return buildResponse(false, status, message, List.of(message), null);
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> success(
-            String message,
-            T data) {
+	public static <T> ResponseEntity<ApiResponse<T>> success(String message, T data) {
 
-        return buildResponse(
-                true,
-                HttpStatus.OK,
-                message,
-                null,
-                data);
-    }
+		return buildResponse(true, HttpStatus.OK, message, null, data);
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> badRequest(
-            String message,
-            List<String> errors) {
+	public static <T> ResponseEntity<ApiResponse<T>> badRequest(String message, List<String> errors) {
 
-        return buildResponse(
-                false,
-                HttpStatus.BAD_REQUEST,
-                message,
-                errors,
-                null);
-    }
+		return buildResponse(false, HttpStatus.BAD_REQUEST, message, errors, null);
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> internalServerError(
-            String message,
-            List<String> errors) {
+	public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String message, List<String> errors) {
 
-        return buildResponse(
-                false,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                message,
-                errors,
-                null);
-    }
+		return buildResponse(false, HttpStatus.INTERNAL_SERVER_ERROR, message, errors, null);
+	}
 
-    private static <T> ResponseEntity<ApiResponse<T>> buildResponse(
-            boolean success,
-            HttpStatus status,
-            String message,
-            List<String> errors,
-            T data) {
+	private static <T> ResponseEntity<ApiResponse<T>> buildResponse(boolean success, HttpStatus status, String message,
+			List<String> errors, T data) {
 
-        ApiResponse<T> response = new ApiResponse<>();
-        response.setSuccess(success);
-        response.setHttpStatusCode(status.value());
-        response.setHttpStatusMessage(status.getReasonPhrase());
-        response.setMessage(message);
-        response.setErrors(errors);
-        response.setData(data);
+		ApiResponse<T> response = new ApiResponse<>();
+		response.setSuccess(success);
+		response.setHttpStatusCode(status.value());
+		response.setHttpStatusMessage(status.getReasonPhrase());
+		response.setMessage(message);
+		response.setErrors(errors);
+		response.setData(data);
 
-        return ResponseEntity.status(status).body(response);
-    }
+		return ResponseEntity.status(status).body(response);
+	}
 }
