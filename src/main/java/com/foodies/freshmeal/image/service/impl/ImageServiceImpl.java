@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.foodies.freshmeal.common.config.AWSS3Config;
+import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
 import com.foodies.freshmeal.common.enums.EntityName;
@@ -176,7 +177,7 @@ public class ImageServiceImpl implements IImageService {
             imageEntity = dto.getImageEntity();
             imageName = imageEntity.getImageName();
         }
-        
+
         String fileURL = String.format("https://%s.s3.%s.amazonaws.com/%s",
                 BUCKET_NAME,
                 REGION,
@@ -192,6 +193,8 @@ public class ImageServiceImpl implements IImageService {
         imageEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
         if (serviceContext.getUserProfile() != null) {
             imageEntity.setCreatedBy(serviceContext.getUserProfile().getId());
+        } else {
+            imageEntity.setCreatedBy(RoleType.ADMIN.getLabel());
         }
         imageEntity.setFileSize(file.getSize());
         imageEntity.setThumbnailUrl(fileURL);

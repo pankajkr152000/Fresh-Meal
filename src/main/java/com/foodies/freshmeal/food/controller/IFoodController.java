@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
+import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.food.dto.FoodMetadataResponse;
 import com.foodies.freshmeal.food.dto.FoodResponse;
 import com.foodies.freshmeal.food.dto.FoodStatusRequest;
@@ -28,7 +29,7 @@ public interface IFoodController {
 
     ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> groupCategories() throws JsonProcessingException;
 
-    ResponseEntity<ApiResponse<FoodResponse>> getFoodByFoodId(FoodStatusRequest foodId) throws JsonProcessingException;
+    ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(FoodStatusRequest foodId) throws JsonProcessingException;
 
     ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException;
     

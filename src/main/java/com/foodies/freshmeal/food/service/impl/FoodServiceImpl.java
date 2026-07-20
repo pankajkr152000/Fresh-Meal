@@ -12,9 +12,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
+import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.exception.InvalidFoodStatusTransitionException;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
@@ -41,6 +43,7 @@ import com.foodies.freshmeal.food.dto.FoodResponse;
 import com.foodies.freshmeal.food.dto.FoodStatusRequest;
 import com.foodies.freshmeal.food.entity.FoodEntity;
 import com.foodies.freshmeal.food.repository.IFoodRepository;
+import com.foodies.freshmeal.food.service.IFoodNavigationService;
 import com.foodies.freshmeal.food.service.IFoodService;
 import com.foodies.freshmeal.image.dto.CreateImageInputDTO;
 import com.foodies.freshmeal.image.entity.ImageEntity;
@@ -56,16 +59,19 @@ public class FoodServiceImpl implements IFoodService {
     private final IServiceContext serviceContext;
     private final IDatabaseSequenceService databaseSequenceService;
     private final IFoodRepository foodRepository;
+    private final IFoodNavigationService foodNavigationService;
 
     public FoodServiceImpl(
             IImageService imageService,
             IServiceContext serviceContext,
             IDatabaseSequenceService databaseSequenceService,
-            IFoodRepository foodRepository) {
+            IFoodRepository foodRepository,
+            IFoodNavigationService foodNavigationService) {
         this.imageService = imageService;
         this.serviceContext = serviceContext;
         this.databaseSequenceService = databaseSequenceService;
         this.foodRepository = foodRepository;
+        this.foodNavigationService = foodNavigationService;
     }
 
     /*
@@ -128,6 +134,12 @@ public class FoodServiceImpl implements IFoodService {
         foodResponse.setFoodStatus(DisplayOptionMapperUtil.from(foodEntity.getStatus()));
         foodResponse.setAvailable(foodEntity.isAvailable());
         foodResponse.setAllowedStatuses(foodEntity.getStatus().getAllowedTransitionOptions());
+        foodResponse.setPreviousStatus(foodEntity.getStatus().getLabel());
+        foodResponse.setUpdatedAt(
+                foodEntity.getStatusUpdatedAt() != null ? foodEntity.getStatusUpdatedAt().toString() : null);
+        foodResponse.setUpdatedBy(foodEntity.getUpdatedBy());
+        foodResponse.setCreatedBy(foodEntity.getCreatedBy());
+        foodResponse.setCreatedAt(foodEntity.getCreatedAt() != null ? foodEntity.getCreatedAt().toString() : null);
         return foodResponse;
     }
 
@@ -176,6 +188,11 @@ public class FoodServiceImpl implements IFoodService {
                 .map(fc -> Objects.requireNonNull(fc).getGroup())
                 .collect(Collectors.toSet()));
         foodEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
+        if (serviceContext.getUserProfile() != null) {
+            foodEntity.setCreatedBy(serviceContext.getUserProfile().getId());
+        } else {
+            foodEntity.setCreatedBy(RoleType.ADMIN.getLabel());
+        }
         /*
          * Save the food entity to the database
          */
@@ -392,6 +409,60 @@ public class FoodServiceImpl implements IFoodService {
          */
         food.setStatusUpdatedBy("ADMIN");
 
+    }
+
+    @Override
+    public IServiceOutput<EntityViewResponse<FoodResponse>> getFoodByFoodId(IServiceInput<FoodStatusRequest> request) {
+
+        // =========================================================================
+        // Request
+        // =========================================================================
+
+        FoodStatusRequest foodRequest = request.getInput();
+
+        LOGGER.info("Fetching food details for Food Id : {}", foodRequest.getFoodId());
+
+        // =========================================================================
+        // Retrieve Food
+        // =========================================================================
+
+        FoodEntity foodEntity = foodRepository.findById(foodRequest.getFoodId()).orElseThrow(() -> {
+            LOGGER.error("Food not found with Food Id : {}", foodRequest.getFoodId());
+
+            return new ResourceNotFoundException("No food found with Food Id : " + foodRequest.getFoodId());
+        });
+
+        LOGGER.debug("Food found successfully : {}", foodEntity.getId());
+
+        // =========================================================================
+        // Convert Entity to Response
+        // =========================================================================
+
+        FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
+
+        // =========================================================================
+        // Build Entity View Response
+        // =========================================================================
+
+        EntityViewResponse<FoodResponse> entityViewResponse = new EntityViewResponse<>();
+
+        entityViewResponse.setData(foodResponse);
+
+        entityViewResponse.setNavigation(foodNavigationService.getNavigation(foodEntity.getId()));
+
+        LOGGER.debug("Navigation generated successfully for Food Id : {}", foodEntity.getId());
+
+        // =========================================================================
+        // Build Service Output
+        // =========================================================================
+
+        IServiceOutput<EntityViewResponse<FoodResponse>> output = new ServiceOutput<>();
+
+        output.setOutput(entityViewResponse);
+
+        LOGGER.info("Food details retrieved successfully for Food Id : {}", foodEntity.getId());
+
+        return output;
     }
 
 }

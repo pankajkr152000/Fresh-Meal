@@ -21,6 +21,7 @@ import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.foodies.freshmeal.common.dto.ApiResponses;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
+import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
@@ -234,12 +235,14 @@ public class FoodController implements IFoodController {
     @AuditApi
     @PostMapping(FoodApiConstants.GET_FOOD_BY_FOOD_ID)
     @Override
-    public ResponseEntity<ApiResponse<FoodResponse>> getFoodByFoodId(@RequestBody FoodStatusRequest foodRequest)
+    public ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(@RequestBody FoodStatusRequest foodRequest)
             throws JsonProcessingException {
         IServiceInput<FoodStatusRequest> input = new ServiceInput<>();
         input.setInput(foodRequest);
-        IServiceOutput<FoodResponse> output = foodService.readFoodByFoodId(input);
+        
+        IServiceOutput<EntityViewResponse<FoodResponse>> output = foodService.getFoodByFoodId(input);
 
+        
         return ApiResponses.success("Food retrived successfully", output.getOutput());
 
     }

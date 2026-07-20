@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public abstract class ABaseEntity implements IEntity {
     private static final long serialVersionUID = 76880402025344019L;
-	@JsonFormat(pattern = AppCalendar.DEFAULT_DATE_TIME_FORMAT)
+    @JsonFormat(pattern = AppCalendar.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime createdAt;
     private String createdBy;
 

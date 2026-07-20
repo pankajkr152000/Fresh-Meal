@@ -40,5 +40,7 @@ public class FoodResponse {
     private String previousStatus;
     private String updatedAt;
     private String updatedBy;
+    private String createdBy;
+    private String createdAt;
 
 }

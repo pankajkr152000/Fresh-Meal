@@ -68,7 +68,28 @@ food
 └── validator
 
 
+common
+│
+├── dto
+│   └── view
+│       ├── ViewResponse.java
+│       ├── EntityNavigation.java
+│       └── NavigationItem.java
+│
+├── mapper
+│   └── NavigationMapper.java
+│
+└── service
+    └── EntityNavigationService.java
 
+
+food
+│
+├── controller
+├── service
+│     └── FoodNavigationService.java
+├── repository
+└── mapper
 
 
 

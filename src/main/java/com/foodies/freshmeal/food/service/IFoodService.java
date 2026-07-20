@@ -3,6 +3,7 @@ package com.foodies.freshmeal.food.service;
 import java.util.List;
 
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
+import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
@@ -52,5 +53,14 @@ public interface IFoodService {
      * @return @Code{FoodResponse} status details
      */
     IServiceOutput<FoodResponse> readFoodByFoodId(IServiceInput<FoodStatusRequest> input);
+    
+    /**
+     * get the @Code{FoodEntity}.
+     *
+     * @param foodId Food Id
+     *
+     * @return @Code{FoodResponse} status details
+     */
+    IServiceOutput<EntityViewResponse<FoodResponse>> getFoodByFoodId(IServiceInput<FoodStatusRequest> input);
 
 }
