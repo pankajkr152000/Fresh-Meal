@@ -19,6 +19,7 @@ public enum FoodCategoryConstant implements IDisplayOption {
     PIZZA("Pizza", CategoryGroupConstant.FAST_FOOD),
     BURGER("Burger", CategoryGroupConstant.FAST_FOOD),
     SANDWICH("Sandwich", CategoryGroupConstant.FAST_FOOD),
+    Roll("Roll", CategoryGroupConstant.FAST_FOOD),
 
     // Desserts
     DESSERT("Dessert", CategoryGroupConstant.DESSERT),

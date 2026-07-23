@@ -193,6 +193,7 @@ public class FoodServiceImpl implements IFoodService {
         } else {
             foodEntity.setCreatedBy(RoleType.ADMIN.getLabel());
         }
+        foodEntity.setAvailable(true);
         /*
          * Save the food entity to the database
          */
