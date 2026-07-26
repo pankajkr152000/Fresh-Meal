@@ -63,13 +63,19 @@ public class AuditLog implements IAuditLog {
     private String requestMethod;
 
     // Default constructor
-     public AuditLog() {
-         
-     }
+    public AuditLog() {
+
+    }
 
     // Constructor with parameters
-    public AuditLog(String api, String method, org.bson.Document requestBody, org.bson.Document responseBody,
-            Integer responseStatus, Long executionTimeMs, String ipAddress) {
+    public AuditLog(String api,
+            MethodType method,
+            org.bson.Document requestBody,
+            org.bson.Document responseBody,
+            Integer responseStatus,
+            Long executionTimeMs,
+            String ipAddress) {
+
         this.api = api;
         this.method = method;
         this.requestBody = requestBody;
@@ -77,7 +83,7 @@ public class AuditLog implements IAuditLog {
         this.responseStatus = responseStatus;
         this.executionTimeMs = executionTimeMs;
         this.ipAddress = ipAddress;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = AppCalendar.getBusinessLocalDateTime();
     }
 
     // Getters and Setters
@@ -99,16 +105,6 @@ public class AuditLog implements IAuditLog {
     @Override
     public void setApi(String api) {
         this.api = api;
-    }
-
-    @Override
-    public String getMethod() {
-        return method;
-    }
-
-    @Override
-    public void setMethod(String method) {
-        this.method = method;
     }
 
     @Override
@@ -196,36 +192,52 @@ public class AuditLog implements IAuditLog {
                 '}';
     }
 
-	public String getRequestId() {
-		return requestId;
-	}
+    public String getRequestId() {
+        return requestId;
+    }
 
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
-	public String getQueryParams() {
-		return queryParams;
-	}
+    public String getQueryParams() {
+        return queryParams;
+    }
 
-	public void setQueryParams(String queryParams) {
-		this.queryParams = queryParams;
-	}
+    public void setQueryParams(String queryParams) {
+        this.queryParams = queryParams;
+    }
 
-	public String getUserId() {
-		return userId;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	public String getExceptionMessage() {
-		return exceptionMessage;
-	}
+    public String getExceptionMessage() {
+        return exceptionMessage;
+    }
 
-	public void setExceptionMessage(String exceptionMessage) {
-		this.exceptionMessage = exceptionMessage;
-	}
-    
+    public void setExceptionMessage(String exceptionMessage) {
+        this.exceptionMessage = exceptionMessage;
+    }
+
+    /**
+     * Returns the business method executed.
+     */
+    @Override
+    public MethodType getMethod() {
+        return method;
+    }
+
+    /**
+     * Sets the business method executed.
+     */
+    @Override
+    public void setMethod(MethodType method) {
+        this.method = method;
+    }
+
 }

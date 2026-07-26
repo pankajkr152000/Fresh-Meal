@@ -13,7 +13,8 @@ public enum ActionType implements IDisplayOption {
     LOGIN("Login"),
     LOGOUT("Logout"),
     UPLOAD("Upload"),
-    DOWNLOAD("Download");
+    DOWNLOAD("Download"),
+    GET("Get");
 
     private final String displayName;
 

@@ -4,6 +4,7 @@ import com.foodies.freshmeal.common.contract.IDisplayOption;
 
 public enum RoleType implements IDisplayOption {
     ADMIN("Admin"),
+    SYSTEM("System"),
     USER("User");
 
     /**

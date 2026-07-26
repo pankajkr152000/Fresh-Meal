@@ -20,6 +20,7 @@ import com.foodies.freshmeal.common.audit.entity.IAuditLog;
 import com.foodies.freshmeal.common.audit.entity.impl.AuditLog;
 import com.foodies.freshmeal.common.audit.repository.IAuditRepository;
 import com.foodies.freshmeal.common.audit.service.IAuditService;
+import com.foodies.freshmeal.common.constants.MethodType;
 
 @Service
 public class AuditServiceImpl implements IAuditService {
@@ -66,7 +67,7 @@ public class AuditServiceImpl implements IAuditService {
     @Override
     public void logSuccess(
             String api,
-            String method,
+            MethodType method,
             Object request,
             Object response,
             Integer statusCode,
@@ -97,7 +98,7 @@ public class AuditServiceImpl implements IAuditService {
     @Override
     public void logFailure(
             String api,
-            String method,
+            MethodType method,
             Object request,
             Exception exception,
             Integer statusCode,

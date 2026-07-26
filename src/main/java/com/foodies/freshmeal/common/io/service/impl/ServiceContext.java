@@ -14,9 +14,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 import com.foodies.freshmeal.common.audit.entity.impl.AuditDataInput;
+import com.foodies.freshmeal.common.constants.ActionType;
+import com.foodies.freshmeal.common.constants.MethodType;
+import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.exception.IError;
 import com.foodies.freshmeal.common.exception.IErrors;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
+import com.foodies.freshmeal.common.validation.model.ValidationResult;
 import com.foodies.freshmeal.user.entity.UserProfile;
 
 @Component
@@ -49,6 +53,13 @@ public class ServiceContext implements IServiceContext {
 
     private static final long serialVersionUID = 1L;
 
+    private ModuleType moduleType;
+
+    private MethodType methodType;
+
+    private ActionType actionType;
+
+    private ValidationResult validationResult;
 
     public ServiceContext() {
         // Default constructor
@@ -121,16 +132,14 @@ public class ServiceContext implements IServiceContext {
     public void setRequestReceivedTime(
             LocalDateTime requestReceivedTime) {
 
-        this.requestReceivedTime =
-                requestReceivedTime;
+        this.requestReceivedTime = requestReceivedTime;
     }
 
     @Override
     public void setApplicationContext(
             ApplicationContext applicationContext) {
 
-        this.applicationContext =
-                applicationContext;
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -144,24 +153,21 @@ public class ServiceContext implements IServiceContext {
     public void setCorrelationId(
             String correlationId) {
 
-        this.correlationId =
-                correlationId;
+        this.correlationId = correlationId;
     }
 
     @Override
     public void setValidationErrors(
             List<IError> validationErrors) {
 
-        this.validationErrors =
-                validationErrors;
+        this.validationErrors = validationErrors;
     }
 
     @Override
     public void setOverridentErrors(
             List<IError> overridentErrors) {
 
-        this.overridentErrors =
-                overridentErrors;
+        this.overridentErrors = overridentErrors;
     }
 
     @Override
@@ -171,8 +177,7 @@ public class ServiceContext implements IServiceContext {
         if (overridentErrors != null &&
                 overridentErrors.getErrors() != null) {
 
-            this.overridentErrors =
-                    overridentErrors.getErrors();
+            this.overridentErrors = overridentErrors.getErrors();
         }
     }
 
@@ -202,8 +207,7 @@ public class ServiceContext implements IServiceContext {
     public void setRequestId(
             String requestId) {
 
-        this.requestId =
-                requestId;
+        this.requestId = requestId;
     }
 
     // =====================================================
@@ -249,7 +253,6 @@ public class ServiceContext implements IServiceContext {
         return !overridentErrors.isEmpty();
     }
 
-    
     // =====================================================
     // Attribute HELPERS
     // =====================================================
@@ -296,4 +299,49 @@ public class ServiceContext implements IServiceContext {
     public Date getAsOfDateBusiness() {
         return getAsOfBusinessDate();
     }
+
+    // =====================================================
+    // Constant HELPERS
+    // =====================================================
+
+    @Override
+    public ModuleType getModuleType() {
+        return moduleType;
+    }
+
+    @Override
+    public void setModuleType(ModuleType moduleType) {
+        this.moduleType = moduleType;
+    }
+
+    @Override
+    public MethodType getMethodType() {
+        return methodType;
+    }
+
+    @Override
+    public void setMethodType(MethodType methodType) {
+        this.methodType = methodType;
+    }
+
+    @Override
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    @Override
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
+    }
+
+    @Override
+    public ValidationResult getValidationResult() {
+        return validationResult;
+    }
+
+    @Override
+    public void setValidationResult(ValidationResult validationResult) {
+        this.validationResult = validationResult;
+    }
+
 }

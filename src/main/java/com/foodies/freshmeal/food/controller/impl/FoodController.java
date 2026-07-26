@@ -18,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodies.freshmeal.common.audit.annotation.AuditApi;
+import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.ApiBaseConstants;
+import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.foodies.freshmeal.common.dto.ApiResponses;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
@@ -26,7 +28,6 @@ import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
-import com.foodies.freshmeal.common.io.service.impl.ServiceContext;
 import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
 import com.foodies.freshmeal.food.constants.FoodApiConstants;
 import com.foodies.freshmeal.food.controller.IFoodController;
@@ -64,10 +65,12 @@ public class FoodController implements IFoodController {
 
     private final IFoodService foodService;
     private final ObjectMapper objectMapper;
-
-    public FoodController(IFoodService foodService, ObjectMapper objectMapper) {
+    private final IServiceContext serviceContext;
+    
+    public FoodController(IFoodService foodService, ObjectMapper objectMapper, IServiceContext serviceContext) {
         this.foodService = foodService;
         this.objectMapper = objectMapper;
+        this.serviceContext = serviceContext;
     }
 
     /**
@@ -85,7 +88,7 @@ public class FoodController implements IFoodController {
      * ("/add")
      */
     @Override
-    @AuditApi
+    @AuditApi(action = ActionType.CREATE, module = ModuleType.FOOD)
     @PostMapping(value = FoodApiConstants.ADD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<FoodResponse>> addFood(@RequestPart("food") String foodJsonRequest,
             @RequestPart(value = "image", required = false) MultipartFile imageFile)
@@ -94,8 +97,6 @@ public class FoodController implements IFoodController {
         FoodRequest foodRequest = objectMapper.readValue(
                 foodJsonRequest,
                 FoodRequest.class);
-
-        IServiceContext serviceContext = new ServiceContext();
 
         serviceContext.setAttribute("foodRequest", foodJsonRequest);
 
@@ -212,7 +213,7 @@ public class FoodController implements IFoodController {
      * ("/{foodId}/status")
      */
     @Override
-    @AuditApi
+    @AuditApi(action = ActionType.UPDATE, module = ModuleType.FOOD)
     @PatchMapping(FoodApiConstants.UPDATE_FOOD_STATUS)
     public ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(@PathVariable String foodId,
             @Valid @RequestBody UpdateFoodStatusRequest updateRequest) {
@@ -233,7 +234,7 @@ public class FoodController implements IFoodController {
     /*
      *  {"/view"}
      */
-    @AuditApi
+    @AuditApi(action = ActionType.GET, module = ModuleType.FOOD)
     @PostMapping(FoodApiConstants.GET_FOOD_BY_FOOD_ID)
     @Override
     public ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(@RequestBody FoodStatusRequest foodRequest)
@@ -251,7 +252,7 @@ public class FoodController implements IFoodController {
     /*
      *  {"/edit"}
      */
-    @AuditApi
+    @AuditApi(action = ActionType.UPDATE, module = ModuleType.FOOD)
     //@PutMapping(FoodApiConstants.EDIT_FOOD)
 	@Override
 
@@ -262,8 +263,6 @@ public class FoodController implements IFoodController {
     	FoodRequest foodRequest = objectMapper.readValue(
                 foodJsonRequest,
                 FoodRequest.class);
-
-        IServiceContext serviceContext = new ServiceContext();
 
         serviceContext.setAttribute("foodRequest", foodJsonRequest);
 

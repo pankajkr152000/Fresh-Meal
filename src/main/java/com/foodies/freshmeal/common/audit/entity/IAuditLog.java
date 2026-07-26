@@ -4,51 +4,98 @@ import java.time.LocalDateTime;
 
 import org.bson.Document;
 
+import com.foodies.freshmeal.common.constants.ActionType;
+import com.foodies.freshmeal.common.constants.MethodType;
+import com.foodies.freshmeal.common.constants.ModuleType;
+import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.entity.IEntity;
 
-public interface IAuditLog extends IEntity  {
-	
-	public String getId();
+/**
+ * Contract for audit log entities.
+ *
+ * <p>
+ * Stores request, response, execution metadata and business audit
+ * information for every API invocation.
+ * </p>
+ *
+ * @author Pankaj Kumar
+ */
+public interface IAuditLog extends IEntity {
 
-    public String getApi();
-	
-    public String getMethod();
+    // =====================================================
+    // BASIC DETAILS
+    // =====================================================
 
-    public Document getRequestBody();
+    String getId();
 
-    public Document getResponseBody();
+    void setId(String id);
 
-    public Integer getResponseStatus();
+    String getApi();
 
-    public String getResponseMessage();
+    void setApi(String api);
 
-    public Long getExecutionTimeMs();
+    /**
+     * Returns the business method executed.
+     * Example:
+     * <ul>
+     * <li>ADD_FOOD</li>
+     * <li>UPDATE_FOOD</li>
+     * <li>VIEW_FOOD</li>
+     * </ul>
+     */
+    MethodType getMethod();
 
-    public String getIpAddress();
+    void setMethod(MethodType method);
 
-    public LocalDateTime getCreatedAt();
+    // =====================================================
+    // REQUEST / RESPONSE
+    // =====================================================
 
+    Document getRequestBody();
 
+    void setRequestBody(Document requestBody);
 
-    public void setId(String id);
+    Document getResponseBody();
 
-    public void setApi(String api);
+    void setResponseBody(Document responseBody);
 
-    public void setMethod(String method);
+    Integer getResponseStatus();
 
-    public void setRequestBody(Document requestBody);
+    void setResponseStatus(Integer responseStatus);
 
-    public void setResponseBody(Document responseBody);
+    String getResponseMessage();
 
-    public void setResponseStatus(Integer responseStatus);
+    void setResponseMessage(String message);
 
-    public void setResponseMessage(String message);
+    // =====================================================
+    // EXECUTION DETAILS
+    // =====================================================
 
-    public void setExecutionTimeMs(Long executionTimeMs);
+    Long getExecutionTimeMs();
 
-    public void setIpAddress(String ipAddress);
+    void setExecutionTimeMs(Long executionTimeMs);
 
-    public void setCreatedAt(LocalDateTime createdAt);
-	
-	
+    String getIpAddress();
+
+    void setIpAddress(String ipAddress);
+
+    LocalDateTime getCreatedAt();
+
+    void setCreatedAt(LocalDateTime createdAt);
+
+    // =====================================================
+    // BUSINESS AUDIT
+    // =====================================================
+
+    RoleType getRole();
+
+    void setRole(RoleType role);
+
+    ModuleType getModule();
+
+    void setModule(ModuleType module);
+
+    ActionType getAction();
+
+    void setAction(ActionType action);
 }

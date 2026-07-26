@@ -3,6 +3,7 @@ package com.foodies.freshmeal.common.entity;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.foodies.freshmeal.common.constants.RecordStatus;
 import com.foodies.freshmeal.common.date.AppCalendar;
 
 import lombok.Getter;
@@ -25,4 +26,6 @@ public abstract class ABaseEntity implements IEntity {
     @JsonFormat(pattern = AppCalendar.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime deletedAt;
     private String deletedBy;
+
+    private RecordStatus recordStatus = RecordStatus.ACTIVE;
 }

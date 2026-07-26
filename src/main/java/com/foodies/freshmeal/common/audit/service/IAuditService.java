@@ -3,6 +3,7 @@ package com.foodies.freshmeal.common.audit.service;
 import java.util.List;
 
 import com.foodies.freshmeal.common.audit.entity.IAuditLog;
+import com.foodies.freshmeal.common.constants.MethodType;
 
 public interface IAuditService {
 
@@ -21,7 +22,7 @@ public interface IAuditService {
      */
     void logSuccess(
             String api,
-            String method,
+            MethodType method,
             Object request,
             Object response,
             Integer statusCode,
@@ -32,7 +33,7 @@ public interface IAuditService {
      */
     void logFailure(
             String api,
-            String method,
+            MethodType method,
             Object request,
             Exception exception,
             Integer statusCode,

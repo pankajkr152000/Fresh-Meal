@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 
+import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.entity.ILoginHistory;
@@ -93,6 +94,8 @@ public class UserProfile extends ABaseEntity {
 	private ILoginHistory loginHistory;
 
 	private ImageEntity profileImage;
+	
+	private RoleType userRoleType;
 
 	/**
 	 * =====================================================

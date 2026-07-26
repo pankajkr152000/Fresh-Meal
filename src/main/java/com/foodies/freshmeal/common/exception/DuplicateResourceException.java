@@ -1,10 +1,10 @@
 package com.foodies.freshmeal.common.exception;
 
-public class ResourceNotFoundException extends BusinessException {
+public class DuplicateResourceException extends BusinessException {
 
     private static final long serialVersionUID = 1L;
 
-    public ResourceNotFoundException(ErrorCode errorCode) {
+    public DuplicateResourceException(ErrorCode errorCode) {
         super(errorCode);
     }
 

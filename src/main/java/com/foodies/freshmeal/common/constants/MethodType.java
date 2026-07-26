@@ -2,6 +2,9 @@ package com.foodies.freshmeal.common.constants;
 
 public enum MethodType {
 
+	//Api
+	API,
+	
     // Food
     ADD_FOOD,
     VIEW_FOOD,
