@@ -16,8 +16,7 @@ import com.foodies.freshmeal.food.dto.UpdateFoodStatusRequest;
 
 public interface IFoodController {
 
-    ResponseEntity<ApiResponse<FoodResponse>> addFood(String foodJson, MultipartFile imageFile)
-            throws JsonProcessingException;
+    ResponseEntity<ApiResponse<FoodResponse>> addFood(String foodJson, MultipartFile imageFile) throws JsonProcessingException;
 
     ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException;
 
@@ -34,6 +33,8 @@ public interface IFoodController {
     ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException;
     
     ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(String foodId, UpdateFoodStatusRequest updateRequest) throws JsonProcessingException;
+    
+    ResponseEntity<ApiResponse<FoodResponse>> editFood(String foodJson, MultipartFile imageFile) throws JsonProcessingException;
     
     //ResponseEntity<ApiResponse<FoodResponse>> getFoodByFoodId(String foodId) throws JsonProcessingException;
 

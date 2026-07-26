@@ -27,6 +27,7 @@ public final class FoodApiConstants {
     //public static final String GET_FOOD_BY_FOOD_ID = "api/foods/view/{foodId}";
     public static final String GET_FOOD_BY_FOOD_ID = "/view";
     public static final String READ_ALL_FOODS = "/readAllFoods";
+    public static final String EDIT_FOOD = "/edit";
 
     // =========================================================
     // Food Search APIs

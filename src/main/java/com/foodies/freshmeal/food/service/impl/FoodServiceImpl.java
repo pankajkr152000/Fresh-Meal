@@ -126,11 +126,11 @@ public class FoodServiceImpl implements IFoodService {
         foodResponse.setFoodName(foodEntity.getFoodName());
         foodResponse.setDescription(foodEntity.getDescription());
         foodResponse.setPrice(foodEntity.getPrice());
-        foodResponse.setFoodCategory(DisplayOptionMapperUtil.fromSet(foodEntity.getFoodCategory()));
+        foodResponse.setFoodCategories(DisplayOptionMapperUtil.fromSet(foodEntity.getFoodCategories()));
         foodResponse.setImageUrl(foodEntity.getImageUrl());
         foodResponse.setDietCategory(DisplayOptionMapperUtil.from(foodEntity.getDietCategory()));
         foodResponse.setCuisineType(DisplayOptionMapperUtil.from(foodEntity.getCuisineType()));
-        foodResponse.setCategoryGroup(DisplayOptionMapperUtil.fromSet(foodEntity.getCategoryGroup()));
+        foodResponse.setCategoryGroups(DisplayOptionMapperUtil.fromSet(foodEntity.getCategoryGroups()));
         foodResponse.setFoodStatus(DisplayOptionMapperUtil.from(foodEntity.getStatus()));
         foodResponse.setAvailable(foodEntity.isAvailable());
         foodResponse.setAllowedStatuses(foodEntity.getStatus().getAllowedTransitionOptions());
@@ -180,10 +180,10 @@ public class FoodServiceImpl implements IFoodService {
         foodEntity.setFoodName(foodRequest.getFoodName());
         foodEntity.setDescription(foodRequest.getDescription());
         foodEntity.setPrice(foodRequest.getPrice());
-        foodEntity.setFoodCategory(foodRequest.getFoodCategories());
+        foodEntity.setFoodCategories(foodRequest.getFoodCategories());
         foodEntity.setDietCategory(foodRequest.getDietCategory());
         foodEntity.setCuisineType(foodRequest.getCuisineType());
-        foodEntity.setCategoryGroup(foodRequest.getFoodCategories().stream()
+        foodEntity.setCategoryGroups(foodRequest.getFoodCategories().stream()
                 .filter(Objects::nonNull)
                 .map(fc -> Objects.requireNonNull(fc).getGroup())
                 .collect(Collectors.toSet()));
@@ -214,7 +214,7 @@ public class FoodServiceImpl implements IFoodService {
                     foodEntity.getFoodName(),
                     foodEntity.getDescription(),
                     foodEntity.getPrice(),
-                    foodEntity.getFoodCategory(),
+                    foodEntity.getFoodCategories(),
                     foodEntity.getImageUrl());
             FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
             foodResponses.add(foodResponse);
@@ -361,10 +361,10 @@ public class FoodServiceImpl implements IFoodService {
                 .description(food.getDescription())
                 .price(food.getPrice())
                 .imageUrl(food.getImageUrl())
-                .foodCategory(DisplayOptionMapperUtil.fromSet(food.getFoodCategory()))
+                .foodCategories(DisplayOptionMapperUtil.fromSet(food.getFoodCategories()))
                 .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
                 .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
-                .categoryGroup(DisplayOptionMapperUtil.fromSet(food.getCategoryGroup()))
+                .categoryGroups(DisplayOptionMapperUtil.fromSet(food.getCategoryGroups()))
                 .foodStatus(DisplayOptionMapperUtil.from(food.getStatus()))
                 .isAvailable(food.getStatus() == FoodStatusConstant.AVAILABLE)
                 .allowedStatuses(food.getStatus().getAllowedTransitionOptions())
@@ -462,6 +462,119 @@ public class FoodServiceImpl implements IFoodService {
         output.setOutput(entityViewResponse);
 
         LOGGER.info("Food details retrieved successfully for Food Id : {}", foodEntity.getId());
+
+        return output;
+    }
+
+    @Override
+    public IServiceOutput<FoodResponse> editFood(IServiceInput<CreateFoodInputDTO> input) {
+
+        // =========================================================================
+        // Request
+        // =========================================================================
+
+        FoodRequest request = input.getInput().getFoodRequest();
+        MultipartFile imageFile = input.getInput().getImageFile();
+
+        // =========================================================================
+        // Load Existing Food
+        // =========================================================================
+
+        IServiceInput<FoodIdRequest> foodInput = new ServiceInput<>();
+
+        FoodIdRequest foodIdRequest = new FoodIdRequest();
+        foodIdRequest.setFoodId(request.getId());
+
+        foodInput.setInput(foodIdRequest);
+
+        FoodEntity foodEntity = loadFood(foodInput).getOutput();
+
+        // =========================================================================
+        // Update Basic Fields
+        // =========================================================================
+
+        foodEntity.setFoodName(request.getFoodName());
+        foodEntity.setDescription(request.getDescription());
+        foodEntity.setPrice(request.getPrice());
+
+        foodEntity.setFoodCategories(request.getFoodCategories());
+        foodEntity.setDietCategory(request.getDietCategory());
+        foodEntity.setCuisineType(request.getCuisineType());
+
+        //foodEntity.setCategoryGroups(DisplayOptionMapperUtil.fromSet(request.getFoodCategories());
+        foodEntity.setCategoryGroups(request.getFoodCategories().stream()
+                .filter(Objects::nonNull)
+                .map(fc -> Objects.requireNonNull(fc).getGroup())
+                .collect(Collectors.toSet()));
+
+        // =========================================================================
+        // Update Food Status
+        // =========================================================================
+
+        if (request.getFoodStatus() != null) {
+
+            FoodStatusConstant requestedStatus =
+                    DisplayOptionMapperUtil.fromValue(
+                            FoodStatusConstant.class,
+                            request.getFoodStatus().getValue());
+
+            validateStatusTransition(foodEntity.getStatus(), requestedStatus);
+
+            applyStatus(foodEntity, requestedStatus);
+        }
+
+        // =========================================================================
+        // Update Availability
+        // =========================================================================
+        if(FoodStatusConstant.AVAILABLE.equals(request.getFoodStatus()))
+        	foodEntity.setAvailable(true);
+        else
+        	foodEntity.setAvailable(false);
+        // =========================================================================
+        // Upload New Image (Only If Selected)
+        // =========================================================================
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+
+            IServiceInput<CreateImageInputDTO> imageInput = new ServiceInput<>();
+
+            CreateImageInputDTO imageDTO = new CreateImageInputDTO();
+            imageDTO.setFile(imageFile);
+
+            imageInput.setInput(imageDTO);
+
+            ImageEntity imageEntity = imageService.uploadImageToS3(imageInput).getOutput();
+
+            foodEntity.setImageName(imageEntity.getImageName());
+            foodEntity.setImageUrl(imageEntity.getImageUrl());
+        }
+
+        // =========================================================================
+        // Audit Fields
+        // =========================================================================
+
+        foodEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+
+        if (serviceContext.getUserProfile() != null) {
+            foodEntity.setUpdatedBy(serviceContext.getUserProfile().getId());
+        } else {
+            foodEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+        }
+
+        // =========================================================================
+        // Save
+        // =========================================================================
+
+        foodRepository.save(foodEntity);
+
+        // =========================================================================
+        // Response
+        // =========================================================================
+
+        FoodResponse response = convertToFoodResponse(foodEntity, new FoodResponse());
+
+        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+        output.setOutput(response);
 
         return output;
     }

@@ -29,11 +29,11 @@ public class FoodEntity extends ABaseEntity {
     private String foodName;
     private String description;
     private double price;
-    private Set<FoodCategoryConstant> foodCategory;
+    private Set<FoodCategoryConstant> foodCategories;
     private String imageUrl;
     private DietCategoryConstant dietCategory; // veg or non-veg
     private CuisineTypeConstant cuisineType;
-    private Set<CategoryGroupConstant> categoryGroup;
+    private Set<CategoryGroupConstant> categoryGroups;
     /**
      * Current lifecycle status of the food.
      *

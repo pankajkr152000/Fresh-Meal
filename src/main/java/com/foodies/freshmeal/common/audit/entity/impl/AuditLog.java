@@ -8,6 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.foodies.freshmeal.common.audit.entity.IAuditLog;
+import com.foodies.freshmeal.common.constants.ActionType;
+import com.foodies.freshmeal.common.constants.MethodType;
+import com.foodies.freshmeal.common.constants.ModuleType;
+import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.date.AppCalendar;
 
 import lombok.Getter;
@@ -24,7 +28,7 @@ public class AuditLog implements IAuditLog {
     private String id;
 
     private String api;
-    private String method;
+    private String requestUrl;
 
     private org.bson.Document requestBody; // Input JSON
     private org.bson.Document responseBody; // Output JSON
@@ -47,6 +51,16 @@ public class AuditLog implements IAuditLog {
     @Indexed
     @JsonFormat(pattern = AppCalendar.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime createdAt;
+
+    private RoleType role;
+
+    private ModuleType module;
+
+    private MethodType method;
+
+    private ActionType action;
+
+    private String requestMethod;
 
     // Default constructor
      public AuditLog() {

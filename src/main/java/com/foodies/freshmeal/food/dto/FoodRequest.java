@@ -6,6 +6,7 @@ import com.foodies.freshmeal.food.constants.CategoryGroupConstant;
 import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
 import com.foodies.freshmeal.food.constants.DietCategoryConstant;
 import com.foodies.freshmeal.food.constants.FoodCategoryConstant;
+import com.foodies.freshmeal.food.constants.FoodStatusConstant;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,13 +20,15 @@ import lombok.Setter;
 @Setter
 @Data
 public class FoodRequest {
+	private String id;
     private String foodName;
     private String description;
     private double price;
     private Set<FoodCategoryConstant> foodCategories;
     private DietCategoryConstant dietCategory; // veg or non-veg
     private CuisineTypeConstant cuisineType;
-    private Set<CategoryGroupConstant> categoryGroup;
+    private FoodStatusConstant foodStatus;
+    private Set<CategoryGroupConstant> categoryGroups;
 
     public String getFoodName() {
         return foodName;

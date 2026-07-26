@@ -25,13 +25,13 @@ public class FoodResponse {
     private double price;
     private String imageUrl;
     
-    private Set<DisplayOptionResponse> foodCategory;
+    private Set<DisplayOptionResponse> foodCategories;
     
     private DisplayOptionResponse dietCategory;
 
     private DisplayOptionResponse cuisineType;
 
-    private Set<DisplayOptionResponse> categoryGroup;
+    private Set<DisplayOptionResponse> categoryGroups;
 
     private DisplayOptionResponse foodStatus;
     

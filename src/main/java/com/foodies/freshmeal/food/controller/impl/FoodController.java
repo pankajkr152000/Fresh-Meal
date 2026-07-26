@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -246,6 +247,36 @@ public class FoodController implements IFoodController {
         return ApiResponses.success("Food retrived successfully", output.getOutput());
 
     }
+
+    /*
+     *  {"/edit"}
+     */
+    @AuditApi
+    //@PutMapping(FoodApiConstants.EDIT_FOOD)
+	@Override
+
+	@PutMapping(value = FoodApiConstants.EDIT_FOOD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<ApiResponse<FoodResponse>> editFood(@RequestPart("food") String foodJsonRequest,
+			@RequestPart(value = "image", required = false) MultipartFile imageFile) throws JsonProcessingException {
+		
+    	FoodRequest foodRequest = objectMapper.readValue(
+                foodJsonRequest,
+                FoodRequest.class);
+
+        IServiceContext serviceContext = new ServiceContext();
+
+        serviceContext.setAttribute("foodRequest", foodJsonRequest);
+
+        IServiceInput<CreateFoodInputDTO> input = new ServiceInput<>();
+        CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO();
+        createFoodInputDTO.setFoodRequest(foodRequest);
+        createFoodInputDTO.setImageFile(imageFile);
+        input.setInput(createFoodInputDTO);
+
+        IServiceOutput<FoodResponse> output = foodService.editFood(input);
+    	
+        return ApiResponses.success("Food edited successfully", output.getOutput());
+	}
     
     
 

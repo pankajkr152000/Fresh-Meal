@@ -22,6 +22,8 @@ public interface IFoodService {
     IServiceOutput<String> generateFoodId(IServiceInput<CreateFoodInputDTO> input);
 
     IServiceOutput<FoodResponse> addFood(IServiceInput<CreateFoodInputDTO> input);
+    
+    IServiceOutput<FoodResponse> editFood(IServiceInput<CreateFoodInputDTO> input);
 
     IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input);
 
