@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
@@ -337,7 +338,7 @@ public class FoodServiceImpl implements IFoodService {
 
             requestedStatus = DisplayOptionMapperUtil.fromValue(FoodStatusConstant.class, requestedFoodStatus);
         }
-        validateStatusTransition(currentStatus, requestedStatus);
+        validateStatusTransition(currentStatus, requestedStatus, input.getServiceContext());
 
         applyStatus(food, requestedStatus);
 
@@ -381,17 +382,18 @@ public class FoodServiceImpl implements IFoodService {
 
     }
 
-    private void validateStatusTransition(FoodStatusConstant currentStatus, FoodStatusConstant requestedStatus) {
+    private void validateStatusTransition(FoodStatusConstant currentStatus, FoodStatusConstant requestedStatus,
+            IServiceContext serviceContext1) {
 
         if (currentStatus == null) {
             throw new InvalidFoodStatusTransitionException("Food status is not set.");
         }
 
-        if (currentStatus == requestedStatus) {
+        if (currentStatus == requestedStatus && !ActionType.UPDATE.equals(serviceContext1.getActionType())) {
             throw new InvalidFoodStatusTransitionException("Food is already in status : " + requestedStatus);
         }
 
-        if (!currentStatus.canTransitionTo(requestedStatus)) {
+        if (!currentStatus.canTransitionTo(requestedStatus) && !ActionType.UPDATE.equals(serviceContext1.getActionType())) {
 
             throw new InvalidFoodStatusTransitionException(
                     String.format("Food status cannot be changed from %s to %s.", currentStatus, requestedStatus));
@@ -501,7 +503,7 @@ public class FoodServiceImpl implements IFoodService {
         foodEntity.setDietCategory(request.getDietCategory());
         foodEntity.setCuisineType(request.getCuisineType());
 
-        //foodEntity.setCategoryGroups(DisplayOptionMapperUtil.fromSet(request.getFoodCategories());
+        // foodEntity.setCategoryGroups(DisplayOptionMapperUtil.fromSet(request.getFoodCategories());
         foodEntity.setCategoryGroups(request.getFoodCategories().stream()
                 .filter(Objects::nonNull)
                 .map(fc -> Objects.requireNonNull(fc).getGroup())
@@ -513,12 +515,11 @@ public class FoodServiceImpl implements IFoodService {
 
         if (request.getFoodStatus() != null) {
 
-            FoodStatusConstant requestedStatus =
-                    DisplayOptionMapperUtil.fromValue(
-                            FoodStatusConstant.class,
-                            request.getFoodStatus().getValue());
+            FoodStatusConstant requestedStatus = DisplayOptionMapperUtil.fromValue(
+                    FoodStatusConstant.class,
+                    request.getFoodStatus().getValue());
 
-            validateStatusTransition(foodEntity.getStatus(), requestedStatus);
+            validateStatusTransition(foodEntity.getStatus(), requestedStatus, input.getServiceContext());
 
             applyStatus(foodEntity, requestedStatus);
         }
@@ -526,10 +527,10 @@ public class FoodServiceImpl implements IFoodService {
         // =========================================================================
         // Update Availability
         // =========================================================================
-        if(FoodStatusConstant.AVAILABLE.equals(request.getFoodStatus()))
-        	foodEntity.setAvailable(true);
+        if (FoodStatusConstant.AVAILABLE.equals(request.getFoodStatus()))
+            foodEntity.setAvailable(true);
         else
-        	foodEntity.setAvailable(false);
+            foodEntity.setAvailable(false);
         // =========================================================================
         // Upload New Image (Only If Selected)
         // =========================================================================

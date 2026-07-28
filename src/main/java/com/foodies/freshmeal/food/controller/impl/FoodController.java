@@ -66,7 +66,7 @@ public class FoodController implements IFoodController {
     private final IFoodService foodService;
     private final ObjectMapper objectMapper;
     private final IServiceContext serviceContext;
-    
+
     public FoodController(IFoodService foodService, ObjectMapper objectMapper, IServiceContext serviceContext) {
         this.foodService = foodService;
         this.objectMapper = objectMapper;
@@ -114,7 +114,7 @@ public class FoodController implements IFoodController {
     /*
      * ("/readAllFoods")
      */
-//    @AuditApi
+    // @AuditApi
     @Override
     @GetMapping(FoodApiConstants.READ_ALL_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
@@ -232,35 +232,35 @@ public class FoodController implements IFoodController {
     }
 
     /*
-     *  {"/view"}
+     * {"/view"}
      */
     @AuditApi(action = ActionType.GET, module = ModuleType.FOOD)
     @PostMapping(FoodApiConstants.GET_FOOD_BY_FOOD_ID)
     @Override
-    public ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(@RequestBody FoodStatusRequest foodRequest)
+    public ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(
+            @RequestBody FoodStatusRequest foodRequest)
             throws JsonProcessingException {
         IServiceInput<FoodStatusRequest> input = new ServiceInput<>();
         input.setInput(foodRequest);
-        
+
         IServiceOutput<EntityViewResponse<FoodResponse>> output = foodService.getFoodByFoodId(input);
 
-        
         return ApiResponses.success("Food retrived successfully", output.getOutput());
 
     }
 
     /*
-     *  {"/edit"}
+     * {"/edit"}
      */
     @AuditApi(action = ActionType.UPDATE, module = ModuleType.FOOD)
-    //@PutMapping(FoodApiConstants.EDIT_FOOD)
-	@Override
+    // @PutMapping(FoodApiConstants.EDIT_FOOD)
+    @Override
 
-	@PutMapping(value = FoodApiConstants.EDIT_FOOD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<ApiResponse<FoodResponse>> editFood(@RequestPart("food") String foodJsonRequest,
-			@RequestPart(value = "image", required = false) MultipartFile imageFile) throws JsonProcessingException {
-		
-    	FoodRequest foodRequest = objectMapper.readValue(
+    @PutMapping(value = FoodApiConstants.EDIT_FOOD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<FoodResponse>> editFood(@RequestPart("food") String foodJsonRequest,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile) throws JsonProcessingException {
+
+        FoodRequest foodRequest = objectMapper.readValue(
                 foodJsonRequest,
                 FoodRequest.class);
 
@@ -271,12 +271,11 @@ public class FoodController implements IFoodController {
         createFoodInputDTO.setFoodRequest(foodRequest);
         createFoodInputDTO.setImageFile(imageFile);
         input.setInput(createFoodInputDTO);
+        input.setServiceContext(serviceContext);
 
         IServiceOutput<FoodResponse> output = foodService.editFood(input);
-    	
+
         return ApiResponses.success("Food edited successfully", output.getOutput());
-	}
-    
-    
+    }
 
 }
