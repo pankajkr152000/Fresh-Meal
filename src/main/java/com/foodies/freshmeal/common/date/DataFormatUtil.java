@@ -191,7 +191,6 @@ public class DataFormatUtil {
         return strArr[1] + sep + strArr[0] + sep + strArr[2];
     }
 
-     
     public static Date getDateFromString(String str) {
         Date date = null;
         try {
@@ -200,7 +199,7 @@ public class DataFormatUtil {
                 date = sdf.parse(str);
             }
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+            // Parse exception ignored; invalid date string will return null.
         }
         return date;
     }
@@ -241,7 +240,6 @@ public class DataFormatUtil {
         }
     }
 
-     
     public static Date getDateTimeFormString(String str) {
         Date date = null;
         try {
@@ -249,12 +247,11 @@ public class DataFormatUtil {
             sdf.setLenient(false);
             date = sdf.parse(str);
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+
         }
         return date;
     }
 
-     
     public static Date getDateTimeFormStringMcb(String str) {
         Date date = null;
         try {
@@ -262,12 +259,11 @@ public class DataFormatUtil {
             sdf.setLenient(false);
             date = sdf.parse(str);
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+            // parseException.printStackTrace();
         }
         return date;
     }
 
-     
     public static Date getDateFormString(String str) {
         Date date = null;
         try {
@@ -275,7 +271,7 @@ public class DataFormatUtil {
             sdf.setLenient(false);
             date = sdf.parse(str);
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+            // parseException.printStackTrace();
         }
         return date;
     }
@@ -532,7 +528,6 @@ public class DataFormatUtil {
 
     }
 
-     
     public static Date getDateFromString(String str, String format) {
         Date date = null;
         try {
@@ -541,12 +536,11 @@ public class DataFormatUtil {
                 date = sdf.parse(str);
             }
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+            // parseException.printStackTrace();
         }
         return date;
     }
 
-     
     public static Date getDateTimeFromString(String str, String format) {
         Date date = null;
         try {
@@ -554,7 +548,7 @@ public class DataFormatUtil {
             sdf.setLenient(false);
             date = sdf.parse(str);
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+            // parseException.printStackTrace();
         }
         return date;
     }
@@ -967,7 +961,7 @@ public class DataFormatUtil {
     }
 
     // Added during LTA protection implementation
-     
+
     public static boolean isGraterThanToday(String inputDate, Date today) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date input;
@@ -975,14 +969,14 @@ public class DataFormatUtil {
             input = sdf.parse(inputDate);
             return input.after(today);
         } catch (ParseException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
         return true;
     }
     // End LTA protection implementation
 
     // for Date Format dd-mmm-yy as input
-     
+
     public static Date getDateFromStringInDifferentDtFormt(String str) {
         Date date = null;
         try {
@@ -991,12 +985,11 @@ public class DataFormatUtil {
                 date = sdf.parse(str);
             }
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+            // parseException.printStackTrace();
         }
         return date;
     }
 
-     
     public static Date parseStringToDate(String str) {
         Date date = null;
         try {
@@ -1005,35 +998,34 @@ public class DataFormatUtil {
                 date = sdf.parse(str);
             }
         } catch (ParseException parseException) {
-            parseException.printStackTrace();
+            // parseException.printStackTrace();
         }
         return date;
     }
 
-     
     public static LocalDate parseStringToLocalDate(String givenDateString) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DDMMUUUU)
                     .withResolverStyle(ResolverStyle.STRICT);
             return LocalDate.parse(givenDateString, formatter);
         } catch (DateTimeParseException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             return null;
         }
     }
-    
-	public static LocalDateTime parseStringToLocalDateTime(String dateTime) {
 
-		if (dateTime == null || dateTime.isBlank()) {
-			return null;
-		}
+    public static LocalDateTime parseStringToLocalDateTime(String dateTime) {
 
-		try {
-			return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(AppCalendar.DEFAULT_DATE_TIME_FORMAT));
-		} catch (Exception ex) {
-			throw new IllegalArgumentException("Invalid date format. Expected format: " + DEFAULT_DATE_TIME_FORMAT, ex);
-		}
-	}
+        if (dateTime == null || dateTime.isBlank()) {
+            return null;
+        }
+
+        try {
+            return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(DateConstants.DEFAULT_DATE_TIME_FORMAT));
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("Invalid date format. Expected format: " + DEFAULT_DATE_TIME_FORMAT, ex);
+        }
+    }
 
     public static String getFinancialYear(Date date) {
         Calendar cal = Calendar.getInstance();

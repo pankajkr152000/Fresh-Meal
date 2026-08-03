@@ -100,7 +100,7 @@ public class FoodServiceImpl implements IFoodService {
 
         IServiceOutput<String> output = new ServiceOutput<>();
 
-        String foodId = String.format(SequenceConstants.FOOD_ID_SEQUENCE, seq);
+        String foodId = String.format(SequenceConstants.FOOD_ID_PATTERN, seq);
 
         output.setOutput(foodId);
         return output;
@@ -323,7 +323,7 @@ public class FoodServiceImpl implements IFoodService {
 
         FoodEntity food = output.getOutput();
         food.setUpdatedBy("ADMIN");
-        food.setUpdatedAt(AppCalendar.getSystemLocalDateTime());
+        food.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
         FoodStatusConstant currentStatus = food.getStatus();
         FoodStatusConstant requestedStatus = null;
@@ -393,7 +393,8 @@ public class FoodServiceImpl implements IFoodService {
             throw new InvalidFoodStatusTransitionException("Food is already in status : " + requestedStatus);
         }
 
-        if (!currentStatus.canTransitionTo(requestedStatus) && !ActionType.UPDATE.equals(serviceContext1.getActionType())) {
+        if (!currentStatus.canTransitionTo(requestedStatus)
+                && !ActionType.UPDATE.equals(serviceContext1.getActionType())) {
 
             throw new InvalidFoodStatusTransitionException(
                     String.format("Food status cannot be changed from %s to %s.", currentStatus, requestedStatus));

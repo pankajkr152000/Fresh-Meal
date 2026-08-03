@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.foodies.freshmeal.common.audit.entity.impl.AuditDataInput;
 import com.foodies.freshmeal.common.date.AppCalendar;
+import com.foodies.freshmeal.common.date.DateConverter;
 import com.foodies.freshmeal.common.exception.IErrors;
 import com.foodies.freshmeal.common.exception.SystemConfigBean;
 import com.foodies.freshmeal.common.exception.impl.ErrorsImpl;
@@ -227,7 +228,7 @@ public class DaoContext implements IDaoContext {
     @Override
     public Date getAsOfBusinessDate() {
         if (asOfBusinessDate == null) {
-            asOfBusinessDate = AppCalendar.getInstance().getBusinessDate();
+            asOfBusinessDate = DateConverter.toDate(AppCalendar.getBusinessLocalDateTime());
         }
         return asOfBusinessDate;
     }

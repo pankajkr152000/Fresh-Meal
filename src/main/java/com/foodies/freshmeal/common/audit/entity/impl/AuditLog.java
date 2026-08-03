@@ -13,6 +13,7 @@ import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.date.AppCalendar;
+import com.foodies.freshmeal.common.date.DateConstants;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -49,7 +50,7 @@ public class AuditLog implements IAuditLog {
     private String ipAddress;
 
     @Indexed
-    @JsonFormat(pattern = AppCalendar.DEFAULT_DATE_TIME_FORMAT)
+    @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime createdAt;
 
     private RoleType role;

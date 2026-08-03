@@ -2,22 +2,18 @@ package com.foodies.freshmeal.order.constants;
 
 import com.foodies.freshmeal.common.contract.IDisplayOption;
 
-public enum PaymentStatusConstant implements IDisplayOption {
+public enum OrderTypeConstant implements IDisplayOption {
 
-    PENDING("Pending"),
-    INITIATED("Initiated"),
-    SUCCESS("Success"),
-    FAILED("Failed"),
-    CANCELLED("Cancelled"),
-    REFUNDED("Refunded"),
-    PARTIALLY_REFUNDED("Partially Refunded");
+    DELIVERY("Delivery"),
+    TAKEAWAY("Takeaway"),
+    DINE_IN("Dine In");
 
     /**
      * User-friendly display label.
      */
     private final String displayName;
 
-    PaymentStatusConstant(String displayName) {
+    OrderTypeConstant(String displayName) {
         this.displayName = displayName;
     }
 

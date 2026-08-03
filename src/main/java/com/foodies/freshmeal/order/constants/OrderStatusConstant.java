@@ -28,25 +28,25 @@ import com.foodies.freshmeal.common.contract.IDisplayOption;
  */
 public enum OrderStatusConstant implements IDisplayOption {
 
-    /**
-     * Order has been created.
-     */
-    PENDING("Pending"),
+    PLACED("Placed"),
 
-    /**
-     * Restaurant has accepted the order.
-     */
     CONFIRMED("Confirmed"),
 
-    /**
-     * Order has been completed successfully.
-     */
-    COMPLETED("Completed"),
+    PREPARING("Preparing"),
 
-    /**
-     * Order has been cancelled.
-     */
-    CANCELLED("Cancelled");
+    READY_FOR_PICKUP("Ready For Pickup"),
+
+    PICKED_UP("Picked Up"),
+
+    OUT_FOR_DELIVERY("Out For Delivery"),
+
+    DELIVERED("Delivered"),
+
+    CANCELLED("Cancelled"),
+
+    DELIVERY_FAILED("Delivery Failed"),
+
+    RETURNED("Returned");
 
     /**
      * User-friendly display label.
