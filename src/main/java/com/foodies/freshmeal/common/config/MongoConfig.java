@@ -3,14 +3,13 @@ package com.foodies.freshmeal.common.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import com.foodies.freshmeal.common.repository.impl.BaseRepositoryImpl;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-
-
-
 
 /**
  * =====================================================
@@ -25,6 +24,7 @@ import com.mongodb.client.MongoClients;
  * =====================================================
  */
 @Configuration
+@EnableMongoRepositories(basePackages = "com.foodies.freshmeal", repositoryBaseClass = BaseRepositoryImpl.class)
 public class MongoConfig {
 
     @Value("${spring.data.mongodb.uri}")
@@ -34,14 +34,10 @@ public class MongoConfig {
     @SuppressWarnings("unused")
     MongoClient mongoClient() {
 
-        MongoClientSettings settings =
-                MongoClientSettings.builder()
-                        .applyConnectionString(
-                                new ConnectionString(
-                                        mongoUri))
-                        .addCommandListener(
-                                new MongoLoggingListener())
-                        .build();
+        MongoClientSettings settings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(mongoUri))
+                .addCommandListener(new MongoLoggingListener())
+                .build();
 
         return MongoClients.create(settings);
     }

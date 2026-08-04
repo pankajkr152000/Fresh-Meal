@@ -2,7 +2,7 @@ package com.foodies.freshmeal.common.exception;
 
 import com.foodies.freshmeal.common.contract.IDisplayOption;
 
-public enum ErrorCode implements IDisplayOption {
+public enum ErrorCodeConstants implements IDisplayOption {
 
     // ================= Common =================
     INTERNAL_SERVER_ERROR("Internal Server Error"),
@@ -24,7 +24,7 @@ public enum ErrorCode implements IDisplayOption {
 
     private final String label;
 
-    ErrorCode(String label) {
+    ErrorCodeConstants(String label) {
         this.label = label;
     }
 

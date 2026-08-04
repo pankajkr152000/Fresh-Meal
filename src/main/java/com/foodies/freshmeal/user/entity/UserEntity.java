@@ -2,7 +2,6 @@ package com.foodies.freshmeal.user.entity;
 
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.foodies.freshmeal.common.entity.ABaseEntity;
@@ -51,8 +50,8 @@ public class UserEntity extends ABaseEntity {
      * Mongo Primary Key
      * =====================================================
      */
-    @Id
-    private String id;
+    // @Id
+    // private String id;
     private String username;
     private String password;
     private String email;
@@ -65,6 +64,5 @@ public class UserEntity extends ABaseEntity {
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
-
 
 }

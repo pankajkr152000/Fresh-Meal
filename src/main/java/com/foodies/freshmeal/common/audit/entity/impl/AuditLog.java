@@ -1,19 +1,14 @@
 package com.foodies.freshmeal.common.audit.entity.impl;
 
-import java.time.LocalDateTime;
-
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.foodies.freshmeal.common.audit.entity.IAuditLog;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.constants.RoleType;
-import com.foodies.freshmeal.common.date.AppCalendar;
-import com.foodies.freshmeal.common.date.DateConstants;
+import com.foodies.freshmeal.common.entity.ABaseEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,12 +16,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Document(collection = "fm_api_audit_logs")
-public class AuditLog implements IAuditLog {
+public class AuditLog extends ABaseEntity implements IAuditLog {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    private String id;
+    // @Id
+    // private String id;
 
     private String api;
     private String requestUrl;
@@ -49,9 +44,9 @@ public class AuditLog implements IAuditLog {
 
     private String ipAddress;
 
-    @Indexed
-    @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
-    private LocalDateTime createdAt;
+    // @Indexed
+    // @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
+    // private LocalDateTime createdAt;
 
     private RoleType role;
 
@@ -84,19 +79,18 @@ public class AuditLog implements IAuditLog {
         this.responseStatus = responseStatus;
         this.executionTimeMs = executionTimeMs;
         this.ipAddress = ipAddress;
-        this.createdAt = AppCalendar.getBusinessLocalDateTime();
     }
 
     // Getters and Setters
-    @Override
-    public String getId() {
-        return id;
-    }
+    // @Override
+    // public String getId() {
+    // return id;
+    // }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
+    // @Override
+    // public void setId(String id) {
+    // this.id = id;
+    // }
 
     @Override
     public String getApi() {
@@ -168,20 +162,20 @@ public class AuditLog implements IAuditLog {
         this.ipAddress = ipAddress;
     }
 
-    @Override
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    // @Override
+    // public LocalDateTime getCreatedAt() {
+    // return createdAt;
+    // }
 
-    @Override
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    // @Override
+    // public void setCreatedAt(LocalDateTime createdAt) {
+    // this.createdAt = createdAt;
+    // }
 
     @Override
     public String toString() {
         return "AuditLog{" +
-                "id='" + id + '\'' +
+        // "id='" + id + '\'' +
                 ", api='" + api + '\'' +
                 ", method='" + method + '\'' +
                 ", requestBody='" + requestBody + '\'' +
@@ -189,7 +183,7 @@ public class AuditLog implements IAuditLog {
                 ", responseStatus=" + responseStatus +
                 ", executionTimeMs=" + executionTimeMs +
                 ", ipAddress='" + ipAddress + '\'' +
-                ", createdAt=" + createdAt +
+                // ", createdAt=" + createdAt +
                 '}';
     }
 

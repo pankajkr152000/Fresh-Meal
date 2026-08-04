@@ -19,7 +19,7 @@ import com.foodies.freshmeal.common.date.AppCalendar;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.enums.EntityName;
-import com.foodies.freshmeal.common.exception.ErrorCode;
+import com.foodies.freshmeal.common.exception.ErrorCodeConstants;
 import com.foodies.freshmeal.common.exception.InvalidFoodStatusTransitionException;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
 import com.foodies.freshmeal.common.factory.EntityFactory;
@@ -85,7 +85,7 @@ public class FoodServiceImpl implements IFoodService {
         FoodIdRequest foodRequest = request.getInput();
         FoodEntity output = foodRepository
                 .findById(foodRequest.getFoodId()).orElseThrow(
-                        () -> new ResourceNotFoundException(ErrorCode.FOOD_NOT_FOUND));
+                        () -> new ResourceNotFoundException(ErrorCodeConstants.FOOD_NOT_FOUND));
 
         return new ServiceOutput<>(output);
 
@@ -292,7 +292,7 @@ public class FoodServiceImpl implements IFoodService {
         FoodStatusRequest foodRequest = input.getInput();
 
         FoodEntity foodEntity = foodRepository.findById(foodRequest.getFoodId())
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.FOOD_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCodeConstants.FOOD_NOT_FOUND));
 
         /*
          * convert to foodresponse
@@ -433,7 +433,7 @@ public class FoodServiceImpl implements IFoodService {
         FoodEntity foodEntity = foodRepository.findById(foodRequest.getFoodId()).orElseThrow(() -> {
             LOGGER.error("Food not found with Food Id : {}", foodRequest.getFoodId());
 
-            return new ResourceNotFoundException(ErrorCode.FOOD_NOT_FOUND);
+            return new ResourceNotFoundException(ErrorCodeConstants.FOOD_NOT_FOUND);
         });
 
         LOGGER.debug("Food found successfully : {}", foodEntity.getId());

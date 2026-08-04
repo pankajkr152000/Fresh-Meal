@@ -1,7 +1,5 @@
 package com.foodies.freshmeal.common.audit.entity;
 
-import java.time.LocalDateTime;
-
 import org.bson.Document;
 
 import com.foodies.freshmeal.common.constants.ActionType;
@@ -26,9 +24,9 @@ public interface IAuditLog extends IEntity {
     // BASIC DETAILS
     // =====================================================
 
-    String getId();
+    // String getId();
 
-    void setId(String id);
+    // void setId(String id);
 
     String getApi();
 
@@ -79,9 +77,9 @@ public interface IAuditLog extends IEntity {
 
     void setIpAddress(String ipAddress);
 
-    LocalDateTime getCreatedAt();
+    // LocalDateTime getCreatedAt();
 
-    void setCreatedAt(LocalDateTime createdAt);
+    // void setCreatedAt(LocalDateTime createdAt);
 
     // =====================================================
     // BUSINESS AUDIT

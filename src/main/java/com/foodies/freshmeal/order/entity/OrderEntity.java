@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -110,14 +108,14 @@ public class OrderEntity extends ABaseEntity {
     // MongoDB
     // -------------------------------------------------------------------------
 
-    @Id
-    private String id;
+    // @Id
+    // private String id;
 
-    /**
-     * Optimistic locking.
-     */
-    @Version
-    private Long version;
+    // /**
+    // * Optimistic locking.
+    // */
+    // @Version
+    // private Long version;
 
     // -------------------------------------------------------------------------
     // Order Identification

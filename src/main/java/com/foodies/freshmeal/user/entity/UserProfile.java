@@ -3,7 +3,6 @@ package com.foodies.freshmeal.user.entity;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -36,94 +35,92 @@ import lombok.Setter;
 @Document(collection = "fm_user_profiles")
 public class UserProfile extends ABaseEntity {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 4377183688839034087L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 4377183688839034087L;
 
-	/**
-	 * =====================================================
-	 * Constructor
-	 * =====================================================
-	 *
-	 * Package-private constructor.
-	 * Entity creation should happen only through factory.
-	 *
-	 * =====================================================
-	 */
-	UserProfile() {
-		// Package-private constructor.
-		// Entity creation should happen only through factory.
-	}
+    /**
+     * =====================================================
+     * Constructor
+     * =====================================================
+     *
+     * Package-private constructor.
+     * Entity creation should happen only through factory.
+     *
+     * =====================================================
+     */
+    UserProfile() {
+        // Package-private constructor.
+        // Entity creation should happen only through factory.
+    }
 
-	/**
-	 * =====================================================
-	 * Factory Method
-	 * =====================================================
-	 */
-	public static IEntity create() {
-		return new UserProfile();
-	}
+    /**
+     * =====================================================
+     * Factory Method
+     * =====================================================
+     */
+    public static IEntity create() {
+        return new UserProfile();
+    }
 
-	/**
-	 * =====================================================
-	 * Mongo Primary Key
-	 * =====================================================
-	 */
-	@Id
-	private String id;
+    /**
+     * =====================================================
+     * Mongo Primary Key
+     * =====================================================
+     */
+    // @Id
+    // private String id;
 
-	/**
-	 * =====================================================
-	 * Authentication Fields
-	 * =====================================================
-	 */
-	private String userName;
+    /**
+     * =====================================================
+     * Authentication Fields
+     * =====================================================
+     */
+    private String userName;
 
-	private String password;
+    private String password;
 
-	private boolean authenticated;
+    private boolean authenticated;
 
-	/**
-	 * =====================================================
-	 * User Details
-	 * =====================================================
-	 */
-	private UserEntity userEntity;
+    /**
+     * =====================================================
+     * User Details
+     * =====================================================
+     */
+    private UserEntity userEntity;
 
-	private ILoginHistory loginHistory;
+    private ILoginHistory loginHistory;
 
-	private ImageEntity profileImage;
-	
-	private RoleType userRoleType;
+    private ImageEntity profileImage;
 
-	/**
-	 * =====================================================
-	 * Roles / Authorities
-	 * =====================================================
-	 */
-	private Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
+    private RoleType userRoleType;
 
-	/**
-	 * =====================================================
-	 * IEntity
-	 * =====================================================
-	 */
+    /**
+     * =====================================================
+     * Roles / Authorities
+     * =====================================================
+     */
+    private Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
 
+    /**
+     * =====================================================
+     * IEntity
+     * =====================================================
+     */
 
-	/**
-	 * =====================================================
-	 * Authentication
-	 * =====================================================
-	 */
+    /**
+     * =====================================================
+     * Authentication
+     * =====================================================
+     */
 
+    public ImageEntity getProfileImage() {
+        return profileImage;
+    }
 
-	public ImageEntity getProfileImage() {
-		return profileImage;
-	}
-
-	public void setProfileImage(ImageEntity profileImage) {
-		this.profileImage = profileImage;
-	}
+    public void setProfileImage(ImageEntity profileImage) {
+        this.profileImage = profileImage;
+    }
 
 }

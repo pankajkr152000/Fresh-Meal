@@ -2,7 +2,11 @@ package com.foodies.freshmeal.common.entity;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.foodies.freshmeal.common.constants.RecordStatus;
 import com.foodies.freshmeal.common.date.DateConstants;
 
@@ -13,6 +17,13 @@ import lombok.Setter;
 @Setter
 public abstract class ABaseEntity implements IEntity {
     private static final long serialVersionUID = 76880402025344019L;
+
+    @Id
+    private String id;
+
+    @Version
+    private Long version;
+
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime createdAt;
     private String createdBy;
@@ -21,11 +32,16 @@ public abstract class ABaseEntity implements IEntity {
     private LocalDateTime updatedAt;
     private String updatedBy;
 
-    private boolean deletedFlag = false;
+    private boolean deletedFlag = Boolean.FALSE;
 
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime deletedAt;
     private String deletedBy;
 
     private RecordStatus recordStatus = RecordStatus.ACTIVE;
+
+    @JsonIgnore
+    public boolean isDeleted() {
+        return Boolean.TRUE.equals(deletedFlag);
+    }
 }

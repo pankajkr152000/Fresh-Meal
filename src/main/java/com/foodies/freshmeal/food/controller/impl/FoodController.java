@@ -18,11 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodies.freshmeal.common.audit.annotation.AuditApi;
+import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.ApiBaseConstants;
+import com.foodies.freshmeal.common.constants.ApiMessageConstants;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
-import com.foodies.freshmeal.common.dto.ApiResponses;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
@@ -108,7 +109,7 @@ public class FoodController implements IFoodController {
 
         IServiceOutput<FoodResponse> output = foodService.addFood(input);
 
-        return ApiResponses.created("Food created successfully", output.getOutput());
+        return ApiResponseBuilder.created(ApiMessageConstants.FOOD_CREATED , output.getOutput());
     }
 
     /*
@@ -120,7 +121,7 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
         IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
-        return ApiResponses.ok("Foods retrieved successfully", output.getOutput());
+        return  ApiResponseBuilder.success(ApiMessageConstants.FOOD_LIST_FOUND , output.getOutput());
     }
 
     /*
@@ -132,9 +133,9 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> foodCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
-        IServiceOutput<List<DisplayOptionResponse>> output = foodService.getFoodCategories(input);
+        foodService.getFoodCategories(input);
 
-        return ApiResponses.ok("Foods categories", output.getOutput());
+        return  ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
     /*
@@ -146,9 +147,9 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> dietCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
-        IServiceOutput<List<DisplayOptionResponse>> output = foodService.getDietCategories(input);
+        foodService.getDietCategories(input);
 
-        return ApiResponses.ok("Diet categories", output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
     /*
@@ -160,9 +161,9 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> cuisineCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
-        IServiceOutput<List<DisplayOptionResponse>> output = foodService.getCuisineCategories(input);
+        foodService.getCuisineCategories(input);
 
-        return ApiResponses.ok("Cuisine categories", output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
     /*
@@ -174,9 +175,9 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> groupCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
-        IServiceOutput<List<DisplayOptionResponse>> output = foodService.getGroupCategories(input);
+        foodService.getGroupCategories(input);
 
-        return ApiResponses.ok("Group categories", output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
     /*
@@ -188,9 +189,9 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
-        IServiceOutput<FoodMetadataResponse> output = foodService.foodCategoryMetadata(input);
+        foodService.foodCategoryMetadata(input);
 
-        return ApiResponses.ok("Group categories", output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
     /**
@@ -228,7 +229,7 @@ public class FoodController implements IFoodController {
 
         IServiceOutput<FoodResponse> output = foodService.updateFoodStatus(input);
 
-        return ApiResponses.success("Food status updated successfully.", output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_STATUS_UPDATED, output.getOutput());
     }
 
     /*
@@ -245,7 +246,7 @@ public class FoodController implements IFoodController {
 
         IServiceOutput<EntityViewResponse<FoodResponse>> output = foodService.getFoodByFoodId(input);
 
-        return ApiResponses.success("Food retrived successfully", output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_FOUND, output.getOutput());
 
     }
 
@@ -275,7 +276,7 @@ public class FoodController implements IFoodController {
 
         IServiceOutput<FoodResponse> output = foodService.editFood(input);
 
-        return ApiResponses.success("Food edited successfully", output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_UPDATED, output.getOutput());
     }
 
 }

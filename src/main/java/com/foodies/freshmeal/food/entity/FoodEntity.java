@@ -3,7 +3,6 @@ package com.foodies.freshmeal.food.entity;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -23,8 +22,7 @@ import lombok.Setter;
 @Document(collection = "fm_food")
 public class FoodEntity extends ABaseEntity {
     private static final long serialVersionUID = 9030570160895262180L;
-    @Id
-    private String id;
+
     private String imageName;
     private String foodName;
     private String description;

@@ -22,6 +22,8 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
+import com.foodies.freshmeal.common.constants.ErrorCodeConstants;
 import com.foodies.freshmeal.common.constants.HttpStatusCode;
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.mongodb.MongoException;
@@ -95,7 +97,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getMessage())
                 .toList();
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(), errors);
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(), errors);
     }
 
     /**
@@ -119,7 +121,7 @@ public class GlobalExceptionHandler {
                 .map(fieldError -> fieldError.getDefaultMessage())
                 .toList();
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Validation failed.", errors);
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Validation failed.", errors);
     }
 
     /**
@@ -143,7 +145,7 @@ public class GlobalExceptionHandler {
                 .map((ConstraintViolation<?> violation) -> violation.getMessage())
                 .toList();
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Validation failed.", errors);
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Validation failed.", errors);
     }
 
     // ===========================================================
@@ -165,7 +167,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Business exception occurred : {}", exception.getMessage());
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(),
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(),
                 List.of(exception.getMessage()));
     }
 
@@ -185,7 +187,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Resource not found : {}", exception.getMessage());
 
-        return ApiResponse.notFound(exception.getMessage());
+        return ApiResponseBuilder.notFound(ErrorCodeConstants.FM_AUTH_003 , exception.getMessage());
     }
 
     /**
@@ -204,7 +206,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Duplicate resource : {}", exception.getMessage());
 
-        return ApiResponse.conflict(exception.getMessage());
+        return ApiResponseBuilder.conflict(ErrorCodeConstants.FM_COM_004 , exception.getMessage());
     }
 
     /**
@@ -223,7 +225,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Illegal argument : {}", exception.getMessage());
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(),
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(),
                 List.of(exception.getMessage()));
     }
 
@@ -242,7 +244,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Illegal state : {}", exception.getMessage());
 
-        return ApiResponse.conflict(exception.getMessage());
+        return ApiResponseBuilder.conflict(ErrorCodeConstants.FM_COM_004 , exception.getMessage());
     }
 
     // ===========================================================
@@ -266,7 +268,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Unauthorized access : {}", exception.getMessage());
 
-        return ApiResponse.unauthorized(exception.getMessage());
+        return ApiResponseBuilder.unauthorized(ErrorCodeConstants.FM_AUTH_002 , exception.getMessage());
     }
 
     /**
@@ -285,7 +287,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Access denied : {}", exception.getMessage());
 
-        return ApiResponse.forbidden(exception.getMessage());
+        return ApiResponseBuilder.forbidden(ErrorCodeConstants.FM_AUTH_001 , exception.getMessage());
     }
 
     /**
@@ -304,7 +306,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Spring Security access denied : {}", exception.getMessage());
 
-        return ApiResponse.forbidden("Access denied.");
+        return ApiResponseBuilder.forbidden(ErrorCodeConstants.FM_AUTH_003 , "Access denied.");
     }
 
     /**
@@ -323,7 +325,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Authentication failed : {}", exception.getMessage());
 
-        return ApiResponse.unauthorized("Authentication failed.");
+        return ApiResponseBuilder.unauthorized(ErrorCodeConstants.FM_AUTH_002 , "Authentication failed.");
     }
 
     // ===========================================================
@@ -348,7 +350,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Malformed request body : {}", exception.getMessage());
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Invalid request payload.",
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Invalid request payload.",
                 List.of("Request body is malformed or contains invalid values."));
     }
 
@@ -369,7 +371,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Missing request parameter : {}", exception.getParameterName());
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Missing request parameter.",
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Missing request parameter.",
                 List.of("Required parameter '" + exception.getParameterName() + "' is missing."));
     }
 
@@ -390,7 +392,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Missing request header : {}", exception.getHeaderName());
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Missing request header.",
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Missing request header.",
                 List.of("Required header '" + exception.getHeaderName() + "' is missing."));
     }
 
@@ -411,7 +413,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Missing path variable : {}", exception.getVariableName());
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Missing path variable.",
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Missing path variable.",
                 List.of("Required path variable '" + exception.getVariableName() + "' is missing."));
     }
 
@@ -432,7 +434,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Method argument type mismatch : {}", exception.getMessage());
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Invalid request parameter.",
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Invalid request parameter.",
                 List.of("Invalid value for parameter '" + exception.getName() + "'."));
     }
 
@@ -453,7 +455,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("HTTP method not supported : {}", exception.getMethod());
 
-        return ApiResponse.methodNotAllowed("HTTP method '" + exception.getMethod() + "' is not supported.");
+        return ApiResponseBuilder.methodNotAllowed(ErrorCodeConstants.FM_COM_001 , "HTTP method '" + exception.getMethod() + "' is not supported.");
     }
 
     /**
@@ -471,7 +473,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("No handler found : {} {}", exception.getHttpMethod(), exception.getRequestURL());
 
-        return ApiResponse.notFound("Requested API endpoint was not found.");
+        return ApiResponseBuilder.notFound(ErrorCodeConstants.FM_COM_005 , "Requested API endpoint was not found.");
     }
 
     // ===========================================================
@@ -496,7 +498,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.error("Database integrity violation.", exception);
 
-        return ApiResponse.conflict("Database integrity violation.");
+        return ApiResponseBuilder.conflict(ErrorCodeConstants.FM_COM_004 , "Database integrity violation.");
     }
 
     /**
@@ -514,7 +516,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.error("MongoDB exception occurred.", exception);
 
-        return ApiResponse.internalServerError("Database operation failed.");
+        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "Database operation failed.");
     }
 
     // ===========================================================
@@ -539,7 +541,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Maximum upload size exceeded.", exception);
 
-        return ApiResponse.payloadTooLarge("Uploaded file exceeds maximum allowed size.");
+        return ApiResponseBuilder.payloadTooLarge(ErrorCodeConstants.FM_COM_001 , "Uploaded file exceeds maximum allowed size.");
     }
 
     /**
@@ -557,7 +559,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.warn("Multipart request failed.", exception);
 
-        return ApiResponse.badRequest(HttpStatusCode.getDescription(400), "Invalid multipart request.",
+        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Invalid multipart request.",
                 List.of(exception.getMessage()));
     }
 
@@ -573,7 +575,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.error("IO exception occurred.", exception);
 
-        return ApiResponse.internalServerError("Unable to process the request.");
+        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "Unable to process the request.");
     }
 
     /**
@@ -584,7 +586,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.error("Null pointer exception occurred.", exception);
 
-        return ApiResponse.internalServerError("Unexpected system error.");
+        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "Unexpected system error.");
     }
 
     // ===========================================================
@@ -607,7 +609,7 @@ public class GlobalExceptionHandler {
 
         LOGGER.error("Unhandled exception occurred.", exception);
 
-        return ApiResponse.internalServerError("An unexpected error occurred. Please contact support.");
+        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "An unexpected error occurred. Please contact support.");
     }
 
 }

@@ -133,7 +133,7 @@ public class AuditServiceImpl implements IAuditService {
     @Override
     public IAuditLog getAuditLogById(String id) {
 
-        return repository.findById(id)
+        return (IAuditLog) repository.findById(id)
                 .orElse(null);
     }
 
