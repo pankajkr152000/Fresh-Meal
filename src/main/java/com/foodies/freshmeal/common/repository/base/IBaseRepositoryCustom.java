@@ -111,8 +111,29 @@ public interface IBaseRepositoryCustom<T extends ABaseEntity, ID> {
      *
      * @return Restored entity.
      */
-    T restore(
-            ID id,
-            RepositoryContext repositoryContext);
+    T restore(ID id, RepositoryContext repositoryContext);
+
+    /**
+     * Finds an archived entity by identifier.
+     *
+     * @param id Entity identifier.
+     *
+     * @return Archived entity if found.
+     */
+    Optional<T> findDeletedById(ID id);
+
+    /**
+     * Retrieves all archived entities.
+     *
+     * @return Archived entities.
+     */
+    List<T> findAllDeleted();
+
+    /**
+     * Permanently deletes an entity.
+     *
+     * @param id Entity identifier.
+     */
+    void deletePermanently(ID id);
 
 }

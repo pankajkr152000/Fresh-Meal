@@ -73,4 +73,12 @@ public record RepositoryContext(
                 .build();
     }
 
+    public static RepositoryContext of(String userName, LocalDateTime businessLocalDateTime) {
+
+        return RepositoryContext.builder()
+                .currentUser(userName)
+                .currentDateTime(AppCalendar.getBusinessLocalDateTime())
+                .build();
+    }
+
 }

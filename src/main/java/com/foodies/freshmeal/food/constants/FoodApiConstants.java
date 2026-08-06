@@ -92,4 +92,45 @@ public final class FoodApiConstants {
     public static final String STATISTICS = "/statistics";
     public static final String TOP_SELLING = "/top-selling";
     public static final String TRENDING = "/trending";
+    
+	 // ============================================================================
+	 // Archive APIs
+	 // ============================================================================
+
+	/**
+	 * Archives a single food.
+	 */
+	public static final String ARCHIVE_FOOD = "/archive";
+
+	/**
+	 * Archives multiple foods.
+	 */
+	public static final String BULK_ARCHIVE_FOOD = "/bulkArchive";
+
+	/**
+	 * Restores a single archived food.
+	 */
+	public static final String RESTORE_FOOD = "/restore";
+
+	/**
+	 * Restores multiple archived foods.
+	 */
+	public static final String BULK_RESTORE_FOOD = "/bulkRestore";
+
+	/**
+	 * Retrieves all archived foods.
+	 */
+	public static final String GET_ARCHIVED_FOODS = "/archived";
+
+	/**
+	 * Permanently deletes a single archived food.
+	 */
+	public static final String PERMANENT_DELETE_FOOD = "/permanentDelete";
+
+	/**
+	 * Permanently deletes multiple archived foods.
+	 */
+	public static final String BULK_PERMANENT_DELETE_FOOD = "/bulkPermanentDelete";
+	
+	
 }

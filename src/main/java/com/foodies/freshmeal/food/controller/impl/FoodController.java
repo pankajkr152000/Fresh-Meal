@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 import com.foodies.freshmeal.common.constants.ApiMessageConstants;
+import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
@@ -32,11 +34,17 @@ import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
 import com.foodies.freshmeal.food.constants.FoodApiConstants;
 import com.foodies.freshmeal.food.controller.IFoodController;
+import com.foodies.freshmeal.food.dto.ArchiveFoodRequest;
+import com.foodies.freshmeal.food.dto.BulkArchiveFoodRequest;
+import com.foodies.freshmeal.food.dto.BulkDeleteFoodRequest;
+import com.foodies.freshmeal.food.dto.BulkRestoreFoodRequest;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodMetadataResponse;
 import com.foodies.freshmeal.food.dto.FoodRequest;
 import com.foodies.freshmeal.food.dto.FoodResponse;
 import com.foodies.freshmeal.food.dto.FoodStatusRequest;
+import com.foodies.freshmeal.food.dto.PermanentDeleteFoodRequest;
+import com.foodies.freshmeal.food.dto.RestoreFoodRequest;
 import com.foodies.freshmeal.food.dto.UpdateFoodStatusRequest;
 import com.foodies.freshmeal.food.service.IFoodService;
 
@@ -89,7 +97,7 @@ public class FoodController implements IFoodController {
      * ("/add")
      */
     @Override
-    @AuditApi(action = ActionType.CREATE, module = ModuleType.FOOD)
+    @AuditApi(action = ActionType.ADD_FOOD, module = ModuleType.FOOD, method = MethodType.CREATE)
     @PostMapping(value = FoodApiConstants.ADD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<FoodResponse>> addFood(@RequestPart("food") String foodJsonRequest,
             @RequestPart(value = "image", required = false) MultipartFile imageFile)
@@ -109,19 +117,19 @@ public class FoodController implements IFoodController {
 
         IServiceOutput<FoodResponse> output = foodService.addFood(input);
 
-        return ApiResponseBuilder.created(ApiMessageConstants.FOOD_CREATED , output.getOutput());
+        return ApiResponseBuilder.created(ApiMessageConstants.FOOD_CREATED, output.getOutput());
     }
 
     /*
      * ("/readAllFoods")
      */
-    // @AuditApi
+    @AuditApi(action = ActionType.READ_ALL_FOODS, module = ModuleType.FOOD, method = MethodType.READ)
     @Override
     @GetMapping(FoodApiConstants.READ_ALL_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
         IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
-        return  ApiResponseBuilder.success(ApiMessageConstants.FOOD_LIST_FOUND , output.getOutput());
+        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_LIST_FOUND, output.getOutput());
     }
 
     /*
@@ -135,7 +143,7 @@ public class FoodController implements IFoodController {
 
         foodService.getFoodCategories(input);
 
-        return  ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
+        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
     /*
@@ -189,9 +197,9 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
 
-        foodService.foodCategoryMetadata(input);
+        IServiceOutput<FoodMetadataResponse> response = foodService.foodCategoryMetadata(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
+        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY, response.getOutput());
     }
 
     /**
@@ -214,7 +222,7 @@ public class FoodController implements IFoodController {
      * ("/{foodId}/status")
      */
     @Override
-    @AuditApi(action = ActionType.UPDATE, module = ModuleType.FOOD)
+    @AuditApi(action = ActionType.UPDATE_FOOD_STATUS, module = ModuleType.FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.UPDATE_FOOD_STATUS)
     public ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(@PathVariable String foodId,
             @Valid @RequestBody UpdateFoodStatusRequest updateRequest) {
@@ -235,7 +243,7 @@ public class FoodController implements IFoodController {
     /*
      * {"/view"}
      */
-    @AuditApi(action = ActionType.GET, module = ModuleType.FOOD)
+    @AuditApi(action = ActionType.VIEW_FOOD, module = ModuleType.FOOD, method = MethodType.READ)
     @PostMapping(FoodApiConstants.GET_FOOD_BY_FOOD_ID)
     @Override
     public ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(
@@ -253,7 +261,7 @@ public class FoodController implements IFoodController {
     /*
      * {"/edit"}
      */
-    @AuditApi(action = ActionType.UPDATE, module = ModuleType.FOOD)
+    @AuditApi(action = ActionType.UPDATE_FOOD, module = ModuleType.FOOD, method = MethodType.UPDATE)
     // @PutMapping(FoodApiConstants.EDIT_FOOD)
     @Override
 
@@ -279,4 +287,140 @@ public class FoodController implements IFoodController {
         return ApiResponseBuilder.success(ApiMessageConstants.FOOD_UPDATED, output.getOutput());
     }
 
+    // ============================================================================
+    // Archive Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @AuditApi(module = ModuleType.FOOD, action = ActionType.ARCHIVE_FOOD, method = MethodType.UPDATE)
+    @PatchMapping(FoodApiConstants.ARCHIVE_FOOD)
+    public ResponseEntity<ApiResponse<FoodResponse>> archiveFood(
+            @RequestBody ArchiveFoodRequest input) {
+
+        IServiceInput<ArchiveFoodRequest> serviceInput = new ServiceInput<>();
+
+        serviceInput.setInput(input);
+
+        IServiceOutput<FoodResponse> serviceOutput = foodService.archiveFood(serviceInput);
+
+        return ApiResponseBuilder.success(serviceOutput.getOutput());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @AuditApi(module = ModuleType.FOOD, action = ActionType.ARCHIVE_FOOD, method = MethodType.UPDATE)
+    @PatchMapping(FoodApiConstants.BULK_ARCHIVE_FOOD)
+    public ResponseEntity<ApiResponse<Void>> bulkArchiveFoods(
+            @RequestBody BulkArchiveFoodRequest input) {
+
+        IServiceInput<BulkArchiveFoodRequest> serviceInput = new ServiceInput<>();
+
+        serviceInput.setInput(input);
+
+        foodService.bulkArchiveFoods(serviceInput);
+
+        return ApiResponseBuilder.success();
+    }
+
+    // ============================================================================
+    // Restore Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @AuditApi(module = ModuleType.FOOD, action = ActionType.RESTORE_FOOD, method = MethodType.UPDATE)
+    @PatchMapping(FoodApiConstants.RESTORE_FOOD)
+    public ResponseEntity<ApiResponse<FoodResponse>> restoreFood(
+            @RequestBody RestoreFoodRequest input) {
+
+        IServiceInput<RestoreFoodRequest> serviceInput = new ServiceInput<>();
+
+        serviceInput.setInput(input);
+
+        IServiceOutput<FoodResponse> serviceOutput = foodService.restoreFood(serviceInput);
+
+        return ApiResponseBuilder.success(serviceOutput.getOutput());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @AuditApi(module = ModuleType.FOOD, action = ActionType.RESTORE_FOOD, method = MethodType.UPDATE)
+    @PatchMapping(FoodApiConstants.BULK_RESTORE_FOOD)
+    public ResponseEntity<ApiResponse<Void>> bulkRestoreFoods(
+            @RequestBody BulkRestoreFoodRequest input) {
+
+        IServiceInput<BulkRestoreFoodRequest> serviceInput = new ServiceInput<>();
+
+        serviceInput.setInput(input);
+
+        foodService.bulkRestoreFoods(serviceInput);
+
+        return ApiResponseBuilder.success();
+    }
+
+    // ============================================================================
+    // Permanent Delete Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @AuditApi(module = ModuleType.FOOD, action = ActionType.PERMANENT_DELETE_FOOD, method = MethodType.DELETE)
+    @DeleteMapping(FoodApiConstants.PERMANENT_DELETE_FOOD)
+    public ResponseEntity<ApiResponse<Void>> permanentDeleteFood(
+            @RequestBody PermanentDeleteFoodRequest input) {
+
+        IServiceInput<PermanentDeleteFoodRequest> serviceInput = new ServiceInput<>();
+
+        serviceInput.setInput(input);
+
+        foodService.permanentDeleteFood(serviceInput);
+
+        return ApiResponseBuilder.success();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @AuditApi(module = ModuleType.FOOD, action = ActionType.PERMANENT_DELETE_FOOD, method = MethodType.DELETE)
+    @DeleteMapping(FoodApiConstants.BULK_PERMANENT_DELETE_FOOD)
+    public ResponseEntity<ApiResponse<Void>> bulkPermanentDeleteFoods(
+            @RequestBody BulkDeleteFoodRequest input) {
+
+        IServiceInput<BulkDeleteFoodRequest> serviceInput = new ServiceInput<>();
+
+        serviceInput.setInput(input);
+
+        foodService.bulkPermanentDeleteFoods(serviceInput);
+
+        return ApiResponseBuilder.success();
+    }
+
+    // ============================================================================
+    // Archived Food Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @AuditApi(module = ModuleType.FOOD, action = ActionType.READ_ARCHIVED_FOODS, method = MethodType.READ)
+    @GetMapping(FoodApiConstants.GET_ARCHIVED_FOODS)
+    public ResponseEntity<ApiResponse<List<FoodResponse>>> readArchivedFoods() {
+
+        IServiceOutput<List<FoodResponse>> serviceOutput = foodService.readArchivedFoods();
+
+        return ApiResponseBuilder.success(serviceOutput.getOutput());
+    }
 }

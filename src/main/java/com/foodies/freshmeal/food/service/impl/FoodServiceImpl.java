@@ -12,13 +12,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.foodies.freshmeal.common.constants.ActionType;
+import com.foodies.freshmeal.common.constants.MethodType;
+import com.foodies.freshmeal.common.constants.RepositoryConstants;
 import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.enums.EntityName;
+import com.foodies.freshmeal.common.exception.BusinessException;
 import com.foodies.freshmeal.common.exception.ErrorCodeConstants;
 import com.foodies.freshmeal.common.exception.InvalidFoodStatusTransitionException;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
@@ -26,6 +28,7 @@ import com.foodies.freshmeal.common.factory.EntityFactory;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
+import com.foodies.freshmeal.common.io.service.impl.RepositoryContext;
 import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceOutput;
 import com.foodies.freshmeal.common.sequence.service.IDatabaseSequenceService;
@@ -37,16 +40,23 @@ import com.foodies.freshmeal.food.constants.DefaultFoodImageConstants;
 import com.foodies.freshmeal.food.constants.DietCategoryConstant;
 import com.foodies.freshmeal.food.constants.FoodCategoryConstant;
 import com.foodies.freshmeal.food.constants.FoodStatusConstant;
+import com.foodies.freshmeal.food.dto.ArchiveFoodRequest;
+import com.foodies.freshmeal.food.dto.BulkArchiveFoodRequest;
+import com.foodies.freshmeal.food.dto.BulkDeleteFoodRequest;
+import com.foodies.freshmeal.food.dto.BulkRestoreFoodRequest;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodIdRequest;
 import com.foodies.freshmeal.food.dto.FoodMetadataResponse;
 import com.foodies.freshmeal.food.dto.FoodRequest;
 import com.foodies.freshmeal.food.dto.FoodResponse;
 import com.foodies.freshmeal.food.dto.FoodStatusRequest;
+import com.foodies.freshmeal.food.dto.PermanentDeleteFoodRequest;
+import com.foodies.freshmeal.food.dto.RestoreFoodRequest;
 import com.foodies.freshmeal.food.entity.FoodEntity;
 import com.foodies.freshmeal.food.repository.IFoodRepository;
 import com.foodies.freshmeal.food.service.IFoodNavigationService;
 import com.foodies.freshmeal.food.service.IFoodService;
+import com.foodies.freshmeal.food.validation.FoodValidator;
 import com.foodies.freshmeal.image.dto.CreateImageInputDTO;
 import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.image.service.IImageService;
@@ -62,18 +72,21 @@ public class FoodServiceImpl implements IFoodService {
     private final IDatabaseSequenceService databaseSequenceService;
     private final IFoodRepository foodRepository;
     private final IFoodNavigationService foodNavigationService;
+    private final FoodValidator foodValidator;
 
     public FoodServiceImpl(
             IImageService imageService,
             IServiceContext serviceContext,
             IDatabaseSequenceService databaseSequenceService,
             IFoodRepository foodRepository,
-            IFoodNavigationService foodNavigationService) {
+            IFoodNavigationService foodNavigationService,
+            FoodValidator foodValidator) {
         this.imageService = imageService;
         this.serviceContext = serviceContext;
         this.databaseSequenceService = databaseSequenceService;
         this.foodRepository = foodRepository;
         this.foodNavigationService = foodNavigationService;
+        this.foodValidator = foodValidator;
     }
 
     /*
@@ -343,7 +356,9 @@ public class FoodServiceImpl implements IFoodService {
         applyStatus(food, requestedStatus);
 
         FoodResponse foodResponse = buildFoodResponse(food, currentStatus);
-
+        System.out.println("ID      : " + food.getId());
+        System.out.println("Version : " + food.getVersion());
+        System.out.println("Status  : " + food.getStatus());
         foodRepository.save(food);
 
         IServiceOutput<FoodResponse> foodResponseOutput = new ServiceOutput<>();
@@ -382,6 +397,30 @@ public class FoodServiceImpl implements IFoodService {
 
     }
 
+    private FoodResponse buildFoodResponse(FoodEntity food) {
+
+        FoodResponse response = FoodResponse.builder()
+                .id(food.getId())
+                .imageName(food.getImageName())
+                .foodName(food.getFoodName())
+                .description(food.getDescription())
+                .price(food.getPrice())
+                .imageUrl(food.getImageUrl())
+                .foodCategories(DisplayOptionMapperUtil.fromSet(food.getFoodCategories()))
+                .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
+                .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
+                .categoryGroups(DisplayOptionMapperUtil.fromSet(food.getCategoryGroups()))
+                .foodStatus(DisplayOptionMapperUtil.from(food.getStatus()))
+                .isAvailable(food.getStatus() == FoodStatusConstant.AVAILABLE)
+                .allowedStatuses(food.getStatus().getAllowedTransitionOptions())
+                .updatedAt(food.getStatusUpdatedAt() != null ? food.getStatusUpdatedAt().toString() : null)
+                .updatedBy(food.getStatusUpdatedBy())
+                .build();
+
+        return response;
+
+    }
+
     private void validateStatusTransition(FoodStatusConstant currentStatus, FoodStatusConstant requestedStatus,
             IServiceContext serviceContext1) {
 
@@ -389,12 +428,12 @@ public class FoodServiceImpl implements IFoodService {
             throw new InvalidFoodStatusTransitionException("Food status is not set.");
         }
 
-        if (currentStatus == requestedStatus && !ActionType.UPDATE.equals(serviceContext1.getActionType())) {
+        if (currentStatus == requestedStatus && !MethodType.UPDATE.equals(serviceContext1.getMethodType())) {
             throw new InvalidFoodStatusTransitionException("Food is already in status : " + requestedStatus);
         }
 
         if (!currentStatus.canTransitionTo(requestedStatus)
-                && !ActionType.UPDATE.equals(serviceContext1.getActionType())) {
+                && !MethodType.UPDATE.equals(serviceContext1.getMethodType())) {
 
             throw new InvalidFoodStatusTransitionException(
                     String.format("Food status cannot be changed from %s to %s.", currentStatus, requestedStatus));
@@ -576,6 +615,490 @@ public class FoodServiceImpl implements IFoodService {
         FoodResponse response = convertToFoodResponse(foodEntity, new FoodResponse());
 
         IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+        output.setOutput(response);
+
+        return output;
+    }
+
+    // ============================================================================
+    // Archive Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<FoodResponse> archiveFood(
+            IServiceInput<ArchiveFoodRequest> input) {
+
+        // ---------------------------------------------------------------------
+        // Validate Request
+        // ---------------------------------------------------------------------
+
+        foodValidator.validateArchiveFood(input);
+
+        // ---------------------------------------------------------------------
+        // Load Food
+        // ---------------------------------------------------------------------
+
+        FoodEntity food = loadFoodById(
+                input.getInput().getFoodId());
+
+        // ---------------------------------------------------------------------
+        // Business Validation
+        // ---------------------------------------------------------------------
+
+        validateFoodCanBeArchived(
+                food,
+                input.getServiceContext());
+
+        // ---------------------------------------------------------------------
+        // Archive Food
+        // ---------------------------------------------------------------------
+        RepositoryContext repositoryContext;
+        if (input.getServiceContext().getUserProfile() != null) {
+            repositoryContext = RepositoryContext.of(
+                    input.getServiceContext().getUserProfile().getUserName(),
+                    AppCalendar.getBusinessLocalDateTime());
+        } else {
+            repositoryContext = RepositoryContext.of(
+                    RepositoryConstants.SYSTEM_USER,
+                    AppCalendar.getBusinessLocalDateTime());
+        }
+        foodRepository.softDelete(
+                food.getId(),
+                repositoryContext);
+
+        // ---------------------------------------------------------------------
+        // Build Response
+        // ---------------------------------------------------------------------
+
+        FoodResponse response = buildFoodResponse(food);
+
+        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+
+        output.setOutput(response);
+
+        return output;
+    }
+
+    // ============================================================================
+    // Common Helper Methods
+    // ============================================================================
+
+    /**
+     * Loads a food by its identifier.
+     *
+     * @param foodId Food identifier.
+     *
+     * @return Food entity.
+     */
+    private FoodEntity loadFoodById(
+            final String foodId) {
+
+        return foodRepository.findActiveById(foodId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Food not found with Id : " + foodId));
+    }
+
+    /**
+     * Creates repository context.
+     *
+     * @param serviceContext Service context.
+     *
+     * @return Repository context.
+     */
+    private RepositoryContext createRepositoryContext(
+            final IServiceContext serviceContext) {
+
+        RepositoryContext repositoryContext;
+        if (serviceContext.getUserProfile() != null) {
+            repositoryContext = RepositoryContext.of(
+                    serviceContext.getUserProfile().getUserName(),
+                    AppCalendar.getBusinessLocalDateTime());
+        } else {
+            repositoryContext = RepositoryContext.of(
+                    RepositoryConstants.SYSTEM_USER,
+                    AppCalendar.getBusinessLocalDateTime());
+        }
+        return repositoryContext;
+    }
+
+    /**
+     * Validates whether a food can be archived.
+     *
+     * @param food           Food entity.
+     * @param serviceContext Service context.
+     */
+    private void validateFoodCanBeArchived(
+            final FoodEntity food,
+            @SuppressWarnings("unused") final IServiceContext serviceContext) {
+
+        if (food.isDeleted()) {
+
+            throw new BusinessException(
+                    "Food is already archived.");
+        }
+
+        /*
+         * Future Rule
+         *
+         * Check whether active orders reference this food.
+         *
+         * if(orderService.hasActiveOrders(food.getId()))
+         * throw new BusinessException(...);
+         */
+    }
+
+    /**
+     * Validates whether a food can be restored.
+     *
+     * @param food Food entity.
+     */
+    private void validateFoodCanBeRestored(
+            final FoodEntity food) {
+
+        if (!food.isDeleted()) {
+
+            throw new BusinessException(
+                    "Food is already active.");
+        }
+    }
+
+    /**
+     * Validates whether a food can be permanently deleted.
+     *
+     * @param food Food entity.
+     */
+    private void validateFoodCanBeDeleted(
+            final FoodEntity food) {
+
+        if (!food.isDeleted()) {
+
+            throw new BusinessException(
+                    "Only archived food can be permanently deleted.");
+        }
+
+        /*
+         * Future Rule
+         *
+         * Prevent deletion when
+         * active orders reference this food.
+         */
+    }
+
+    // ============================================================================
+    // Restore Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<FoodResponse> restoreFood(
+            IServiceInput<RestoreFoodRequest> input) {
+
+        // ---------------------------------------------------------------------
+        // Validate Request
+        // ---------------------------------------------------------------------
+
+        foodValidator.validateRestoreFood(input);
+
+        // ---------------------------------------------------------------------
+        // Load Archived Food
+        // ---------------------------------------------------------------------
+
+        FoodEntity food = loadArchivedFoodById(
+                input.getInput().getFoodId());
+
+        // ---------------------------------------------------------------------
+        // Business Validation
+        // ---------------------------------------------------------------------
+
+        validateFoodCanBeRestored(food);
+
+        // ---------------------------------------------------------------------
+        // Restore Food
+        // ---------------------------------------------------------------------
+
+        foodRepository.restore(
+                food.getId(),
+                createRepositoryContext(
+                        input.getServiceContext()));
+
+        // ---------------------------------------------------------------------
+        // Build Response
+        // ---------------------------------------------------------------------
+
+        FoodResponse response = buildFoodResponse(food);
+
+        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+
+        output.setOutput(response);
+
+        return output;
+    }
+
+    /**
+     * Loads an archived food by its identifier.
+     *
+     * @param foodId Food identifier.
+     *
+     * @return Archived food entity.
+     */
+    private FoodEntity loadArchivedFoodById(
+            final String foodId) {
+
+        return foodRepository.findDeletedById(foodId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Archived food not found with Id : "
+                                + foodId));
+    }
+
+    // ============================================================================
+    // Permanent Delete Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<FoodResponse> permanentDeleteFood(
+            IServiceInput<PermanentDeleteFoodRequest> input) {
+
+        // ---------------------------------------------------------------------
+        // Validate Request
+        // ---------------------------------------------------------------------
+
+        foodValidator.validatePermanentDeleteFood(input);
+
+        // ---------------------------------------------------------------------
+        // Load Archived Food
+        // ---------------------------------------------------------------------
+
+        FoodEntity food = loadArchivedFoodById(
+                input.getInput().getFoodId());
+
+        // ---------------------------------------------------------------------
+        // Business Validation
+        // ---------------------------------------------------------------------
+
+        validateFoodCanBeDeleted(food);
+
+        // ---------------------------------------------------------------------
+        // Delete Food Image
+        // ---------------------------------------------------------------------
+
+        deleteFoodImage(food);
+
+        // ---------------------------------------------------------------------
+        // Permanently Delete Food
+        // ---------------------------------------------------------------------
+
+        foodRepository.deletePermanently(
+                food.getId());
+
+        // ---------------------------------------------------------------------
+        // Build Response
+        // ---------------------------------------------------------------------
+
+        FoodResponse response = buildFoodResponse(food);
+
+        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+
+        output.setOutput(response);
+
+        return output;
+    }
+
+    /**
+     * Deletes food image.
+     *
+     * @param food Food entity.
+     */
+    private void deleteFoodImage(
+            @SuppressWarnings("unused") final FoodEntity food) {
+
+        /*
+         * Future Implementation
+         *
+         * imageService.deleteImage(
+         * food.getImageName());
+         */
+    }
+
+    // ============================================================================
+    // Bulk Archive Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<Void> bulkArchiveFoods(
+            IServiceInput<BulkArchiveFoodRequest> input) {
+
+        // ---------------------------------------------------------------------
+        // Validate Request
+        // ---------------------------------------------------------------------
+
+        foodValidator.validateBulkArchiveFoods(input);
+
+        // ---------------------------------------------------------------------
+        // Archive Foods
+        // ---------------------------------------------------------------------
+
+        for (String foodId : input.getInput().getFoodIds()) {
+
+            ArchiveFoodRequest request = new ArchiveFoodRequest();
+
+            request.setFoodId(foodId);
+
+            IServiceInput<ArchiveFoodRequest> archiveInput = new ServiceInput<>();
+
+            archiveInput.setInput(request);
+            archiveInput.setServiceContext(input.getServiceContext());
+
+            archiveFood(archiveInput);
+        }
+
+        // ---------------------------------------------------------------------
+        // Build Response
+        // ---------------------------------------------------------------------
+
+        return new ServiceOutput<>();
+    }
+
+    // ============================================================================
+    // Bulk Restore Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<Void> bulkRestoreFoods(
+            IServiceInput<BulkRestoreFoodRequest> input) {
+
+        // ---------------------------------------------------------------------
+        // Validate Request
+        // ---------------------------------------------------------------------
+
+        foodValidator.validateBulkRestoreFoods(input);
+
+        // ---------------------------------------------------------------------
+        // Restore Foods
+        // ---------------------------------------------------------------------
+
+        for (String foodId : input.getInput().getFoodIds()) {
+
+            RestoreFoodRequest request = new RestoreFoodRequest();
+
+            request.setFoodId(foodId);
+
+            IServiceInput<RestoreFoodRequest> restoreInput = new ServiceInput<>();
+
+            restoreInput.setInput(request);
+            restoreInput.setServiceContext(input.getServiceContext());
+
+            restoreFood(restoreInput);
+        }
+
+        // ---------------------------------------------------------------------
+        // Build Response
+        // ---------------------------------------------------------------------
+
+        return new ServiceOutput<>();
+    }
+
+    // ============================================================================
+    // Bulk Permanent Delete Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<Void> bulkPermanentDeleteFoods(
+            IServiceInput<BulkDeleteFoodRequest> input) {
+
+        // ---------------------------------------------------------------------
+        // Validate Request
+        // ---------------------------------------------------------------------
+
+        foodValidator.validateBulkPermanentDeleteFoods(input);
+
+        // ---------------------------------------------------------------------
+        // Delete Foods
+        // ---------------------------------------------------------------------
+
+        for (String foodId : input.getInput().getFoodIds()) {
+
+            PermanentDeleteFoodRequest request = new PermanentDeleteFoodRequest();
+
+            request.setFoodId(foodId);
+
+            IServiceInput<PermanentDeleteFoodRequest> deleteInput = new ServiceInput<>();
+
+            deleteInput.setInput(request);
+            deleteInput.setServiceContext(input.getServiceContext());
+
+            permanentDeleteFood(deleteInput);
+        }
+
+        // ---------------------------------------------------------------------
+        // Build Response
+        // ---------------------------------------------------------------------
+
+        return new ServiceOutput<>();
+    }
+
+    /**
+     * Creates a service input.
+     *
+     * @param request        Request object.
+     * @param serviceContext Service context.
+     *
+     * @return Service input.
+     */
+    // private <T> IServiceInput<T> createServiceInput(
+    // final T request,
+    // final IServiceContext serviceContext) {
+
+    // IServiceInput<T> serviceInput = new ServiceInput<>();
+
+    // serviceInput.setInput(request);
+    // serviceInput.setServiceContext(serviceContext);
+
+    // return serviceInput;
+    // }
+
+    // ============================================================================
+    // Archived Food Operations
+    // ============================================================================
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<List<FoodResponse>> readArchivedFoods() {
+
+        // ---------------------------------------------------------------------
+        // Load Archived Foods
+        // ---------------------------------------------------------------------
+
+        List<FoodEntity> archivedFoods = foodRepository.findAllDeleted();
+
+        // ---------------------------------------------------------------------
+        // Build Response
+        // ---------------------------------------------------------------------
+
+        List<FoodResponse> response = archivedFoods.stream()
+                .map(this::buildFoodResponse)
+                .toList();
+
+        IServiceOutput<List<FoodResponse>> output = new ServiceOutput<>();
+
         output.setOutput(response);
 
         return output;

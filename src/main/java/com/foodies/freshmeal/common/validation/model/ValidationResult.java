@@ -33,6 +33,11 @@ public class ValidationResult {
         errors.add(new ValidationError(field, message));
     }
 
+    public void addError(ValidationError validationError) {
+        
+        errors.add(validationError);
+    }
+
     public boolean hasErrors() {
         return !errors.isEmpty();
     }

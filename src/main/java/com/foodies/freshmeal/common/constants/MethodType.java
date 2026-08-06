@@ -1,32 +1,53 @@
 package com.foodies.freshmeal.common.constants;
 
+/**
+ * ============================================================================
+ * Method Types
+ * ============================================================================
+ *
+ * Represents the generic CRUD operation performed by an API.
+ *
+ * This enum is technology-oriented and remains common across
+ * all modules.
+ *
+ * Examples:
+ *
+ * Add Food              -> CREATE
+ * View Food             -> READ
+ * Update Food           -> UPDATE
+ * Archive Food          -> UPDATE
+ * Restore Food          -> UPDATE
+ * Delete Food           -> DELETE
+ *
+ * ============================================================================
+ *
+ * @author Pankaj Kumar
+ * @since 1.0
+ */
 public enum MethodType {
 
-	//Api
-	API,
-	
-    // Food
-    ADD_FOOD,
-    VIEW_FOOD,
-    READ_ALL_FOODS,
-    UPDATE_FOOD,
-    UPDATE_FOOD_STATUS,
-    DELETE_FOOD,
+    /**
+     * Resource creation.
+     */
+    CREATE,
 
-    // Category
-    ADD_CATEGORY,
-    UPDATE_CATEGORY,
-    DELETE_CATEGORY,
+    /**
+     * Resource retrieval.
+     */
+    READ,
 
-    // Images
-    UPLOAD_IMAGE,
-    DELETE_IMAGE,
+    /**
+     * Resource modification.
+     */
+    UPDATE,
 
-    // Authentication
-    LOGIN,
-    LOGOUT,
-
-    // Orders
-    PLACE_ORDER,
-    CANCEL_ORDER
+    /**
+     * Resource deletion.
+     */
+    DELETE,
+    
+    /**
+     * Default MethodType.
+     */
+    API
 }

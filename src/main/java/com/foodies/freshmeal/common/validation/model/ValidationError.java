@@ -23,4 +23,17 @@ public class ValidationError {
      * Validation message.
      */
     private String message;
+
+    /**
+     * Creates a validation error.
+     *
+     * @param field   Field name.
+     * @param message Validation message.
+     *
+     * @return ValidationError instance.
+     */
+    public static ValidationError of(final String field, final String message) {
+
+        return new ValidationError(field, message);
+    }
 }

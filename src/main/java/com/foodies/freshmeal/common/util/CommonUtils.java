@@ -2,7 +2,13 @@ package com.foodies.freshmeal.common.util;
 
 import java.util.Comparator;
 
+import org.springframework.util.StringUtils;
+
 public final class CommonUtils {
+
+    public static boolean isBlank(String foodId) {
+        return !StringUtils.hasText(foodId);
+    }
 
     private CommonUtils() {
     }
