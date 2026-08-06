@@ -1,11 +1,15 @@
 package com.foodies.freshmeal.common.exception;
 
-public class DuplicateResourceException extends BusinessException {
+/**
+ * Duplicate Resource Exception.
+ */
+public class DuplicateResourceException extends AbstractBusinessException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public DuplicateResourceException(ErrorCodeConstants errorCode) {
-        super(errorCode);
-    }
+	public DuplicateResourceException(final IBusinessError error) {
+
+		super(error);
+	}
 
 }

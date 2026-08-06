@@ -21,7 +21,6 @@ import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.exception.BusinessException;
-import com.foodies.freshmeal.common.exception.ErrorCodeConstants;
 import com.foodies.freshmeal.common.exception.InvalidFoodStatusTransitionException;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
 import com.foodies.freshmeal.common.factory.EntityFactory;
@@ -39,6 +38,7 @@ import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
 import com.foodies.freshmeal.food.constants.DefaultFoodImageConstants;
 import com.foodies.freshmeal.food.constants.DietCategoryConstant;
 import com.foodies.freshmeal.food.constants.FoodCategoryConstant;
+import com.foodies.freshmeal.food.constants.FoodErrorConstants;
 import com.foodies.freshmeal.food.constants.FoodStatusConstant;
 import com.foodies.freshmeal.food.dto.ArchiveFoodRequest;
 import com.foodies.freshmeal.food.dto.BulkArchiveFoodRequest;
@@ -98,7 +98,7 @@ public class FoodServiceImpl implements IFoodService {
         FoodIdRequest foodRequest = request.getInput();
         FoodEntity output = foodRepository
                 .findById(foodRequest.getFoodId()).orElseThrow(
-                        () -> new ResourceNotFoundException(ErrorCodeConstants.FOOD_NOT_FOUND));
+                        () -> new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND));
 
         return new ServiceOutput<>(output);
 
@@ -223,7 +223,7 @@ public class FoodServiceImpl implements IFoodService {
     public IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input) {
         List<FoodResponse> foodResponses = new ArrayList<>();
 
-        foodRepository.findAll().stream().forEach(foodEntity -> {
+        foodRepository.findAllActive().stream().forEach(foodEntity -> {
             LOGGER.info("Food ID: {}, Food Name: {}, Description: {}, Price: {}, Category: {}, Image URL: {}",
                     foodEntity.getId(),
                     foodEntity.getFoodName(),
@@ -305,7 +305,7 @@ public class FoodServiceImpl implements IFoodService {
         FoodStatusRequest foodRequest = input.getInput();
 
         FoodEntity foodEntity = foodRepository.findById(foodRequest.getFoodId())
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorCodeConstants.FOOD_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND));
 
         /*
          * convert to foodresponse
@@ -472,7 +472,7 @@ public class FoodServiceImpl implements IFoodService {
         FoodEntity foodEntity = foodRepository.findById(foodRequest.getFoodId()).orElseThrow(() -> {
             LOGGER.error("Food not found with Food Id : {}", foodRequest.getFoodId());
 
-            return new ResourceNotFoundException(ErrorCodeConstants.FOOD_NOT_FOUND);
+            return new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND);
         });
 
         LOGGER.debug("Food found successfully : {}", foodEntity.getId());
@@ -641,8 +641,7 @@ public class FoodServiceImpl implements IFoodService {
         // Load Food
         // ---------------------------------------------------------------------
 
-        FoodEntity food = loadFoodById(
-                input.getInput().getFoodId());
+        FoodEntity food = loadFoodById(input.getInput().getFoodId());
 
         // ---------------------------------------------------------------------
         // Business Validation
@@ -693,12 +692,17 @@ public class FoodServiceImpl implements IFoodService {
      *
      * @return Food entity.
      */
-    private FoodEntity loadFoodById(
-            final String foodId) {
+    private FoodEntity loadFoodById(final String foodId) {
+    	
+        FoodEntity output = foodRepository
+                .findById(foodId).orElseThrow(
+                        () -> new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND));
 
-        return foodRepository.findActiveById(foodId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Food not found with Id : " + foodId));
+        return output;
+
+//        return foodRepository.findActiveById(foodId)
+//                .orElseThrow(() -> new ResourceNotFoundException(
+//                        "Food not found with Id : " + foodId));
     }
 
     /**
@@ -736,8 +740,7 @@ public class FoodServiceImpl implements IFoodService {
 
         if (food.isDeleted()) {
 
-            throw new BusinessException(
-                    "Food is already archived.");
+            throw new BusinessException(FoodErrorConstants.FOOD_CANNOT_BE_ARCHIVED);
         }
 
         /*
@@ -760,8 +763,7 @@ public class FoodServiceImpl implements IFoodService {
 
         if (!food.isDeleted()) {
 
-            throw new BusinessException(
-                    "Food is already active.");
+            throw new BusinessException(FoodErrorConstants.FOOD_ALREADY_ACTIVE);
         }
     }
 
@@ -775,8 +777,7 @@ public class FoodServiceImpl implements IFoodService {
 
         if (!food.isDeleted()) {
 
-            throw new BusinessException(
-                    "Only archived food can be permanently deleted.");
+            throw new BusinessException(FoodErrorConstants.FOOD_CANNOT_BE_DELETED);
         }
 
         /*
@@ -850,9 +851,7 @@ public class FoodServiceImpl implements IFoodService {
             final String foodId) {
 
         return foodRepository.findDeletedById(foodId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Archived food not found with Id : "
-                                + foodId));
+                .orElseThrow(() -> new ResourceNotFoundException(FoodErrorConstants.FOOD_ALREADY_ARCHIVED));
     }
 
     // ============================================================================

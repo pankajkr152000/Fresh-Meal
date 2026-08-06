@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.repository.support.SimpleMongoRepository
 import com.foodies.freshmeal.common.constants.EntityFieldConstants;
 import com.foodies.freshmeal.common.constants.RepositoryConstants;
 import com.foodies.freshmeal.common.entity.ABaseEntity;
+import com.foodies.freshmeal.common.exception.CommonErrorConstants;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
 import com.foodies.freshmeal.common.io.service.impl.RepositoryContext;
 import com.foodies.freshmeal.common.repository.base.IBaseRepositoryCustom;
@@ -368,7 +369,7 @@ public class BaseRepositoryImpl<T extends ABaseEntity, ID> extends SimpleMongoRe
 				entityClass);
 
 		if (entity == null) {
-			throw new ResourceNotFoundException(entityClass.getSimpleName() + " not found with id : " + id);
+			throw new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND);
 		}
 
 		return entity;
@@ -396,7 +397,7 @@ public class BaseRepositoryImpl<T extends ABaseEntity, ID> extends SimpleMongoRe
 			LOGGER.warn("Failed to restore {} with id [{}]. Entity not found or already active.",
 					entityClass.getSimpleName(), id);
 
-			throw new ResourceNotFoundException(entityClass.getSimpleName() + " not found with id : " + id);
+			throw new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND);
 		}
 
 		return entity;

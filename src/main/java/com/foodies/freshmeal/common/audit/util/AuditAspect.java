@@ -257,9 +257,9 @@ public class AuditAspect {
 
         } else {
 
-            auditLog.setResponseStatus(HttpStatusCode.INTERNAL_SERVER_ERROR);
+            auditLog.setResponseStatus(httpResponse.getStatus());
 
-            auditLog.setResponseMessage(HttpStatusCode.getDescription(HttpStatusCode.INTERNAL_SERVER_ERROR));
+            auditLog.setResponseMessage(HttpStatusCode.getDescription(0));
         }
 
         /*

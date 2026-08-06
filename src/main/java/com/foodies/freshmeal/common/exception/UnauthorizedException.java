@@ -1,11 +1,15 @@
 package com.foodies.freshmeal.common.exception;
 
-public class UnauthorizedException extends BusinessException {
+/**
+ * Unauthorized Exception.
+ */
+public class UnauthorizedException extends AbstractBusinessException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public UnauthorizedException() {
-        super(ErrorCodeConstants.INVALID_CREDENTIALS);
-    }
+	public UnauthorizedException(final IBusinessError error) {
+
+		super(error);
+	}
 
 }

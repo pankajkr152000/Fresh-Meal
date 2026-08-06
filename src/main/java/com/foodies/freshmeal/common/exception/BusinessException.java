@@ -7,18 +7,15 @@ public class BusinessException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private final ErrorCodeConstants errorCode;
-    private final String errorMessage;
+    private final IBusinessError error;
 
-    public BusinessException(ErrorCodeConstants errorCode) {
-        super(ErrorMessage.get(errorCode));
-        this.errorCode = errorCode;
-        this.errorMessage = "";
+    public BusinessException(IBusinessError error) {
+        super(error.getErrorMessage());
+        this.error = error;
     }
 
-    public BusinessException(String errorMessage) {
-        this.errorCode = null;
-        this.errorMessage = errorMessage;
+    public IBusinessError getErrorCode() {
+        return error;
     }
 
 }

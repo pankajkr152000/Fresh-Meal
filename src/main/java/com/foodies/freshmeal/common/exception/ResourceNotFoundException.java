@@ -1,15 +1,15 @@
 package com.foodies.freshmeal.common.exception;
 
-public class ResourceNotFoundException extends BusinessException {
+/**
+ * Resource Not Found Exception.
+ */
+public class ResourceNotFoundException extends AbstractBusinessException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public ResourceNotFoundException(ErrorCodeConstants errorCode) {
-        super(errorCode);
-    }
+	public ResourceNotFoundException(final IBusinessError error) {
 
-    public ResourceNotFoundException(String errorCode) {
-        super(errorCode);
-    }
+		super(error);
+	}
 
 }

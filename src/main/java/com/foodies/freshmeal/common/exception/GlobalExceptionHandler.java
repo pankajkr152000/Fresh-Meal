@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.messaging.handler.annotation.support.MethodArgumentNotValidException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -21,14 +21,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
-import com.foodies.freshmeal.common.constants.ErrorCodeConstants;
-import com.foodies.freshmeal.common.constants.HttpStatusCode;
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.mongodb.MongoException;
 
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 
 /**
@@ -89,15 +87,25 @@ public class GlobalExceptionHandler {
      * @return HTTP 400 Bad Request response
      */
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<ApiResponse<Void>> handleValidationException(ValidationException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleValidationException(
+            ValidationException exception) {
 
-        LOGGER.warn("Validation failed : {}", exception.getMessage());
+        LOGGER.warn(
+                "Validation failed [{}] : {}",
+                exception.getErrorCode(),
+                exception.getErrorMessage());
 
-        List<String> errors = exception.getValidationResult().getErrors().stream()
+        List<String> errors = exception.getValidationResult()
+                .getErrors()
+                .stream()
                 .map(error -> error.getMessage())
                 .toList();
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(), errors);
+        return ApiResponseBuilder.buildResponse(
+                exception.getHttpStatusCode(),
+                exception.getErrorCode(),
+                exception.getErrorMessage(),
+                errors);
     }
 
     /**
@@ -113,15 +121,21 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(
-            MethodArgumentNotValidException exception) {
+            final MethodArgumentNotValidException exception) {
 
         LOGGER.warn("Bean validation failed.");
 
-        List<String> errors = exception.getBindingResult().getFieldErrors().stream()
+        List<String> errors = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
                 .map(fieldError -> fieldError.getDefaultMessage())
                 .toList();
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Validation failed.", errors);
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.VALIDATION_FAILED.getHttpStatusCode(),
+                CommonErrorConstants.VALIDATION_FAILED.getErrorCode(),
+                CommonErrorConstants.VALIDATION_FAILED.getErrorMessage(),
+                errors);
     }
 
     /**
@@ -137,15 +151,18 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(
-            ConstraintViolationException exception) {
+            final ConstraintViolationException exception) {
 
         LOGGER.warn("Constraint validation failed.");
 
-        List<String> errors = exception.getConstraintViolations().stream()
-                .map((ConstraintViolation<?> violation) -> violation.getMessage())
+        List<String> errors = exception.getConstraintViolations()
+                .stream()
+                .map(constraintViolation -> constraintViolation.getMessage())
                 .toList();
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Validation failed.", errors);
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.VALIDATION_FAILED,
+                errors);
     }
 
     // ===========================================================
@@ -163,50 +180,13 @@ public class GlobalExceptionHandler {
      * @return HTTP 400 Bad Request response
      */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException exception) {
+    public ResponseEntity<ApiResponse<Object>> handleBusinessException(
+            BusinessException exception) {
 
-        LOGGER.warn("Business exception occurred : {}", exception.getMessage());
-
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(),
-                List.of(exception.getMessage()));
-    }
-
-    /**
-     * =========================================================== Handle Resource
-     * Not Found Exception
-     * ===========================================================
-     *
-     * Handles requests where the requested resource does not exist.
-     *
-     * @param exception Resource not found exception
-     *
-     * @return HTTP 404 Not Found response
-     */
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException exception) {
-
-        LOGGER.warn("Resource not found : {}", exception.getMessage());
-
-        return ApiResponseBuilder.notFound(ErrorCodeConstants.FM_AUTH_003 , exception.getMessage());
-    }
-
-    /**
-     * =========================================================== Handle Duplicate
-     * Resource Exception
-     * ===========================================================
-     *
-     * Handles duplicate resource creation requests.
-     *
-     * @param exception Duplicate resource exception
-     *
-     * @return HTTP 409 Conflict response
-     */
-    @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateResourceException(DuplicateResourceException exception) {
-
-        LOGGER.warn("Duplicate resource : {}", exception.getMessage());
-
-        return ApiResponseBuilder.conflict(ErrorCodeConstants.FM_COM_004 , exception.getMessage());
+        return ApiResponseBuilder.buildResponse(
+                exception.getError().getHttpStatusCode(),
+                exception.getError().getErrorCode(),
+                exception.getError().getErrorMessage());
     }
 
     /**
@@ -221,12 +201,14 @@ public class GlobalExceptionHandler {
      * @return HTTP 400 Bad Request response
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(
+            final IllegalArgumentException exception) {
 
         LOGGER.warn("Illegal argument : {}", exception.getMessage());
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), exception.getMessage(),
-                List.of(exception.getMessage()));
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_REQUEST,
+                List.of(CommonErrorConstants.INVALID_REQUEST.getErrorMessage()));
     }
 
     /**
@@ -240,55 +222,19 @@ public class GlobalExceptionHandler {
      * @return HTTP 409 Conflict response
      */
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(IllegalStateException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleIllegalStateException(
+            final IllegalStateException exception) {
 
         LOGGER.warn("Illegal state : {}", exception.getMessage());
 
-        return ApiResponseBuilder.conflict(ErrorCodeConstants.FM_COM_004 , exception.getMessage());
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.OPERATION_FAILED,
+                List.of(exception.getMessage()));
     }
 
     // ===========================================================
     // Authentication & Authorization Exceptions
     // ===========================================================
-
-    /**
-     * =========================================================== Handle
-     * Unauthorized Exception
-     * ===========================================================
-     *
-     * Handles authentication failures where the client has not been authenticated
-     * successfully.
-     *
-     * @param exception Unauthorized exception
-     *
-     * @return HTTP 401 Unauthorized response
-     */
-    @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleUnauthorizedException(UnauthorizedException exception) {
-
-        LOGGER.warn("Unauthorized access : {}", exception.getMessage());
-
-        return ApiResponseBuilder.unauthorized(ErrorCodeConstants.FM_AUTH_002 , exception.getMessage());
-    }
-
-    /**
-     * =========================================================== Handle Forbidden
-     * Exception ===========================================================
-     *
-     * Handles requests where the authenticated user does not have permission to
-     * access the requested resource.
-     *
-     * @param exception Forbidden exception
-     *
-     * @return HTTP 403 Forbidden response
-     */
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ApiResponse<Void>> handleForbiddenException(ForbiddenException exception) {
-
-        LOGGER.warn("Access denied : {}", exception.getMessage());
-
-        return ApiResponseBuilder.forbidden(ErrorCodeConstants.FM_AUTH_001 , exception.getMessage());
-    }
 
     /**
      * =========================================================== Handle Spring
@@ -302,11 +248,13 @@ public class GlobalExceptionHandler {
      * @return HTTP 403 Forbidden response
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(
+            final AccessDeniedException exception) {
 
         LOGGER.warn("Spring Security access denied : {}", exception.getMessage());
 
-        return ApiResponseBuilder.forbidden(ErrorCodeConstants.FM_AUTH_003 , "Access denied.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.ACCESS_DENIED);
     }
 
     /**
@@ -321,11 +269,13 @@ public class GlobalExceptionHandler {
      * @return HTTP 401 Unauthorized response
      */
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(AuthenticationException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleAuthenticationException(
+            final AuthenticationException exception) {
 
         LOGGER.warn("Authentication failed : {}", exception.getMessage());
 
-        return ApiResponseBuilder.unauthorized(ErrorCodeConstants.FM_AUTH_002 , "Authentication failed.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.UNAUTHORIZED);
     }
 
     // ===========================================================
@@ -346,11 +296,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(
-            HttpMessageNotReadableException exception) {
+            final HttpMessageNotReadableException exception) {
 
         LOGGER.warn("Malformed request body : {}", exception.getMessage());
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Invalid request payload.",
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_REQUEST,
                 List.of("Request body is malformed or contains invalid values."));
     }
 
@@ -367,11 +318,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingServletRequestParameterException(
-            MissingServletRequestParameterException exception) {
+            final MissingServletRequestParameterException exception) {
 
         LOGGER.warn("Missing request parameter : {}", exception.getParameterName());
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Missing request parameter.",
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_REQUEST,
                 List.of("Required parameter '" + exception.getParameterName() + "' is missing."));
     }
 
@@ -388,11 +340,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingRequestHeaderException(
-            MissingRequestHeaderException exception) {
+            final MissingRequestHeaderException exception) {
 
         LOGGER.warn("Missing request header : {}", exception.getHeaderName());
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Missing request header.",
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_REQUEST,
                 List.of("Required header '" + exception.getHeaderName() + "' is missing."));
     }
 
@@ -409,11 +362,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MissingPathVariableException.class)
     public ResponseEntity<ApiResponse<Void>> handleMissingPathVariableException(
-            MissingPathVariableException exception) {
+            final MissingPathVariableException exception) {
 
         LOGGER.warn("Missing path variable : {}", exception.getVariableName());
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Missing path variable.",
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_REQUEST,
                 List.of("Required path variable '" + exception.getVariableName() + "' is missing."));
     }
 
@@ -430,11 +384,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatchException(
-            MethodArgumentTypeMismatchException exception) {
+            final MethodArgumentTypeMismatchException exception) {
 
         LOGGER.warn("Method argument type mismatch : {}", exception.getMessage());
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Invalid request parameter.",
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_REQUEST,
                 List.of("Invalid value for parameter '" + exception.getName() + "'."));
     }
 
@@ -451,11 +406,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpRequestMethodNotSupportedException(
-            HttpRequestMethodNotSupportedException exception) {
+            final HttpRequestMethodNotSupportedException exception) {
 
         LOGGER.warn("HTTP method not supported : {}", exception.getMethod());
 
-        return ApiResponseBuilder.methodNotAllowed(ErrorCodeConstants.FM_COM_001 , "HTTP method '" + exception.getMethod() + "' is not supported.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_REQUEST,
+                List.of("HTTP method '" + exception.getMethod() + "' is not supported."));
     }
 
     /**
@@ -469,11 +426,14 @@ public class GlobalExceptionHandler {
      * @return HTTP 404 Not Found response
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNoHandlerFoundException(NoHandlerFoundException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleNoHandlerFoundException(
+            final NoHandlerFoundException exception) {
 
         LOGGER.warn("No handler found : {} {}", exception.getHttpMethod(), exception.getRequestURL());
 
-        return ApiResponseBuilder.notFound(ErrorCodeConstants.FM_COM_005 , "Requested API endpoint was not found.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.RESOURCE_NOT_FOUND,
+                List.of("Requested API endpoint was not found."));
     }
 
     // ===========================================================
@@ -494,11 +454,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolationException(
-            DataIntegrityViolationException exception) {
+            final DataIntegrityViolationException exception) {
 
         LOGGER.error("Database integrity violation.", exception);
 
-        return ApiResponseBuilder.conflict(ErrorCodeConstants.FM_COM_004 , "Database integrity violation.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.DUPLICATE_RESOURCE,
+                List.of("Database integrity violation."));
     }
 
     /**
@@ -512,11 +474,13 @@ public class GlobalExceptionHandler {
      * @return HTTP 500 Internal Server Error response
      */
     @ExceptionHandler(MongoException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMongoException(MongoException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleMongoException(
+            final MongoException exception) {
 
         LOGGER.error("MongoDB exception occurred.", exception);
 
-        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "Database operation failed.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.DATABASE_ERROR);
     }
 
     // ===========================================================
@@ -537,11 +501,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ApiResponse<Void>> handleMaxUploadSizeExceededException(
-            MaxUploadSizeExceededException exception) {
+            final MaxUploadSizeExceededException exception) {
 
         LOGGER.warn("Maximum upload size exceeded.", exception);
 
-        return ApiResponseBuilder.payloadTooLarge(ErrorCodeConstants.FM_COM_001 , "Uploaded file exceeds maximum allowed size.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.FILE_SIZE_EXCEEDED,
+                List.of("Uploaded file exceeds maximum allowed size."));
     }
 
     /**
@@ -555,12 +521,14 @@ public class GlobalExceptionHandler {
      * @return HTTP 400 Bad Request response
      */
     @ExceptionHandler(MultipartException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMultipartException(MultipartException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleMultipartException(
+            final MultipartException exception) {
 
         LOGGER.warn("Multipart request failed.", exception);
 
-        return ApiResponseBuilder.badRequest(HttpStatusCode.getDescription(400), "Invalid multipart request.",
-                List.of(exception.getMessage()));
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INVALID_FILE,
+                List.of("Invalid multipart request."));
     }
 
     // ===========================================================
@@ -571,22 +539,45 @@ public class GlobalExceptionHandler {
      * Handle IO Exception.
      */
     @ExceptionHandler(IOException.class)
-    public ResponseEntity<ApiResponse<Void>> handleIOException(IOException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleIOException(
+            final IOException exception) {
 
         LOGGER.error("IO exception occurred.", exception);
 
-        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "Unable to process the request.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INTERNAL_SERVER_ERROR,
+                List.of("Unable to process the request."));
     }
 
     /**
      * Handle Null Pointer Exception.
      */
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNullPointerException(NullPointerException exception) {
+    public ResponseEntity<ApiResponse<Void>> handleNullPointerException(
+            final NullPointerException exception) {
 
         LOGGER.error("Null pointer exception occurred.", exception);
 
-        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "Unexpected system error.");
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.INTERNAL_SERVER_ERROR,
+                List.of("Unexpected system error."));
+    }
+
+    /**
+     * handle no such method error exception
+     * 
+     * @param exception
+     * @return
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(
+            final NoResourceFoundException exception) {
+
+        LOGGER.warn("Resource not found : {}", exception.getResourcePath());
+
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.RESOURCE_NOT_FOUND,
+                List.of("Requested API endpoint was not found."));
     }
 
     // ===========================================================
@@ -604,12 +595,25 @@ public class GlobalExceptionHandler {
      *
      * @return HTTP 500 Internal Server Error response
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleException(Exception exception) {
 
-        LOGGER.error("Unhandled exception occurred.", exception);
+    @ExceptionHandler(AbstractBusinessException.class)
+    public ResponseEntity<ResponseEntity<ApiResponse<Object>>> handleBusinessException(
+            AbstractBusinessException exception) {
 
-        return ApiResponseBuilder.internalServerError(ErrorCodeConstants.FM_COM_005 , "An unexpected error occurred. Please contact support.");
+        LOGGER.warn(
+                "Business Exception [{}] : {}",
+                exception.getErrorCode(),
+                exception.getErrorMessage());
+
+        return ResponseEntity
+                .status(
+                        exception.getHttpStatusCode()
+                                .toHttpStatus())
+                .body(
+                        ApiResponseBuilder.buildResponse(
+                                exception.getHttpStatusCode(),
+                                exception.getErrorCode(),
+                                exception.getErrorMessage()));
     }
 
 }

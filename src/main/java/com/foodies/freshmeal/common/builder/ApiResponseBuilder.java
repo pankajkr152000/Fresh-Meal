@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import com.foodies.freshmeal.common.constants.ApiMessageConstants;
 import com.foodies.freshmeal.common.constants.HttpStatusCode;
 import com.foodies.freshmeal.common.dto.ApiResponse;
+import com.foodies.freshmeal.common.exception.IBusinessError;
 
 /**
  * ============================================================================
@@ -180,10 +181,11 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return bad request response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode, String message) {
-
-        return badRequest(errorCode, message, List.of(message));
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode,
+    // String message) {
+    //
+    // return badRequest(errorCode, message, List.of(message));
+    // }
 
     /**
      * Returns HTTP 400 (Bad Request).
@@ -193,10 +195,12 @@ public final class ApiResponseBuilder {
      * @param errors    validation errors
      * @return bad request response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode, String message, List<String> errors) {
-
-        return buildResponse(false, HttpStatus.BAD_REQUEST, errorCode, message, errors, null);
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode,
+    // String message, List<String> errors) {
+    //
+    // return buildResponse(false, HttpStatus.BAD_REQUEST, errorCode, message,
+    // errors, null);
+    // }
 
     // =========================================================
     // Unauthorized (401)
@@ -209,10 +213,12 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return unauthorized response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> unauthorized(String errorCode, String message) {
-
-        return buildResponse(false, HttpStatus.UNAUTHORIZED, errorCode, message, List.of(message), null);
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> unauthorized(String
+    // errorCode, String message) {
+    //
+    // return buildResponse(false, HttpStatus.UNAUTHORIZED, errorCode, message,
+    // List.of(message), null);
+    // }
 
     // =========================================================
     // Forbidden (403)
@@ -225,10 +231,12 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return forbidden response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> forbidden(String errorCode, String message) {
-
-        return buildResponse(false, HttpStatus.FORBIDDEN, errorCode, message, List.of(message), null);
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> forbidden(String errorCode,
+    // String message) {
+    //
+    // return buildResponse(false, HttpStatus.FORBIDDEN, errorCode, message,
+    // List.of(message), null);
+    // }
 
     // =========================================================
     // Not Found (404)
@@ -241,10 +249,12 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return not found response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> notFound(String errorCode, String message) {
-
-        return buildResponse(false, HttpStatus.NOT_FOUND, errorCode, message, List.of(message), null);
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> notFound(String errorCode,
+    // String message) {
+    //
+    // return buildResponse(false, HttpStatus.NOT_FOUND, errorCode, message,
+    // List.of(message), null);
+    // }
 
     // =========================================================
     // Conflict (409)
@@ -257,10 +267,12 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return conflict response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> conflict(String errorCode, String message) {
-
-        return buildResponse(false, HttpStatus.CONFLICT, errorCode, message, List.of(message), null);
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> conflict(String errorCode,
+    // String message) {
+    //
+    // return buildResponse(false, HttpStatus.CONFLICT, errorCode, message,
+    // List.of(message), null);
+    // }
 
     // =========================================================
     // Method Not Allowed (405)
@@ -273,10 +285,12 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return method not allowed response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> methodNotAllowed(String errorCode, String message) {
-
-        return buildResponse(false, HttpStatus.METHOD_NOT_ALLOWED, errorCode, message, List.of(message), null);
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> methodNotAllowed(String
+    // errorCode, String message) {
+    //
+    // return buildResponse(false, HttpStatus.METHOD_NOT_ALLOWED, errorCode,
+    // message, List.of(message), null);
+    // }
 
     // =========================================================
     // Payload Too Large (413)
@@ -289,11 +303,13 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return payload too large response
      */
-    @SuppressWarnings("deprecation")
-    public static <T> ResponseEntity<ApiResponse<T>> payloadTooLarge(String errorCode, String message) {
-
-        return buildResponse(false, HttpStatus.PAYLOAD_TOO_LARGE, errorCode, message, List.of(message), null);
-    }
+    // @SuppressWarnings("deprecation")
+    // public static <T> ResponseEntity<ApiResponse<T>> payloadTooLarge(String
+    // errorCode, String message) {
+    //
+    // return buildResponse(false, HttpStatus.PAYLOAD_TOO_LARGE, errorCode, message,
+    // List.of(message), null);
+    // }
 
     // =========================================================
     // Internal Server Error (500)
@@ -306,10 +322,11 @@ public final class ApiResponseBuilder {
      * @param message   business message
      * @return internal server error response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String errorCode, String message) {
-
-        return internalServerError(errorCode, message, List.of(message));
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String
+    // errorCode, String message) {
+    //
+    // return internalServerError(errorCode, message, List.of(message));
+    // }
 
     /**
      * Returns HTTP 500 (Internal Server Error).
@@ -319,11 +336,13 @@ public final class ApiResponseBuilder {
      * @param errors    validation/business errors
      * @return internal server error response
      */
-    public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String errorCode, String message,
-            List<String> errors) {
-
-        return buildResponse(false, HttpStatus.INTERNAL_SERVER_ERROR, errorCode, message, errors, null);
-    }
+    // public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String
+    // errorCode, String message,
+    // List<String> errors) {
+    //
+    // return buildResponse(false, HttpStatus.NOT_FOUND, errorCode, message, errors,
+    // null);
+    // }
 
     // =========================================================
     // Common Response Builder
@@ -350,7 +369,7 @@ public final class ApiResponseBuilder {
 
         response.setHttpStatusCode(status.value());
 
-        response.setHttpStatusMessage(HttpStatusCode.getDescription(status));
+        response.setHttpStatusMessage(HttpStatusCode.getDescription(status.value()));
 
         response.setErrorCode(errorCode);
 
@@ -361,6 +380,40 @@ public final class ApiResponseBuilder {
         response.setData(data);
 
         return ResponseEntity.status(status).body(response);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(String errorCode, String errorMessage) {
+        return buildResponse(false, HttpStatus.INTERNAL_SERVER_ERROR, errorCode, errorMessage, null, null);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(HttpStatusCode httpStatusCode, String errorCode,
+            String errorMessage, List<String> errors) {
+
+        return buildResponse(false, httpStatusCode.toHttpStatus(), errorCode, errorMessage, errors, null);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(HttpStatusCode httpStatusCode, String errorCode,
+            String errorMessage) {
+
+        return buildResponse(httpStatusCode, errorCode, errorMessage, List.of(errorMessage));
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(final IBusinessError error,
+            List<String> errors) {
+        return buildResponse(
+                error.getHttpStatusCode(),
+                error.getErrorCode(),
+                error.getErrorMessage(),
+                errors);
+    }
+
+    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(final IBusinessError error) {
+
+        return buildResponse(
+                error.getHttpStatusCode(),
+                error.getErrorCode(),
+                error.getErrorMessage(),
+                List.of(error.getErrorMessage()));
     }
 
 }

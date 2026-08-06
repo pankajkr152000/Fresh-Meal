@@ -1,11 +1,15 @@
 package com.foodies.freshmeal.common.exception;
 
-public class ForbiddenException extends BusinessException {
+/**
+ * Forbidden Exception.
+ */
+public class ForbiddenException extends AbstractBusinessException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public ForbiddenException() {
-        super(ErrorCodeConstants.ACCESS_DENIED);
-    }
+	public ForbiddenException(final IBusinessError error) {
+
+		super(error);
+	}
 
 }
