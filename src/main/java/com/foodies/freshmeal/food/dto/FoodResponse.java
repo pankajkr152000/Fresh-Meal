@@ -19,6 +19,7 @@ import lombok.Setter;
 @Builder
 public class FoodResponse {
     private String id;
+    private String foodNumber;
     private String imageName;
     private String foodName;
     private String description;

@@ -3,6 +3,7 @@ package com.foodies.freshmeal.food.entity;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -23,6 +24,16 @@ import lombok.Setter;
 public class FoodEntity extends ABaseEntity {
     private static final long serialVersionUID = 9030570160895262180L;
 
+    /**
+     * External/business identifier of the food.
+     *
+     * <p>
+     * This identifier is unique and may be exposed to the frontend,
+     * URLs, reports, and other business-facing operations.
+     * </p>
+     */
+    @Indexed(unique = true)
+    private String foodNumber;
     private String imageName;
     private String foodName;
     private String description;

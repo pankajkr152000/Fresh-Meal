@@ -147,4 +147,6 @@ public interface IFoodService {
 	 * @return Archived food list.
 	 */
 	IServiceOutput<List<FoodResponse>> readArchivedFoods();
+
+	IServiceOutput<String> generateFoodNumber(IServiceInput<CreateFoodInputDTO> input);
 }

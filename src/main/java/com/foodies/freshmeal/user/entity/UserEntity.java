@@ -2,6 +2,7 @@ package com.foodies.freshmeal.user.entity;
 
 import java.util.List;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.foodies.freshmeal.common.entity.ABaseEntity;
@@ -52,6 +53,18 @@ public class UserEntity extends ABaseEntity {
      */
     // @Id
     // private String id;
+
+    /**
+     * External/business identifier of the food.
+     *
+     * <p>
+     * This identifier is unique and may be exposed to the frontend,
+     * URLs, reports, and other business-facing operations.
+     * </p>
+     */
+    @Indexed(unique = true)
+    private String userNumber;
+
     private String username;
     private String password;
     private String email;

@@ -58,7 +58,7 @@ public class ImageServiceImpl implements IImageService {
 
         LOGGER.info("Generated image ID: IMG07_{}", seq);
 
-        String imageId = String.format(SequenceConstants.IMAGE_ID_PATTERN, seq);
+        String imageId = String.format(SequenceConstants.IMAGE_DB_ID_PATTERN, seq);
 
         IServiceOutput<String> output = new ServiceOutput<>();
         output.setOutput(imageId);

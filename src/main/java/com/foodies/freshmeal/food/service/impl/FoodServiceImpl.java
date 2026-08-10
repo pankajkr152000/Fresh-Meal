@@ -113,11 +113,27 @@ public class FoodServiceImpl implements IFoodService {
 
         IServiceOutput<String> output = new ServiceOutput<>();
 
-        String foodId = String.format(SequenceConstants.FOOD_ID_PATTERN, seq);
+        String foodId = String.format(SequenceConstants.FOOD_DB_ID_PATTERN, seq);
 
         output.setOutput(foodId);
         return output;
 
+    }
+    
+    @Override
+    public IServiceOutput<String> generateFoodNumber(IServiceInput<CreateFoodInputDTO> input) {
+    	
+    	long seq = databaseSequenceService.getCurrentSequence(serviceContext, SequenceConstants.FOOD_SEQUENCE);
+    	
+    	LOGGER.info("Generated food Number: FOD01_{}", seq);
+    	
+    	IServiceOutput<String> output = new ServiceOutput<>();
+    	
+    	String foodId = String.format(SequenceConstants.FOOD_NUMBER_PATTERN, seq);
+    	
+    	output.setOutput(foodId);
+    	return output;
+    	
     }
 
     @Override
@@ -137,6 +153,7 @@ public class FoodServiceImpl implements IFoodService {
 
     private FoodResponse convertToFoodResponse(FoodEntity foodEntity, FoodResponse foodResponse) {
         foodResponse.setId(foodEntity.getId());
+        foodResponse.setFoodNumber(foodEntity.getFoodNumber());
         foodResponse.setImageName(foodEntity.getImageName());
         foodResponse.setFoodName(foodEntity.getFoodName());
         foodResponse.setDescription(foodEntity.getDescription());
@@ -168,10 +185,15 @@ public class FoodServiceImpl implements IFoodService {
 
         CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO(foodRequest, imageFile);
         foodServiceInput.setInput(createFoodInputDTO);
-
+        
+        // Generate Food ID
         String foodId = generateFoodId(foodServiceInput).getOutput();
         foodEntity.setId(foodId);
 
+        // Generate Food Number
+        String foodNumber = generateFoodNumber(foodServiceInput).getOutput();
+        foodEntity.setFoodNumber(foodNumber);
+        
         /*
          * if image is not provided by the user, then add a default image to the food
          * entity
@@ -372,6 +394,7 @@ public class FoodServiceImpl implements IFoodService {
 
         FoodResponse response = FoodResponse.builder()
                 .id(food.getId())
+                .foodNumber(food.getFoodNumber())
                 .imageName(food.getImageName())
                 .foodName(food.getFoodName())
                 .description(food.getDescription())
@@ -401,6 +424,7 @@ public class FoodServiceImpl implements IFoodService {
 
         FoodResponse response = FoodResponse.builder()
                 .id(food.getId())
+                .foodNumber(food.getFoodNumber())
                 .imageName(food.getImageName())
                 .foodName(food.getFoodName())
                 .description(food.getDescription())
@@ -693,16 +717,16 @@ public class FoodServiceImpl implements IFoodService {
      * @return Food entity.
      */
     private FoodEntity loadFoodById(final String foodId) {
-    	
+
         FoodEntity output = foodRepository
                 .findById(foodId).orElseThrow(
                         () -> new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND));
 
         return output;
 
-//        return foodRepository.findActiveById(foodId)
-//                .orElseThrow(() -> new ResourceNotFoundException(
-//                        "Food not found with Id : " + foodId));
+        // return foodRepository.findActiveById(foodId)
+        // .orElseThrow(() -> new ResourceNotFoundException(
+        // "Food not found with Id : " + foodId));
     }
 
     /**

@@ -96,6 +96,11 @@ public final class FoodApiConstants {
 	 // ============================================================================
 	 // Archive APIs
 	 // ============================================================================
+    
+    /**
+     * Retrieves all archived foods.
+     */
+    public static final String GET_ARCHIVED_FOODS = "/archived";
 
 	/**
 	 * Archives a single food.
@@ -116,11 +121,6 @@ public final class FoodApiConstants {
 	 * Restores multiple archived foods.
 	 */
 	public static final String BULK_RESTORE_FOOD = "/bulkRestore";
-
-	/**
-	 * Retrieves all archived foods.
-	 */
-	public static final String GET_ARCHIVED_FOODS = "/archived";
 
 	/**
 	 * Permanently deletes a single archived food.
