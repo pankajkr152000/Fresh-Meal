@@ -35,7 +35,9 @@ entity name
     7) FoodEntity -> fm_food
 
 
-
+To remove track of any file from git trace
+use command cmd
+ git rm --cached logs/freshmeal.log
 
 
 Backend Architecture
