@@ -208,7 +208,6 @@ public class OrderEntity extends ABaseEntity {
      * the customer's current address.
      */
     @Valid
-    @NotNull
     private AddressSnapshot deliveryAddress;
 
     // =========================================================================
