@@ -18,16 +18,13 @@ import lombok.Setter;
  * OrderMetadata
  * ============================================================================
  *
- * Represents additional business and technical metadata associated with an
+ * Represents technical, marketing and source metadata associated with an
  * order.
  *
- * This information is primarily used for analytics, reporting, marketing,
- * auditing, and debugging.
+ * Business information such as coupon, gift order and scheduling belongs to
+ * their respective domain objects and is intentionally not duplicated here.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -40,53 +37,38 @@ public class OrderMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Order source.
+     * Source from which the order originated.
      *
-     * Example:
+     * Examples:
+     *
      * WEB
      * MOBILE_APP
-     * ADMIN_PANEL
      * POS
      */
     private OrderSourceConstant orderSource;
 
     /**
-     * Platform.
-     *
-     * Example:
-     * ANDROID
-     * IOS
-     * WINDOWS
-     * MAC
-     * LINUX
+     * Platform used to create the order.
      */
     private PlatformTypeConstant platformType;
 
     /**
-     * Device type.
-     *
-     * Example:
-     * MOBILE
-     * TABLET
-     * DESKTOP
+     * Device used to create the order.
      */
     private DeviceTypeConstant deviceType;
 
     /**
      * Application version.
-     *
-     * Example:
-     * 1.0.5
      */
     private String applicationVersion;
 
     /**
-     * Client IP Address.
+     * Client IP address.
      */
     private String ipAddress;
 
     /**
-     * Browser / Device User-Agent.
+     * Browser / device user agent.
      */
     private String userAgent;
 
@@ -97,29 +79,7 @@ public class OrderMetadata implements Serializable {
 
     /**
      * Referral source.
-     *
-     * Example:
-     * Facebook
-     * Instagram
-     * Google Ads
      */
     private String referralSource;
-
-    /**
-     * Coupon code applied.
-     */
-    private String couponCode;
-
-    /**
-     * Gift order.
-     */
-    @Builder.Default
-    private Boolean giftOrder = Boolean.FALSE;
-
-    /**
-     * Scheduled order.
-     */
-    @Builder.Default
-    private Boolean scheduledOrder = Boolean.FALSE;
 
 }

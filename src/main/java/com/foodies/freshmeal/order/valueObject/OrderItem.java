@@ -23,24 +23,11 @@ import lombok.Setter;
  *
  * Represents a single food item ordered by the customer.
  *
- * This class is a Value Object that stores a snapshot of the food at the time
- * the order was placed. It intentionally duplicates selected food information
- * to preserve historical accuracy.
+ * This is a historical snapshot of the food at the time the order was placed.
  *
- * Example:
- *
- * Veg Burger
- * Quantity : 2
- * Unit Price : ₹120
- * Line Total : ₹240
- *
- * Even if the food price later changes to ₹150, this order will still display
- * ₹120 because it stores the original snapshot.
+ * Pricing values are calculated and controlled by the backend.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -88,11 +75,6 @@ public class OrderItem implements Serializable {
 
     /**
      * Diet category snapshot.
-     *
-     * Veg
-     * Non-Veg
-     * Vegan
-     * Jain
      */
     private String dietCategory;
 
@@ -104,7 +86,7 @@ public class OrderItem implements Serializable {
     private Integer quantity;
 
     /**
-     * Price of one unit at the time of ordering.
+     * Unit price at the time of order.
      */
     @NotNull
     @DecimalMin("0.00")
@@ -112,7 +94,7 @@ public class OrderItem implements Serializable {
     private BigDecimal unitPrice;
 
     /**
-     * Discount applied on this item.
+     * Discount applied to this item.
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -120,7 +102,7 @@ public class OrderItem implements Serializable {
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
     /**
-     * Tax applied on this item.
+     * Tax applied to this item.
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -144,20 +126,13 @@ public class OrderItem implements Serializable {
     /**
      * Customer-specific instruction.
      *
-     * Example:
-     * - Less spicy
-     * - Extra cheese
-     * - No onion
+     * Examples:
+     *
+     * Less spicy
+     * Extra cheese
+     * No onion
      */
     @Size(max = 500)
     private String specialInstruction;
 
-    /**
-     * Whether this item is currently available.
-     *
-     * Useful when viewing historical orders if the food has since been
-     * discontinued.
-     */
-    @Builder.Default
-    private Boolean available = Boolean.TRUE;
 }

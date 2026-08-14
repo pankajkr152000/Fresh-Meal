@@ -80,6 +80,8 @@ public enum CommonErrorConstants implements IBusinessError {
     OPERATION_FAILED("FM-COM-501", "Operation failed.", HttpStatusCode.INTERNAL_SERVER_ERROR),
 
     SERVICE_UNAVAILABLE("FM-COM-502", "Service temporarily unavailable.", HttpStatusCode.SERVICE_UNAVAILABLE),
+    
+    URL_UNAVAILABLE("FM-COM-503", "Requested URL unavailable.", HttpStatusCode.SERVICE_UNAVAILABLE),
 
     // =====================================================================
     // Database

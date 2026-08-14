@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import com.foodies.freshmeal.common.valueObject.GeoLocation;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -19,35 +20,12 @@ import lombok.Setter;
  * AddressSnapshot
  * ============================================================================
  *
- * Represents the delivery address snapshot captured at the time an order is
- * placed.
+ * Historical snapshot of the delivery address used for an order.
  *
- * <p>
- * This is a Value Object and should not be treated as a reusable customer
- * address. It preserves the exact delivery location even if the customer
- * updates or deletes their saved addresses later.
- * </p>
- *
- * Example:
- *
- * <pre>
- * House No      : A-101
- * Apartment     : Green Residency
- * Street        : MG Road
- * Area          : Salt Lake
- * City          : Kolkata
- * State         : West Bengal
- * Country       : India
- * Pincode       : 700091
- * Landmark      : Near City Centre Mall
- * Latitude      : 22.5726
- * Longitude     : 88.3639
- * </pre>
+ * This should never depend on the customer's current saved address because
+ * customers may update or delete their addresses after placing an order.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -60,20 +38,20 @@ public class AddressSnapshot implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Flat / House / Building Number.
+     * House / Flat / Building number.
      */
     @NotBlank
     @Size(max = 100)
     private String houseNumber;
 
     /**
-     * Apartment / Society / Building Name.
+     * Apartment / Society / Building name.
      */
     @Size(max = 150)
     private String apartmentName;
 
     /**
-     * Street / Road Name.
+     * Street / Road name.
      */
     @NotBlank
     @Size(max = 150)
@@ -87,33 +65,33 @@ public class AddressSnapshot implements Serializable {
     private String area;
 
     /**
-     * City name.
+     * City.
      */
     @NotBlank
     @Size(max = 100)
     private String city;
 
     /**
-     * District name.
+     * District.
      */
     @Size(max = 100)
     private String district;
 
     /**
-     * State name.
+     * State.
      */
     @NotBlank
     @Size(max = 100)
     private String state;
 
     /**
-     * Country name.
+     * Country.
      */
     @Builder.Default
     private String country = "India";
 
     /**
-     * Postal / ZIP Code.
+     * Postal / PIN code.
      */
     @NotBlank
     @Pattern(regexp = "^[0-9]{6}$", message = "Invalid pincode.")
@@ -126,32 +104,29 @@ public class AddressSnapshot implements Serializable {
     private String landmark;
 
     /**
-     * Contact person name for delivery.
+     * Delivery contact person.
      */
     @NotBlank
     @Size(max = 100)
     private String contactPersonName;
 
     /**
-     * Contact mobile number.
+     * Delivery contact mobile number.
      */
     @NotBlank
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Invalid mobile number.")
     private String contactMobileNumber;
 
     /**
-     * Delivery instructions.
-     *
-     * Example:
-     * - Ring the bell once.
-     * - Leave at security gate.
-     * - Call before delivery.
+     * Delivery-specific instructions.
      */
     @Size(max = 500)
     private String deliveryInstruction;
 
     /**
-     * geoLocation of delivery location.
+     * Geographic coordinates of the delivery location.
      */
+    @Valid
     private GeoLocation location;
+
 }

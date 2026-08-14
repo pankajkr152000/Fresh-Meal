@@ -18,43 +18,9 @@ import lombok.Setter;
  * OrderTimeline
  * ============================================================================
  *
- * Represents the complete lifecycle timeline of an order.
- *
- * This value object captures all important timestamps from order placement
- * until completion or cancellation.
+ * Represents important lifecycle timestamps associated with an order.
  *
  * ============================================================================
- *
- * Order Flow
- *
- * Order Placed
- * │
- * ▼
- * Order Confirmed
- * │
- * ▼
- * Preparation Started
- * │
- * ▼
- * Ready For Pickup
- * │
- * ▼
- * Picked Up
- * │
- * ▼
- * Out For Delivery
- * │
- * ▼
- * Delivered
- *
- * OR
- *
- * Cancelled
- *
- * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -79,13 +45,19 @@ public class OrderTimeline implements Serializable {
     private LocalDateTime confirmedAt;
 
     /**
+     * Restaurant rejected the order.
+     */
+    @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
+    private LocalDateTime rejectedAt;
+
+    /**
      * Kitchen started preparing the order.
      */
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime preparationStartedAt;
 
     /**
-     * Food is ready for pickup.
+     * Food became ready.
      */
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime readyForPickupAt;
@@ -97,13 +69,13 @@ public class OrderTimeline implements Serializable {
     private LocalDateTime pickedUpAt;
 
     /**
-     * Delivery partner is on the way.
+     * Delivery partner started delivery.
      */
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime outForDeliveryAt;
 
     /**
-     * Order delivered successfully.
+     * Order successfully delivered.
      */
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime deliveredAt;

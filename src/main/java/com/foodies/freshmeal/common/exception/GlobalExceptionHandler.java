@@ -562,22 +562,35 @@ public class GlobalExceptionHandler {
                 CommonErrorConstants.INTERNAL_SERVER_ERROR,
                 List.of("Unexpected system error."));
     }
+    /*
+     * handle requested url not found
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(
+            NoResourceFoundException exception) {
+
+        LOGGER.warn("No resource found: {}", exception.getResourcePath());
+
+        return ApiResponseBuilder.buildResponse(
+                CommonErrorConstants.URL_UNAVAILABLE,
+                List.of("Requested url was not found.", "Requested URL : " + exception.getResourcePath()));
+    }
 
     /**
-     * handle no such method error exception
+     * handle no resource found exception
      * 
      * @param exception
      * @return
      */
-    @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(
-            final NoResourceFoundException exception) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResourceFoundException(
+            final ResourceNotFoundException exception) {
 
-        LOGGER.warn("Resource not found : {}", exception.getResourcePath());
+        LOGGER.warn("Resource not found : {}", exception.getMessage());
 
         return ApiResponseBuilder.buildResponse(
                 CommonErrorConstants.RESOURCE_NOT_FOUND,
-                List.of("Requested API endpoint was not found."));
+                List.of("Requested resource was not found."));
     }
 
     // ===========================================================

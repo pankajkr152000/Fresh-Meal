@@ -25,24 +25,13 @@ import lombok.Setter;
  * PaymentInfo
  * ============================================================================
  *
- * Represents payment-related information captured for an order.
+ * Represents payment and refund information associated with an order.
  *
- * This Value Object stores the complete payment lifecycle including payment,
- * settlement and refund information.
- *
- * This design is future-ready for payment gateways such as:
- *
- * • Razorpay
- * • Stripe
- * • PhonePe
- * • Google Pay
- * • Paytm
- * • Cash On Delivery
+ * Invoice information is intentionally maintained at OrderEntity level because
+ * an invoice is an order/billing concern rather than a payment transaction
+ * concern.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -55,7 +44,7 @@ public class PaymentInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Payment mode selected by customer.
+     * Payment mode selected by the customer.
      */
     @Builder.Default
     private PaymentModeConstant paymentMode = PaymentModeConstant.CASH_ON_DELIVERY;
@@ -69,7 +58,8 @@ public class PaymentInfo implements Serializable {
     /**
      * Payment gateway name.
      *
-     * Example:
+     * Examples:
+     *
      * Razorpay
      * Stripe
      * PhonePe
@@ -79,12 +69,12 @@ public class PaymentInfo implements Serializable {
     private String paymentGateway;
 
     /**
-     * Payment gateway order identifier.
+     * Gateway order identifier.
      */
     private String gatewayOrderId;
 
     /**
-     * Payment gateway transaction identifier.
+     * Application transaction identifier.
      */
     private String transactionId;
 
@@ -104,7 +94,7 @@ public class PaymentInfo implements Serializable {
     private String authorizationId;
 
     /**
-     * Amount paid by customer.
+     * Amount successfully paid.
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -118,7 +108,7 @@ public class PaymentInfo implements Serializable {
     private String currency = "INR";
 
     /**
-     * Payment completed time.
+     * Payment completion timestamp.
      */
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime paidAt;
@@ -126,16 +116,21 @@ public class PaymentInfo implements Serializable {
     /**
      * Payment failure reason.
      */
+    @Size(max = 500)
     private String failureReason;
 
+    // =========================================================================
+    // Refund
+    // =========================================================================
+
     /**
-     * Refund status.
+     * Current refund status.
      */
     @Builder.Default
     private RefundStatusConstant refundStatus = RefundStatusConstant.NOT_APPLICABLE;
 
     /**
-     * Refunded amount.
+     * Total amount refunded.
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -154,19 +149,9 @@ public class PaymentInfo implements Serializable {
     private String refundReason;
 
     /**
-     * Refund completed time.
+     * Refund completion timestamp.
      */
     @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     private LocalDateTime refundedAt;
 
-    /**
-     * Indicates whether invoice has been generated.
-     */
-    @Builder.Default
-    private Boolean invoiceGenerated = Boolean.FALSE;
-
-    /**
-     * Invoice number.
-     */
-    private String invoiceNumber;
 }

@@ -20,16 +20,11 @@ import lombok.Setter;
  * DeliveryPartnerSnapshot
  * ============================================================================
  *
- * Represents the delivery partner details captured at the time of order
- * assignment.
+ * Historical snapshot of the delivery partner assigned to the order.
  *
- * This snapshot preserves the delivery partner information even if the
- * delivery partner profile changes later.
+ * This object is null until a delivery partner is assigned.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -48,7 +43,7 @@ public class DeliveryPartnerSnapshot implements Serializable {
     private String deliveryPartnerId;
 
     /**
-     * Employee / Rider code.
+     * Rider / employee code.
      */
     @NotBlank
     private String partnerCode;
@@ -67,13 +62,13 @@ public class DeliveryPartnerSnapshot implements Serializable {
     private EmailAddress emailAddress;
 
     /**
-     * Delivery partner contact number.
+     * Delivery partner phone.
      */
     @Valid
     private PhoneNumber phoneNumber;
 
     /**
-     * Profile image URL.
+     * Profile image.
      */
     private String profileImageUrl;
 
@@ -85,28 +80,13 @@ public class DeliveryPartnerSnapshot implements Serializable {
     /**
      * Vehicle type.
      *
-     * Example:
-     * Bike
-     * Bicycle
-     * Scooter
-     * Car
+     * Examples:
+     *
+     * BIKE
+     * SCOOTER
+     * BICYCLE
+     * CAR
      */
     private String vehicleType;
-
-    /**
-     * Average delivery partner rating.
-     */
-    private Double averageRating;
-
-    /**
-     * Total completed deliveries.
-     */
-    private Integer totalDeliveries;
-
-    /**
-     * Indicates whether the partner was active at the time of assignment.
-     */
-    @Builder.Default
-    private Boolean active = Boolean.TRUE;
 
 }

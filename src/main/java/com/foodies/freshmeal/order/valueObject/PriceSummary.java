@@ -17,32 +17,28 @@ import lombok.Setter;
  * PriceSummary
  * ============================================================================
  *
- * Represents the complete pricing breakdown of an order.
+ * Represents the complete historical pricing breakdown of an order.
  *
- * <p>
- * This Value Object stores every monetary component involved in calculating the
- * final payable amount. Storing these values ensures historical accuracy and
- * avoids recalculating prices after an order has been placed.
- * </p>
- *
- * Example:
- *
- * Item Total : ₹500
- * Item Discount : ₹50
- * Coupon Discount : ₹30
- * Tax : ₹37.80
- * Delivery Charge : ₹40
- * Packing Charge : ₹20
- * Platform Fee : ₹5
- * Tip : ₹30
- * Round Off : ₹0.20
- * -----------------------------------
- * Grand Total : ₹552.00
+ * All monetary values are calculated by the backend and persisted with the
+ * order so that historical orders do not change when pricing rules change.
  *
  * ============================================================================
  *
- * @author Pankaj Kumar
- * @version 1.0
+ * Grand Total Formula
+ *
+ * Item Total
+ * - Item Discount
+ * - Coupon Discount
+ * + Tax
+ * + Delivery Charge
+ * + Packing Charge
+ * + Platform Fee
+ * + Tip
+ * + Round Off
+ * ---------------------------
+ * = Grand Total
+ *
+ * ============================================================================
  */
 @Getter
 @Setter
@@ -63,7 +59,7 @@ public class PriceSummary implements Serializable {
     private BigDecimal itemTotal = BigDecimal.ZERO;
 
     /**
-     * Discount applied directly on food items.
+     * Total discount applied directly to food items.
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -71,18 +67,29 @@ public class PriceSummary implements Serializable {
     private BigDecimal itemDiscount = BigDecimal.ZERO;
 
     /**
-     * Coupon discount.
+     * Order-level coupon discount.
      */
     @Builder.Default
     @DecimalMin("0.00")
     @Digits(integer = 10, fraction = 2)
     private BigDecimal couponDiscount = BigDecimal.ZERO;
 
+    /**
+     * Coupon code applied to the order.
+     */
     private String couponCode;
 
+    /**
+     * Coupon display name.
+     */
     private String couponName;
+
     /**
      * Total tax amount.
+     *
+     * Normally:
+     *
+     * taxAmount = CGST + SGST
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -122,7 +129,7 @@ public class PriceSummary implements Serializable {
     private BigDecimal packingCharge = BigDecimal.ZERO;
 
     /**
-     * Platform / Convenience fee.
+     * Platform / convenience fee.
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -130,7 +137,7 @@ public class PriceSummary implements Serializable {
     private BigDecimal platformFee = BigDecimal.ZERO;
 
     /**
-     * Tip paid to the delivery partner.
+     * Tip provided for delivery.
      */
     @Builder.Default
     @DecimalMin("0.00")
@@ -138,7 +145,7 @@ public class PriceSummary implements Serializable {
     private BigDecimal tipAmount = BigDecimal.ZERO;
 
     /**
-     * Round-off adjustment.
+     * Rounding adjustment.
      */
     @Builder.Default
     @Digits(integer = 10, fraction = 2)
@@ -154,9 +161,8 @@ public class PriceSummary implements Serializable {
 
     /**
      * Currency.
-     *
-     * Default: INR
      */
     @Builder.Default
     private String currency = "INR";
+
 }

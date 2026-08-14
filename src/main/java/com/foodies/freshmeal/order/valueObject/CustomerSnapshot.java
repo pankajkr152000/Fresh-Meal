@@ -18,19 +18,12 @@ import lombok.Setter;
  * CustomerSnapshot
  * ============================================================================
  *
- * Represents the customer information captured at the time an order is placed.
+ * Historical snapshot of customer information at the time the order was
+ * created.
  *
- * This class is a Value Object and should never be treated as the Customer
- * master record.
- *
- * The purpose of this snapshot is to preserve historical order information.
- * Even if the customer updates their profile later, previously placed orders
- * should continue displaying the original customer details.
+ * This is NOT the Customer master record.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -56,7 +49,7 @@ public class CustomerSnapshot implements Serializable {
     private String customerName;
 
     /**
-     * Customer email address.
+     * Customer email.
      */
     @Email
     @Size(max = 150)
@@ -71,39 +64,34 @@ public class CustomerSnapshot implements Serializable {
 
     /**
      * Customer profile image.
-     *
-     * Stored only for display purposes.
      */
     private String profileImageUrl;
 
     /**
-     * Indicates whether the customer is a guest user.
+     * Indicates whether the customer was a guest.
      */
     @Builder.Default
     private Boolean guestCustomer = Boolean.FALSE;
 
     /**
-     * Customer loyalty membership ID.
+     * Loyalty membership identifier.
      *
-     * Optional.
+     * Future-ready.
      */
     private String membershipId;
 
     /**
-     * Loyalty tier.
+     * Loyalty membership level.
      *
-     * Example:
-     * Bronze
-     * Silver
-     * Gold
-     * Platinum
+     * Future-ready.
      */
     private String membershipLevel;
 
     /**
-     * GST Number.
+     * GST number for business customers.
      *
-     * Useful when customers request business invoices.
+     * Future-ready.
      */
     private String gstNumber;
+
 }

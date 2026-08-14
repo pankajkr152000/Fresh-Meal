@@ -89,29 +89,29 @@ public final class SequenceConstants {
     // They should NOT be exposed as customer-facing identifiers.
     // =========================================================================
 
-    public static final String USER_DB_ID_PATTERN = "USR_DB_%06d";
+    public static final String USER_DB_ID_PATTERN = "USRDB%06d";
 
-    public static final String USER_PROFILE_DB_ID_PATTERN = "UPR_DB_%06d";
+    public static final String USER_PROFILE_DB_ID_PATTERN = "UPRDB%06d";
 
-    public static final String LOGIN_HISTORY_DB_ID_PATTERN = "LGH_DB_%06d";
+    public static final String LOGIN_HISTORY_DB_ID_PATTERN = "LGHDB%06d";
 
-    public static final String FOOD_DB_ID_PATTERN = "FOOD_DB_%06d";
+    public static final String FOOD_DB_ID_PATTERN = "FOODDB%06d";
 
-    public static final String ORDER_DB_ID_PATTERN = "ORD_DB_%06d";
+    public static final String ORDER_DB_ID_PATTERN = "ORDDB%06d";
 
-    public static final String IMAGE_DB_ID_PATTERN = "IMG_DB_%06d";
+    public static final String IMAGE_DB_ID_PATTERN = "IMGDB%06d";
 
-    public static final String RESTAURANT_DB_ID_PATTERN = "RST_DB_%06d";
+    public static final String RESTAURANT_DB_ID_PATTERN = "RSTDB%06d";
 
-    public static final String DELIVERY_PARTNER_DB_ID_PATTERN = "DLP_DB_%06d";
+    public static final String DELIVERY_PARTNER_DB_ID_PATTERN = "DLPDB%06d";
 
-    public static final String PAYMENT_DB_ID_PATTERN = "PAY_DB_%06d";
+    public static final String PAYMENT_DB_ID_PATTERN = "PAYDB%06d";
 
-    public static final String REFUND_DB_ID_PATTERN = "RFD_DB_%06d";
+    public static final String REFUND_DB_ID_PATTERN = "RFDDB%06d";
 
-    public static final String COUPON_DB_ID_PATTERN = "CPN_DB_%06d";
+    public static final String COUPON_DB_ID_PATTERN = "CPNDB%06d";
 
-    public static final String CATEGORY_DB_ID_PATTERN = "CAT_DB_%06d";
+    public static final String CATEGORY_DB_ID_PATTERN = "CATDB%06d";
 
     // =========================================================================
     // External / Business Identifier Patterns

@@ -22,15 +22,13 @@ import lombok.Setter;
  * RestaurantSnapshot
  * ============================================================================
  *
- * Snapshot of restaurant details at the time an order is placed.
+ * Historical snapshot of restaurant information captured when the order
+ * was placed.
  *
- * This class preserves historical restaurant information even if the
- * restaurant profile is modified later.
+ * This prevents historical orders from changing when restaurant master data
+ * changes later.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -74,58 +72,32 @@ public class RestaurantSnapshot implements Serializable {
     private PhoneNumber phoneNumber;
 
     /**
-     * Restaurant address.
+     * Restaurant address snapshot.
      */
     @Valid
     private Address address;
 
     /**
-     * Restaurant geographical location.
+     * Restaurant location snapshot.
      */
     @Valid
     private GeoLocation geoLocation;
 
     /**
-     * Restaurant logo/image URL.
+     * Restaurant logo/image.
      */
     private String imageUrl;
 
     /**
-     * FSSAI License Number.
+     * FSSAI license number.
+     *
+     * Useful for compliance/invoice requirements.
      */
     private String fssaiLicenseNumber;
 
     /**
-     * GST Number.
+     * GST number.
      */
     private String gstNumber;
-
-    /**
-     * Average customer rating at the time of order.
-     */
-    private Double averageRating;
-
-    /**
-     * Total customer ratings.
-     */
-    private Integer totalRatings;
-
-    /**
-     * Indicates whether delivery service is available.
-     */
-    @Builder.Default
-    private Boolean deliveryAvailable = Boolean.TRUE;
-
-    /**
-     * Indicates whether takeaway is available.
-     */
-    @Builder.Default
-    private Boolean takeawayAvailable = Boolean.TRUE;
-
-    /**
-     * Indicates whether dine-in is available.
-     */
-    @Builder.Default
-    private Boolean dineInAvailable = Boolean.FALSE;
 
 }

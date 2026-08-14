@@ -6,11 +6,9 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.foodies.freshmeal.common.date.DateConstants;
-import com.foodies.freshmeal.common.valueObject.Money;
 import com.foodies.freshmeal.order.constants.CancellationReasonConstant;
 import com.foodies.freshmeal.order.constants.CancellationSourceConstant;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,15 +20,11 @@ import lombok.Setter;
  * CancellationInfo
  * ============================================================================
  *
- * Represents cancellation details of an order.
+ * Represents cancellation information for an order.
  *
- * This value object captures who cancelled the order, why it was cancelled,
- * refund information, and any additional remarks.
+ * Refund processing is intentionally handled by PaymentInfo.
  *
  * ============================================================================
- *
- * @author Pankaj Kumar
- * @version 1.0
  */
 @Getter
 @Setter
@@ -43,7 +37,7 @@ public class CancellationInfo implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Indicates whether the order is cancelled.
+     * Indicates whether the order was cancelled.
      */
     @Builder.Default
     private Boolean cancelled = Boolean.FALSE;
@@ -55,14 +49,15 @@ public class CancellationInfo implements Serializable {
     private LocalDateTime cancelledAt;
 
     /**
-     * User who cancelled the order.
+     * Actor responsible for cancellation.
      *
-     * Example:
-     * Customer
-     * Restaurant
-     * Delivery Partner
-     * Admin
-     * System
+     * Examples:
+     *
+     * CUSTOMER
+     * RESTAURANT
+     * DELIVERY_PARTNER
+     * ADMIN
+     * SYSTEM
      */
     private String cancelledBy;
 
@@ -77,39 +72,13 @@ public class CancellationInfo implements Serializable {
     private CancellationReasonConstant cancellationReason;
 
     /**
-     * Customer/Admin remarks.
+     * Customer-facing cancellation remarks.
      */
     private String cancellationRemarks;
 
     /**
-     * Internal remarks.
-     *
-     * Visible only to administrators.
+     * Internal administrator remarks.
      */
     private String internalRemarks;
-
-    /**
-     * Indicates whether refund is applicable.
-     */
-    @Builder.Default
-    private Boolean refundRequired = Boolean.FALSE;
-
-    /**
-     * Refund amount.
-     */
-    @Valid
-    private Money refundAmount;
-
-    /**
-     * Indicates whether refund has been completed.
-     */
-    @Builder.Default
-    private Boolean refunded = Boolean.FALSE;
-
-    /**
-     * Refund completed timestamp.
-     */
-    @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
-    private LocalDateTime refundedAt;
 
 }
