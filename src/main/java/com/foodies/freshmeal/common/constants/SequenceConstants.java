@@ -62,6 +62,8 @@ public final class SequenceConstants {
 
     public static final String LOGIN_HISTORY_SEQUENCE = "login_history_sequence";
 
+    public static final String ADDRESS_SEQUENCE = "address_sequence";
+
     public static final String FOOD_SEQUENCE = "food_sequence";
 
     public static final String ORDER_SEQUENCE = "order_sequence";
@@ -94,6 +96,8 @@ public final class SequenceConstants {
     public static final String USER_PROFILE_DB_ID_PATTERN = "UPRDB%06d";
 
     public static final String LOGIN_HISTORY_DB_ID_PATTERN = "LGHDB%06d";
+
+    public static final String ADDRESS_DB_ID_PATTERN = "ADRDB%06d";
 
     public static final String FOOD_DB_ID_PATTERN = "FOODDB%06d";
 
@@ -132,6 +136,8 @@ public final class SequenceConstants {
     public static final String USER_NUMBER_PATTERN = "FM-USR-%07d";
 
     public static final String USER_PROFILE_NUMBER_PATTERN = "FM-UPR-%07d";
+
+    public static final String ADDRESS_NUMBER_PATTERN = "FM-ADR-%07d";
 
     public static final String FOOD_NUMBER_PATTERN = "FM-FOOD-%07d";
 

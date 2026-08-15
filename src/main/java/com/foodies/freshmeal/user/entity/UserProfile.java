@@ -10,8 +10,8 @@ import org.springframework.security.core.GrantedAuthority;
 import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
-import com.foodies.freshmeal.common.entity.ILoginHistory;
 import com.foodies.freshmeal.image.entity.ImageEntity;
+import com.foodies.freshmeal.user.valueObject.LoginHistorySnapshot;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -101,7 +101,7 @@ public class UserProfile extends ABaseEntity {
      */
     private UserEntity userEntity;
 
-    private ILoginHistory loginHistory;
+    private LoginHistorySnapshot loginHistory;
 
     private ImageEntity profileImage;
 

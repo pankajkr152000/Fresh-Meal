@@ -16,7 +16,6 @@ import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.order.constants.DeliveryStatusConstant;
 import com.foodies.freshmeal.order.constants.OrderStatusConstant;
 import com.foodies.freshmeal.order.constants.OrderTypeConstant;
-import com.foodies.freshmeal.order.valueObject.AddressSnapshot;
 import com.foodies.freshmeal.order.valueObject.CancellationInfo;
 import com.foodies.freshmeal.order.valueObject.CustomerSnapshot;
 import com.foodies.freshmeal.order.valueObject.DeliveryPartnerSnapshot;
@@ -27,6 +26,7 @@ import com.foodies.freshmeal.order.valueObject.OrderTimeline;
 import com.foodies.freshmeal.order.valueObject.PaymentInfo;
 import com.foodies.freshmeal.order.valueObject.PriceSummary;
 import com.foodies.freshmeal.order.valueObject.RestaurantSnapshot;
+import com.foodies.freshmeal.user.valueObject.AddressSnapshot;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

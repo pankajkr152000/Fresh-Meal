@@ -71,7 +71,14 @@ public class UserEntity extends ABaseEntity {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private List<String> address;
+    /**
+     * Business identifiers of addresses owned by this user.
+     *
+     * <p>
+     * Address details are maintained in AddressEntity.
+     * </p>
+     */
+    private List<String> addressNumbers;
     private List<String> roles;
     private boolean accountNonExpired;
     private boolean accountNonLocked;

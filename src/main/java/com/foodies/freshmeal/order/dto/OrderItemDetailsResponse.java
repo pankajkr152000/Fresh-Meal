@@ -2,7 +2,8 @@ package com.foodies.freshmeal.order.dto;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.math.BigDecimal;
+
+import com.foodies.freshmeal.common.valueObject.Money;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -93,17 +94,17 @@ public class OrderItemDetailsResponse implements Serializable {
     /**
      * Unit price at the time the order was placed.
      */
-    private BigDecimal unitPrice;
+    private Money unitPrice;
 
     /**
      * Discount applied to this item.
      */
-    private BigDecimal discountAmount;
+    private Money discountAmount;
 
     /**
      * Tax applied to this item.
      */
-    private BigDecimal taxAmount;
+    private Money taxAmount;
 
     /**
      * Final amount for this order line.
@@ -114,7 +115,7 @@ public class OrderItemDetailsResponse implements Serializable {
      * - Discount
      * + Tax
      */
-    private BigDecimal lineTotal;
+    private Money lineTotal;
 
     // =========================================================================
     // Customer Instruction

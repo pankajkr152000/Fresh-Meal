@@ -1,4 +1,4 @@
-package com.foodies.freshmeal.order.valueObject;
+package com.foodies.freshmeal.user.valueObject;
 
 import java.io.Serial;
 import java.io.Serializable;

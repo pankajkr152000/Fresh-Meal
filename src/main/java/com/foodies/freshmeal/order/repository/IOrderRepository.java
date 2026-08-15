@@ -1,7 +1,5 @@
 package com.foodies.freshmeal.order.repository;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Repository;
 
 import com.foodies.freshmeal.common.repository.base.IBaseRepository;
@@ -14,51 +12,25 @@ import com.foodies.freshmeal.order.entity.OrderEntity;
  *
  * Persistence repository for the Order aggregate.
  *
- * This repository extends the application's common IBaseRepository so that
- * OrderEntity automatically receives:
+ * <p>
+ * This repository extends the common FreshMeal repository infrastructure
+ * instead of directly extending Spring Data MongoRepository.
+ * </p>
  *
- * - Standard MongoDB CRUD operations
- * - Pagination
- * - Sorting
- * - Soft delete support
- * - Restore support
- * - Active record retrieval
- * - Archived record retrieval
- * - Generic Mongo query operations
+ * <p>
+ * Common persistence capabilities such as CRUD, pagination, sorting,
+ * active-record retrieval, soft delete, restore, and generic MongoDB
+ * queries are inherited from IBaseRepository.
+ * </p>
  *
- * Business rules and order lifecycle logic belong to the service/business
- * layer and should not be implemented here.
+ * <p>
+ * Order-specific query behavior will be introduced only when the actual
+ * Order Management use cases require it.
+ * </p>
  *
  * ============================================================================
  */
 @Repository
 public interface IOrderRepository extends IBaseRepository<OrderEntity, String> {
 
-    /**
-     * Finds an active order using its business-facing order number.
-     *
-     * Example:
-     *
-     * FM-ORD-0000001
-     *
-     * <p>
-     * The repository framework's standard Spring Data query mechanism is used
-     * here. For business operations where soft-delete filtering is critical,
-     * the service should prefer the active-query methods provided by
-     * IBaseRepositoryCustom.
-     * </p>
-     *
-     * @param orderNumber business order number
-     * @return matching order when present
-     */
-    Optional<OrderEntity> findByOrderNumber(String orderNumber);
-
-    /**
-     * Determines whether an order exists using its business-facing order
-     * number.
-     *
-     * @param orderNumber business order number
-     * @return true when an order exists
-     */
-    boolean existsByOrderNumber(String orderNumber);
 }

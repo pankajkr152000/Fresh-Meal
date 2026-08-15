@@ -1,12 +1,12 @@
 package com.foodies.freshmeal.common.factory;
 
 import com.foodies.freshmeal.common.entity.IEntity;
-import com.foodies.freshmeal.common.entity.impl.LoginHistory;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
 import com.foodies.freshmeal.food.entity.FoodEntity;
 import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.order.entity.OrderEntity;
+import com.foodies.freshmeal.user.entity.LoginHistoryEntity;
 import com.foodies.freshmeal.user.entity.UserEntity;
 import com.foodies.freshmeal.user.entity.UserProfile;
 
@@ -66,7 +66,7 @@ public final class EntityFactory {
                 UserProfile.create();
 
             case LOGIN_HISTORY_ENTITY ->
-                LoginHistory.create();
+                LoginHistoryEntity.create();
 
             case FOOD_ENTITY ->
                 FoodEntity.create();
