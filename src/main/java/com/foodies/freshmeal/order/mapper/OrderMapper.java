@@ -23,7 +23,6 @@ import com.foodies.freshmeal.order.dto.PriceDetailsResponse;
 import com.foodies.freshmeal.order.dto.RestaurantDetailsResponse;
 import com.foodies.freshmeal.order.dto.TimelineDetailsResponse;
 import com.foodies.freshmeal.order.entity.OrderEntity;
-import com.foodies.freshmeal.order.valueObject.AddressSnapshot;
 import com.foodies.freshmeal.order.valueObject.CancellationInfo;
 import com.foodies.freshmeal.order.valueObject.CustomerSnapshot;
 import com.foodies.freshmeal.order.valueObject.DeliveryPartnerSnapshot;
@@ -34,6 +33,7 @@ import com.foodies.freshmeal.order.valueObject.OrderTimeline;
 import com.foodies.freshmeal.order.valueObject.PaymentInfo;
 import com.foodies.freshmeal.order.valueObject.PriceSummary;
 import com.foodies.freshmeal.order.valueObject.RestaurantSnapshot;
+import com.foodies.freshmeal.user.valueObject.AddressSnapshot;
 
 /**
  * ============================================================================
