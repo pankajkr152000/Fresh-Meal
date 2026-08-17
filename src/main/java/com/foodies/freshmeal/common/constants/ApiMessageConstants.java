@@ -156,6 +156,8 @@ public final class ApiMessageConstants {
 
     public static final String RESTAURANT_FOUND = "Restaurant fetched successfully";
 
+    public static final String RESTAURANT_LIST_FOUND = "Restaurants fetched successfully";
+
     public static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
 
     // =========================================================

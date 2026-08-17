@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.valueObject.Address;
-import com.foodies.freshmeal.common.valueObject.GeoLocation;
 import com.foodies.freshmeal.restaurant.constants.BranchStatusConstant;
 import com.foodies.freshmeal.restaurant.valueObject.OperatingHours;
 
@@ -63,11 +62,6 @@ public class RestaurantBranchEntity extends ABaseEntity {
      * Physical address of the branch.
      */
     private Address address;
-
-    /**
-     * Geographic location of the branch.
-     */
-    private GeoLocation geoLocation;
 
     /**
      * Regular weekly operating hours of the branch.

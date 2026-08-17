@@ -60,7 +60,16 @@ public enum ActionType implements IDisplayOption {
     // =========================================================================
 
     LOGIN("Login"),
-    LOGOUT("Logout");
+    LOGOUT("Logout"),
+
+    // =========================================================================
+    // Restaurant Operations
+    // =========================================================================
+
+    CREATE_RESTAURANT("Create Restaurant"),
+    VIEW_RESTAURANT("View Restaurant"),
+    READ_ALL_RESTAURANTS("Read All Restaurants"),
+    UPDATE_RESTAURANT("Update Restaurant");
 
     /**
      * Display name.

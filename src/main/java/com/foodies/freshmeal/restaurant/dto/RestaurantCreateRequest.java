@@ -51,16 +51,10 @@ public class RestaurantCreateRequest implements Serializable {
     // Basic Information
     // =========================================================================
 
-    /**
-     * Business/display name of the restaurant.
-     */
     @NotBlank
     @Size(max = 150)
     private String restaurantName;
 
-    /**
-     * Optional restaurant description.
-     */
     @Size(max = 1000)
     private String description;
 
@@ -68,22 +62,13 @@ public class RestaurantCreateRequest implements Serializable {
     // Contact Information
     // =========================================================================
 
-    /**
-     * Primary restaurant phone number.
-     */
     @NotBlank
     private String phoneNumber;
 
-    /**
-     * Primary restaurant email address.
-     */
     @NotBlank
     @Email
     private String emailAddress;
 
-    /**
-     * Official restaurant website.
-     */
     @Size(max = 500)
     private String website;
 
@@ -91,26 +76,7 @@ public class RestaurantCreateRequest implements Serializable {
     // Restaurant Classification
     // =========================================================================
 
-    /**
-     * Cuisine types offered by the restaurant.
-     *
-     * Uses the existing FreshMeal cuisine taxonomy.
-     */
     @NotEmpty
     private Set<CuisineTypeConstant> cuisineTypes;
-
-    // =========================================================================
-    // Images
-    // =========================================================================
-
-    /**
-     * MongoDB identifier of the restaurant logo image.
-     */
-    private String logoImageId;
-
-    /**
-     * MongoDB identifier of the restaurant cover image.
-     */
-    private String coverImageId;
 
 }

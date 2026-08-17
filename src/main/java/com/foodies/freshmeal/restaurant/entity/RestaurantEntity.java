@@ -120,6 +120,7 @@ public class RestaurantEntity extends ABaseEntity {
      *
      * Stores the MongoDB identifier of the ImageEntity.
      */
+    private String logoImageUrl;
     private String logoImageId;
 
     /**
@@ -127,6 +128,7 @@ public class RestaurantEntity extends ABaseEntity {
      *
      * Stores the MongoDB identifier of the ImageEntity.
      */
+    private String coverImageUrl;
     private String coverImageId;
 
     /**
