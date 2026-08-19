@@ -58,6 +58,7 @@ import com.foodies.freshmeal.food.service.IFoodNavigationService;
 import com.foodies.freshmeal.food.service.IFoodService;
 import com.foodies.freshmeal.food.validation.FoodValidator;
 import com.foodies.freshmeal.image.dto.CreateImageInputDTO;
+import com.foodies.freshmeal.image.dto.ImageSnapshot;
 import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.image.service.IImageService;
 import com.foodies.freshmeal.image.service.impl.ImageServiceImpl;
@@ -154,12 +155,12 @@ public class FoodServiceImpl implements IFoodService {
     private FoodResponse convertToFoodResponse(FoodEntity foodEntity, FoodResponse foodResponse) {
         foodResponse.setId(foodEntity.getId());
         foodResponse.setFoodNumber(foodEntity.getFoodNumber());
-        foodResponse.setImageName(foodEntity.getImageName());
+        foodResponse.setImageName(foodEntity.getFoodImage().getImageName());
         foodResponse.setFoodName(foodEntity.getFoodName());
         foodResponse.setDescription(foodEntity.getDescription());
         foodResponse.setPrice(foodEntity.getPrice());
         foodResponse.setFoodCategories(DisplayOptionMapperUtil.fromSet(foodEntity.getFoodCategories()));
-        foodResponse.setImageUrl(foodEntity.getImageUrl());
+        foodResponse.setImageUrl(foodEntity.getFoodImage().getImageURL());
         foodResponse.setDietCategory(DisplayOptionMapperUtil.from(foodEntity.getDietCategory()));
         foodResponse.setCuisineType(DisplayOptionMapperUtil.from(foodEntity.getCuisineType()));
         foodResponse.setCategoryGroups(DisplayOptionMapperUtil.fromSet(foodEntity.getCategoryGroups()));
@@ -199,8 +200,11 @@ public class FoodServiceImpl implements IFoodService {
          * entity
          */
         if (imageFile == null || imageFile.isEmpty()) {
-            foodEntity.setImageName(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
-            foodEntity.setImageUrl(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
+        	ImageSnapshot image = new ImageSnapshot();
+        	image.setImageId(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
+        	image.setImageName(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
+        	image.setImageURL(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
+            foodEntity.setFoodImage(image);
         } else {
 
             IServiceInput<CreateImageInputDTO> imageServiceInput = new ServiceInput<>();
@@ -210,8 +214,13 @@ public class FoodServiceImpl implements IFoodService {
 
             IServiceOutput<ImageEntity> imageEntityOutput = imageService.uploadImageToS3(imageServiceInput);
             ImageEntity imageEntity = imageEntityOutput.getOutput();
-            foodEntity.setImageName(imageEntity.getImageName());
-            foodEntity.setImageUrl(imageEntity.getImageUrl());
+            
+            ImageSnapshot image = new ImageSnapshot();
+        	image.setImageId(imageEntity.getId());
+        	image.setImageName(imageEntity.getImageName());
+        	image.setImageURL(imageEntity.getImageUrl());
+        	
+            foodEntity.setFoodImage(image);
 
         }
         foodEntity.setFoodName(foodRequest.getFoodName());
@@ -252,7 +261,7 @@ public class FoodServiceImpl implements IFoodService {
                     foodEntity.getDescription(),
                     foodEntity.getPrice(),
                     foodEntity.getFoodCategories(),
-                    foodEntity.getImageUrl());
+                    foodEntity.getFoodImage().getImageURL());
             FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
             foodResponses.add(foodResponse);
         });
@@ -395,11 +404,11 @@ public class FoodServiceImpl implements IFoodService {
         FoodResponse response = FoodResponse.builder()
                 .id(food.getId())
                 .foodNumber(food.getFoodNumber())
-                .imageName(food.getImageName())
+                .imageName(food.getFoodImage().getImageName())
                 .foodName(food.getFoodName())
                 .description(food.getDescription())
                 .price(food.getPrice())
-                .imageUrl(food.getImageUrl())
+                .imageUrl(food.getFoodImage().getImageURL())
                 .foodCategories(DisplayOptionMapperUtil.fromSet(food.getFoodCategories()))
                 .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
                 .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
@@ -425,11 +434,11 @@ public class FoodServiceImpl implements IFoodService {
         FoodResponse response = FoodResponse.builder()
                 .id(food.getId())
                 .foodNumber(food.getFoodNumber())
-                .imageName(food.getImageName())
+                .imageName(food.getFoodImage().getImageName())
                 .foodName(food.getFoodName())
                 .description(food.getDescription())
                 .price(food.getPrice())
-                .imageUrl(food.getImageUrl())
+                .imageUrl(food.getFoodImage().getImageURL())
                 .foodCategories(DisplayOptionMapperUtil.fromSet(food.getFoodCategories()))
                 .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
                 .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
@@ -610,8 +619,12 @@ public class FoodServiceImpl implements IFoodService {
 
             ImageEntity imageEntity = imageService.uploadImageToS3(imageInput).getOutput();
 
-            foodEntity.setImageName(imageEntity.getImageName());
-            foodEntity.setImageUrl(imageEntity.getImageUrl());
+            ImageSnapshot image = new ImageSnapshot();
+        	image.setImageId(imageEntity.getId());
+        	image.setImageName(imageEntity.getImageName());
+        	image.setImageURL(imageEntity.getImageUrl());
+        	
+            foodEntity.setFoodImage(image);
         }
 
         // =========================================================================

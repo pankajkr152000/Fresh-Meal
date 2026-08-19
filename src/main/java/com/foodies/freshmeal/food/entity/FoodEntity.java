@@ -14,6 +14,7 @@ import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
 import com.foodies.freshmeal.food.constants.DietCategoryConstant;
 import com.foodies.freshmeal.food.constants.FoodCategoryConstant;
 import com.foodies.freshmeal.food.constants.FoodStatusConstant;
+import com.foodies.freshmeal.image.dto.ImageSnapshot;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,12 +35,11 @@ public class FoodEntity extends ABaseEntity {
      */
     @Indexed(unique = true)
     private String foodNumber;
-    private String imageName;
+    private ImageSnapshot foodImage;
     private String foodName;
     private String description;
     private double price;
     private Set<FoodCategoryConstant> foodCategories;
-    private String imageUrl;
     private DietCategoryConstant dietCategory; // veg or non-veg
     private CuisineTypeConstant cuisineType;
     private Set<CategoryGroupConstant> categoryGroups;

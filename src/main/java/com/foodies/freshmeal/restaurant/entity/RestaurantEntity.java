@@ -11,6 +11,7 @@ import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
+import com.foodies.freshmeal.image.dto.ImageSnapshot;
 import com.foodies.freshmeal.restaurant.constants.RestaurantStatusConstant;
 
 import lombok.Getter;
@@ -120,16 +121,14 @@ public class RestaurantEntity extends ABaseEntity {
      *
      * Stores the MongoDB identifier of the ImageEntity.
      */
-    private String logoImageUrl;
-    private String logoImageId;
+    private ImageSnapshot restaurantLogoImage;
 
     /**
      * Reference to the restaurant cover image.
      *
      * Stores the MongoDB identifier of the ImageEntity.
      */
-    private String coverImageUrl;
-    private String coverImageId;
+    private ImageSnapshot restaurantCoverImage;
 
     /**
      * Package-private constructor.

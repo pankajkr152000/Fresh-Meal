@@ -22,6 +22,8 @@ public interface IImageService {
 
     public IServiceOutput<ImageEntity> getImageEntityById(IServiceInput<String> input);
 
+	public IServiceOutput<String> generateImageNumber(IServiceInput<CreateImageInputDTO> input);
+
 
 
 }

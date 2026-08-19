@@ -140,6 +140,8 @@ public final class SequenceConstants {
     public static final String ADDRESS_NUMBER_PATTERN = "FM-ADR-%07d";
 
     public static final String FOOD_NUMBER_PATTERN = "FM-FOOD-%07d";
+    
+    public static final String IMAGE_NUMBER_PATTERN = "FM-IMG-%07d";
 
     public static final String ORDER_NUMBER_PATTERN = "FM-ORD-%07d";
 
