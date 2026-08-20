@@ -156,7 +156,7 @@ public class AuditAspect {
 
             if (auditApi.logRequest()) {
 
-                auditLog.setRequestBody(buildRequestDocument(joinPoint.getArgs()));
+                auditLog.setRequestBody(buildRequestDocument(signature, joinPoint.getArgs()));
             }
 
             logRequest(auditLog);
@@ -372,38 +372,62 @@ public class AuditAspect {
      *
      * @return BSON document
      */
-    private Document buildRequestDocument(Object[] args) {
+    private Document buildRequestDocument(
+            MethodSignature signature,
+            Object[] args) {
 
         Document requestDocument = new Document();
 
-        for (Object arg : args) {
+        String[] parameterNames = signature.getParameterNames();
+
+        for (int i = 0; i < args.length; i++) {
+
+            Object arg = args[i];
 
             if (arg == null) {
                 continue;
             }
 
+            String parameterName =
+                    parameterNames != null && i < parameterNames.length
+                            ? parameterNames[i]
+                            : "argument" + i;
+
             try {
 
                 if (arg instanceof MultipartFile file) {
 
-                    requestDocument.append("file", new Document().append("fileName", file.getOriginalFilename())
-                            .append("contentType", file.getContentType()).append("fileSize", file.getSize()));
+                    requestDocument.append(
+                            parameterName,
+                            new Document()
+                                    .append("fileName", file.getOriginalFilename())
+                                    .append("contentType", file.getContentType())
+                                    .append("fileSize", file.getSize())
+                    );
 
                     continue;
                 }
 
-                /*
-                 * Mask sensitive fields.
-                 */
-                Object maskedObject = AuditMaskingUtil.maskObject(arg);
+                Object maskedObject =
+                        AuditMaskingUtil.maskObject(arg);
 
-                requestDocument.append(arg.getClass().getSimpleName(), convertToDocument(maskedObject));
+                requestDocument.append(
+                        parameterName,
+                        convertToDocument(maskedObject)
+                );
 
             } catch (Exception ex) {
 
-                LOGGER.error("Failed to serialize request object.", ex);
+                LOGGER.error(
+                        "Failed to serialize request parameter. Name={}",
+                        parameterName,
+                        ex
+                );
 
-                requestDocument.append(arg.getClass().getSimpleName(), "Serialization Failed");
+                requestDocument.append(
+                        parameterName,
+                        "Serialization Failed"
+                );
             }
         }
 
@@ -411,8 +435,26 @@ public class AuditAspect {
     }
 
     /**
-     * =========================================================== Convert Object To
-     * BSON Document ===========================================================
+     * ===========================================================
+     * Convert Object To BSON Document
+     * ===========================================================
+     *
+     * Converts a Java object into a MongoDB BSON Document.
+     *
+     * Supports:
+     *
+     * - Mongo Document
+     * - Map
+     * - DTO / POJO
+     * - String
+     * - Number
+     * - Boolean
+     * - Enum
+     * - Other scalar values
+     *
+     * Scalar values are wrapped inside a "value" field because
+     * MongoDB Document represents a BSON document and cannot
+     * directly represent a scalar JSON value.
      *
      * @param object Java object
      *
@@ -424,15 +466,92 @@ public class AuditAspect {
             return null;
         }
 
+        if (object instanceof Document document) {
+            return document;
+        }
+
         try {
 
-            return Document.parse(objectMapper.writeValueAsString(object));
+            /*
+             * Map / DTO / POJO
+             *
+             * Example:
+             *
+             * {
+             *     "foodName": "Biryani",
+             *     "price": 359
+             * }
+             */
+            if (object instanceof java.util.Map<?, ?>) {
 
-        } catch (JsonProcessingException ex) {
+                return objectMapper.convertValue(
+                        object,
+                        Document.class
+                );
+            }
 
-            LOGGER.error("Failed to convert object to BSON document.", ex);
+            /*
+             * String
+             *
+             * A String is a scalar JSON value and therefore
+             * cannot be passed directly to Document.parse().
+             */
+            if (object instanceof String value) {
 
-            return new Document().append("error", ex.getMessage());
+                return new Document("value", value);
+            }
+
+            /*
+             * Numbers
+             */
+            if (object instanceof Number value) {
+
+                return new Document("value", value);
+            }
+
+            /*
+             * Boolean
+             */
+            if (object instanceof Boolean value) {
+
+                return new Document("value", value);
+            }
+
+            /*
+             * Enum
+             */
+            if (object instanceof Enum<?> value) {
+
+                return new Document("value", value.name());
+            }
+
+            /*
+             * Collection / array / other scalar values.
+             *
+             * Convert the object to JSON first and determine
+             * whether the result represents a JSON object.
+             */
+            String json = objectMapper.writeValueAsString(object);
+
+            if (json.startsWith("{") && json.endsWith("}")) {
+
+                return Document.parse(json);
+            }
+
+            /*
+             * Any non-document JSON value is wrapped.
+             */
+            return new Document("value", object);
+
+        } catch (Exception ex) {
+
+            LOGGER.error(
+                    "Failed to convert object to BSON document. Type={}",
+                    object.getClass().getName(),
+                    ex
+            );
+
+            return new Document("value", String.valueOf(object));
         }
     }
 

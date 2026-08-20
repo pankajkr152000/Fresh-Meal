@@ -3,28 +3,25 @@ package com.foodies.freshmeal.restaurant.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.foodies.freshmeal.common.dto.ApiResponse;
-import com.foodies.freshmeal.restaurant.dto.RestaurantCreateRequest;
 import com.foodies.freshmeal.restaurant.dto.RestaurantDetailsResponse;
 import com.foodies.freshmeal.restaurant.dto.RestaurantIdRequest;
 import com.foodies.freshmeal.restaurant.dto.RestaurantListResponse;
-import com.foodies.freshmeal.restaurant.dto.RestaurantUpdateRequest;
 
 /**
  * ============================================================================
- * Restaurant Controller
+ * Restaurant Controller Contract
  * ============================================================================
  *
  * Defines HTTP operations exposed by the Restaurant module.
  *
  * <p>
- * The controller is responsible only for receiving HTTP requests and
- * delegating operations to the Restaurant service layer.
- * </p>
- *
- * <p>
- * Business logic must remain inside the service layer.
+ * The controller is responsible only for request handling and delegation.
+ * Business logic belongs to the Restaurant service layer.
  * </p>
  *
  * ============================================================================
@@ -34,41 +31,67 @@ import com.foodies.freshmeal.restaurant.dto.RestaurantUpdateRequest;
  */
 public interface IRestaurantController {
 
-    /**
-     * Creates a new restaurant.
-     *
-     * @param input restaurant creation request
-     *
-     * @return created restaurant
-     */
-    ResponseEntity<ApiResponse<RestaurantDetailsResponse>> createRestaurant(
-            RestaurantCreateRequest input);
+	/**
+	 * Creates a new restaurant.
+	 *
+	 * <p>
+	 * The request is multipart/form-data and contains:
+	 * </p>
+	 *
+	 * <ul>
+	 * <li>restaurant - RestaurantCreateRequest JSON</li>
+	 * <li>logoImage - optional restaurant logo</li>
+	 * <li>coverImage - optional restaurant cover image</li>
+	 * </ul>
+	 *
+	 * @param restaurantJson restaurant request JSON
+	 * @param logoImage      optional logo image
+	 * @param coverImage     optional cover image
+	 *
+	 * @return created restaurant
+	 *
+	 * @throws JsonProcessingException if restaurant JSON cannot be parsed
+	 */
+	ResponseEntity<ApiResponse<RestaurantDetailsResponse>> createRestaurant(String restaurantJson,
+			MultipartFile logoImage, MultipartFile coverImage) throws JsonProcessingException;
 
-    /**
-     * Retrieves all active restaurants.
-     *
-     * @return restaurant list
-     */
-    ResponseEntity<ApiResponse<List<RestaurantListResponse>>> readRestaurants();
+	/**
+	 * Retrieves all active restaurants.
+	 *
+	 * @return active restaurants
+	 */
+	ResponseEntity<ApiResponse<List<RestaurantListResponse>>> readRestaurants();
 
-    /**
-     * Retrieves a restaurant by its identifier.
-     *
-     * @param input restaurant identifier request
-     *
-     * @return restaurant details
-     */
-    ResponseEntity<ApiResponse<RestaurantDetailsResponse>> getRestaurantById(
-            RestaurantIdRequest input);
+	/**
+	 * Retrieves a restaurant by identifier.
+	 *
+	 * @param input restaurant identifier request
+	 *
+	 * @return restaurant details
+	 */
+	ResponseEntity<ApiResponse<RestaurantDetailsResponse>> getRestaurantById(@RequestBody RestaurantIdRequest input);
 
-    /**
-     * Updates an existing restaurant.
-     *
-     * @param input restaurant update request
-     *
-     * @return updated restaurant
-     */
-    ResponseEntity<ApiResponse<RestaurantDetailsResponse>> updateRestaurant(
-            RestaurantUpdateRequest input);
-
+	/**
+	 * Updates an existing restaurant.
+	 *
+	 * <p>
+	 * The request is multipart/form-data and contains:
+	 * </p>
+	 *
+	 * <ul>
+	 * <li>restaurant - RestaurantUpdateRequest JSON</li>
+	 * <li>logoImage - optional replacement logo</li>
+	 * <li>coverImage - optional replacement cover image</li>
+	 * </ul>
+	 *
+	 * @param restaurantJson restaurant update JSON
+	 * @param logoImage      optional replacement logo
+	 * @param coverImage     optional replacement cover image
+	 *
+	 * @return updated restaurant
+	 *
+	 * @throws JsonProcessingException if restaurant JSON cannot be parsed
+	 */
+	ResponseEntity<ApiResponse<RestaurantDetailsResponse>> updateRestaurant(String restaurantJson,
+			MultipartFile logoImage, MultipartFile coverImage) throws JsonProcessingException;
 }

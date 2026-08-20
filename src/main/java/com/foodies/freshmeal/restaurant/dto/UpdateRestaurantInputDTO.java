@@ -3,6 +3,8 @@ package com.foodies.freshmeal.restaurant.dto;
 import java.io.Serial;
 import java.io.Serializable;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.foodies.freshmeal.image.dto.ImageSnapshot;
 
 import lombok.AllArgsConstructor;
@@ -51,10 +53,12 @@ public class UpdateRestaurantInputDTO implements Serializable {
      * Optional replacement logo image.
      */
     private ImageSnapshot logoImage;
+    private MultipartFile logoImageFile;
 
     /**
      * Optional replacement cover image.
      */
     private ImageSnapshot coverImage;
+    private MultipartFile coverImageFile;
 
 }

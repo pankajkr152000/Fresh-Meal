@@ -27,7 +27,7 @@ import com.mongodb.client.MongoClients;
 @EnableMongoRepositories(basePackages = "com.foodies.freshmeal", repositoryBaseClass = BaseRepositoryImpl.class)
 public class MongoConfig {
 
-    @Value("${spring.data.mongodb.uri}")
+    @Value("${spring.mongodb.uri}")
     private String mongoUri;
 
     @Bean
