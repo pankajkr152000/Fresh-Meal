@@ -6,5 +6,6 @@ public class ApiBaseConstants {
 
     public static final String FOOD_BASE_URL = "/api/foods";
 
-    
+    public static final String PINCODE_BASE_URL = "/api/pincodes";
+
 }

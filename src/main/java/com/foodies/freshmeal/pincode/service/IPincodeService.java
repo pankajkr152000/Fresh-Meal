@@ -1,18 +1,23 @@
 package com.foodies.freshmeal.pincode.service;
 
+import com.foodies.freshmeal.common.io.service.IServiceInput;
+import com.foodies.freshmeal.common.io.service.IServiceOutput;
+import com.foodies.freshmeal.pincode.dto.PincodeLookupRequest;
 import com.foodies.freshmeal.pincode.valueObject.PincodeDetails;
 
 /**
  * =============================================================================
- * Service : PincodeService
+ * Pincode Service
  * =============================================================================
  *
- * Purpose
- * -------
- * Provides pincode-related business operations for FreshMeal.
+ * Responsibilities
+ * ----------------
+ * • Define pincode-related business operations.
+ * • Accept requests through the common IServiceInput abstraction.
+ * • Return results through the common IServiceOutput abstraction.
  *
- * The service exposes our application's internal PincodeDetails model and
- * remains completely independent of the external pincode API response format.
+ * The implementation is responsible for communicating with the external
+ * pincode API and transforming its response into FreshMeal's internal model.
  * =============================================================================
  */
 public interface IPincodeService {
@@ -20,9 +25,9 @@ public interface IPincodeService {
     /**
      * Retrieves location details for the supplied pincode.
      *
-     * @param pincode six-digit Indian pincode
-     * @return resolved pincode details
+     * @param input pincode lookup service input
+     * @return pincode location details
      */
-    PincodeDetails getPincodeDetails(String pincode);
+    IServiceOutput<PincodeDetails> getPincodeDetails(IServiceInput<PincodeLookupRequest> input);
 
 }

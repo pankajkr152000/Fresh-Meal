@@ -212,4 +212,6 @@ public final class ApiMessageConstants {
 
     public static final String METADATA_FETCHED = "Metadata fetched successfully";
 
+    public static final String PINCODE_DETAILS_FETCHED = "Pincode details fetched successfully";
+
 }
