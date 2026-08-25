@@ -3,9 +3,9 @@ package com.foodies.freshmeal.pincode.client;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import com.foodies.freshmeal.common.exception.PincodeException;
+import com.foodies.freshmeal.pincode.constants.PincodeErrorConstants;
 import com.foodies.freshmeal.pincode.dto.PincodeApiResponse;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * =============================================================================
@@ -14,25 +14,26 @@ import lombok.RequiredArgsConstructor;
  *
  * Purpose
  * -------
- * Responsible only for communicating with the external pincode API.
+ * Responsible for communicating with the external pincode API.
  *
- * This class does not contain business logic and does not transform the
- * external response into FreshMeal's internal model.
- *
- * That responsibility belongs to PincodeService.
+ * HTTP-level failures are handled at this layer because this class owns the
+ * external HTTP communication.
  * =============================================================================
  */
 @Component
-@RequiredArgsConstructor
 public class PincodeApiClient {
 
     private final RestClient pincodeRestClient;
 
+    public PincodeApiClient(RestClient pincodeRestClient) {
+        this.pincodeRestClient = pincodeRestClient;
+    }
+
     /**
-     * Fetches pincode information from the external API.
+     * Fetches pincode details from the external API.
      *
      * @param pincode Indian six-digit pincode
-     * @return response received from the external pincode API
+     * @return external API response
      */
     public PincodeApiResponse getPincodeDetails(String pincode) {
 
@@ -40,6 +41,12 @@ public class PincodeApiClient {
                 .get()
                 .uri("/pincode/{pincode}", pincode)
                 .retrieve()
+                .onStatus(
+                        status -> status.isError(),
+                        (request, response) -> {
+                            throw new PincodeException(PincodeErrorConstants.PINCODE_API_FAILURE,
+                                    response.getStatusCode().value());
+                        })
                 .body(PincodeApiResponse.class);
     }
 }

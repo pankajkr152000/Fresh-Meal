@@ -1,7 +1,5 @@
 package com.foodies.freshmeal.pincode.dto;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +14,8 @@ import lombok.Setter;
  * -------
  * Represents the top-level response received from the external pincode API.
  *
- * This DTO belongs to the external API integration layer. It should not be
- * exposed directly to the frontend or used by the Address domain.
- *
- * The PincodeService will later transform this external response into our
- * internal PincodeDetails model.
+ * The external API returns the actual pincode information inside the "data"
+ * object. Therefore, data is represented by PincodeApiData rather than a List.
  * =============================================================================
  */
 @Getter
@@ -29,8 +24,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PincodeApiResponse {
 
-    private String status;
+    private Boolean success;
 
-    private List<PincodeApiData> data;
+    private PincodeApiData data;
+
+    private PincodeApiMeta meta;
 
 }

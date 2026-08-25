@@ -1,7 +1,5 @@
 package com.foodies.freshmeal.pincode.dto;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -11,26 +9,35 @@ import lombok.Setter;
 
 /**
  * =============================================================================
- * DTO : PincodeApiData
+ * DTO : PincodeApiMeta
  * =============================================================================
  *
  * Purpose
  * -------
- * Represents the "data" object returned by the external pincode API.
+ * Represents the metadata returned by the external pincode API.
  *
- * A pincode can contain multiple post offices, therefore postOffices is
- * represented as a List.
+ * This DTO belongs to the external API integration layer and mirrors the
+ * provider's response structure.
  * =============================================================================
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PincodeApiData {
+public class PincodeApiMeta {
 
-    private String pincode;
+    @JsonProperty("api_version")
+    private String apiVersion;
 
-    @JsonProperty("post_offices")
-    private List<PincodePostOffice> postOffices;
+    @JsonProperty("dataset_version")
+    private String datasetVersion;
+
+    @JsonProperty("release_id")
+    private String releaseId;
+
+    @JsonProperty("request_id")
+    private String requestId;
+
+    private Integer count;
 
 }

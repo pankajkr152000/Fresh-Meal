@@ -9,6 +9,7 @@ import com.foodies.freshmeal.pincode.client.PincodeApiClient;
 import com.foodies.freshmeal.pincode.dto.PincodeApiData;
 import com.foodies.freshmeal.pincode.dto.PincodeApiResponse;
 import com.foodies.freshmeal.pincode.dto.PincodeLookupRequest;
+import com.foodies.freshmeal.pincode.dto.PincodePostOffice;
 import com.foodies.freshmeal.pincode.service.IPincodeService;
 import com.foodies.freshmeal.pincode.valueObject.PincodeDetails;
 
@@ -19,12 +20,14 @@ import com.foodies.freshmeal.pincode.valueObject.PincodeDetails;
  *
  * Responsibilities
  * ----------------
- * • Validate the pincode request.
- * • Communicate with the external pincode API through PincodeApiClient.
- * • Transform the external API response into FreshMeal's PincodeDetails.
- * • Return the result using the common ServiceOutput implementation.
+ * • Validate the supplied pincode.
+ * • Call the external pincode API through PincodeApiClient.
+ * • Validate the external API response.
+ * • Extract the required location information.
+ * • Convert the external response into FreshMeal's PincodeDetails.
  *
- * The service does not expose the external API DTOs to the controller.
+ * The service does not expose external API DTOs to the controller or other
+ * application modules.
  * =============================================================================
  */
 @Service
@@ -48,21 +51,26 @@ public class PincodeServiceImpl implements IPincodeService {
                 pincodeRequest.pincode());
 
         if (response == null
+                || !Boolean.TRUE.equals(response.getSuccess())
                 || response.getData() == null
-                || response.getData().isEmpty()) {
+                || response.getData().getPostOffices() == null
+                || response.getData().getPostOffices().isEmpty()) {
 
             throw new IllegalStateException(
                     "No details found for pincode : "
                             + pincodeRequest.pincode());
+
         }
 
-        PincodeApiData pincodeData = response.getData().get(0);
+        PincodeApiData pincodeData = response.getData();
+
+        PincodePostOffice postOffice = pincodeData.getPostOffices().get(0);
 
         PincodeDetails output = new PincodeDetails(
                 pincodeData.getPincode(),
                 "India",
-                pincodeData.getStatename(),
-                pincodeData.getDistrict());
+                postOffice.getState(),
+                postOffice.getDistrict());
 
         return new ServiceOutput<>(output);
     }

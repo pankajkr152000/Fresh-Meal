@@ -69,7 +69,13 @@ public enum ActionType implements IDisplayOption {
     CREATE_RESTAURANT("Create Restaurant"),
     VIEW_RESTAURANT("View Restaurant"),
     READ_ALL_RESTAURANTS("Read All Restaurants"),
-    UPDATE_RESTAURANT("Update Restaurant");
+    UPDATE_RESTAURANT("Update Restaurant"),
+
+    // =========================================================================
+    // Pincode Operations
+    // =========================================================================
+
+    PINCODE_LOOKUP("Pincode Lookup");
 
     /**
      * Display name.

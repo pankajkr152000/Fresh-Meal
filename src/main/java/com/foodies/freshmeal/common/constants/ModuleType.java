@@ -13,7 +13,8 @@ public enum ModuleType implements IDisplayOption {
     ORDER("Order"),
     PAYMENT("Payment"),
     COUPON("Coupon"),
-    REVIEW("Review");
+    REVIEW("Review"),
+    PINCODE("Pincode");
 
     private final String displayName;
 
