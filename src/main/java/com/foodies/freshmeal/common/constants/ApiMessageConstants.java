@@ -214,4 +214,12 @@ public final class ApiMessageConstants {
 
     public static final String PINCODE_DETAILS_FETCHED = "Pincode details fetched successfully";
 
+    // =========================================================================
+    // Address
+    // =========================================================================
+
+    public static final String ADDRESS_CREATED = "Address created successfully.";
+
+    public static final String ADDRESS_FETCHED = "Address details fetched successfully.";
+
 }

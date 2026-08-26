@@ -172,7 +172,12 @@ public enum EntityName {
     /**
      * Notification entity.
      */
-    NOTIFICATION_ENTITY("NTF", "Notification");
+    NOTIFICATION_ENTITY("NTF", "Notification"),
+
+    /**
+     * Address entity.
+     */
+    ADDRESS_ENTITY("ADR", "Address");
 
     /**
      * Unique entity code.

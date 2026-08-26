@@ -75,7 +75,17 @@ public enum ActionType implements IDisplayOption {
     // Pincode Operations
     // =========================================================================
 
-    PINCODE_LOOKUP("Pincode Lookup");
+    PINCODE_LOOKUP("Pincode Lookup"),
+	
+	
+	
+	// =========================================================================
+	// Pincode Operations
+	// =========================================================================
+	
+	ADD_ADDRESS("Add Address");
+	
+	
 
     /**
      * Display name.

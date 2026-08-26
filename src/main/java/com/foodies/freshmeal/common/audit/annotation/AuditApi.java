@@ -10,37 +10,60 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * =========================================================== Audit API
- * Annotation ===========================================================
+ * ====================================================================================
+ * <b>Audit API Annotation</b>
+ * ====================================================================================
  *
- *
- *
+ * <p>
  * Marks an API for audit logging and provides business metadata used by the
  * audit framework.
- * 
- * 
- * ========= USES ========= 
- * Example 1 : 
- * @AuditApi( 
- * 		module = ModuleType.AUTH,
- * 		action = ActionType.RESET_PASSWORD, 
- * 		logRequest = false, 
- * 		logResponse = false )
- * 
- * 
- * Example 2 : 
- * @AuditApi( 
- * 		module = ModuleType.FOOD, 
- * 		action = ActionType.CREATE
- * ) 
+ * </p>
+ *
+ * <h3>Uses</h3>
+ *
+ * <p>
+ * <b>Example 1:</b>
+ * </p>
+ *
+ * <pre>
+ * {@code
+ * @AuditApi(
+ *     module = ModuleType.AUTH,
+ *     action = ActionType.RESET_PASSWORD,
+ *     method = MethodType.CREATE,
+ *     logRequest = false,
+ *     logResponse = false
+ * )
+ * }
+ * </pre>
+ *
+ * <p>
+ * <b>Example 2:</b>
+ * </p>
+ *
+ * <pre>
+ * {@code
+ * @AuditApi(
+ *     module = ModuleType.FOOD,
+ *     action = ActionType.CREATE
+ * )
  * @PostMapping("/add")
- * 
- * ==================
- *    Retrieve
- * ==================
- * MethodSignature signature = (MethodSignature) joinPoint.getSignature();
- * AuditApi auditApi = signature.getMethod().getAnnotation(AuditApi.class);
- * 
+ * }
+ * </pre>
+ *
+ * <h3>Retrieve</h3>
+ *
+ * <pre>
+ * {@code
+ * MethodSignature signature =
+ *         (MethodSignature) joinPoint.getSignature();
+ *
+ * AuditApi auditApi =
+ *         signature.getMethod().getAnnotation(AuditApi.class);
+ * }
+ * </pre>
+ *
+ * ============================================================================
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

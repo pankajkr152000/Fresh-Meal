@@ -114,7 +114,7 @@ public class FoodController implements IFoodController {
         createFoodInputDTO.setFoodRequest(foodRequest);
         createFoodInputDTO.setImageFile(imageFile);
         input.setInput(createFoodInputDTO);
-
+        input.setServiceContext(serviceContext);
         IServiceOutput<FoodResponse> output = foodService.addFood(input);
 
         return ApiResponseBuilder.created(ApiMessageConstants.FOOD_CREATED, output.getOutput());
@@ -128,6 +128,7 @@ public class FoodController implements IFoodController {
     @GetMapping(FoodApiConstants.READ_ALL_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
         IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
         return ApiResponseBuilder.success(ApiMessageConstants.FOOD_LIST_FOUND, output.getOutput());
     }
@@ -140,7 +141,7 @@ public class FoodController implements IFoodController {
     @GetMapping(FoodApiConstants.FOOD_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> foodCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
-
+        input.setServiceContext(serviceContext);
         foodService.getFoodCategories(input);
 
         return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
@@ -154,7 +155,7 @@ public class FoodController implements IFoodController {
     @GetMapping(FoodApiConstants.DIET_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> dietCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
-
+        input.setServiceContext(serviceContext);
         foodService.getDietCategories(input);
 
         return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
@@ -168,7 +169,7 @@ public class FoodController implements IFoodController {
     @GetMapping(FoodApiConstants.CUISINE_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> cuisineCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
-
+        input.setServiceContext(serviceContext);
         foodService.getCuisineCategories(input);
 
         return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
@@ -182,7 +183,7 @@ public class FoodController implements IFoodController {
     @GetMapping(FoodApiConstants.GROUP_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> groupCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
-
+        input.setServiceContext(serviceContext);
         foodService.getGroupCategories(input);
 
         return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
@@ -196,7 +197,7 @@ public class FoodController implements IFoodController {
     @GetMapping(FoodApiConstants.FOOD_CATEGORY_METADATA)
     public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
-
+        input.setServiceContext(serviceContext);
         IServiceOutput<FoodMetadataResponse> response = foodService.foodCategoryMetadata(input);
 
         return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY, response.getOutput());
@@ -234,7 +235,7 @@ public class FoodController implements IFoodController {
 
         IServiceInput<FoodStatusRequest> input = new ServiceInput<>();
         input.setInput(request);
-
+        input.setServiceContext(serviceContext);
         IServiceOutput<FoodResponse> output = foodService.updateFoodStatus(input);
 
         return ApiResponseBuilder.success(ApiMessageConstants.FOOD_STATUS_UPDATED, output.getOutput());
@@ -251,7 +252,7 @@ public class FoodController implements IFoodController {
             throws JsonProcessingException {
         IServiceInput<FoodStatusRequest> input = new ServiceInput<>();
         input.setInput(foodRequest);
-
+        input.setServiceContext(serviceContext);
         IServiceOutput<EntityViewResponse<FoodResponse>> output = foodService.getFoodByFoodId(input);
 
         return ApiResponseBuilder.success(ApiMessageConstants.FOOD_FOUND, output.getOutput());
@@ -276,6 +277,7 @@ public class FoodController implements IFoodController {
         serviceContext.setAttribute("foodRequest", foodJsonRequest);
 
         IServiceInput<CreateFoodInputDTO> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
         CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO();
         createFoodInputDTO.setFoodRequest(foodRequest);
         createFoodInputDTO.setImageFile(imageFile);
@@ -301,7 +303,7 @@ public class FoodController implements IFoodController {
             @RequestBody ArchiveFoodRequest input) {
 
         IServiceInput<ArchiveFoodRequest> serviceInput = new ServiceInput<>();
-
+        serviceInput.setServiceContext(serviceContext);
         serviceInput.setInput(input);
 
         IServiceOutput<FoodResponse> serviceOutput = foodService.archiveFood(serviceInput);
@@ -316,13 +318,13 @@ public class FoodController implements IFoodController {
     @AuditApi(module = ModuleType.FOOD, action = ActionType.ARCHIVE_FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.BULK_ARCHIVE_FOOD)
     public ResponseEntity<ApiResponse<Void>> bulkArchiveFoods(
-            @RequestBody BulkArchiveFoodRequest input) {
+            @RequestBody BulkArchiveFoodRequest bulkArchiveFoodRequest) {
 
-        IServiceInput<BulkArchiveFoodRequest> serviceInput = new ServiceInput<>();
+        IServiceInput<BulkArchiveFoodRequest> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
+        input.setInput(bulkArchiveFoodRequest);
 
-        serviceInput.setInput(input);
-
-        foodService.bulkArchiveFoods(serviceInput);
+        foodService.bulkArchiveFoods(input);
 
         return ApiResponseBuilder.success();
     }
@@ -341,7 +343,7 @@ public class FoodController implements IFoodController {
             @RequestBody RestoreFoodRequest input) {
 
         IServiceInput<RestoreFoodRequest> serviceInput = new ServiceInput<>();
-
+        serviceInput.setServiceContext(serviceContext);
         serviceInput.setInput(input);
 
         IServiceOutput<FoodResponse> serviceOutput = foodService.restoreFood(serviceInput);
@@ -359,7 +361,7 @@ public class FoodController implements IFoodController {
             @RequestBody BulkRestoreFoodRequest input) {
 
         IServiceInput<BulkRestoreFoodRequest> serviceInput = new ServiceInput<>();
-
+        serviceInput.setServiceContext(serviceContext);
         serviceInput.setInput(input);
 
         foodService.bulkRestoreFoods(serviceInput);
@@ -381,7 +383,7 @@ public class FoodController implements IFoodController {
             @RequestBody PermanentDeleteFoodRequest input) {
 
         IServiceInput<PermanentDeleteFoodRequest> serviceInput = new ServiceInput<>();
-
+        serviceInput.setServiceContext(serviceContext);
         serviceInput.setInput(input);
 
         foodService.permanentDeleteFood(serviceInput);
@@ -399,7 +401,7 @@ public class FoodController implements IFoodController {
             @RequestBody BulkDeleteFoodRequest input) {
 
         IServiceInput<BulkDeleteFoodRequest> serviceInput = new ServiceInput<>();
-
+        serviceInput.setServiceContext(serviceContext);
         serviceInput.setInput(input);
 
         foodService.bulkPermanentDeleteFoods(serviceInput);
@@ -418,7 +420,8 @@ public class FoodController implements IFoodController {
     @AuditApi(module = ModuleType.FOOD, action = ActionType.READ_ARCHIVED_FOODS, method = MethodType.READ)
     @GetMapping(FoodApiConstants.GET_ARCHIVED_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readArchivedFoods() {
-
+        IServiceInput<Void> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
         IServiceOutput<List<FoodResponse>> serviceOutput = foodService.readArchivedFoods();
 
         return ApiResponseBuilder.success(serviceOutput.getOutput());

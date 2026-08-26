@@ -8,4 +8,9 @@ public class ApiBaseConstants {
 
     public static final String PINCODE_BASE_URL = "/api/pincodes";
 
+    /**
+     * Address module base URL.
+     */
+    public static final String ADDRESS_BASE_URL = "/api/addresses";
+
 }

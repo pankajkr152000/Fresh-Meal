@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import com.foodies.freshmeal.common.valueObject.GeoLocation;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -102,7 +103,7 @@ public class AddressDetailsResponse implements Serializable {
     /**
      * Contact number for delivery.
      */
-    private String contactMobileNumber;
+    private PhoneNumber contactMobileNumber;
 
     /**
      * Customer's delivery instructions.

@@ -6,6 +6,7 @@ import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
 import com.foodies.freshmeal.food.entity.FoodEntity;
 import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.order.entity.OrderEntity;
+import com.foodies.freshmeal.user.entity.AddressEntity;
 import com.foodies.freshmeal.user.entity.LoginHistoryEntity;
 import com.foodies.freshmeal.user.entity.UserEntity;
 import com.foodies.freshmeal.user.entity.UserProfile;
@@ -76,6 +77,9 @@ public final class EntityFactory {
 
             case IMAGE_ENTITY ->
                 ImageEntity.create();
+
+            case ADDRESS_ENTITY ->
+                AddressEntity.create();
 
             default ->
                 throw new IllegalArgumentException(

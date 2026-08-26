@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import com.foodies.freshmeal.common.valueObject.GeoLocation;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -115,7 +116,7 @@ public class AddressSnapshot implements Serializable {
      */
     @NotBlank
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Invalid mobile number.")
-    private String contactMobileNumber;
+    private PhoneNumber contactMobileNumber;
 
     /**
      * Delivery-specific instructions.

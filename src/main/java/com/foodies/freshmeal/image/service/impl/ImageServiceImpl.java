@@ -52,38 +52,39 @@ public class ImageServiceImpl implements IImageService {
     @Value("${aws.region}")
     private String REGION;
 
-	@Override
-	public IServiceOutput<String> generateImageId(IServiceInput<CreateImageInputDTO> input) {
-		long seq = databaseSequenceService.generateSequence(input.getServiceContext(), SequenceConstants.IMAGE_SEQUENCE);
-		
-		IServiceContext serviceContext = input.getServiceContext();
-		serviceContext.setAttribute(DataContext.IMAGE_SEQUENCE, seq);
-		
-		String imageId = String.format(SequenceConstants.IMAGE_DB_ID_PATTERN, seq);
-		
-		LOGGER.info("Generated image ID: {}", imageId);
+    @Override
+    public IServiceOutput<String> generateImageId(IServiceInput<CreateImageInputDTO> input) {
+        long seq = databaseSequenceService.generateSequence(input.getServiceContext(),
+                SequenceConstants.IMAGE_SEQUENCE);
 
-		IServiceOutput<String> output = new ServiceOutput<>();
-		output.setOutput(imageId);
-		return output;
-	}
+        IServiceContext serviceContext = input.getServiceContext();
+        serviceContext.setAttribute(DataContext.IMAGE_SEQUENCE, seq);
 
-	@Override
-	public IServiceOutput<String> generateImageNumber(IServiceInput<CreateImageInputDTO> input) {
-		long seq = 0L;
-		if(input.getServiceContext().hasAttribute(DataContext.IMAGE_SEQUENCE)) {
-			seq = (Long)input.getServiceContext().getAttribute(DataContext.IMAGE_SEQUENCE);
-		} else {
-			databaseSequenceService.getCurrentSequence(input.getServiceContext(), SequenceConstants.IMAGE_SEQUENCE);
-		}
-		String imageNo = String.format(SequenceConstants.IMAGE_NUMBER_PATTERN, seq);
-		
-		LOGGER.info("Generated image Number: {}", imageNo);
+        String imageId = String.format(SequenceConstants.IMAGE_DB_ID_PATTERN, seq);
 
-		IServiceOutput<String> output = new ServiceOutput<>();
-		output.setOutput(imageNo);
-		return output;
-	}
+        LOGGER.info("Generated image ID: {}", imageId);
+
+        IServiceOutput<String> output = new ServiceOutput<>();
+        output.setOutput(imageId);
+        return output;
+    }
+
+    @Override
+    public IServiceOutput<String> generateImageNumber(IServiceInput<CreateImageInputDTO> input) {
+        long seq = 0L;
+        if (input.getServiceContext().hasAttribute(DataContext.IMAGE_SEQUENCE)) {
+            seq = (Long) input.getServiceContext().getAttribute(DataContext.IMAGE_SEQUENCE);
+        } else {
+            databaseSequenceService.getCurrentSequence(input.getServiceContext(), SequenceConstants.IMAGE_SEQUENCE);
+        }
+        String imageNo = String.format(SequenceConstants.IMAGE_NUMBER_PATTERN, seq);
+
+        LOGGER.info("Generated image Number: {}", imageNo);
+
+        IServiceOutput<String> output = new ServiceOutput<>();
+        output.setOutput(imageNo);
+        return output;
+    }
 
     @Override
     public IServiceOutput<ImageEntity> uploadImageToS3(IServiceInput<CreateImageInputDTO> input) {
@@ -97,9 +98,9 @@ public class ImageServiceImpl implements IImageService {
         String imageId = imageIdOutput.getOutput();
         IServiceOutput<String> imageNoOutput = generateImageNumber(input);
         String imageNumber = imageNoOutput.getOutput();
-        
+
         input.getServiceContext().setAttribute(DataContext.IMAGE_ID, imageId);
-        
+
         String imageName = generateImageName(input.getServiceContext(), file);
         ImageEntity imageEntity = (ImageEntity) EntityFactory.createEntity(EntityName.IMAGE_ENTITY);
         imageEntity.setId(imageId);
@@ -128,7 +129,6 @@ public class ImageServiceImpl implements IImageService {
             if (putObjectResponse.sdkHttpResponse().isSuccessful()) {
                 System.out.println("Image uploaded successfully: " + imageName);
 
-              
                 IServiceInput<CreateImageInputDTO> serviceinput = new ServiceInput<>();
                 CreateImageInputDTO createImageInputDTO = new CreateImageInputDTO();
                 createImageInputDTO.setFile(file);
@@ -208,9 +208,9 @@ public class ImageServiceImpl implements IImageService {
             String imageId = imageIdOutput.getOutput();
             IServiceOutput<String> imageNoOutput = generateImageNumber(input);
             String imageNumber = imageNoOutput.getOutput();
-            
+
             input.getServiceContext().setAttribute(DataContext.IMAGE_ID, imageId);
-            
+
             imageName = generateImageName(serviceContext, file);
             imageEntity.setId(imageId);
             imageEntity.setImageNumber(imageNumber);
@@ -262,12 +262,12 @@ public class ImageServiceImpl implements IImageService {
         input.setInput(dto);
 
         // 1. Get the unique_id
-        String uniqueId = null;
-        if(input.getServiceContext().hasAttribute(DataContext.IMAGE_ID)) {
-        	uniqueId = (String)input.getServiceContext().getAttribute(DataContext.IMAGE_ID);
+        String uniqueId;
+        if (input.getServiceContext().hasAttribute(DataContext.IMAGE_ID)) {
+            uniqueId = (String) input.getServiceContext().getAttribute(DataContext.IMAGE_ID);
         } else {
-        	var serviceOutput = generateImageId(input);
-        	uniqueId = serviceOutput.getOutput();
+            var serviceOutput = generateImageId(input);
+            uniqueId = serviceOutput.getOutput();
         }
 
         // 2. Append the clean ID string and the file extension

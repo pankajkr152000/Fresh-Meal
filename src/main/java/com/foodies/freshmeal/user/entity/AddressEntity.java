@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.valueObject.GeoLocation;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
+import com.foodies.freshmeal.user.constants.AddressTypeConstant;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -114,7 +116,7 @@ public class AddressEntity extends ABaseEntity {
      * WORK
      * OTHER
      */
-    private String addressType;
+    private AddressTypeConstant addressType;
 
     /**
      * Indicates whether this is the customer's default address.
@@ -133,7 +135,7 @@ public class AddressEntity extends ABaseEntity {
     /**
      * Contact phone number for delivery.
      */
-    private String phoneNumber;
+    private PhoneNumber phoneNumber;
 
     /**
      * Flat, apartment, house or building number.
@@ -154,11 +156,22 @@ public class AddressEntity extends ABaseEntity {
      * City.
      */
     private String city;
+    
+    /**
+     * District derived from the supplied postal / PIN code.
+     *
+     * <p>
+     * This value is resolved through PincodeService and should not be
+     * independently trusted from the client request.
+     * </p>
+     */
+    private String district;
 
     /**
      * State.
      */
     private String state;
+
 
     /**
      * Country.

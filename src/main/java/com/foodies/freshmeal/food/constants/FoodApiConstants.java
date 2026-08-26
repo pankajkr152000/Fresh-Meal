@@ -12,19 +12,13 @@ public final class FoodApiConstants {
     }
 
     // =========================================================
-    // Base URL
-    // =========================================================
-
-    public static final String BASE_URL = "/api/foods";
-
-    // =========================================================
     // Food CRUD APIs
     // =========================================================
 
     public static final String ADD = "/add";
     public static final String UPDATE_FOOD_STATUS = "/{foodId}/status";
     public static final String DELETE = "/delete";
-    //public static final String GET_FOOD_BY_FOOD_ID = "api/foods/view/{foodId}";
+    // public static final String GET_FOOD_BY_FOOD_ID = "api/foods/view/{foodId}";
     public static final String GET_FOOD_BY_FOOD_ID = "/view";
     public static final String READ_ALL_FOODS = "/readAllFoods";
     public static final String EDIT_FOOD = "/edit";
@@ -92,45 +86,44 @@ public final class FoodApiConstants {
     public static final String STATISTICS = "/statistics";
     public static final String TOP_SELLING = "/top-selling";
     public static final String TRENDING = "/trending";
-    
-	 // ============================================================================
-	 // Archive APIs
-	 // ============================================================================
-    
+
+    // ============================================================================
+    // Archive APIs
+    // ============================================================================
+
     /**
      * Retrieves all archived foods.
      */
     public static final String GET_ARCHIVED_FOODS = "/archived";
 
-	/**
-	 * Archives a single food.
-	 */
-	public static final String ARCHIVE_FOOD = "/archive";
+    /**
+     * Archives a single food.
+     */
+    public static final String ARCHIVE_FOOD = "/archive";
 
-	/**
-	 * Archives multiple foods.
-	 */
-	public static final String BULK_ARCHIVE_FOOD = "/bulkArchive";
+    /**
+     * Archives multiple foods.
+     */
+    public static final String BULK_ARCHIVE_FOOD = "/bulkArchive";
 
-	/**
-	 * Restores a single archived food.
-	 */
-	public static final String RESTORE_FOOD = "/restore";
+    /**
+     * Restores a single archived food.
+     */
+    public static final String RESTORE_FOOD = "/restore";
 
-	/**
-	 * Restores multiple archived foods.
-	 */
-	public static final String BULK_RESTORE_FOOD = "/bulkRestore";
+    /**
+     * Restores multiple archived foods.
+     */
+    public static final String BULK_RESTORE_FOOD = "/bulkRestore";
 
-	/**
-	 * Permanently deletes a single archived food.
-	 */
-	public static final String PERMANENT_DELETE_FOOD = "/permanentDelete";
+    /**
+     * Permanently deletes a single archived food.
+     */
+    public static final String PERMANENT_DELETE_FOOD = "/permanentDelete";
 
-	/**
-	 * Permanently deletes multiple archived foods.
-	 */
-	public static final String BULK_PERMANENT_DELETE_FOOD = "/bulkPermanentDelete";
-	
-	
+    /**
+     * Permanently deletes multiple archived foods.
+     */
+    public static final String BULK_PERMANENT_DELETE_FOOD = "/bulkPermanentDelete";
+
 }
