@@ -1,5 +1,7 @@
 package com.foodies.freshmeal.restaurant.mapper;
 
+import java.util.stream.Stream;
+
 import org.springframework.stereotype.Component;
 
 import com.foodies.freshmeal.common.util.DisplayOptionMapperUtil;
@@ -33,8 +35,7 @@ public class RestaurantBranchMapper {
      *
      * @return branch entity
      */
-    public RestaurantBranchEntity toEntity(
-            RestaurantBranchCreateRequest request) {
+    public RestaurantBranchEntity toEntity(RestaurantBranchCreateRequest request) {
 
         RestaurantBranchEntity entity = (RestaurantBranchEntity) RestaurantBranchEntity.create();
 
@@ -53,8 +54,7 @@ public class RestaurantBranchMapper {
      *
      * @return branch list response
      */
-    public RestaurantBranchListResponse toListResponse(
-            RestaurantBranchEntity entity) {
+    public RestaurantBranchListResponse toListResponse(RestaurantBranchEntity entity) {
 
         return RestaurantBranchListResponse.builder()
                 .id(entity.getId())
@@ -62,9 +62,7 @@ public class RestaurantBranchMapper {
                 .restaurantId(entity.getRestaurantId())
                 .branchName(entity.getBranchName())
                 .addressSummary(buildAddressSummary(entity))
-                .status(
-                        DisplayOptionMapperUtil.from(
-                                entity.getStatus()))
+                .status(DisplayOptionMapperUtil.from(entity.getStatus()))
                 .isAvailable(entity.isAvailable())
                 .build();
     }
@@ -76,8 +74,7 @@ public class RestaurantBranchMapper {
      *
      * @return branch details response
      */
-    public RestaurantBranchDetailsResponse toDetailsResponse(
-            RestaurantBranchEntity entity) {
+    public RestaurantBranchDetailsResponse toDetailsResponse(RestaurantBranchEntity entity) {
 
         return RestaurantBranchDetailsResponse.builder()
                 .id(entity.getId())
@@ -86,9 +83,7 @@ public class RestaurantBranchMapper {
                 .branchName(entity.getBranchName())
                 .address(entity.getAddress())
                 .operatingHours(entity.getOperatingHours())
-                .status(
-                        DisplayOptionMapperUtil.from(
-                                entity.getStatus()))
+                .status(DisplayOptionMapperUtil.from(entity.getStatus()))
                 .statusUpdatedAt(entity.getStatusUpdatedAt())
                 .statusUpdatedBy(entity.getStatusUpdatedBy())
                 .isAvailable(entity.isAvailable())
@@ -106,8 +101,7 @@ public class RestaurantBranchMapper {
      *
      * @return formatted address summary
      */
-    private String buildAddressSummary(
-            RestaurantBranchEntity entity) {
+    private String buildAddressSummary(RestaurantBranchEntity entity) {
 
         if (entity.getAddress() == null) {
             return null;
@@ -115,7 +109,7 @@ public class RestaurantBranchMapper {
 
         var address = entity.getAddress();
 
-        return java.util.stream.Stream.of(
+        return Stream.of(
                 address.getHouseNumber(),
                 address.getApartmentName(),
                 address.getStreet(),
