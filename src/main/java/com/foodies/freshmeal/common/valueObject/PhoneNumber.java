@@ -27,5 +27,15 @@ public class PhoneNumber implements Serializable {
     @NotBlank
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Invalid mobile number.")
     private String value;
+    
+    @Override
+    public String toString() {
+    	return value;
+    }
+    
+	public static PhoneNumber toPhoneNumber(String phoneNumber) {
+		return PhoneNumber.builder().value(phoneNumber).build();
+
+	}
 
 }

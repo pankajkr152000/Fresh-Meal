@@ -1,5 +1,6 @@
 package com.foodies.freshmeal.restaurant.mapper;
 
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Component;
@@ -15,20 +16,33 @@ import com.foodies.freshmeal.restaurant.entity.RestaurantBranchEntity;
  * Mapper : Restaurant Branch
  * ============================================================================
  *
- * Provides pure object transformations between RestaurantBranchEntity and
- * Restaurant Branch API representations.
+ * <p>
+ * Provides pure object transformations between {@link RestaurantBranchEntity}
+ * and Restaurant Branch API representations.
+ * </p>
+ *
+ * <p>
+ * The mapper is responsible only for object transformation and presentation
+ * formatting. Business rules and persistence operations remain outside this
+ * class.
+ * </p>
  *
  * ============================================================================
+ *
+ * @author Pankaj Kumar
+ * @since 1.0
  */
 @Component
 public class RestaurantBranchMapper {
 
     /**
-     * Maps RestaurantBranchCreateRequest to RestaurantBranchEntity.
+     * Maps a {@link RestaurantBranchCreateRequest} to a
+     * {@link RestaurantBranchEntity}.
      *
      * <p>
-     * Server-managed fields such as branchNumber, status, availability,
-     * and audit information are intentionally not populated here.
+     * Server-managed fields such as <code>branchNumber</code> and common audit
+     * information are intentionally not populated here. They are assigned by
+     * the service/domain infrastructure.
      * </p>
      *
      * @param request branch creation request
@@ -48,7 +62,8 @@ public class RestaurantBranchMapper {
     }
 
     /**
-     * Maps RestaurantBranchEntity to the lightweight list projection.
+     * Maps a {@link RestaurantBranchEntity} to the lightweight list
+     * representation.
      *
      * @param entity branch entity
      *
@@ -62,13 +77,14 @@ public class RestaurantBranchMapper {
                 .restaurantId(entity.getRestaurantId())
                 .branchName(entity.getBranchName())
                 .addressSummary(buildAddressSummary(entity))
-                .status(DisplayOptionMapperUtil.from(entity.getStatus()))
-                .isAvailable(entity.isAvailable())
+                .status(DisplayOptionMapperUtil.from(entity.getRecordStatus()))
+                .isAvailable(!entity.isDeleted())
                 .build();
     }
 
     /**
-     * Maps RestaurantBranchEntity to the detailed branch projection.
+     * Maps a {@link RestaurantBranchEntity} to the detailed branch
+     * representation.
      *
      * @param entity branch entity
      *
@@ -83,10 +99,10 @@ public class RestaurantBranchMapper {
                 .branchName(entity.getBranchName())
                 .address(entity.getAddress())
                 .operatingHours(entity.getOperatingHours())
-                .status(DisplayOptionMapperUtil.from(entity.getStatus()))
-                .statusUpdatedAt(entity.getStatusUpdatedAt())
-                .statusUpdatedBy(entity.getStatusUpdatedBy())
-                .isAvailable(entity.isAvailable())
+                .status(DisplayOptionMapperUtil.from(entity.getRecordStatus()))
+                .statusUpdatedAt(entity.getUpdatedAt())
+                .statusUpdatedBy(entity.getUpdatedBy())
+                .isAvailable(!entity.isDeleted())
                 .createdAt(entity.getCreatedAt())
                 .createdBy(entity.getCreatedBy())
                 .updatedAt(entity.getUpdatedAt())
@@ -95,11 +111,18 @@ public class RestaurantBranchMapper {
     }
 
     /**
-     * Builds a concise address representation for list responses.
+     * Builds a concise human-readable address representation for list
+     * responses.
+     *
+     * <p>
+     * Empty address components are ignored so that the resulting summary
+     * remains readable even when optional address fields are not supplied.
+     * </p>
      *
      * @param entity branch entity
      *
-     * @return formatted address summary
+     * @return formatted address summary, or <code>null</code> when address is
+     *         unavailable
      */
     private String buildAddressSummary(RestaurantBranchEntity entity) {
 
@@ -119,6 +142,6 @@ public class RestaurantBranchMapper {
                 address.getState(),
                 address.getPincode())
                 .filter(value -> value != null && !value.isBlank())
-                .collect(java.util.stream.Collectors.joining(", "));
+                .collect(Collectors.joining(", "));
     }
 }

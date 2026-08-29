@@ -1,16 +1,13 @@
 package com.foodies.freshmeal.restaurant.entity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.valueObject.Address;
-import com.foodies.freshmeal.restaurant.constants.BranchStatusConstant;
 import com.foodies.freshmeal.restaurant.valueObject.OperatingHours;
 
 import lombok.Getter;
@@ -67,33 +64,6 @@ public class RestaurantBranchEntity extends ABaseEntity {
      * Regular weekly operating hours of the branch.
      */
     private List<OperatingHours> operatingHours;
-
-    /**
-     * Current business status of the branch.
-     *
-     * Default:
-     * ACTIVE
-     */
-    @Field("status")
-    private BranchStatusConstant status = BranchStatusConstant.ACTIVE;
-
-    /**
-     * Timestamp of the most recent branch status change.
-     */
-    private LocalDateTime statusUpdatedAt;
-
-    /**
-     * Administrator username who last changed the branch status.
-     */
-    private String statusUpdatedBy;
-
-    /**
-     * Indicates whether the branch is currently operationally available.
-     *
-     * This is intentionally separate from branch lifecycle status.
-     */
-    @Field("branch_availability")
-    private boolean isAvailable = true;
 
     /**
      * Package-private constructor.

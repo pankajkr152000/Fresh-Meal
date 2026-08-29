@@ -109,7 +109,6 @@ public class RestaurantMapper {
 				.createdBy(entity.getCreatedBy())
 				.updatedAt(entity.getUpdatedAt())
 				.updatedBy(entity.getUpdatedBy())
-
 				.build();
 	}
 }

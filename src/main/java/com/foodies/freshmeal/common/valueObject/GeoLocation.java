@@ -32,4 +32,9 @@ public class GeoLocation implements Serializable {
      */
     private Double longitude;
 
+    @Override
+    public String toString() {
+        return "GeoLocation{latitude=" + latitude + ", longitude=" + longitude + "}";
+    }
+
 }

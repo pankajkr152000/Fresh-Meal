@@ -27,5 +27,14 @@ public class EmailAddress implements Serializable {
     @NotBlank
     @Email
     private String value;
+    
+    @Override
+    public String toString() {
+    	return value;
+    }
+    
+	public static EmailAddress toEmailAddress(String emailAddress) {
+		return EmailAddress.builder().value(emailAddress).build();
+	}
 
 }

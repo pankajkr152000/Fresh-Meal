@@ -44,7 +44,8 @@ public class RestaurantBranchUpdateRequest implements Serializable {
     // =========================================================================
     // Branch Information
     // =========================================================================
-
+    @NotBlank
+    private String branchId;
     /**
      * Business/display name of the branch.
      */

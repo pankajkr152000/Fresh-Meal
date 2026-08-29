@@ -72,6 +72,8 @@ public final class SequenceConstants {
 
     public static final String RESTAURANT_SEQUENCE = "restaurant_sequence";
 
+    public static final String RESTAURANT_BRANCH_SEQUENCE = "restaurant_branch_sequence";
+
     public static final String DELIVERY_PARTNER_SEQUENCE = "delivery_partner_sequence";
 
     public static final String PAYMENT_SEQUENCE = "payment_sequence";
@@ -107,6 +109,8 @@ public final class SequenceConstants {
 
     public static final String RESTAURANT_DB_ID_PATTERN = "RSTDB%06d";
 
+    public static final String RESTAURANT_BRANCH_DB_ID_PATTERN = "BRNDB%06d";
+
     public static final String DELIVERY_PARTNER_DB_ID_PATTERN = "DLPDB%06d";
 
     public static final String PAYMENT_DB_ID_PATTERN = "PAYDB%06d";
@@ -140,12 +144,14 @@ public final class SequenceConstants {
     public static final String ADDRESS_NUMBER_PATTERN = "FM-ADR-%07d";
 
     public static final String FOOD_NUMBER_PATTERN = "FM-FOOD-%07d";
-    
+
     public static final String IMAGE_NUMBER_PATTERN = "FM-IMG-%07d";
 
     public static final String ORDER_NUMBER_PATTERN = "FM-ORD-%07d";
 
     public static final String RESTAURANT_NUMBER_PATTERN = "FM-RST-%07d";
+
+    public static final String RESTAURANT_BRANCH_NUMBER_PATTERN = "FM-BRN-%07d";
 
     public static final String DELIVERY_PARTNER_NUMBER_PATTERN = "FM-DLP-%07d";
 

@@ -51,4 +51,37 @@ public final class RestaurantApiMessageConstants {
      */
     public static final String RESTAURANT_UPDATED = "Restaurant updated successfully.";
 
+    // =========================================================================
+    // Restaurant Branch Messages
+    // =========================================================================
+
+    /**
+     * Restaurant branch created successfully.
+     */
+    public static final String RESTAURANT_BRANCH_CREATED = "Restaurant branch created successfully.";
+
+    /**
+     * Restaurant branch list retrieved successfully.
+     */
+    public static final String RESTAURANT_BRANCH_LIST_FOUND = "Restaurant branches retrieved successfully.";
+
+    /**
+     * Restaurant branch retrieved successfully.
+     */
+    public static final String RESTAURANT_BRANCH_FOUND = "Restaurant branch retrieved successfully.";
+
+    /**
+     * Restaurant branch list for a restaurant retrieved successfully.
+     */
+    public static final String RESTAURANT_BRANCH_LIST_BY_RESTAURANT_FOUND = "Restaurant branches retrieved successfully.";
+
+    /**
+     * Restaurant branch updated successfully.
+     */
+    public static final String RESTAURANT_BRANCH_UPDATED = "Restaurant branch updated successfully.";
+
+    public static final String RESTAURANT_STATUS_UPDATED = "Restaurant status updated successfully.";
+
+    public static final String RESTAURANT_AVAILABILITY_UPDATED = "Restaurant availability updated successfully.";
+
 }

@@ -20,7 +20,6 @@ import com.foodies.freshmeal.restaurant.entity.RestaurantBranchEntity;
  * ============================================================================
  */
 @Repository
-public interface IRestaurantBranchRepository
-        extends IBaseRepository<RestaurantBranchEntity, String> {
+public interface IRestaurantBranchRepository extends IBaseRepository<RestaurantBranchEntity, String> {
 
 }

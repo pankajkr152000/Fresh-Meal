@@ -29,8 +29,7 @@ public interface IRestaurantBranchService {
      *
      * @return created branch details
      */
-    IServiceOutput<RestaurantBranchDetailsResponse> create(
-            IServiceInput<RestaurantBranchCreateRequest> input);
+    IServiceOutput<RestaurantBranchDetailsResponse> create(IServiceInput<RestaurantBranchCreateRequest> input);
 
     /**
      * Retrieves a branch by its identifier.
@@ -39,8 +38,7 @@ public interface IRestaurantBranchService {
      *
      * @return branch details
      */
-    IServiceOutput<RestaurantBranchDetailsResponse> getById(
-            IServiceInput<RestaurantBranchIdRequest> input);
+    IServiceOutput<RestaurantBranchDetailsResponse> getById(IServiceInput<RestaurantBranchIdRequest> input);
 
     /**
      * Retrieves all active branches.
@@ -49,8 +47,7 @@ public interface IRestaurantBranchService {
      *
      * @return branch list
      */
-    IServiceOutput<List<RestaurantBranchListResponse>> getAll(
-            IServiceInput<Void> input);
+    IServiceOutput<List<RestaurantBranchListResponse>> getAll(IServiceInput<Void> input);
 
     /**
      * Retrieves all active branches belonging to a restaurant.
@@ -59,8 +56,7 @@ public interface IRestaurantBranchService {
      *
      * @return branches belonging to the restaurant
      */
-    IServiceOutput<List<RestaurantBranchListResponse>> getByRestaurantId(
-            IServiceInput<RestaurantIdRequest> input);
+    IServiceOutput<List<RestaurantBranchListResponse>> getByRestaurantId(IServiceInput<RestaurantIdRequest> input);
 
     /**
      * Updates an existing restaurant branch.
@@ -69,7 +65,6 @@ public interface IRestaurantBranchService {
      *
      * @return updated branch details
      */
-    IServiceOutput<RestaurantBranchDetailsResponse> update(
-            IServiceInput<RestaurantBranchUpdateRequest> input);
+    IServiceOutput<RestaurantBranchDetailsResponse> update(IServiceInput<RestaurantBranchUpdateRequest> input);
 
 }

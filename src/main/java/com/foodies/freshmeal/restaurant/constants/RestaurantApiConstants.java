@@ -125,4 +125,61 @@ public final class RestaurantApiConstants {
      */
     public static final String RESTAURANT_METADATA = "/metadata";
 
+    // =========================================================================
+    // Restaurant Branch APIs
+    // =========================================================================
+
+    /**
+     * Creates a new restaurant branch.
+     *
+     * POST /api/restaurants/branches/create
+     */
+    public static final String CREATE_BRANCH = "/branches/create";
+
+    /**
+     * Retrieves all active restaurant branches.
+     *
+     * GET /api/restaurants/branches/readAllBranches
+     */
+    public static final String READ_ALL_BRANCHES = "/branches/readAllBranches";
+
+    /**
+     * Retrieves a restaurant branch by its identifier.
+     *
+     * POST /api/restaurants/branches/view
+     */
+    public static final String GET_BRANCH_BY_ID = "/branches/view";
+
+    /**
+     * Retrieves all active branches belonging to a restaurant.
+     *
+     * POST /api/restaurants/branches/readByRestaurant
+     */
+    public static final String READ_BRANCHES_BY_RESTAURANT = "/branches/readByRestaurant";
+
+    /**
+     * Updates an existing restaurant branch.
+     *
+     * PUT /api/restaurants/branches/update
+     */
+    public static final String UPDATE_BRANCH = "/branches/update";
+
+    // =========================================================================
+    // Restaurant Lifecycle APIs
+    // =========================================================================
+
+    /**
+     * Updates restaurant lifecycle status.
+     *
+     * PUT /api/restaurants/status
+     */
+    public static final String UPDATE_STATUS = "/status";
+
+    /**
+     * Updates restaurant operational availability.
+     *
+     * PUT /api/restaurants/availability
+     */
+    public static final String UPDATE_AVAILABILITY = "/availability";
+
 }

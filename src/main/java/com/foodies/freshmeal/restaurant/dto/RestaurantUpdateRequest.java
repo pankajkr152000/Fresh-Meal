@@ -57,7 +57,7 @@ public class RestaurantUpdateRequest implements Serializable {
     // =========================================================================
     // Basic Information
     // =========================================================================
-
+    private String restaurantId;
     /**
      * Business/display name of the restaurant.
      */

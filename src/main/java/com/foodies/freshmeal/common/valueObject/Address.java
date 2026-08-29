@@ -64,4 +64,105 @@ public class Address implements Serializable {
      */
     private GeoLocation geoLocation;
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (houseNumber != null && !houseNumber.isEmpty()) {
+            sb.append(houseNumber).append(", ");
+        }
+        if (apartmentName != null && !apartmentName.isEmpty()) {
+            sb.append(apartmentName).append(", ");
+        }
+        if (street != null && !street.isEmpty()) {
+            sb.append(street).append(", ");
+        }
+        if (area != null && !area.isEmpty()) {
+            sb.append(area).append(", ");
+        }
+        if (city != null && !city.isEmpty()) {
+            sb.append(city).append(", ");
+        }
+        if (district != null && !district.isEmpty()) {
+            sb.append(district).append(", ");
+        }
+        if (state != null && !state.isEmpty()) {
+            sb.append(state).append(", ");
+        }
+        if (country != null && !country.isEmpty()) {
+            sb.append(country).append(", ");
+        }
+        if (pincode != null && !pincode.isEmpty()) {
+            sb.append(pincode);
+        }
+        return sb.toString();
+    }
+
+    public String getFullAddress() {
+        StringBuilder sb = new StringBuilder();
+        if (houseNumber != null && !houseNumber.isEmpty()) {
+            sb.append(houseNumber).append(", ");
+        }
+        if (apartmentName != null && !apartmentName.isEmpty()) {
+            sb.append(apartmentName).append(", ");
+        }
+        if (street != null && !street.isEmpty()) {
+            sb.append(street).append(", ");
+        }
+        if (area != null && !area.isEmpty()) {
+            sb.append(area).append(", ");
+        }
+        if (city != null && !city.isEmpty()) {
+            sb.append(city).append(", ");
+        }
+        if (district != null && !district.isEmpty()) {
+            sb.append(district).append(", ");
+        }
+        if (state != null && !state.isEmpty()) {
+            sb.append(state).append(", ");
+        }
+        if (country != null && !country.isEmpty()) {
+            sb.append(country).append(", ");
+        }
+        if (pincode != null && !pincode.isEmpty()) {
+            sb.append(pincode);
+        }
+        return sb.toString();
+    }
+
+    public static Address fromString(String addressString) {
+        String[] parts = addressString.split(", ");
+        Address address = new Address();
+        int index = 0;
+
+        if (parts.length > index) {
+            address.setHouseNumber(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setApartmentName(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setStreet(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setArea(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setCity(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setDistrict(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setState(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setCountry(parts[index++]);
+        }
+        if (parts.length > index) {
+            address.setPincode(parts[index]);
+        }
+
+        return address;
+    }
+
 }

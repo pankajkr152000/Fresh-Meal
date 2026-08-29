@@ -37,4 +37,59 @@ public class Money implements Serializable {
     @Builder.Default
     private String currency = "INR";
 
+    @Override
+    public String toString() {
+        return String.format("%s %.2f", currency, amount);
+    }
+
+    public static Money of(BigDecimal amount, String currency) {
+        return Money.builder()
+                .amount(amount)
+                .currency(currency)
+                .build();
+    }
+
+    public static Money of(BigDecimal amount) {
+        return Money.builder()
+                .amount(amount)
+                .currency("INR")
+                .build();
+    }
+
+    public static Money of(String amount, String currency) {
+        return Money.builder()
+                .amount(new BigDecimal(amount))
+                .currency(currency)
+                .build();
+    }
+
+    public static Money of(String amount) {
+        return Money.builder()
+                .amount(new BigDecimal(amount))
+                .currency("INR")
+                .build();
+    }
+
+    public static Money defaultMoney() {
+        return Money.builder()
+                .amount(BigDecimal.ZERO)
+                .currency("INR")
+                .build();
+    }
+
+    public static Money defaultMoney(String currency) {
+        return Money.builder()
+                .amount(BigDecimal.ZERO)
+                .currency(currency)
+                .build();
+    }
+
+    public static BigDecimal toBigDecimal(Money money) {
+        return money != null ? money.getAmount() : BigDecimal.ZERO;
+    }
+
+    public static Double getDoubleValue(Money money) {
+        return money != null ? money.getAmount().doubleValue() : 0.0;
+    }
+
 }
