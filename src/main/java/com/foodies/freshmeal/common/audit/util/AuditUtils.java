@@ -76,8 +76,8 @@ public class AuditUtils {
     private String resolveUserId() {
 
         if (serviceContext.getUserProfile() != null
-                && serviceContext.getUserProfile().getId() != null) {
-            return serviceContext.getUserProfile().getId();
+                && serviceContext.getUserProfile().getUserNumber() != null) {
+            return serviceContext.getUserProfile().getUserNumber();
         }
 
         return RoleType.SYSTEM.name();

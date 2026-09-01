@@ -1,5 +1,7 @@
 package com.foodies.freshmeal.common.audit.entity;
 
+import java.util.List;
+
 import org.bson.Document;
 
 import com.foodies.freshmeal.common.constants.ActionType;
@@ -85,9 +87,9 @@ public interface IAuditLog extends IEntity {
     // BUSINESS AUDIT
     // =====================================================
 
-    RoleType getRole();
+    List<RoleType> getRole();
 
-    void setRole(RoleType role);
+    void setRole(List<RoleType> role);
 
     ModuleType getModule();
 

@@ -232,7 +232,7 @@ public class ImageServiceImpl implements IImageService {
         imageEntity.setActive(true);
         imageEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
         if (serviceContext.getUserProfile() != null) {
-            imageEntity.setCreatedBy(serviceContext.getUserProfile().getId());
+            imageEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
         } else {
             imageEntity.setCreatedBy(RoleType.ADMIN.getLabel());
         }

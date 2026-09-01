@@ -9,7 +9,6 @@ import com.foodies.freshmeal.order.entity.OrderEntity;
 import com.foodies.freshmeal.user.entity.AddressEntity;
 import com.foodies.freshmeal.user.entity.LoginHistoryEntity;
 import com.foodies.freshmeal.user.entity.UserEntity;
-import com.foodies.freshmeal.user.entity.UserProfile;
 
 /**
  * ============================================================================
@@ -63,8 +62,8 @@ public final class EntityFactory {
             case USER_ENTITY ->
                 UserEntity.create();
 
-            case USER_PROFILE_ENTITY ->
-                UserProfile.create();
+            // case USER_PROFILE_ENTITY ->
+            // UserProfile.create();
 
             case LOGIN_HISTORY_ENTITY ->
                 LoginHistoryEntity.create();

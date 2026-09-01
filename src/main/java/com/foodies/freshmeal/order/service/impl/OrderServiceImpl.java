@@ -590,7 +590,7 @@ public class OrderServiceImpl implements IOrderService {
 
         final String currentUser = context != null &&
                 context.getUserProfile() != null
-                        ? context.getUserProfile().getUserName()
+                        ? context.getUserProfile().getUserNumber()
                         : null;
 
         return RepositoryContext.builder()

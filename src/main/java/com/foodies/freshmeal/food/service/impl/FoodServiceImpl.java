@@ -120,21 +120,21 @@ public class FoodServiceImpl implements IFoodService {
         return output;
 
     }
-    
+
     @Override
     public IServiceOutput<String> generateFoodNumber(IServiceInput<CreateFoodInputDTO> input) {
-    	
-    	long seq = databaseSequenceService.getCurrentSequence(serviceContext, SequenceConstants.FOOD_SEQUENCE);
-    	
-    	LOGGER.info("Generated food Number: FOD01_{}", seq);
-    	
-    	IServiceOutput<String> output = new ServiceOutput<>();
-    	
-    	String foodId = String.format(SequenceConstants.FOOD_NUMBER_PATTERN, seq);
-    	
-    	output.setOutput(foodId);
-    	return output;
-    	
+
+        long seq = databaseSequenceService.getCurrentSequence(serviceContext, SequenceConstants.FOOD_SEQUENCE);
+
+        LOGGER.info("Generated food Number: FOD01_{}", seq);
+
+        IServiceOutput<String> output = new ServiceOutput<>();
+
+        String foodId = String.format(SequenceConstants.FOOD_NUMBER_PATTERN, seq);
+
+        output.setOutput(foodId);
+        return output;
+
     }
 
     @Override
@@ -186,7 +186,7 @@ public class FoodServiceImpl implements IFoodService {
 
         CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO(foodRequest, imageFile);
         foodServiceInput.setInput(createFoodInputDTO);
-        
+
         // Generate Food ID
         String foodId = generateFoodId(foodServiceInput).getOutput();
         foodEntity.setId(foodId);
@@ -194,16 +194,16 @@ public class FoodServiceImpl implements IFoodService {
         // Generate Food Number
         String foodNumber = generateFoodNumber(foodServiceInput).getOutput();
         foodEntity.setFoodNumber(foodNumber);
-        
+
         /*
          * if image is not provided by the user, then add a default image to the food
          * entity
          */
         if (imageFile == null || imageFile.isEmpty()) {
-        	ImageSnapshot image = new ImageSnapshot();
-        	image.setImageId(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
-        	image.setImageName(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
-        	image.setImageURL(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
+            ImageSnapshot image = new ImageSnapshot();
+            image.setImageId(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
+            image.setImageName(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
+            image.setImageURL(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
             foodEntity.setFoodImage(image);
         } else {
 
@@ -214,12 +214,12 @@ public class FoodServiceImpl implements IFoodService {
 
             IServiceOutput<ImageEntity> imageEntityOutput = imageService.uploadImageToS3(imageServiceInput);
             ImageEntity imageEntity = imageEntityOutput.getOutput();
-            
+
             ImageSnapshot image = new ImageSnapshot();
-        	image.setImageId(imageEntity.getId());
-        	image.setImageName(imageEntity.getImageName());
-        	image.setImageURL(imageEntity.getImageUrl());
-        	
+            image.setImageId(imageEntity.getId());
+            image.setImageName(imageEntity.getImageName());
+            image.setImageURL(imageEntity.getImageUrl());
+
             foodEntity.setFoodImage(image);
 
         }
@@ -235,7 +235,7 @@ public class FoodServiceImpl implements IFoodService {
                 .collect(Collectors.toSet()));
         foodEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
         if (serviceContext.getUserProfile() != null) {
-            foodEntity.setCreatedBy(serviceContext.getUserProfile().getId());
+            foodEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
         } else {
             foodEntity.setCreatedBy(RoleType.ADMIN.getLabel());
         }
@@ -620,10 +620,10 @@ public class FoodServiceImpl implements IFoodService {
             ImageEntity imageEntity = imageService.uploadImageToS3(imageInput).getOutput();
 
             ImageSnapshot image = new ImageSnapshot();
-        	image.setImageId(imageEntity.getId());
-        	image.setImageName(imageEntity.getImageName());
-        	image.setImageURL(imageEntity.getImageUrl());
-        	
+            image.setImageId(imageEntity.getId());
+            image.setImageName(imageEntity.getImageName());
+            image.setImageURL(imageEntity.getImageUrl());
+
             foodEntity.setFoodImage(image);
         }
 
@@ -634,7 +634,7 @@ public class FoodServiceImpl implements IFoodService {
         foodEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
         if (serviceContext.getUserProfile() != null) {
-            foodEntity.setUpdatedBy(serviceContext.getUserProfile().getId());
+            foodEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
         } else {
             foodEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
         }
@@ -694,7 +694,7 @@ public class FoodServiceImpl implements IFoodService {
         RepositoryContext repositoryContext;
         if (input.getServiceContext().getUserProfile() != null) {
             repositoryContext = RepositoryContext.of(
-                    input.getServiceContext().getUserProfile().getUserName(),
+                    input.getServiceContext().getUserProfile().getUsername(),
                     AppCalendar.getBusinessLocalDateTime());
         } else {
             repositoryContext = RepositoryContext.of(
@@ -755,7 +755,7 @@ public class FoodServiceImpl implements IFoodService {
         RepositoryContext repositoryContext;
         if (serviceContext.getUserProfile() != null) {
             repositoryContext = RepositoryContext.of(
-                    serviceContext.getUserProfile().getUserName(),
+                    serviceContext.getUserProfile().getUsername(),
                     AppCalendar.getBusinessLocalDateTime());
         } else {
             repositoryContext = RepositoryContext.of(

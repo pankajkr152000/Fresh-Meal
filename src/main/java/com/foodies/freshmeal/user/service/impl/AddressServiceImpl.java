@@ -197,8 +197,8 @@ public class AddressServiceImpl implements IAddressService {
         addressEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
 
         if (serviceContext.getUserProfile() != null) {
-            addressEntity.setCreatedBy(serviceContext.getUserProfile().getId());
-            addressEntity.setUserNumber(serviceContext.getUserProfile().getId());
+            addressEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
+            addressEntity.setUserNumber(serviceContext.getUserProfile().getUserNumber());
         } else {
             addressEntity.setCreatedBy(RoleType.ADMIN.getLabel());
         }

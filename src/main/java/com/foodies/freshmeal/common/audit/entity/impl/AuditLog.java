@@ -1,5 +1,8 @@
 package com.foodies.freshmeal.common.audit.entity.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -48,7 +51,7 @@ public class AuditLog extends ABaseEntity implements IAuditLog {
     // @JsonFormat(pattern = DateConstants.DEFAULT_DATE_TIME_FORMAT)
     // private LocalDateTime createdAt;
 
-    private RoleType role;
+    private List<RoleType> role = new ArrayList<>();
 
     private ModuleType module;
 
