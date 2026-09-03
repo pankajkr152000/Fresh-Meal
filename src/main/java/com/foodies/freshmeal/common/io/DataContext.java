@@ -46,6 +46,8 @@ public class DataContext implements IDataContext {
     public static final String RESTAURANT_BRANCH_SEQUENCE = "RESTAURANT_BRANCH_SEQUENCE";
 
     public static final String ADDRESS_SEQUENCE = "ADDRESS_SEQUENCE";
+
+    public static String USER_SEQUENCE = "USER_SEQUENCE";
     /*
      * ========================================================================
      * Internal State
