@@ -96,7 +96,20 @@ public enum ActionType implements IDisplayOption {
     // Address Operations
     // =========================================================================
 
-    ADD_ADDRESS("Add Address");
+    ADD_ADDRESS("Add Address"),
+
+    // =========================================================================
+    // User Operations
+    // =========================================================================
+
+    ADD_USER("Add User"),
+    VIEW_USER("View User"),
+    UPDATE_USER("Update User"),
+    DELETE_USER("Delete User"),
+    ENABLE_USER("Enable User"),
+    DISABLE_USER("Disable User"),
+    LOCK_USER("Lock User"),
+    UNLOCK_USER("Unlock User");
 
     /**
      * Display name.

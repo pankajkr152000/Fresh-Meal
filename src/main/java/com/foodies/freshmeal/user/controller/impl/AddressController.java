@@ -71,10 +71,9 @@ public class AddressController implements IAddressController {
      * @return created address information
      */
     @Override
-    @AuditApi(action = ActionType.ADD_ADDRESS , module = ModuleType.ADDRESS, method = MethodType.CREATE)
+    @AuditApi(action = ActionType.ADD_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.CREATE)
     @PostMapping(AddressApiConstants.ADD)
-    public ResponseEntity<ApiResponse<AddressResponse>> addAddress(
-            @RequestBody AddressRequest request) {
+    public ResponseEntity<ApiResponse<AddressResponse>> addAddress(@RequestBody AddressRequest request) {
 
         IServiceInput<AddressInputDTO> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
@@ -99,8 +98,7 @@ public class AddressController implements IAddressController {
      */
     @Override
     @PostMapping(AddressApiConstants.GET_BY_ID)
-    public ResponseEntity<ApiResponse<AddressResponse>> getAddressByAddressId(
-            @RequestBody AddressIdRequest request) {
+    public ResponseEntity<ApiResponse<AddressResponse>> getAddressByAddressId(@RequestBody AddressIdRequest request) {
 
         IServiceInput<AddressIdRequest> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);

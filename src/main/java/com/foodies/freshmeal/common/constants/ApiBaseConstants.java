@@ -13,4 +13,9 @@ public class ApiBaseConstants {
      */
     public static final String ADDRESS_BASE_URL = "/api/addresses";
 
+    /**
+     * User module base URL.
+     */
+    public static final String USER_BASE_URL = "/api/users";
+
 }

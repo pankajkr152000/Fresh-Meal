@@ -10,6 +10,7 @@ import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
 import com.foodies.freshmeal.common.enums.EntityName;
+import com.foodies.freshmeal.common.exception.BusinessException;
 import com.foodies.freshmeal.common.exception.CommonErrorConstants;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
 import com.foodies.freshmeal.common.factory.EntityFactory;
@@ -20,6 +21,7 @@ import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.RepositoryContext;
 import com.foodies.freshmeal.common.io.service.impl.ServiceOutput;
 import com.foodies.freshmeal.common.sequence.service.IDatabaseSequenceService;
+import com.foodies.freshmeal.user.constants.UserErrorConstants;
 import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
@@ -385,6 +387,11 @@ public class UserServiceImpl implements IUserService {
 
         UserEntity userEntity = loadUserByUserNumber(input).getOutput();
 
+        if (userEntity.isEnabled()) {
+
+            throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_ENABLED);
+        }
+
         userEntity.setEnabled(true);
 
         return saveAccountState(userEntity);
@@ -397,6 +404,11 @@ public class UserServiceImpl implements IUserService {
     public IServiceOutput<UserResponse> disableUser(IServiceInput<UserNumberRequest> input) {
 
         UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+
+        if (!userEntity.isEnabled()) {
+
+            throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_DISABLED);
+        }
 
         userEntity.setEnabled(false);
 
@@ -411,6 +423,11 @@ public class UserServiceImpl implements IUserService {
 
         UserEntity userEntity = loadUserByUserNumber(input).getOutput();
 
+        if (!userEntity.isAccountNonLocked()) {
+
+            throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_LOCKED);
+        }
+
         userEntity.setAccountNonLocked(false);
 
         return saveAccountState(userEntity);
@@ -423,6 +440,10 @@ public class UserServiceImpl implements IUserService {
     public IServiceOutput<UserResponse> unlockUser(IServiceInput<UserNumberRequest> input) {
 
         UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+
+        if (userEntity.isAccountNonLocked()) {
+            throw new BusinessException(UserErrorConstants.ACCOUNT_NOT_LOCKED);
+        }
 
         userEntity.setAccountNonLocked(true);
 
@@ -439,7 +460,7 @@ public class UserServiceImpl implements IUserService {
      * @param username       username to validate
      * @param excludedUserId user ID to exclude during update
      */
-    private void ensureUsernameAvailable(String username, String excludedUserId) {
+    private void ensureUsernameAvailable(final String username, final String excludedUserId) {
 
         Criteria criteria = Criteria.where("username").is(username);
 
@@ -448,7 +469,8 @@ public class UserServiceImpl implements IUserService {
         }
 
         if (userRepository.exists(Query.query(criteria))) {
-            throw new IllegalArgumentException("Username is already in use.");
+
+            throw new BusinessException(UserErrorConstants.USERNAME_ALREADY_EXISTS);
         }
     }
 
@@ -458,7 +480,7 @@ public class UserServiceImpl implements IUserService {
      * @param email          email to validate
      * @param excludedUserId user ID to exclude during update
      */
-    private void ensureEmailAvailable(Object email, String excludedUserId) {
+    private void ensureEmailAvailable(final Object email, final String excludedUserId) {
 
         if (email == null) {
             return;
@@ -471,7 +493,8 @@ public class UserServiceImpl implements IUserService {
         }
 
         if (userRepository.exists(Query.query(criteria))) {
-            throw new IllegalArgumentException("Email address is already in use.");
+
+            throw new BusinessException(UserErrorConstants.EMAIL_ALREADY_EXISTS);
         }
     }
 
@@ -481,7 +504,7 @@ public class UserServiceImpl implements IUserService {
      * @param phoneNumber    phone number to validate
      * @param excludedUserId user ID to exclude during update
      */
-    private void ensurePhoneNumberAvailable(Object phoneNumber, String excludedUserId) {
+    private void ensurePhoneNumberAvailable(final Object phoneNumber, final String excludedUserId) {
 
         if (phoneNumber == null) {
             return;
@@ -494,7 +517,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         if (userRepository.exists(Query.query(criteria))) {
-            throw new IllegalArgumentException("Phone number is already in use.");
+            throw new BusinessException(UserErrorConstants.PHONE_NUMBER_ALREADY_EXISTS);
         }
     }
 

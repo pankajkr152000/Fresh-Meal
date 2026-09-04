@@ -100,6 +100,14 @@ public final class ApiMessageConstants {
 
     public static final String USER_ALREADY_EXISTS = "User already exists";
 
+    public static final String USER_ENABLED = "User enabled successfully";
+
+    public static final String USER_DISABLED = "User disabled successfully";
+
+    public static final String USER_LOCKED = "User locked successfully";
+
+    public static final String USER_UNLOCKED = "User unlocked successfully";
+
     // =========================================================
     // Food
     // =========================================================
