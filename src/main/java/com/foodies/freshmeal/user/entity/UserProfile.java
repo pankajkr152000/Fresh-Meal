@@ -21,11 +21,11 @@ import lombok.Getter;
  * persisted business representation of the user inside {@link UserEntity}.
  * </p>
  *
+ *
  * <p>
  * This class is intentionally not a MongoDB persistence entity. A
  * {@code UserProfile} is created when a user is loaded during authentication
- * and is normally associated with the current Spring Security context for
- * the lifetime of the authenticated request/session.
+ * and is used as the Spring Security principal for the authenticated request.
  * </p>
  *
  * <h3>Responsibilities</h3>

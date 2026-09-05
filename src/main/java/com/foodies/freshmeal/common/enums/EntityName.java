@@ -177,7 +177,12 @@ public enum EntityName {
     /**
      * Address entity.
      */
-    ADDRESS_ENTITY("ADR", "Address");
+    ADDRESS_ENTITY("ADR", "Address"),
+
+    /**
+     * Email verification OTP entity.
+     */
+    EMAIL_VERIFY_OTP_ENTITY("EVO", "Email Verification OTP");
 
     /**
      * Unique entity code.

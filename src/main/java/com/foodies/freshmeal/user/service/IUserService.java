@@ -2,6 +2,7 @@ package com.foodies.freshmeal.user.service;
 
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
+import com.foodies.freshmeal.user.dto.EmailRequest;
 import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
@@ -109,6 +110,9 @@ public interface IUserService {
      */
     IServiceOutput<UserEntity> loadUserByUsername(
             IServiceInput<UsernameRequest> input);
+
+    IServiceOutput<UserEntity> loadUserByEmail(
+            IServiceInput<EmailRequest> input);
 
     /**
      * Generates the internal persistence identifier for a user.

@@ -84,6 +84,8 @@ public final class SequenceConstants {
 
     public static final String CATEGORY_SEQUENCE = "category_sequence";
 
+    public static final String EMAIL_VERIFICATION_OTP_SEQUENCE = "email_verification_otp_sequence";
+
     // =========================================================================
     // Internal Database ID Patterns
     // =========================================================================
@@ -120,6 +122,8 @@ public final class SequenceConstants {
     public static final String COUPON_DB_ID_PATTERN = "CPNDB%06d";
 
     public static final String CATEGORY_DB_ID_PATTERN = "CATDB%06d";
+
+    public static final String EMAIL_VERIFICATION_OTP_DB_ID_PATTERN = "EVPDB%06d";
 
     // =========================================================================
     // External / Business Identifier Patterns
@@ -162,4 +166,6 @@ public final class SequenceConstants {
     public static final String COUPON_NUMBER_PATTERN = "FM-CPN-%07d";
 
     public static final String CATEGORY_NUMBER_PATTERN = "FM-CAT-%07d";
+
+    public static final String EMAIL_VERIFICATION_OTP_NUMBER_PATTERN = "FM-EVP-%07d";
 }

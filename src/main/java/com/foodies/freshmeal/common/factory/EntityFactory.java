@@ -1,5 +1,6 @@
 package com.foodies.freshmeal.common.factory;
 
+import com.foodies.freshmeal.authentication.entity.EmailVerificationOtpEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
@@ -79,6 +80,9 @@ public final class EntityFactory {
 
             case ADDRESS_ENTITY ->
                 AddressEntity.create();
+
+            case EMAIL_VERIFY_OTP_ENTITY ->
+                EmailVerificationOtpEntity.create();
 
             default ->
                 throw new IllegalArgumentException(

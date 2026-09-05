@@ -21,7 +21,10 @@ import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.RepositoryContext;
 import com.foodies.freshmeal.common.io.service.impl.ServiceOutput;
 import com.foodies.freshmeal.common.sequence.service.IDatabaseSequenceService;
+import com.foodies.freshmeal.common.util.FreshMealUtilities;
+import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.user.constants.UserErrorConstants;
+import com.foodies.freshmeal.user.dto.EmailRequest;
 import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
@@ -238,7 +241,15 @@ public class UserServiceImpl implements IUserService {
         userEntity.setUsername(userRequest.getUsername());
         userEntity.setFirstName(userRequest.getFirstName());
         userEntity.setLastName(userRequest.getLastName());
-        userEntity.setEmail(userRequest.getEmail());
+
+        String normalizedEmail = FreshMealUtilities.normalizeEmail(
+                userRequest.getEmail().getValue());
+
+        userEntity.setEmail(
+                EmailAddress.builder()
+                        .value(normalizedEmail)
+                        .build());
+
         userEntity.setPhoneNumber(userRequest.getPhoneNumber());
 
         /*
@@ -344,7 +355,13 @@ public class UserServiceImpl implements IUserService {
 
         userEntity.setLastName(userRequest.getLastName());
 
-        userEntity.setEmail(userRequest.getEmail());
+        String normalizedEmail = FreshMealUtilities.normalizeEmail(
+                userRequest.getEmail().getValue());
+
+        userEntity.setEmail(
+                EmailAddress.builder()
+                        .value(normalizedEmail)
+                        .build());
 
         userEntity.setPhoneNumber(userRequest.getPhoneNumber());
 
@@ -580,7 +597,13 @@ public class UserServiceImpl implements IUserService {
 
         response.setLastName(userEntity.getLastName());
 
-        response.setEmail(userEntity.getEmail());
+        String normalizedEmail = FreshMealUtilities.normalizeEmail(
+                userEntity.getEmail().getValue());
+
+        response.setEmail(
+                EmailAddress.builder()
+                        .value(normalizedEmail)
+                        .build());
 
         response.setPhoneNumber(userEntity.getPhoneNumber());
 
@@ -589,5 +612,32 @@ public class UserServiceImpl implements IUserService {
         response.setRoles(userEntity.getRoles());
 
         return response;
+    }
+
+    @Override
+    public IServiceOutput<UserEntity> loadUserByEmail(
+            IServiceInput<EmailRequest> input) {
+
+        EmailRequest request = input.getInput();
+
+        if (request == null
+                || request.getEmail() == null
+                || !FreshMealUtilities.hasText(
+                        request.getEmail().getValue())) {
+
+            throw new BusinessException(
+                    UserErrorConstants.EMAIL_REQUIRED);
+        }
+
+        String email = FreshMealUtilities.normalizeEmail(
+                request.getEmail().getValue());
+
+        Query query = Query.query(
+                Criteria.where("email.value").is(email));
+
+        UserEntity userEntity = userRepository.findOne(query)
+                .orElseThrow(() -> new BusinessException(UserErrorConstants.USER_NOT_FOUND));
+
+        return new ServiceOutput<>(userEntity);
     }
 }
