@@ -1,6 +1,9 @@
 package com.foodies.freshmeal.common.factory;
 
 import com.foodies.freshmeal.authentication.entity.EmailVerificationOtpEntity;
+import com.foodies.freshmeal.authentication.entity.PasswordResetTokenEntity;
+import com.foodies.freshmeal.authentication.entity.RevokedSessionEntity;
+import com.foodies.freshmeal.authentication.entity.RevokedTokenEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
@@ -83,6 +86,15 @@ public final class EntityFactory {
 
             case EMAIL_VERIFY_OTP_ENTITY ->
                 EmailVerificationOtpEntity.create();
+
+            case REVOKED_TOKEN_ENTITY ->
+                RevokedTokenEntity.create();
+
+            case REVOKED_SESSION_ENTITY ->
+                RevokedSessionEntity.create();
+
+            case PASSWORD_RESET_TOKEN_ENTITY ->
+                PasswordResetTokenEntity.create();
 
             default ->
                 throw new IllegalArgumentException(

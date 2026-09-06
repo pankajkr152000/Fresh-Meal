@@ -405,6 +405,31 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "New password must be different from the current password.",
             HttpStatusCode.BAD_REQUEST),
 
+    PASSWORD_TOO_SHORT(
+            "FM-AUTH-105",
+            "Password must contain at least 8 characters.",
+            HttpStatusCode.BAD_REQUEST),
+
+    PASSWORD_TOO_LONG(
+            "FM-AUTH-106",
+            "Password must not contain more than 100 characters.",
+            HttpStatusCode.BAD_REQUEST),
+
+    PASSWORD_UPPERCASE_REQUIRED(
+            "FM-AUTH-107",
+            "Password must contain at least one uppercase letter.",
+            HttpStatusCode.BAD_REQUEST),
+
+    PASSWORD_LOWERCASE_REQUIRED(
+            "FM-AUTH-108",
+            "Password must contain at least one lowercase letter.",
+            HttpStatusCode.BAD_REQUEST),
+
+    PASSWORD_DIGIT_REQUIRED(
+            "FM-AUTH-109",
+            "Password must contain at least one digit.",
+            HttpStatusCode.BAD_REQUEST),
+
     /**
      * ============================================================================
      * Email Verification / OTP Errors
@@ -468,6 +493,29 @@ public enum AuthenticationErrorConstants implements IBusinessError {
     EMAIL_VERIFICATION_FAILED(
             "FM-AUTH-116",
             "Email verification failed.",
+            HttpStatusCode.BAD_REQUEST),
+
+    /**
+     * Indicates that another email verification OTP cannot be requested yet
+     * because the resend cooldown period has not elapsed.
+     */
+    EMAIL_OTP_RESEND_COOLDOWN(
+            "FM-AUTH-117",
+            "Please wait before requesting another email verification OTP.",
+            HttpStatusCode.TOO_MANY_REQUESTS),
+
+    /**
+     * Indicates that email verification is temporarily locked because the
+     * maximum number of OTP verification attempts has been exceeded.
+     */
+    EMAIL_OTP_LOCKED(
+            "FM-AUTH-118",
+            "Email verification is temporarily locked. Please try again later.",
+            HttpStatusCode.TOO_MANY_REQUESTS),
+
+    PASSWORD_SPECIAL_CHARACTER_REQUIRED(
+            "FM-AUTH-119",
+            "Password must contain at least one special character.",
             HttpStatusCode.BAD_REQUEST);
 
     /**

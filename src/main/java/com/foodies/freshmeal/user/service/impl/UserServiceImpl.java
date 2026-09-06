@@ -25,6 +25,7 @@ import com.foodies.freshmeal.common.util.FreshMealUtilities;
 import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.user.constants.UserErrorConstants;
 import com.foodies.freshmeal.user.dto.EmailRequest;
+import com.foodies.freshmeal.user.dto.UpdatePasswordInputDTO;
 import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
@@ -318,6 +319,39 @@ public class UserServiceImpl implements IUserService {
         UserResponse response = toUserResponse(userEntity);
 
         return new ServiceOutput<>(response);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<UserResponse> updatePassword(
+            final IServiceInput<UpdatePasswordInputDTO> input) {
+
+        final UpdatePasswordInputDTO updatePasswordInput = input.getInput();
+
+        final UserEntity userEntity = userRepository
+                .findOne(Query.query(
+                        Criteria.where("userNumber")
+                                .is(updatePasswordInput.getUserNumber())))
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        CommonErrorConstants.RESOURCE_NOT_FOUND));
+
+        userEntity.setPassword(updatePasswordInput.getEncodedPassword());
+
+        userEntity.setUpdatedAt(
+                AppCalendar.getBusinessLocalDateTime());
+
+        if (serviceContext.getUserProfile() != null) {
+            userEntity.setUpdatedBy(
+                    serviceContext.getUserProfile().getUserNumber());
+        } else {
+            userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+        }
+
+        userRepository.save(userEntity);
+
+        return new ServiceOutput<>(toUserResponse(userEntity));
     }
 
     /**
@@ -640,4 +674,245 @@ public class UserServiceImpl implements IUserService {
 
         return new ServiceOutput<>(userEntity);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Creates a new FreshMeal user account specifically through the public
+     * registration workflow.
+     * </p>
+     *
+     * <p>
+     * Unlike {@link #addUser(IServiceInput)}, a newly registered account must
+     * complete email verification before authentication is permitted.
+     * Therefore, the account is created with {@code emailVerified = false}
+     * and {@code enabled = false}.
+     * </p>
+     *
+     * <h3>Registration Security</h3>
+     * <ul>
+     * <li>Username uniqueness is validated.</li>
+     * <li>Email uniqueness is validated.</li>
+     * <li>Phone-number uniqueness is validated.</li>
+     * <li>The default {@link RoleType#USER} role is assigned.</li>
+     * <li>The account remains disabled until email verification succeeds.</li>
+     * <li>Password handling remains outside this User service.</li>
+     * </ul>
+     *
+     * @param input service input containing registration information
+     * @return newly created, unverified user entity
+     */
+    @Override
+    public IServiceOutput<UserEntity> registerUser(
+            IServiceInput<UserInputDTO> input) {
+
+        UserInputDTO userInputDTO = input.getInput();
+        UserRequest userRequest = userInputDTO.getUserRequest();
+
+        /*
+         * Validate unique username before creating the entity.
+         */
+        ensureUsernameAvailable(
+                userRequest.getUsername(),
+                null);
+
+        /*
+         * Validate unique email before creating the entity.
+         */
+        String normalizedEmail = FreshMealUtilities.normalizeEmail(
+                userRequest.getEmail().getValue());
+        ensureEmailAvailable(
+                normalizedEmail,
+                null);
+
+        /*
+         * Validate unique phone number before creating the entity.
+         */
+        ensurePhoneNumberAvailable(
+                userRequest.getPhoneNumber(),
+                null);
+
+        /*
+         * Create the user using the existing UserEntity creation infrastructure.
+         */
+        UserEntity userEntity = createUserEntity(input).getOutput();
+
+        /*
+         * Registration requires email verification before authentication.
+         */
+        userEntity.setEmailVerified(false);
+        userEntity.setEnabled(false);
+
+        /*
+         * Persist the newly registered user.
+         */
+        userEntity = userRepository.save(userEntity);
+
+        return new ServiceOutput<>(userEntity);
+    }
+
+    /**
+     * =================================================================================================
+     * REGISTER USER
+     * =================================================================================================
+     *
+     * <p>
+     * Registers a new self-service user using an already encoded password.
+     * </p>
+     *
+     * <p>
+     * Password encoding is intentionally handled by the Authentication module.
+     * This service receives only the encoded password and remains responsible for
+     * user-domain validation, entity creation, registration state, and persistence.
+     * </p>
+     *
+     * <p>
+     * Self-registered accounts are created with {@code emailVerified = false} and
+     * {@code enabled = false}. The Authentication module is responsible for
+     * completing the subsequent email verification workflow.
+     * </p>
+     *
+     * @param input
+     *                        service input containing user registration information
+     * @param encodedPassword
+     *                        password already encoded by the Authentication module
+     * @return service output containing the persisted {@link UserEntity}
+     */
+    @Override
+    public IServiceOutput<UserEntity> registerUser(
+            final IServiceInput<UserInputDTO> input,
+            final String encodedPassword) {
+
+        if (encodedPassword == null || encodedPassword.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Encoded password must not be null or blank.");
+        }
+
+        final UserInputDTO userInputDTO = input.getInput();
+
+        final UserRequest userRequest = userInputDTO.getUserRequest();
+
+        /*
+         * Self-registration must respect the same uniqueness rules as
+         * the existing User module.
+         */
+        ensureUsernameAvailable(
+                userRequest.getUsername(),
+                null);
+
+        ensureEmailAvailable(
+                userRequest.getEmail(),
+                null);
+
+        ensurePhoneNumberAvailable(
+                userRequest.getPhoneNumber(),
+                null);
+
+        /*
+         * Reuse the existing entity creation flow so that ID generation,
+         * user-number generation, role assignment, profile mapping,
+         * and audit handling remain centralized.
+         */
+        final UserEntity userEntity = createUserEntity(input).getOutput();
+
+        /*
+         * Authentication owns password encoding.
+         * UserService only persists the already encoded value.
+         */
+        userEntity.setPassword(encodedPassword);
+
+        /*
+         * Self-registration requires email verification before
+         * the account becomes eligible for authentication.
+         */
+        userEntity.setEmailVerified(false);
+        userEntity.setEnabled(false);
+
+        final UserEntity savedUserEntity = userRepository.save(userEntity);
+
+        return new ServiceOutput<>(
+                savedUserEntity);
+    }
+
+    /**
+     * =================================================================================================
+     * ACTIVATE USER
+     * =================================================================================================
+     *
+     * <p>
+     * Activates a self-registered user after successful email verification.
+     * </p>
+     *
+     * <p>
+     * Activation marks the user's email address as verified and enables the
+     * account for authentication.
+     * </p>
+     *
+     * <p>
+     * This operation is intentionally owned by the User module so that the
+     * Authentication module does not directly modify or persist {@link UserEntity}.
+     * </p>
+     *
+     * <p>
+     * The operation is idempotent. If the user has already been verified and
+     * enabled, the existing user entity is returned without performing another
+     * persistence operation.
+     * </p>
+     *
+     * @param input service input containing the user business identifier
+     * @return service output containing the activated {@link UserEntity}
+     */
+    @Override
+    public IServiceOutput<UserEntity> activateUser(final IServiceInput<UserNumberRequest> input) {
+
+        final UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+
+        /*
+         * Activation is idempotent.
+         *
+         * If the account has already completed email verification and is enabled,
+         * no further state change is required.
+         */
+        if (userEntity.isEmailVerified() && userEntity.isEnabled()) {
+
+            return new ServiceOutput<>(userEntity);
+        }
+
+        /*
+         * Mark the email address as verified and enable the account.
+         *
+         * These two state changes together represent successful activation
+         * of a self-registered user.
+         */
+        userEntity.setEmailVerified(true);
+        userEntity.setEnabled(true);
+
+        /*
+         * Populate update audit information using the same convention
+         * already used throughout this UserServiceImpl.
+         */
+        userEntity.setUpdatedAt(
+                AppCalendar.getBusinessLocalDateTime());
+
+        if (serviceContext.getUserProfile() != null) {
+
+            userEntity.setUpdatedBy(
+                    serviceContext.getUserProfile().getUserNumber());
+
+        } else {
+
+            userEntity.setUpdatedBy(
+                    RoleType.ADMIN.getLabel());
+        }
+
+        /*
+         * Persist the activated user.
+         */
+        final UserEntity savedUserEntity = userRepository.save(userEntity);
+
+        return new ServiceOutput<>(
+                savedUserEntity);
+    }
+
 }

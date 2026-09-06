@@ -191,6 +191,8 @@ public class UserEntity extends ABaseEntity {
     @Indexed(unique = true)
     private EmailAddress email;
 
+    private boolean emailVerified = false;
+
     /**
      * User's first name.
      */

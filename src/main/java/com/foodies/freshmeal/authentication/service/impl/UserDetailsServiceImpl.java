@@ -1,18 +1,24 @@
+
 package com.foodies.freshmeal.authentication.service.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.foodies.freshmeal.authentication.constants.AuthenticationErrorConstants;
+import com.foodies.freshmeal.authentication.service.IUserDetailsService;
 import com.foodies.freshmeal.common.constants.RoleType;
-import com.foodies.freshmeal.common.io.service.IServiceContext;
+import com.foodies.freshmeal.common.exception.UsernameNotFoundException;
+import com.foodies.freshmeal.common.io.service.IServiceInput;
+import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
+import com.foodies.freshmeal.common.valueObject.EmailAddress;
+import com.foodies.freshmeal.user.dto.EmailRequest;
 import com.foodies.freshmeal.user.dto.UsernameRequest;
 import com.foodies.freshmeal.user.entity.UserEntity;
 import com.foodies.freshmeal.user.entity.UserProfile;
@@ -20,46 +26,65 @@ import com.foodies.freshmeal.user.service.IUserService;
 
 /**
  * ============================================================================
- * Service : UserDetailsServiceImpl
+ * Security : UserDetailsServiceImpl
  * ============================================================================
  *
- * Loads FreshMeal users for Spring Security authentication.
+ * Provides the FreshMeal security bridge between application user data and
+ * Spring Security's {@link UserDetails} model.
  *
  * <p>
- * This implementation acts as the bridge between the FreshMeal user domain
- * represented by {@link UserEntity} and the Spring Security authentication
- * model represented by {@link UserDetails}.
+ * FreshMeal keeps {@link UserEntity} as the persisted source of truth for user
+ * identity and uses {@link UserProfile} as the non-persistent Spring Security
+ * representation of an authenticated user.
  * </p>
  *
  * <h3>Responsibilities</h3>
+ *
  * <ul>
- * <li>Load an active FreshMeal user through {@link IUserService}.</li>
- * <li>Convert FreshMeal {@link RoleType} values into Spring Security
- * {@link GrantedAuthority} instances.</li>
- * <li>Create a {@link UserProfile} for Spring Security.</li>
+ * <li>Resolve a login identifier to a FreshMeal {@link UserEntity}.</li>
+ * <li>Support both username and email authentication identifiers.</li>
+ * <li>Convert FreshMeal roles into Spring Security authorities.</li>
+ * <li>Create a {@link UserProfile} for Spring Security authentication.</li>
  * </ul>
  *
- * <h3>Authentication Boundary</h3>
+ * <h3>Security Boundary</h3>
+ *
  * <p>
- * This class does not authenticate passwords itself. Password verification is
- * performed by Spring Security through the configured authentication provider.
- * This service only supplies the user information required by that process.
+ * This component does not verify passwords itself. Password verification is
+ * delegated to Spring Security's authentication provider and configured
+ * password encoder.
  * </p>
  *
- * <h3>Domain Separation</h3>
  * <p>
- * FreshMeal business roles remain represented by {@link RoleType}. Spring
- * Security-specific authority names are created only at this security
- * boundary, preventing framework-specific authorization concepts from leaking
- * into the persisted user domain.
+ * This component also does not access the user repository directly. User
+ * lookup remains the responsibility of {@link IUserService}, preserving the
+ * existing FreshMeal service-layer architecture.
  * </p>
  *
- * <h3>Security Consideration</h3>
- * <p>
- * Only active users should be loaded for normal authentication. The existing
- * {@link IUserService} and repository infrastructure are responsible for
- * applying FreshMeal's active-record semantics.
- * </p>
+ * <h3>Authentication Flow</h3>
+ *
+ * <pre>
+ * Login identifier
+ *       |
+ *       v
+ * IUserDetailsService
+ *       |
+ *       v
+ * UserDetailsServiceImpl
+ *       |
+ *       +---- Email ----&gt; IUserService.loadUserByEmail()
+ *       |
+ *       +---- Username -&gt; IUserService.loadUserByUsername()
+ *                              |
+ *                              v
+ *                         UserEntity
+ *                              |
+ *                              v
+ *                         UserProfile
+ *                              |
+ *                              v
+ *                    Spring Security
+ * </pre>
  *
  * ============================================================================
  *
@@ -67,73 +92,137 @@ import com.foodies.freshmeal.user.service.IUserService;
  * @since 1.0
  */
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements IUserDetailsService {
 
     // =========================================================================
     // Dependencies
     // =========================================================================
 
     /**
-     * FreshMeal user service used to load persisted user information.
+     * FreshMeal user service responsible for user identity lookup.
      */
     private final IUserService userService;
-
-    /**
-     * Service context used by the FreshMeal service layer.
-     */
-    private final IServiceContext serviceContext;
 
     // =========================================================================
     // Constructor
     // =========================================================================
 
     /**
-     * Creates the Spring Security user-details service.
+     * Creates the FreshMeal user-details service.
      *
-     * @param userService    FreshMeal user service.
-     * @param serviceContext current service context.
+     * @param userService FreshMeal user service.
      */
-    public UserDetailsServiceImpl(
-            IUserService userService,
-            IServiceContext serviceContext) {
+    public UserDetailsServiceImpl(IUserService userService) {
 
         this.userService = userService;
-        this.serviceContext = serviceContext;
     }
 
     // =========================================================================
-    // UserDetailsService
+    // User Details
     // =========================================================================
 
     /**
-     * {@inheritDoc}
+     * Loads a FreshMeal user using either a username or an email address.
+     *
+     * <p>
+     * The supplied identifier is routed to the appropriate user-service
+     * lookup operation. The resulting {@link UserEntity} is then converted
+     * into a {@link UserProfile} containing the user's credentials, account
+     * state, and Spring Security authorities.
+     * </p>
+     *
+     * @param identifier username or email supplied during authentication.
+     * @return Spring Security user details.
+     * @throws UsernameNotFoundException when the user cannot be resolved.
      */
     @Override
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsernameOrUserEmail(
+            String identifier) {
 
-        if (username == null || username.isBlank()) {
-            throw new UsernameNotFoundException("User not found.");
+        if (identifier == null || identifier.isBlank()) {
+            throw new UsernameNotFoundException(
+                    AuthenticationErrorConstants.AUTHENTICATION_FAILED);
         }
+
+        UserEntity userEntity;
+
+        if (isEmailIdentifier(identifier)) {
+            userEntity = loadUserByEmail(identifier);
+        } else {
+            userEntity = loadUserByUsername(identifier);
+        }
+
+        Collection<? extends GrantedAuthority> authorities = buildAuthorities(userEntity.getRoles());
+
+        return UserProfile.create(
+                userEntity,
+                authorities);
+    }
+
+    // =========================================================================
+    // User Lookup
+    // =========================================================================
+
+    /**
+     * Loads a user using a username.
+     *
+     * @param username username used for authentication.
+     * @return matching active user entity.
+     * @throws UsernameNotFoundException when the user cannot be resolved.
+     */
+    private UserEntity loadUserByUsername(
+            String username) {
 
         UsernameRequest request = new UsernameRequest();
+
         request.setUsername(username);
 
-        ServiceInput<UsernameRequest> input = new ServiceInput<>();
+        IServiceInput<UsernameRequest> input = new ServiceInput<>();
+
         input.setInput(request);
-        input.setServiceContext(serviceContext);
 
-        UserEntity userEntity = userService
-                .loadUserByUsername(input)
-                .getOutput();
+        IServiceOutput<UserEntity> output = userService.loadUserByUsername(input);
 
-        if (userEntity == null) {
-            throw new UsernameNotFoundException("User not found.");
+        if (output == null || output.getOutput() == null) {
+            throw new UsernameNotFoundException(
+                    AuthenticationErrorConstants.AUTHENTICATION_FAILED);
         }
 
-        Collection<GrantedAuthority> authorities = buildAuthorities(userEntity);
+        return output.getOutput();
+    }
 
-        return UserProfile.create(userEntity, authorities);
+    /**
+     * Loads a user using an email address.
+     *
+     * <p>
+     * The existing FreshMeal {@link EmailAddress} value object is used rather
+     * than constructing the value object directly.
+     * </p>
+     *
+     * @param email email address used for authentication.
+     * @return matching active user entity.
+     * @throws UsernameNotFoundException when the user cannot be resolved.
+     */
+    private UserEntity loadUserByEmail(
+            String email) {
+
+        EmailRequest request = new EmailRequest();
+
+        request.setEmail(
+                EmailAddress.toEmailAddress(email));
+
+        IServiceInput<EmailRequest> input = new ServiceInput<>();
+
+        input.setInput(request);
+
+        IServiceOutput<UserEntity> output = userService.loadUserByEmail(input);
+
+        if (output == null || output.getOutput() == null) {
+            throw new UsernameNotFoundException(
+                    AuthenticationErrorConstants.AUTHENTICATION_FAILED);
+        }
+
+        return output.getOutput();
     }
 
     // =========================================================================
@@ -141,50 +230,59 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     // =========================================================================
 
     /**
-     * Converts FreshMeal business roles into Spring Security authorities.
+     * Converts FreshMeal domain roles into Spring Security authorities.
      *
      * <p>
-     * FreshMeal persists roles as {@link RoleType}. Spring Security expects
-     * {@link GrantedAuthority} instances. The conventional {@code ROLE_}
-     * prefix is applied at this security boundary.
+     * FreshMeal roles are business-level roles. Spring Security receives the
+     * conventional {@code ROLE_} prefixed representation.
      * </p>
      *
      * <pre>
-     * ADMIN              -> ROLE_ADMIN
-     * USER               -> ROLE_USER
-     * RESTAURANT_OWNER   -> ROLE_RESTAURANT_OWNER
-     * DELIVERY_PARTNER   -> ROLE_DELIVERY_PARTNER
+     * ADMIN            -&gt; ROLE_ADMIN
+     * USER             -&gt; ROLE_USER
+     * RESTAURANT_OWNER -&gt; ROLE_RESTAURANT_OWNER
+     * DELIVERY_PARTNER -&gt; ROLE_DELIVERY_PARTNER
      * </pre>
      *
-     * @param userEntity persisted FreshMeal user.
-     *
+     * @param roles FreshMeal domain roles.
      * @return immutable collection of Spring Security authorities.
      */
-    private Collection<GrantedAuthority> buildAuthorities(
-            UserEntity userEntity) {
+    private Collection<? extends GrantedAuthority> buildAuthorities(
+            Collection<RoleType> roles) {
 
-        if (userEntity.getRoles() == null
-                || userEntity.getRoles().isEmpty()) {
+        if (roles == null || roles.isEmpty()) {
             return Collections.emptyList();
         }
 
-        return userEntity.getRoles()
-                .stream()
-                .filter(role -> role != null)
-                .map(this::toAuthority)
-                .toList();
+        return Collections.unmodifiableList(
+                roles.stream()
+                        .filter(role -> role != null)
+                        .map(roleType -> roleType.name())
+                        .map(role -> new SimpleGrantedAuthority(
+                                "ROLE_" + role))
+                        .collect(Collectors.toList()));
     }
 
-    /**
-     * Converts a FreshMeal role into a Spring Security authority.
-     *
-     * @param role FreshMeal business role.
-     *
-     * @return corresponding Spring Security authority.
-     */
-    private GrantedAuthority toAuthority(RoleType role) {
+    // =========================================================================
+    // Identifier Resolution
+    // =========================================================================
 
-        return new SimpleGrantedAuthority(
-                "ROLE_" + role.name());
+    /**
+     * Determines whether the supplied authentication identifier represents an
+     * email address.
+     *
+     * <p>
+     * This method performs only identifier routing. Actual email validation
+     * remains the responsibility of the FreshMeal {@link EmailAddress} value
+     * object and user-service validation rules.
+     * </p>
+     *
+     * @param identifier authentication identifier.
+     * @return {@code true} when the identifier appears to be an email address.
+     */
+    private boolean isEmailIdentifier(
+            String identifier) {
+
+        return identifier.contains("@");
     }
 }

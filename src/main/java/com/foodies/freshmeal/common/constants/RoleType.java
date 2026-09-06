@@ -75,7 +75,6 @@ public enum RoleType implements IDisplayOption {
     /*
      * default
      */
-    SYSTEM("System"),
     // =========================================================================
     // Administrative Roles
     // =========================================================================

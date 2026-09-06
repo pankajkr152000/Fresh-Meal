@@ -182,7 +182,22 @@ public enum EntityName {
     /**
      * Email verification OTP entity.
      */
-    EMAIL_VERIFY_OTP_ENTITY("EVO", "Email Verification OTP");
+    EMAIL_VERIFY_OTP_ENTITY("EVO", "Email Verification OTP"),
+
+    /**
+     * revoked token entity.
+     */
+    REVOKED_TOKEN_ENTITY("RTK", "Revoked Token"),
+
+    /**
+     * revoked session entity.
+     */
+    REVOKED_SESSION_ENTITY("RSS", "Revoked Session"),
+
+    /**
+     * Password reset token entity.
+     */
+    PASSWORD_RESET_TOKEN_ENTITY("PRT", "Password Reset Token");
 
     /**
      * Unique entity code.

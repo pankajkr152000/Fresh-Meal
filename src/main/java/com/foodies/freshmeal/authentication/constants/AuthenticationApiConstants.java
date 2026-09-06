@@ -85,4 +85,11 @@ public final class AuthenticationApiConstants {
      * Reset the password using a valid password-reset token.
      */
     public static final String RESET_PASSWORD = "/reset-password";
+
+    /**
+     * Resend the email OTP for email verification.
+     */
+    public static final String RESEND_EMAIL_OTP = "/resend-email-otp";
+
+    public static final String REFRESH_TOKEN = "/refresh-token";
 }

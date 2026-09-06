@@ -61,6 +61,13 @@ public enum ActionType implements IDisplayOption {
 
     LOGIN("Login"),
     LOGOUT("Logout"),
+    REGISTER("Register"),
+    VERIFY_EMAIL_OTP("Verify Email OTP"),
+    RESEND_EMAIL_OTP("Resend Email OTP"),
+    REFRESH_TOKEN("Refresh Token"),
+    CHANGE_PASSWORD("Change Password"),
+    FORGOT_PASSWORD("Forgot Password"),
+    RESET_PASSWORD("Reset Password"),
 
     // =========================================================================
     // Restaurant Operations
@@ -86,6 +93,7 @@ public enum ActionType implements IDisplayOption {
     READ_RESTAURANT_BRANCHES_BY_RESTAURANT("Read Restaurant Branches By Restaurant"),
 
     UPDATE_RESTAURANT_BRANCH("Update Restaurant Branch"),
+
     // =========================================================================
     // Pincode Operations
     // =========================================================================

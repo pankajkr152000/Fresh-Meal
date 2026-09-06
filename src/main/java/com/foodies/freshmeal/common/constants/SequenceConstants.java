@@ -86,6 +86,14 @@ public final class SequenceConstants {
 
     public static final String EMAIL_VERIFICATION_OTP_SEQUENCE = "email_verification_otp_sequence";
 
+    public static final String LOGIN_HISTORY_ENTITY_SEQUENCE = "login_history_sequence";
+
+    public static final String REVOKED_TOKEN_SEQUENCE = "revoked_token_sequence";
+
+    public static final String REVOKED_SESSION_SEQUENCE = "revoked_session_sequence";
+
+    public static final String PASSWORD_RESET_TOKEN_SEQUENCE = "password_reset_token_sequence";
+
     // =========================================================================
     // Internal Database ID Patterns
     // =========================================================================
@@ -124,6 +132,14 @@ public final class SequenceConstants {
     public static final String CATEGORY_DB_ID_PATTERN = "CATDB%06d";
 
     public static final String EMAIL_VERIFICATION_OTP_DB_ID_PATTERN = "EVPDB%06d";
+
+    public static final String LOGIN_HISTORY_ENTITY_DB_ID_PATTERN = "LGHDB%06d";
+
+    public static final String REVOKED_TOKEN_DB_ID_PATTERN = "RTKDB%06d";
+
+    public static final String REVOKED_SESSION_DB_ID_PATTERN = "RSSDB%06d";
+
+    public static final String PASSWORD_RESET_TOKEN_DB_ID_PATTERN = "PRTDB%06d";
 
     // =========================================================================
     // External / Business Identifier Patterns
@@ -168,4 +184,12 @@ public final class SequenceConstants {
     public static final String CATEGORY_NUMBER_PATTERN = "FM-CAT-%07d";
 
     public static final String EMAIL_VERIFICATION_OTP_NUMBER_PATTERN = "FM-EVP-%07d";
+
+    public static final String LOGIN_HISTORY_NUMBER_PATTERN = "FM-LGH-%07d";
+
+    public static final String REVOKED_TOKEN_NUMBER_PATTERN = "FM-RTK-%07d";
+
+    public static final String REVOKED_SESSION_NUMBER_PATTERN = "FM-RSS-%07d";
+
+    public static final String PASSWORD_RESET_TOKEN_NUMBER_PATTERN = "FM-PRT-%07d";
 }

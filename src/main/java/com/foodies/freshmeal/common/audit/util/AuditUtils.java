@@ -80,6 +80,6 @@ public class AuditUtils {
             return serviceContext.getUserProfile().getUserNumber();
         }
 
-        return RoleType.SYSTEM.name();
+        return RoleType.ADMIN.name();
     }
 }

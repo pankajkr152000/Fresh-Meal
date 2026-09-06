@@ -47,7 +47,12 @@ public class DataContext implements IDataContext {
 
     public static final String ADDRESS_SEQUENCE = "ADDRESS_SEQUENCE";
 
+    public static final String LOGIN_HISTORY_SEQUENCE = "LOGIN_HISTORY_SEQUENCE";
+
     public static String USER_SEQUENCE = "USER_SEQUENCE";
+
+    public static String CURRENT_ACCESS_TOKEN = "CURRENT_ACCESS_TOKEN";
+
     /*
      * ========================================================================
      * Internal State

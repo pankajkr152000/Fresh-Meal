@@ -15,7 +15,12 @@ public enum ModuleType implements IDisplayOption {
     COUPON("Coupon"),
     REVIEW("Review"),
     ADDRESS("Address"),
-    PINCODE("Pincode");
+    PINCODE("Pincode"),
+    NOTIFICATION("Notification"),
+    AUTHENTICATION("Authentication"),
+    AUTHORIZATION("Authorization"),
+
+    ;
 
     private final String displayName;
 

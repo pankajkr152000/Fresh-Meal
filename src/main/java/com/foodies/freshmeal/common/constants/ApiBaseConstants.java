@@ -18,4 +18,14 @@ public class ApiBaseConstants {
      */
     public static final String USER_BASE_URL = "/api/users";
 
+    /**
+     * Order module base URL.
+     */
+    public static final String ORDER_BASE_URL = "/api/orders";
+
+    /**
+     * Authentication module base URL.
+     */
+    public static final String AUTHENTICATION_BASE_URL = "/api/auth";
+
 }

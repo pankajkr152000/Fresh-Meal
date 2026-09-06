@@ -1,7 +1,16 @@
 package com.foodies.freshmeal.authentication.service;
 
+import com.foodies.freshmeal.authentication.dto.ChangePasswordInputDTO;
+import com.foodies.freshmeal.authentication.dto.ForgotPasswordInputDTO;
+import com.foodies.freshmeal.authentication.dto.LoginInputDTO;
+import com.foodies.freshmeal.authentication.dto.LoginResponse;
+import com.foodies.freshmeal.authentication.dto.LogoutInputDTO;
+import com.foodies.freshmeal.authentication.dto.RefreshTokenInputDTO;
 import com.foodies.freshmeal.authentication.dto.RegisterInputDTO;
 import com.foodies.freshmeal.authentication.dto.RegisterResponse;
+import com.foodies.freshmeal.authentication.dto.ResendEmailOtpInputDTO;
+import com.foodies.freshmeal.authentication.dto.ResetPasswordInputDTO;
+import com.foodies.freshmeal.authentication.dto.TokenResponse;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpInputDTO;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpResponse;
 import com.foodies.freshmeal.common.io.service.IServiceInput;

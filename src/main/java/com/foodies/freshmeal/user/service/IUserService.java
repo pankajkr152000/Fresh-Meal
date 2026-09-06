@@ -3,6 +3,7 @@ package com.foodies.freshmeal.user.service;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.user.dto.EmailRequest;
+import com.foodies.freshmeal.user.dto.UpdatePasswordInputDTO;
 import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
@@ -150,6 +151,9 @@ public interface IUserService {
     IServiceOutput<UserResponse> addUser(
             IServiceInput<UserInputDTO> input);
 
+    IServiceOutput<UserEntity> registerUser(
+            IServiceInput<UserInputDTO> input);
+
     /**
      * Updates an existing user.
      *
@@ -203,4 +207,76 @@ public interface IUserService {
      */
     IServiceOutput<UserResponse> unlockUser(
             IServiceInput<UserNumberRequest> input);
+
+    /**
+     * =================================================================================================
+     * REGISTER USER
+     * =================================================================================================
+     *
+     * <p>
+     * Registers a self-service user using a password that has already been encoded
+     * by the Authentication module.
+     * </p>
+     *
+     * <p>
+     * The Authentication module owns password validation and password encoding.
+     * The User module owns user creation and persistence.
+     * </p>
+     *
+     * <p>
+     * Self-registered users are initially created with email verification pending
+     * and the account disabled until the authentication workflow completes email
+     * verification.
+     * </p>
+     *
+     * @param input
+     *                        service input containing the user registration
+     *                        information
+     * @param encodedPassword
+     *                        password already encoded by the Authentication module
+     * @return service output containing the persisted {@link UserEntity}
+     */
+    IServiceOutput<UserEntity> registerUser(IServiceInput<UserInputDTO> input, String encodedPassword);
+
+    /**
+     * =================================================================================================
+     * ACTIVATE USER
+     * =================================================================================================
+     *
+     * <p>
+     * Activates a user account after the required email verification process has
+     * been successfully completed.
+     * </p>
+     *
+     * <p>
+     * Activation marks the user's email address as verified and enables the account
+     * for authentication.
+     * </p>
+     *
+     * @param input
+     *              service input containing the user business identifier
+     * @return service output containing the activated {@link UserEntity}
+     */
+    IServiceOutput<UserEntity> activateUser(IServiceInput<UserNumberRequest> input);
+
+    /**
+     * =========================================================================
+     * Password Management
+     * =========================================================================
+     */
+
+    /**
+     * Updates the encoded password of an existing user.
+     *
+     * <p>
+     * Password modification is intentionally separated from the general
+     * {@code updateUser(...)} operation because password is a sensitive
+     * security field.
+     * </p>
+     *
+     * @param input password update input
+     * @return {@link UserResponse} representing the updated user
+     */
+    IServiceOutput<UserResponse> updatePassword(IServiceInput<UpdatePasswordInputDTO> input);
+
 }

@@ -111,4 +111,11 @@ public final class AuthenticationMessageConstants {
      * Indicates that the password was reset successfully.
      */
     public static final String PASSWORD_RESET_SUCCESSFUL = "Password reset successful.";
+
+    public static final String EMAIL_VERIFICATION_OTP_RESENT = "A new email verification OTP has been sent.";
+
+    public static final String REGISTRATION_SUCCESSFUL = "Registration successful. Please verify your email address using the OTP sent to you.";
+
+    public static final String EMAIL_VERIFICATION_SUCCESSFUL = "Email address verified successfully.";
+
 }

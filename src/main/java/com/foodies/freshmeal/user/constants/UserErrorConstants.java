@@ -260,7 +260,12 @@ public enum UserErrorConstants implements IBusinessError {
     INVALID_ADDRESS_ASSOCIATION(
             "FM-USER-082",
             "Invalid user address association.",
-            HttpStatusCode.BAD_REQUEST);
+            HttpStatusCode.BAD_REQUEST),
+
+    EMAIL_NOT_VERIFIED(
+            "FM-USER-083",
+            "User email address is not verified.",
+            HttpStatusCode.FORBIDDEN);
 
     /**
      * Error code.

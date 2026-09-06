@@ -111,6 +111,12 @@ public class EmailVerificationOtpEntity extends ABaseEntity {
     private LocalDateTime expiresAt;
 
     /**
+     * Time at which the maximum number of verification attempts was exceeded.
+     */
+    @Indexed
+    private LocalDateTime attemptsExceededAt;
+
+    /**
      * Number of verification attempts already made.
      */
     private int attemptCount;
@@ -206,6 +212,14 @@ public class EmailVerificationOtpEntity extends ABaseEntity {
 
     public void setExpiresAt(final LocalDateTime expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public LocalDateTime getAttemptsExceededAt() {
+        return attemptsExceededAt;
+    }
+
+    public void setAttemptsExceededAt(final LocalDateTime attemptsExceededAt) {
+        this.attemptsExceededAt = attemptsExceededAt;
     }
 
     public int getAttemptCount() {
