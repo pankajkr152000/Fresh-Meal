@@ -1318,12 +1318,182 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         return new ServiceOutput<>(Boolean.TRUE);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IServiceOutput<Boolean> resetPassword(
             final IServiceInput<ResetPasswordInputDTO> input) {
 
-        throw new UnsupportedOperationException(
-                "Unimplemented method 'resetPassword'");
+        final ResetPasswordInputDTO inputDTO = input.getInput();
+
+        final String resetToken = inputDTO.getResetPasswordRequest().getResetToken();
+
+        final String newPassword = inputDTO.getResetPasswordRequest().getNewPassword();
+
+        if (!hasText(resetToken)) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_REQUIRED);
+        }
+
+        if (!hasText(newPassword)) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
+        }
+
+        /*
+         * Hash the supplied raw token before performing the database lookup.
+         *
+         * The raw token must never be persisted or queried directly.
+         */
+        final String tokenHash = hashPasswordResetToken(resetToken);
+
+        final Query tokenQuery = Query.query(
+                Criteria.where("tokenHash").is(tokenHash));
+
+        final PasswordResetTokenEntity resetTokenEntity = passwordResetTokenRepository
+                .findOne(tokenQuery)
+                .orElseThrow(() -> new BusinessException(
+                        AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN));
+
+        /*
+         * Explicitly reject tokens that have already been revoked.
+         */
+        if (resetTokenEntity.isRevoked()) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_REVOKED);
+        }
+
+        /*
+         * A reset token can only be consumed once.
+         */
+        if (resetTokenEntity.isUsed()) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_ALREADY_USED);
+        }
+
+        /*
+         * Check expiration using the business-local application time.
+         */
+        final LocalDateTime now = AppCalendar.getBusinessLocalDateTime();
+
+        if (resetTokenEntity.getExpiresAt() == null
+                || !now.isBefore(resetTokenEntity.getExpiresAt())) {
+
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_EXPIRED);
+        }
+
+        /*
+         * Validate the new raw password before encoding it.
+         */
+        validatePassword(newPassword);
+
+        /*
+         * Load the associated active user.
+         */
+        final UserNumberRequest userNumberRequest = new UserNumberRequest();
+
+        userNumberRequest.setUserNumber(
+                resetTokenEntity.getUserNumber());
+
+        final IServiceInput<UserNumberRequest> userServiceInput = new ServiceInput<>(
+                userNumberRequest,
+                input.getServiceContext());
+
+        final UserEntity userEntity = userService.loadUserByUserNumber(userServiceInput)
+                .getOutput();
+
+        if (userEntity == null) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN);
+        }
+
+        /*
+         * Do not allow the user to reset the password to the existing password.
+         */
+        if (passwordEncoder.matches(
+                newPassword,
+                userEntity.getPassword())) {
+
+            throw new BusinessException(
+                    AuthenticationErrorConstants.NEW_PASSWORD_SAME_AS_OLD_PASSWORD);
+        }
+
+        /*
+         * Encode the new password before handing it to the User module.
+         */
+        final String encodedPassword = passwordEncoder.encode(newPassword);
+
+        final UpdatePasswordInputDTO updatePasswordInput = new UpdatePasswordInputDTO(
+                userEntity.getUserNumber(),
+                encodedPassword);
+
+        userService.updatePassword(
+                new ServiceInput<>(
+                        updatePasswordInput,
+                        input.getServiceContext()));
+
+        /*
+         * Consume the reset token.
+         *
+         * It is marked as used rather than physically deleted so that the
+         * security lifecycle remains auditable.
+         */
+        resetTokenEntity.setUsed(true);
+        resetTokenEntity.setUsedAt(now);
+        resetTokenEntity.setUpdatedAt(now);
+
+        if (input.getServiceContext().getUserProfile() != null) {
+
+            resetTokenEntity.setUpdatedBy(
+                    input.getServiceContext()
+                            .getUserProfile()
+                            .getUserNumber());
+
+        } else {
+
+            resetTokenEntity.setUpdatedBy(
+                    RoleType.ADMIN.getLabel());
+        }
+
+        passwordResetTokenRepository.save(resetTokenEntity);
+
+        /*
+         * Password reset invalidates every existing authentication session.
+         *
+         * This prevents previously issued access/refresh tokens from remaining
+         * usable after the password has been changed.
+         */
+        final IServiceOutput<List<LoginHistoryEntity>> activeSessions = loginHistoryService.loadActiveLoginHistories(
+                new ServiceInput<>(
+                        userNumberRequest,
+                        input.getServiceContext()));
+
+        if (activeSessions.getOutput() != null) {
+
+            activeSessions.getOutput().forEach(loginHistory -> {
+
+                final String sessionId = loginHistory.getSessionId();
+
+                if (hasText(sessionId)) {
+
+                    tokenRevocationService.revokeSession(
+                            sessionId,
+                            userEntity.getUserNumber(),
+                            input.getServiceContext());
+                }
+            });
+        }
+
+        /*
+         * A password reset is normally an unauthenticated operation, so there
+         * should not be an authenticated SecurityContext to clear. Clearing it
+         * defensively ensures that no stale authentication survives the reset.
+         */
+        SecurityContextHolder.clearContext();
+
+        return new ServiceOutput<>(Boolean.TRUE);
     }
 
     /**
@@ -1591,21 +1761,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
          * account-state category are treated as failed authentication.
          */
         return LoginStatus.FAILED;
-    }
-
-    /**
-     * Validates the authentication-session identifier.
-     *
-     * @param sessionId authentication-session identifier.
-     *
-     * @throws IllegalArgumentException when the session identifier is empty.
-     */
-    private void validateSessionId(String sessionId) {
-
-        if (sessionId == null || sessionId.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Session ID must not be empty.");
-        }
     }
 
     private boolean hasText(String str) {

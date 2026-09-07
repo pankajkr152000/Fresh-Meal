@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.user.controller.impl;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 import com.foodies.freshmeal.common.constants.ApiMessageConstants;
+import com.foodies.freshmeal.common.constants.AuthorizationConstants;
 import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
@@ -92,6 +94,7 @@ public class UserController implements IUserController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(action = ActionType.ADD_USER, module = ModuleType.USER, method = MethodType.CREATE)
     @PostMapping(UserApiConstants.ADD)
     public ResponseEntity<ApiResponse<UserResponse>> addUser(
@@ -122,6 +125,7 @@ public class UserController implements IUserController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_SELF)
     @PostMapping(UserApiConstants.GET_BY_USER_NUMBER)
     public ResponseEntity<ApiResponse<UserResponse>> getUserByUserNumber(
             @RequestBody UserNumberRequest request) {
@@ -151,6 +155,7 @@ public class UserController implements IUserController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_SELF)
     @PostMapping(UserApiConstants.UPDATE)
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(
             @RequestBody UpdateUserInputDTO request) {
@@ -176,6 +181,7 @@ public class UserController implements IUserController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @PostMapping(UserApiConstants.DELETE)
     public ResponseEntity<ApiResponse<Boolean>> deleteUser(
             @RequestBody UserIdRequest request) {
@@ -201,6 +207,7 @@ public class UserController implements IUserController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @PostMapping(UserApiConstants.ENABLE)
     public ResponseEntity<ApiResponse<UserResponse>> enableUser(
             @RequestBody UserNumberRequest request) {
@@ -226,6 +233,7 @@ public class UserController implements IUserController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @PostMapping(UserApiConstants.DISABLE)
     public ResponseEntity<ApiResponse<UserResponse>> disableUser(
             @RequestBody UserNumberRequest request) {
@@ -252,6 +260,7 @@ public class UserController implements IUserController {
      */
     @Override
     @PostMapping(UserApiConstants.LOCK)
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     public ResponseEntity<ApiResponse<UserResponse>> lockUser(
             @RequestBody UserNumberRequest request) {
 
@@ -276,6 +285,7 @@ public class UserController implements IUserController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @PostMapping(UserApiConstants.UNLOCK)
     public ResponseEntity<ApiResponse<UserResponse>> unlockUser(
             @RequestBody UserNumberRequest request) {

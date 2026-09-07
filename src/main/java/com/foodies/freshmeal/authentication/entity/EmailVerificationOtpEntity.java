@@ -66,7 +66,9 @@ import com.foodies.freshmeal.common.entity.IEntity;
 @Document(collection = "fm_email_verification_otps")
 public class EmailVerificationOtpEntity extends ABaseEntity {
 
-    /**
+    private static final long serialVersionUID = -8389961188127573660L;
+
+	/**
      * Business identifier assigned to the OTP verification record.
      */
     @Indexed(unique = true)

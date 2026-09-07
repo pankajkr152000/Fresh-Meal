@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,7 @@ import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 import com.foodies.freshmeal.common.constants.ApiMessageConstants;
+import com.foodies.freshmeal.common.constants.AuthorizationConstants;
 import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
@@ -97,6 +99,7 @@ public class FoodController implements IFoodController {
      * ("/add")
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(action = ActionType.ADD_FOOD, module = ModuleType.FOOD, method = MethodType.CREATE)
     @PostMapping(value = FoodApiConstants.ADD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<FoodResponse>> addFood(@RequestPart("food") String foodJsonRequest,
@@ -123,8 +126,9 @@ public class FoodController implements IFoodController {
     /*
      * ("/readAllFoods")
      */
-    @AuditApi(action = ActionType.READ_ALL_FOODS, module = ModuleType.FOOD, method = MethodType.READ)
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+    @AuditApi(action = ActionType.READ_ALL_FOODS, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.READ_ALL_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
@@ -138,6 +142,7 @@ public class FoodController implements IFoodController {
      */
     // @AuditApi
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.FOOD_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> foodCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
@@ -152,6 +157,7 @@ public class FoodController implements IFoodController {
      */
     // @AuditApi
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.DIET_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> dietCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
@@ -166,6 +172,7 @@ public class FoodController implements IFoodController {
      */
     // @AuditApi
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.CUISINE_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> cuisineCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
@@ -180,6 +187,7 @@ public class FoodController implements IFoodController {
      */
     // @AuditApi
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.GROUP_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> groupCategories() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
@@ -194,6 +202,7 @@ public class FoodController implements IFoodController {
      */
     // @AuditApi
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.FOOD_CATEGORY_METADATA)
     public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException {
         IServiceInput<Void> input = new ServiceInput<>();
@@ -223,6 +232,7 @@ public class FoodController implements IFoodController {
      * ("/{foodId}/status")
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(action = ActionType.UPDATE_FOOD_STATUS, module = ModuleType.FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.UPDATE_FOOD_STATUS)
     public ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(@PathVariable String foodId,
@@ -244,9 +254,10 @@ public class FoodController implements IFoodController {
     /*
      * {"/view"}
      */
+    @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @AuditApi(action = ActionType.VIEW_FOOD, module = ModuleType.FOOD, method = MethodType.READ)
     @PostMapping(FoodApiConstants.GET_FOOD_BY_FOOD_ID)
-    @Override
     public ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(
             @RequestBody FoodStatusRequest foodRequest)
             throws JsonProcessingException {
@@ -262,10 +273,9 @@ public class FoodController implements IFoodController {
     /*
      * {"/edit"}
      */
-    @AuditApi(action = ActionType.UPDATE_FOOD, module = ModuleType.FOOD, method = MethodType.UPDATE)
-    // @PutMapping(FoodApiConstants.EDIT_FOOD)
     @Override
-
+    @AuditApi(action = ActionType.UPDATE_FOOD, module = ModuleType.FOOD, method = MethodType.UPDATE)
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @PutMapping(value = FoodApiConstants.EDIT_FOOD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<FoodResponse>> editFood(@RequestPart("food") String foodJsonRequest,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) throws JsonProcessingException {
@@ -297,6 +307,7 @@ public class FoodController implements IFoodController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.ARCHIVE_FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.ARCHIVE_FOOD)
     public ResponseEntity<ApiResponse<FoodResponse>> archiveFood(
@@ -315,6 +326,7 @@ public class FoodController implements IFoodController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.ARCHIVE_FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.BULK_ARCHIVE_FOOD)
     public ResponseEntity<ApiResponse<Void>> bulkArchiveFoods(
@@ -337,6 +349,7 @@ public class FoodController implements IFoodController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.RESTORE_FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.RESTORE_FOOD)
     public ResponseEntity<ApiResponse<FoodResponse>> restoreFood(
@@ -355,6 +368,7 @@ public class FoodController implements IFoodController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.RESTORE_FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.BULK_RESTORE_FOOD)
     public ResponseEntity<ApiResponse<Void>> bulkRestoreFoods(
@@ -377,6 +391,7 @@ public class FoodController implements IFoodController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.PERMANENT_DELETE_FOOD, method = MethodType.DELETE)
     @DeleteMapping(FoodApiConstants.PERMANENT_DELETE_FOOD)
     public ResponseEntity<ApiResponse<Void>> permanentDeleteFood(
@@ -395,6 +410,7 @@ public class FoodController implements IFoodController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.PERMANENT_DELETE_FOOD, method = MethodType.DELETE)
     @DeleteMapping(FoodApiConstants.BULK_PERMANENT_DELETE_FOOD)
     public ResponseEntity<ApiResponse<Void>> bulkPermanentDeleteFoods(
@@ -417,6 +433,7 @@ public class FoodController implements IFoodController {
      * {@inheritDoc}
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.READ_ARCHIVED_FOODS, method = MethodType.READ)
     @GetMapping(FoodApiConstants.GET_ARCHIVED_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readArchivedFoods() {

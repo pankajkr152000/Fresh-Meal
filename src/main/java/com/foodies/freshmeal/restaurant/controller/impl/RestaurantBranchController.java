@@ -3,6 +3,7 @@ package com.foodies.freshmeal.restaurant.controller.impl;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.foodies.freshmeal.common.audit.annotation.AuditApi;
 import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
 import com.foodies.freshmeal.common.constants.ActionType;
+import com.foodies.freshmeal.common.constants.AuthorizationConstants;
 import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
@@ -94,6 +96,7 @@ public class RestaurantBranchController implements IRestaurantBranchController {
      * @return created restaurant branch
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @PostMapping(RestaurantBranchApiConstants.CREATE)
     @AuditApi(module = ModuleType.RESTAURANT, action = ActionType.CREATE_RESTAURANT_BRANCH, method = MethodType.CREATE)
     public ResponseEntity<ApiResponse<RestaurantBranchDetailsResponse>> createBranch(
@@ -121,6 +124,7 @@ public class RestaurantBranchController implements IRestaurantBranchController {
      * @return active restaurant branches
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(RestaurantBranchApiConstants.READ_ALL_BRANCHES)
     @AuditApi(module = ModuleType.RESTAURANT, action = ActionType.READ_ALL_RESTAURANT_BRANCHES, method = MethodType.READ)
     public ResponseEntity<ApiResponse<List<RestaurantBranchListResponse>>> readBranches() {
@@ -148,6 +152,7 @@ public class RestaurantBranchController implements IRestaurantBranchController {
      * @return restaurant branch details
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @PostMapping(RestaurantBranchApiConstants.GET_BRANCH_BY_ID)
     @AuditApi(module = ModuleType.RESTAURANT, action = ActionType.VIEW_RESTAURANT_BRANCH, method = MethodType.READ)
     public ResponseEntity<ApiResponse<RestaurantBranchDetailsResponse>> getBranchById(
@@ -177,6 +182,7 @@ public class RestaurantBranchController implements IRestaurantBranchController {
      * @return restaurant branches belonging to the restaurant
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @PostMapping(RestaurantBranchApiConstants.GET_BY_RESTAURANT_ID)
     @AuditApi(module = ModuleType.RESTAURANT, action = ActionType.READ_RESTAURANT_BRANCHES_BY_RESTAURANT, method = MethodType.READ)
     public ResponseEntity<ApiResponse<List<RestaurantBranchListResponse>>> getBranchesByRestaurantId(
@@ -207,6 +213,7 @@ public class RestaurantBranchController implements IRestaurantBranchController {
      * @return updated restaurant branch
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @PutMapping(RestaurantBranchApiConstants.UPDATE)
     @AuditApi(module = ModuleType.RESTAURANT, action = ActionType.UPDATE_RESTAURANT_BRANCH, method = MethodType.UPDATE)
     public ResponseEntity<ApiResponse<RestaurantBranchDetailsResponse>> updateBranch(

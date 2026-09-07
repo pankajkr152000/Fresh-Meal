@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.pincode.controller.impl;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 import com.foodies.freshmeal.common.constants.ApiMessageConstants;
+import com.foodies.freshmeal.common.constants.AuthorizationConstants;
 import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
@@ -58,6 +60,7 @@ public class PincodeController implements IPincodeController {
      * @return pincode location details
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @AuditApi(action = ActionType.PINCODE_LOOKUP, method = MethodType.READ, module = ModuleType.PINCODE)
     @PostMapping("/lookup")
     public ResponseEntity<ApiResponse<PincodeDetails>> lookupPincode(@RequestBody PincodeLookupRequest request) {

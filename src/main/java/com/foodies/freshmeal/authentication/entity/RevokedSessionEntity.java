@@ -42,7 +42,9 @@ import lombok.Setter;
 @Document(collection = "fm_revoked_sessions")
 public class RevokedSessionEntity extends ABaseEntity {
 
-    /**
+    private static final long serialVersionUID = 5893009431818262199L;
+
+	/**
      * Unique FreshMeal authentication-session identifier.
      */
     @Indexed(unique = true)

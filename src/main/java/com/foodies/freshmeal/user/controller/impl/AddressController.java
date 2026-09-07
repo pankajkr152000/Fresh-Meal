@@ -1,6 +1,7 @@
 package com.foodies.freshmeal.user.controller.impl;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import com.foodies.freshmeal.common.builder.ApiResponseBuilder;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 import com.foodies.freshmeal.common.constants.ApiMessageConstants;
+import com.foodies.freshmeal.common.constants.AuthorizationConstants;
 import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
 import com.foodies.freshmeal.common.dto.ApiResponse;
@@ -71,6 +73,7 @@ public class AddressController implements IAddressController {
      * @return created address information
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.USER_ONLY)
     @AuditApi(action = ActionType.ADD_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.CREATE)
     @PostMapping(AddressApiConstants.ADD)
     public ResponseEntity<ApiResponse<AddressResponse>> addAddress(@RequestBody AddressRequest request) {
@@ -97,6 +100,7 @@ public class AddressController implements IAddressController {
      * @return address information
      */
     @Override
+    @PreAuthorize(AuthorizationConstants.USER_ONLY)
     @PostMapping(AddressApiConstants.GET_BY_ID)
     public ResponseEntity<ApiResponse<AddressResponse>> getAddressByAddressId(@RequestBody AddressIdRequest request) {
 

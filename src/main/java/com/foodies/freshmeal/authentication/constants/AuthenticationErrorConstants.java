@@ -402,7 +402,7 @@ public enum AuthenticationErrorConstants implements IBusinessError {
 
     NEW_PASSWORD_SAME_AS_OLD_PASSWORD(
             "FM-AUTH-104",
-            "New password must be different from the current password.",
+            "New password must be different from the old password.",
             HttpStatusCode.BAD_REQUEST),
 
     PASSWORD_TOO_SHORT(

@@ -99,8 +99,7 @@ import jakarta.validation.Valid;
 @RestController
 @Validated
 @RequestMapping(ApiBaseConstants.AUTHENTICATION_BASE_URL)
-public class AuthenticationController
-        implements IAuthenticationController {
+public class AuthenticationController implements IAuthenticationController {
 
     // =========================================================================
     // Dependencies
