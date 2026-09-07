@@ -13,9 +13,9 @@ import com.foodies.freshmeal.common.constants.RoleType;
  * </p>
  *
  * <p>
- * Business roles themselves remain defined by {@link RoleType}. This class
- * only provides framework-facing authorization expressions so controllers
- * and services do not duplicate role strings throughout the application.
+ * Business roles themselves remain defined by {@link RoleType}. This class only
+ * provides framework-facing authorization expressions so controllers and
+ * services do not duplicate role strings throughout the application.
  * </p>
  *
  * <h3>Authorization Model</h3>
@@ -46,54 +46,37 @@ public final class AuthorizationRoleConstants {
     /**
      * Administrative role expression.
      */
-    public static final String ADMIN =
-            "hasRole('" + RoleType.ADMIN + "')";
+    public static final String ADMIN = "hasRole('" + RoleType.ADMIN + "')";
 
     /**
      * Standard application-user role expression.
      */
-    public static final String USER =
-            "hasRole('" + RoleType.USER + "')";
+    public static final String USER = "hasRole('" + RoleType.USER + "')";
 
     /**
      * Restaurant-owner role expression.
      */
-    public static final String RESTAURANT_OWNER =
-            "hasRole('" + RoleType.RESTAURANT_OWNER + "')";
+    public static final String RESTAURANT_OWNER = "hasRole('" + RoleType.RESTAURANT_OWNER + "')";
 
     /**
      * Delivery-partner role expression.
      */
-    public static final String DELIVERY_PARTNER =
-            "hasRole('" + RoleType.DELIVERY_PARTNER + "')";
+    public static final String DELIVERY_PARTNER = "hasRole('" + RoleType.DELIVERY_PARTNER + "')";
 
     /**
      * Administrator or restaurant-owner role expression.
      */
-    public static final String ADMIN_OR_RESTAURANT_OWNER =
-            "hasAnyRole('"
-                    + RoleType.ADMIN
-                    + "','"
-                    + RoleType.RESTAURANT_OWNER
-                    + "')";
+    public static final String ADMIN_OR_RESTAURANT_OWNER = "hasAnyRole('" + RoleType.ADMIN + "','"
+            + RoleType.RESTAURANT_OWNER + "')";
 
     /**
      * Administrator or delivery-partner role expression.
      */
-    public static final String ADMIN_OR_DELIVERY_PARTNER =
-            "hasAnyRole('"
-                    + RoleType.ADMIN
-                    + "','"
-                    + RoleType.DELIVERY_PARTNER
-                    + "')";
+    public static final String ADMIN_OR_DELIVERY_PARTNER = "hasAnyRole('" + RoleType.ADMIN + "','"
+            + RoleType.DELIVERY_PARTNER + "')";
 
     /**
      * Administrator or standard-user role expression.
      */
-    public static final String ADMIN_OR_USER =
-            "hasAnyRole('"
-                    + RoleType.ADMIN
-                    + "','"
-                    + RoleType.USER
-                    + "')";
+    public static final String ADMIN_OR_USER = "hasAnyRole('" + RoleType.ADMIN + "','" + RoleType.USER + "')";
 }

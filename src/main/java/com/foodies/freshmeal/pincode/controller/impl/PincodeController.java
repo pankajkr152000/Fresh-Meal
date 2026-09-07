@@ -41,36 +41,36 @@ import com.foodies.freshmeal.pincode.valueObject.PincodeDetails;
 @RequestMapping(ApiBaseConstants.PINCODE_BASE_URL)
 public class PincodeController implements IPincodeController {
 
-    private final IPincodeService pincodeService;
-    private final IServiceContext serviceContext;
+	private final IPincodeService pincodeService;
+	private final IServiceContext serviceContext;
 
-    public PincodeController(IPincodeService pincodeService, IServiceContext serviceContext) {
-        this.pincodeService = pincodeService;
-        this.serviceContext = serviceContext;
-    }
+	public PincodeController(IPincodeService pincodeService, IServiceContext serviceContext) {
+		this.pincodeService = pincodeService;
+		this.serviceContext = serviceContext;
+	}
 
-    /**
-     * Looks up location details for the supplied pincode.
-     *
-     * Example: POST /api/pincodes/lookup
-     *
-     * { "pincode": "700001" }
-     *
-     * @param request pincode lookup request
-     * @return pincode location details
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
-    @AuditApi(action = ActionType.PINCODE_LOOKUP, method = MethodType.READ, module = ModuleType.PINCODE)
-    @PostMapping("/lookup")
-    public ResponseEntity<ApiResponse<PincodeDetails>> lookupPincode(@RequestBody PincodeLookupRequest request) {
+	/**
+	 * Looks up location details for the supplied pincode.
+	 *
+	 * Example: POST /api/pincodes/lookup
+	 *
+	 * { "pincode": "700001" }
+	 *
+	 * @param request pincode lookup request
+	 * @return pincode location details
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+	@AuditApi(action = ActionType.PINCODE_LOOKUP, method = MethodType.READ, module = ModuleType.PINCODE)
+	@PostMapping("/lookup")
+	public ResponseEntity<ApiResponse<PincodeDetails>> lookupPincode(@RequestBody PincodeLookupRequest request) {
 
-        IServiceInput<PincodeLookupRequest> input = new ServiceInput<>();
-        input.setServiceContext(serviceContext);
-        input.setInput(request);
+		IServiceInput<PincodeLookupRequest> input = new ServiceInput<>();
+		input.setServiceContext(serviceContext);
+		input.setInput(request);
 
-        IServiceOutput<PincodeDetails> output = pincodeService.getPincodeDetails(input);
+		IServiceOutput<PincodeDetails> output = pincodeService.getPincodeDetails(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.PINCODE_DETAILS_FETCHED, output.getOutput());
-    }
+		return ApiResponseBuilder.success(ApiMessageConstants.PINCODE_DETAILS_FETCHED, output.getOutput());
+	}
 }

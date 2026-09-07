@@ -44,202 +44,202 @@ import com.foodies.freshmeal.user.service.IAddressService;
 @Service
 public class AddressServiceImpl implements IAddressService {
 
-    private final IDatabaseSequenceService databaseSequenceService;
+	private final IDatabaseSequenceService databaseSequenceService;
 
-    private final IAddressRepository addressRepository;
+	private final IAddressRepository addressRepository;
 
-    private final IPincodeService pincodeService;
+	private final IPincodeService pincodeService;
 
-    private final IServiceContext serviceContext;
+	private final IServiceContext serviceContext;
 
-    public AddressServiceImpl(IDatabaseSequenceService databaseSequenceService, IAddressRepository addressRepository,
-            IPincodeService pincodeService, IServiceContext serviceContext) {
+	public AddressServiceImpl(IDatabaseSequenceService databaseSequenceService, IAddressRepository addressRepository,
+			IPincodeService pincodeService, IServiceContext serviceContext) {
 
-        this.databaseSequenceService = databaseSequenceService;
-        this.addressRepository = addressRepository;
-        this.pincodeService = pincodeService;
-        this.serviceContext = serviceContext;
-    }
+		this.databaseSequenceService = databaseSequenceService;
+		this.addressRepository = addressRepository;
+		this.pincodeService = pincodeService;
+		this.serviceContext = serviceContext;
+	}
 
-    /**
-     * Loads an address using its business-facing address number.
-     *
-     * @param input address identifier input
-     * @return address entity
-     */
-    @Override
-    public IServiceOutput<AddressEntity> loadAddress(IServiceInput<AddressIdRequest> input) {
+	/**
+	 * Loads an address using its business-facing address number.
+	 *
+	 * @param input address identifier input
+	 * @return address entity
+	 */
+	@Override
+	public IServiceOutput<AddressEntity> loadAddress(IServiceInput<AddressIdRequest> input) {
 
-        AddressIdRequest addressRequest = input.getInput();
+		AddressIdRequest addressRequest = input.getInput();
 
-        AddressEntity addressEntity = addressRepository.findById(addressRequest.getAddressId())
-                .orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
+		AddressEntity addressEntity = addressRepository.findById(addressRequest.getAddressId())
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        return new ServiceOutput<>(addressEntity);
-    }
+		return new ServiceOutput<>(addressEntity);
+	}
 
-    /**
-     * Generates the MongoDB/business entity ID for the address.
-     *
-     * @param input address creation input
-     * @return generated address ID
-     */
-    @Override
-    public IServiceOutput<String> generateAddressId(IServiceInput<AddressInputDTO> input) {
+	/**
+	 * Generates the MongoDB/business entity ID for the address.
+	 *
+	 * @param input address creation input
+	 * @return generated address ID
+	 */
+	@Override
+	public IServiceOutput<String> generateAddressId(IServiceInput<AddressInputDTO> input) {
 
-        long seq = databaseSequenceService.generateSequence(input.getServiceContext(),
-                SequenceConstants.ADDRESS_SEQUENCE);
+		long seq = databaseSequenceService.generateSequence(input.getServiceContext(),
+				SequenceConstants.ADDRESS_SEQUENCE);
 
-        IServiceContext inputServiceContext = input.getServiceContext();
+		IServiceContext inputServiceContext = input.getServiceContext();
 
-        inputServiceContext.setAttribute(DataContext.ADDRESS_SEQUENCE, seq);
+		inputServiceContext.setAttribute(DataContext.ADDRESS_SEQUENCE, seq);
 
-        String addressId = String.format(SequenceConstants.ADDRESS_DB_ID_PATTERN, seq);
+		String addressId = String.format(SequenceConstants.ADDRESS_DB_ID_PATTERN, seq);
 
-        IServiceOutput<String> output = new ServiceOutput<>();
+		IServiceOutput<String> output = new ServiceOutput<>();
 
-        output.setOutput(addressId);
+		output.setOutput(addressId);
 
-        return output;
-    }
+		return output;
+	}
 
-    /**
-     * Generates the business-facing address number.
-     *
-     * The sequence generated while creating the address ID is reused so that both
-     * identifiers belong to the same address sequence.
-     *
-     * @param input address creation input
-     * @return generated address number
-     */
-    @Override
-    public IServiceOutput<String> generateAddressNumber(IServiceInput<AddressInputDTO> input) {
+	/**
+	 * Generates the business-facing address number.
+	 *
+	 * The sequence generated while creating the address ID is reused so that both
+	 * identifiers belong to the same address sequence.
+	 *
+	 * @param input address creation input
+	 * @return generated address number
+	 */
+	@Override
+	public IServiceOutput<String> generateAddressNumber(IServiceInput<AddressInputDTO> input) {
 
-        long seq;
+		long seq;
 
-        if (input.getServiceContext().hasAttribute(DataContext.ADDRESS_SEQUENCE)) {
-            seq = (Long) input.getServiceContext().getAttribute(DataContext.ADDRESS_SEQUENCE);
-        } else {
-            seq = databaseSequenceService.getCurrentSequence(input.getServiceContext(),
-                    SequenceConstants.ADDRESS_SEQUENCE);
-        }
+		if (input.getServiceContext().hasAttribute(DataContext.ADDRESS_SEQUENCE)) {
+			seq = (Long) input.getServiceContext().getAttribute(DataContext.ADDRESS_SEQUENCE);
+		} else {
+			seq = databaseSequenceService.getCurrentSequence(input.getServiceContext(),
+					SequenceConstants.ADDRESS_SEQUENCE);
+		}
 
-        String addressNumber = String.format(SequenceConstants.ADDRESS_NUMBER_PATTERN, seq);
+		String addressNumber = String.format(SequenceConstants.ADDRESS_NUMBER_PATTERN, seq);
 
-        IServiceOutput<String> output = new ServiceOutput<>();
+		IServiceOutput<String> output = new ServiceOutput<>();
 
-        output.setOutput(addressNumber);
+		output.setOutput(addressNumber);
 
-        return output;
-    }
+		return output;
+	}
 
-    /**
-     * Creates and persists an AddressEntity.
-     *
-     * @param input address creation input
-     * @return created address entity
-     */
-    @Override
-    public IServiceOutput<AddressEntity> createAddressEntity(IServiceInput<AddressInputDTO> input) {
+	/**
+	 * Creates and persists an AddressEntity.
+	 *
+	 * @param input address creation input
+	 * @return created address entity
+	 */
+	@Override
+	public IServiceOutput<AddressEntity> createAddressEntity(IServiceInput<AddressInputDTO> input) {
 
-        AddressEntity addressEntity = (AddressEntity) EntityFactory.createEntity(EntityName.ADDRESS_ENTITY);
-        AddressInputDTO addressInputDTO = input.getInput();
-        AddressRequest addressRequest = addressInputDTO.getAddressRequest();
+		AddressEntity addressEntity = (AddressEntity) EntityFactory.createEntity(EntityName.ADDRESS_ENTITY);
+		AddressInputDTO addressInputDTO = input.getInput();
+		AddressRequest addressRequest = addressInputDTO.getAddressRequest();
 
-        IServiceInput<AddressInputDTO> addressServiceInput = new ServiceInput<>();
+		IServiceInput<AddressInputDTO> addressServiceInput = new ServiceInput<>();
 
-        AddressInputDTO createAddressInputDTO = new AddressInputDTO();
+		AddressInputDTO createAddressInputDTO = new AddressInputDTO();
 
-        createAddressInputDTO.setAddressRequest(addressRequest);
+		createAddressInputDTO.setAddressRequest(addressRequest);
 
-        addressServiceInput.setInput(createAddressInputDTO);
+		addressServiceInput.setInput(createAddressInputDTO);
 
-        // Generate Address ID.
-        String addressId = generateAddressId(addressServiceInput).getOutput();
+		// Generate Address ID.
+		String addressId = generateAddressId(addressServiceInput).getOutput();
 
-        addressEntity.setId(addressId);
+		addressEntity.setId(addressId);
 
-        // Generate Address Number.
-        String addressNumber = generateAddressNumber(addressServiceInput).getOutput();
+		// Generate Address Number.
+		String addressNumber = generateAddressNumber(addressServiceInput).getOutput();
 
-        addressEntity.setAddressNumber(addressNumber);
+		addressEntity.setAddressNumber(addressNumber);
 
-        /*
-         * Resolve country, state and district from the supplied pincode.
-         *
-         * These values must come from the PincodeService rather than being trusted from
-         * the client request.
-         */
-        PincodeLookupRequest pincodeLookupRequest = new PincodeLookupRequest(addressRequest.getPostalCode());
+		/*
+		 * Resolve country, state and district from the supplied pincode.
+		 *
+		 * These values must come from the PincodeService rather than being trusted from
+		 * the client request.
+		 */
+		PincodeLookupRequest pincodeLookupRequest = new PincodeLookupRequest(addressRequest.getPostalCode());
 
-        IServiceInput<PincodeLookupRequest> pincodeInput = new ServiceInput<>();
+		IServiceInput<PincodeLookupRequest> pincodeInput = new ServiceInput<>();
 
-        pincodeInput.setInput(pincodeLookupRequest);
+		pincodeInput.setInput(pincodeLookupRequest);
 
-        IServiceOutput<PincodeDetails> pincodeOutput = pincodeService.getPincodeDetails(pincodeInput);
+		IServiceOutput<PincodeDetails> pincodeOutput = pincodeService.getPincodeDetails(pincodeInput);
 
-        PincodeDetails pincodeDetails = pincodeOutput.getOutput();
+		PincodeDetails pincodeDetails = pincodeOutput.getOutput();
 
-        addressEntity.setPostalCode(pincodeDetails.pincode());
-        addressEntity.setCountry(pincodeDetails.country());
-        addressEntity.setState(pincodeDetails.state());
-        addressEntity.setDistrict(pincodeDetails.district());
+		addressEntity.setPostalCode(pincodeDetails.pincode());
+		addressEntity.setCountry(pincodeDetails.country());
+		addressEntity.setState(pincodeDetails.state());
+		addressEntity.setDistrict(pincodeDetails.district());
 
-        // Address information supplied by the client.
-        addressEntity.setAddressType(addressRequest.getAddressType());
-        addressEntity.setDefaultAddress(addressRequest.isDefaultAddress());
-        addressEntity.setRecipientName(addressRequest.getRecipientName());
-        addressEntity.setPhoneNumber(addressRequest.getPhoneNumber());
-        addressEntity.setAddressLine1(addressRequest.getAddressLine1());
-        addressEntity.setAddressLine2(addressRequest.getAddressLine2());
-        addressEntity.setLandmark(addressRequest.getLandmark());
-        addressEntity.setCity(addressRequest.getCity());
-        addressEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
+		// Address information supplied by the client.
+		addressEntity.setAddressType(addressRequest.getAddressType());
+		addressEntity.setDefaultAddress(addressRequest.isDefaultAddress());
+		addressEntity.setRecipientName(addressRequest.getRecipientName());
+		addressEntity.setPhoneNumber(addressRequest.getPhoneNumber());
+		addressEntity.setAddressLine1(addressRequest.getAddressLine1());
+		addressEntity.setAddressLine2(addressRequest.getAddressLine2());
+		addressEntity.setLandmark(addressRequest.getLandmark());
+		addressEntity.setCity(addressRequest.getCity());
+		addressEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        if (serviceContext.getUserProfile() != null) {
-            addressEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
-            addressEntity.setUserNumber(serviceContext.getUserProfile().getUserNumber());
-        } else {
-            addressEntity.setCreatedBy(RoleType.ADMIN.getLabel());
-        }
-        addressRepository.save(addressEntity);
+		if (serviceContext.getUserProfile() != null) {
+			addressEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
+			addressEntity.setUserNumber(serviceContext.getUserProfile().getUserNumber());
+		} else {
+			addressEntity.setCreatedBy(RoleType.ADMIN.getLabel());
+		}
+		addressRepository.save(addressEntity);
 
-        IServiceOutput<AddressEntity> output = new ServiceOutput<>();
-        output.setOutput(addressEntity);
+		IServiceOutput<AddressEntity> output = new ServiceOutput<>();
+		output.setOutput(addressEntity);
 
-        return output;
-    }
+		return output;
+	}
 
-    /**
-     * Creates a customer address and converts it into AddressResponse.
-     *
-     * @param input address creation input
-     * @return created address response
-     */
-    @Override
-    public IServiceOutput<AddressResponse> addAddress(IServiceInput<AddressInputDTO> input) {
+	/**
+	 * Creates a customer address and converts it into AddressResponse.
+	 *
+	 * @param input address creation input
+	 * @return created address response
+	 */
+	@Override
+	public IServiceOutput<AddressResponse> addAddress(IServiceInput<AddressInputDTO> input) {
 
-        IServiceOutput<AddressEntity> entityOutput = createAddressEntity(input);
-        AddressEntity addressEntity = entityOutput.getOutput();
+		IServiceOutput<AddressEntity> entityOutput = createAddressEntity(input);
+		AddressEntity addressEntity = entityOutput.getOutput();
 
-        AddressResponse response = new AddressResponse();
-        response.setAddressNumber(addressEntity.getAddressNumber());
-        response.setAddressType(addressEntity.getAddressType());
-        response.setDefaultAddress(addressEntity.isDefaultAddress());
-        response.setRecipientName(addressEntity.getRecipientName());
-        response.setPhoneNumber(addressEntity.getPhoneNumber());
-        response.setAddressLine1(addressEntity.getAddressLine1());
-        response.setAddressLine2(addressEntity.getAddressLine2());
-        response.setLandmark(addressEntity.getLandmark());
-        response.setCity(addressEntity.getCity());
-        response.setDistrict(addressEntity.getDistrict());
-        response.setState(addressEntity.getState());
-        response.setCountry(addressEntity.getCountry());
-        response.setPostalCode(addressEntity.getPostalCode());
-        response.setLocation(addressEntity.getLocation());
+		AddressResponse response = new AddressResponse();
+		response.setAddressNumber(addressEntity.getAddressNumber());
+		response.setAddressType(addressEntity.getAddressType());
+		response.setDefaultAddress(addressEntity.isDefaultAddress());
+		response.setRecipientName(addressEntity.getRecipientName());
+		response.setPhoneNumber(addressEntity.getPhoneNumber());
+		response.setAddressLine1(addressEntity.getAddressLine1());
+		response.setAddressLine2(addressEntity.getAddressLine2());
+		response.setLandmark(addressEntity.getLandmark());
+		response.setCity(addressEntity.getCity());
+		response.setDistrict(addressEntity.getDistrict());
+		response.setState(addressEntity.getState());
+		response.setCountry(addressEntity.getCountry());
+		response.setPostalCode(addressEntity.getPostalCode());
+		response.setLocation(addressEntity.getLocation());
 
-        IServiceOutput<AddressResponse> output = new ServiceOutput<>();
-        output.setOutput(response);
-        return output;
-    }
+		IServiceOutput<AddressResponse> output = new ServiceOutput<>();
+		output.setOutput(response);
+		return output;
+	}
 }

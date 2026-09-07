@@ -85,834 +85,786 @@ import com.foodies.freshmeal.user.service.IUserService;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    /**
-     * Database sequence service.
-     */
-    private final IDatabaseSequenceService databaseSequenceService;
+	/**
+	 * Database sequence service.
+	 */
+	private final IDatabaseSequenceService databaseSequenceService;
 
-    /**
-     * User repository.
-     */
-    private final IUserRepository userRepository;
+	/**
+	 * User repository.
+	 */
+	private final IUserRepository userRepository;
 
-    /**
-     * Current service context.
-     */
-    private final IServiceContext serviceContext;
+	/**
+	 * Current service context.
+	 */
+	private final IServiceContext serviceContext;
 
-    /**
-     * Creates a UserServiceImpl.
-     *
-     * @param databaseSequenceService database sequence service
-     * @param userRepository          user repository
-     * @param serviceContext          current service context
-     */
-    public UserServiceImpl(IDatabaseSequenceService databaseSequenceService, IUserRepository userRepository,
-            IServiceContext serviceContext) {
+	/**
+	 * Creates a UserServiceImpl.
+	 *
+	 * @param databaseSequenceService database sequence service
+	 * @param userRepository          user repository
+	 * @param serviceContext          current service context
+	 */
+	public UserServiceImpl(IDatabaseSequenceService databaseSequenceService, IUserRepository userRepository,
+			IServiceContext serviceContext) {
 
-        this.databaseSequenceService = databaseSequenceService;
-        this.userRepository = userRepository;
-        this.serviceContext = serviceContext;
-    }
+		this.databaseSequenceService = databaseSequenceService;
+		this.userRepository = userRepository;
+		this.serviceContext = serviceContext;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserEntity> loadUser(IServiceInput<UserIdRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserEntity> loadUser(IServiceInput<UserIdRequest> input) {
 
-        UserIdRequest userIdRequest = input.getInput();
+		UserIdRequest userIdRequest = input.getInput();
 
-        UserEntity userEntity = userRepository.findActiveById(userIdRequest.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
+		UserEntity userEntity = userRepository.findActiveById(userIdRequest.getUserId())
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        return new ServiceOutput<>(userEntity);
-    }
+		return new ServiceOutput<>(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserEntity> loadUserByUserNumber(IServiceInput<UserNumberRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserEntity> loadUserByUserNumber(IServiceInput<UserNumberRequest> input) {
 
-        UserNumberRequest userNumberRequest = input.getInput();
+		UserNumberRequest userNumberRequest = input.getInput();
 
-        Query query = Query.query(Criteria.where("userNumber").is(userNumberRequest.getUserNumber()));
+		Query query = Query.query(Criteria.where("userNumber").is(userNumberRequest.getUserNumber()));
 
-        UserEntity userEntity = userRepository.findOne(query)
-                .orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
+		UserEntity userEntity = userRepository.findOne(query)
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        return new ServiceOutput<>(userEntity);
-    }
+		return new ServiceOutput<>(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserEntity> loadUserByUsername(IServiceInput<UsernameRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserEntity> loadUserByUsername(IServiceInput<UsernameRequest> input) {
 
-        UsernameRequest usernameRequest = input.getInput();
+		UsernameRequest usernameRequest = input.getInput();
 
-        Query query = Query.query(Criteria.where("username").is(usernameRequest.getUsername()));
+		Query query = Query.query(Criteria.where("username").is(usernameRequest.getUsername()));
 
-        UserEntity userEntity = userRepository.findOne(query)
-                .orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
+		UserEntity userEntity = userRepository.findOne(query)
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        return new ServiceOutput<>(userEntity);
-    }
+		return new ServiceOutput<>(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<String> generateUserId(IServiceInput<UserInputDTO> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<String> generateUserId(IServiceInput<UserInputDTO> input) {
 
-        long sequence = databaseSequenceService.generateSequence(input.getServiceContext(),
-                SequenceConstants.USER_ENTITY_SEQUENCE);
+		long sequence = databaseSequenceService.generateSequence(input.getServiceContext(),
+				SequenceConstants.USER_ENTITY_SEQUENCE);
 
-        IServiceContext inputServiceContext = input.getServiceContext();
+		IServiceContext inputServiceContext = input.getServiceContext();
 
-        inputServiceContext.setAttribute(DataContext.USER_SEQUENCE, sequence);
+		inputServiceContext.setAttribute(DataContext.USER_SEQUENCE, sequence);
 
-        String userId = String.format(SequenceConstants.USER_DB_ID_PATTERN, sequence);
+		String userId = String.format(SequenceConstants.USER_DB_ID_PATTERN, sequence);
 
-        IServiceOutput<String> output = new ServiceOutput<>();
-        output.setOutput(userId);
+		IServiceOutput<String> output = new ServiceOutput<>();
+		output.setOutput(userId);
 
-        return output;
-    }
+		return output;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<String> generateUserNumber(IServiceInput<UserInputDTO> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<String> generateUserNumber(IServiceInput<UserInputDTO> input) {
 
-        long sequence;
+		long sequence;
 
-        if (input.getServiceContext().hasAttribute(DataContext.USER_SEQUENCE)) {
+		if (input.getServiceContext().hasAttribute(DataContext.USER_SEQUENCE)) {
 
-            sequence = (Long) input.getServiceContext().getAttribute(DataContext.USER_SEQUENCE);
+			sequence = (Long) input.getServiceContext().getAttribute(DataContext.USER_SEQUENCE);
 
-        } else {
+		} else {
 
-            sequence = databaseSequenceService.getCurrentSequence(input.getServiceContext(),
-                    SequenceConstants.USER_ENTITY_SEQUENCE);
-        }
+			sequence = databaseSequenceService.getCurrentSequence(input.getServiceContext(),
+					SequenceConstants.USER_ENTITY_SEQUENCE);
+		}
 
-        String userNumber = String.format(SequenceConstants.USER_NUMBER_PATTERN, sequence);
+		String userNumber = String.format(SequenceConstants.USER_NUMBER_PATTERN, sequence);
 
-        IServiceOutput<String> output = new ServiceOutput<>();
-        output.setOutput(userNumber);
+		IServiceOutput<String> output = new ServiceOutput<>();
+		output.setOutput(userNumber);
 
-        return output;
-    }
+		return output;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserEntity> createUserEntity(IServiceInput<UserInputDTO> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserEntity> createUserEntity(IServiceInput<UserInputDTO> input) {
 
-        UserInputDTO userInputDTO = input.getInput();
-        UserRequest userRequest = userInputDTO.getUserRequest();
+		UserInputDTO userInputDTO = input.getInput();
+		UserRequest userRequest = userInputDTO.getUserRequest();
 
-        UserEntity userEntity = (UserEntity) EntityFactory.createEntity(EntityName.USER_ENTITY);
+		UserEntity userEntity = (UserEntity) EntityFactory.createEntity(EntityName.USER_ENTITY);
 
-        /*
-         * Generate internal UserEntity ID.
-         */
-        String userId = generateUserId(input).getOutput();
+		/*
+		 * Generate internal UserEntity ID.
+		 */
+		String userId = generateUserId(input).getOutput();
 
-        userEntity.setId(userId);
+		userEntity.setId(userId);
 
-        /*
-         * Generate business-facing user number.
-         *
-         * The same sequence used for the internal ID is reused so both identifiers
-         * belong to the same User sequence.
-         */
-        String userNumber = generateUserNumber(input).getOutput();
+		/*
+		 * Generate business-facing user number.
+		 *
+		 * The same sequence used for the internal ID is reused so both identifiers
+		 * belong to the same User sequence.
+		 */
+		String userNumber = generateUserNumber(input).getOutput();
 
-        userEntity.setUserNumber(userNumber);
+		userEntity.setUserNumber(userNumber);
 
-        /*
-         * Copy user information supplied by the client.
-         */
-        userEntity.setUsername(userRequest.getUsername());
-        userEntity.setFirstName(userRequest.getFirstName());
-        userEntity.setLastName(userRequest.getLastName());
+		/*
+		 * Copy user information supplied by the client.
+		 */
+		userEntity.setUsername(userRequest.getUsername());
+		userEntity.setFirstName(userRequest.getFirstName());
+		userEntity.setLastName(userRequest.getLastName());
 
-        String normalizedEmail = FreshMealUtilities.normalizeEmail(
-                userRequest.getEmail().getValue());
+		String normalizedEmail = FreshMealUtilities.normalizeEmail(userRequest.getEmail().getValue());
 
-        userEntity.setEmail(
-                EmailAddress.builder()
-                        .value(normalizedEmail)
-                        .build());
+		userEntity.setEmail(EmailAddress.builder().value(normalizedEmail).build());
 
-        userEntity.setPhoneNumber(userRequest.getPhoneNumber());
+		userEntity.setPhoneNumber(userRequest.getPhoneNumber());
 
-        /*
-         * A newly registered user receives the normal USER domain role.
-         *
-         * Elevated roles must never be accepted directly from a normal registration
-         * request.
-         */
-        userEntity.setRoles(List.of(RoleType.USER));
+		/*
+		 * A newly registered user receives the normal USER domain role.
+		 *
+		 * Elevated roles must never be accepted directly from a normal registration
+		 * request.
+		 */
+		userEntity.setRoles(List.of(RoleType.USER));
 
-        /*
-         * New accounts are active by default.
-         *
-         * Authentication credentials are intentionally not handled here.
-         */
-        userEntity.setAccountNonExpired(true);
-        userEntity.setAccountNonLocked(true);
-        userEntity.setCredentialsNonExpired(true);
-        userEntity.setEnabled(true);
+		/*
+		 * New accounts are active by default.
+		 *
+		 * Authentication credentials are intentionally not handled here.
+		 */
+		userEntity.setAccountNonExpired(true);
+		userEntity.setAccountNonLocked(true);
+		userEntity.setCredentialsNonExpired(true);
+		userEntity.setEnabled(true);
 
-        /*
-         * Populate creation audit information.
-         */
-        userEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
+		/*
+		 * Populate creation audit information.
+		 */
+		userEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        if (serviceContext.getUserProfile() != null) {
+		if (serviceContext.getUserProfile() != null) {
 
-            userEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
+			userEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
 
-        } else {
+		} else {
 
-            userEntity.setCreatedBy(RoleType.ADMIN.getLabel());
-        }
+			userEntity.setCreatedBy(RoleType.ADMIN.getLabel());
+		}
 
-        return new ServiceOutput<>(userEntity);
-    }
+		return new ServiceOutput<>(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserResponse> addUser(IServiceInput<UserInputDTO> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserResponse> addUser(IServiceInput<UserInputDTO> input) {
 
-        UserInputDTO userInputDTO = input.getInput();
-        UserRequest userRequest = userInputDTO.getUserRequest();
+		UserInputDTO userInputDTO = input.getInput();
+		UserRequest userRequest = userInputDTO.getUserRequest();
 
-        /*
-         * Validate unique username before creating the entity.
-         */
-        ensureUsernameAvailable(userRequest.getUsername(), null);
+		/*
+		 * Validate unique username before creating the entity.
+		 */
+		ensureUsernameAvailable(userRequest.getUsername(), null);
 
-        /*
-         * Validate unique email before creating the entity.
-         */
-        ensureEmailAvailable(userRequest.getEmail(), null);
+		/*
+		 * Validate unique email before creating the entity.
+		 */
+		ensureEmailAvailable(userRequest.getEmail(), null);
 
-        /*
-         * Validate unique phone number before creating the entity.
-         */
-        ensurePhoneNumberAvailable(userRequest.getPhoneNumber(), null);
+		/*
+		 * Validate unique phone number before creating the entity.
+		 */
+		ensurePhoneNumberAvailable(userRequest.getPhoneNumber(), null);
 
-        UserEntity userEntity = createUserEntity(input).getOutput();
+		UserEntity userEntity = createUserEntity(input).getOutput();
 
-        userEntity = userRepository.save(userEntity);
+		userEntity = userRepository.save(userEntity);
 
-        UserResponse response = toUserResponse(userEntity);
+		UserResponse response = toUserResponse(userEntity);
 
-        return new ServiceOutput<>(response);
-    }
+		return new ServiceOutput<>(response);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserResponse> updatePassword(
-            final IServiceInput<UpdatePasswordInputDTO> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserResponse> updatePassword(final IServiceInput<UpdatePasswordInputDTO> input) {
 
-        final UpdatePasswordInputDTO updatePasswordInput = input.getInput();
+		final UpdatePasswordInputDTO updatePasswordInput = input.getInput();
 
-        final UserEntity userEntity = userRepository
-                .findOne(Query.query(
-                        Criteria.where("userNumber")
-                                .is(updatePasswordInput.getUserNumber())))
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        CommonErrorConstants.RESOURCE_NOT_FOUND));
+		final UserEntity userEntity = userRepository
+				.findOne(Query.query(Criteria.where("userNumber").is(updatePasswordInput.getUserNumber())))
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        userEntity.setPassword(updatePasswordInput.getEncodedPassword());
+		userEntity.setPassword(updatePasswordInput.getEncodedPassword());
 
-        userEntity.setUpdatedAt(
-                AppCalendar.getBusinessLocalDateTime());
+		userEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        if (serviceContext.getUserProfile() != null) {
-            userEntity.setUpdatedBy(
-                    serviceContext.getUserProfile().getUserNumber());
-        } else {
-            userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
-        }
+		if (serviceContext.getUserProfile() != null) {
+			userEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
+		} else {
+			userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+		}
 
-        userRepository.save(userEntity);
+		userRepository.save(userEntity);
 
-        return new ServiceOutput<>(toUserResponse(userEntity));
-    }
+		return new ServiceOutput<>(toUserResponse(userEntity));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserResponse> updateUser(IServiceInput<UpdateUserInputDTO> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserResponse> updateUser(IServiceInput<UpdateUserInputDTO> input) {
 
-        UpdateUserInputDTO updateInput = (UpdateUserInputDTO) input.getInput();
+		UpdateUserInputDTO updateInput = (UpdateUserInputDTO) input.getInput();
 
-        UserEntity userEntity = userRepository
-                .findOne(Query.query(Criteria.where("userNumber").is(updateInput.getUserNumber())))
-                .orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
+		UserEntity userEntity = userRepository
+				.findOne(Query.query(Criteria.where("userNumber").is(updateInput.getUserNumber())))
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        UserRequest userRequest = updateInput.getUserRequest();
+		UserRequest userRequest = updateInput.getUserRequest();
 
-        /*
-         * Validate uniqueness while excluding the current user.
-         */
-        ensureUsernameAvailable(userRequest.getUsername(), userEntity.getId());
+		/*
+		 * Validate uniqueness while excluding the current user.
+		 */
+		ensureUsernameAvailable(userRequest.getUsername(), userEntity.getId());
 
-        ensureEmailAvailable(userRequest.getEmail(), userEntity.getId());
+		ensureEmailAvailable(userRequest.getEmail(), userEntity.getId());
 
-        ensurePhoneNumberAvailable(userRequest.getPhoneNumber(), userEntity.getId());
+		ensurePhoneNumberAvailable(userRequest.getPhoneNumber(), userEntity.getId());
 
-        /*
-         * Update only fields owned by UserRequest.
-         *
-         * Sensitive/security fields, roles, addresses and account-state fields are
-         * deliberately not modified through this operation.
-         */
-        userEntity.setUsername(userRequest.getUsername());
+		/*
+		 * Update only fields owned by UserRequest.
+		 *
+		 * Sensitive/security fields, roles, addresses and account-state fields are
+		 * deliberately not modified through this operation.
+		 */
+		userEntity.setUsername(userRequest.getUsername());
 
-        userEntity.setFirstName(userRequest.getFirstName());
+		userEntity.setFirstName(userRequest.getFirstName());
 
-        userEntity.setLastName(userRequest.getLastName());
+		userEntity.setLastName(userRequest.getLastName());
 
-        String normalizedEmail = FreshMealUtilities.normalizeEmail(
-                userRequest.getEmail().getValue());
+		String normalizedEmail = FreshMealUtilities.normalizeEmail(userRequest.getEmail().getValue());
 
-        userEntity.setEmail(
-                EmailAddress.builder()
-                        .value(normalizedEmail)
-                        .build());
+		userEntity.setEmail(EmailAddress.builder().value(normalizedEmail).build());
 
-        userEntity.setPhoneNumber(userRequest.getPhoneNumber());
+		userEntity.setPhoneNumber(userRequest.getPhoneNumber());
 
-        userEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+		userEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        if (serviceContext.getUserProfile() != null) {
+		if (serviceContext.getUserProfile() != null) {
 
-            userEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
+			userEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
 
-        } else {
+		} else {
 
-            userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
-        }
+			userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+		}
 
-        userEntity = userRepository.save(userEntity);
+		userEntity = userRepository.save(userEntity);
 
-        return new ServiceOutput<>(toUserResponse(userEntity));
-    }
+		return new ServiceOutput<>(toUserResponse(userEntity));
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<Boolean> deleteUser(IServiceInput<UserIdRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<Boolean> deleteUser(IServiceInput<UserIdRequest> input) {
 
-        UserIdRequest userIdRequest = input.getInput();
+		UserIdRequest userIdRequest = input.getInput();
 
-        RepositoryContext repositoryContext = buildRepositoryContext();
+		RepositoryContext repositoryContext = buildRepositoryContext();
 
-        userRepository.softDelete(userIdRequest.getUserId(), repositoryContext);
+		userRepository.softDelete(userIdRequest.getUserId(), repositoryContext);
 
-        return new ServiceOutput<>(Boolean.TRUE);
-    }
+		return new ServiceOutput<>(Boolean.TRUE);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserResponse> enableUser(IServiceInput<UserNumberRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserResponse> enableUser(IServiceInput<UserNumberRequest> input) {
 
-        UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+		UserEntity userEntity = loadUserByUserNumber(input).getOutput();
 
-        if (userEntity.isEnabled()) {
+		if (userEntity.isEnabled()) {
 
-            throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_ENABLED);
-        }
+			throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_ENABLED);
+		}
 
-        userEntity.setEnabled(true);
+		userEntity.setEnabled(true);
 
-        return saveAccountState(userEntity);
-    }
+		return saveAccountState(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserResponse> disableUser(IServiceInput<UserNumberRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserResponse> disableUser(IServiceInput<UserNumberRequest> input) {
 
-        UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+		UserEntity userEntity = loadUserByUserNumber(input).getOutput();
 
-        if (!userEntity.isEnabled()) {
+		if (!userEntity.isEnabled()) {
 
-            throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_DISABLED);
-        }
+			throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_DISABLED);
+		}
 
-        userEntity.setEnabled(false);
+		userEntity.setEnabled(false);
 
-        return saveAccountState(userEntity);
-    }
+		return saveAccountState(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserResponse> lockUser(IServiceInput<UserNumberRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserResponse> lockUser(IServiceInput<UserNumberRequest> input) {
 
-        UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+		UserEntity userEntity = loadUserByUserNumber(input).getOutput();
 
-        if (!userEntity.isAccountNonLocked()) {
+		if (!userEntity.isAccountNonLocked()) {
 
-            throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_LOCKED);
-        }
+			throw new BusinessException(UserErrorConstants.ACCOUNT_ALREADY_LOCKED);
+		}
 
-        userEntity.setAccountNonLocked(false);
+		userEntity.setAccountNonLocked(false);
 
-        return saveAccountState(userEntity);
-    }
+		return saveAccountState(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<UserResponse> unlockUser(IServiceInput<UserNumberRequest> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<UserResponse> unlockUser(IServiceInput<UserNumberRequest> input) {
 
-        UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+		UserEntity userEntity = loadUserByUserNumber(input).getOutput();
 
-        if (userEntity.isAccountNonLocked()) {
-            throw new BusinessException(UserErrorConstants.ACCOUNT_NOT_LOCKED);
-        }
+		if (userEntity.isAccountNonLocked()) {
+			throw new BusinessException(UserErrorConstants.ACCOUNT_NOT_LOCKED);
+		}
 
-        userEntity.setAccountNonLocked(true);
+		userEntity.setAccountNonLocked(true);
 
-        return saveAccountState(userEntity);
-    }
+		return saveAccountState(userEntity);
+	}
 
-    // =========================================================================
-    // Private Business Helper Methods
-    // =========================================================================
+	// =========================================================================
+	// Private Business Helper Methods
+	// =========================================================================
 
-    /**
-     * Validates username uniqueness.
-     *
-     * @param username       username to validate
-     * @param excludedUserId user ID to exclude during update
-     */
-    private void ensureUsernameAvailable(final String username, final String excludedUserId) {
+	/**
+	 * Validates username uniqueness.
+	 *
+	 * @param username       username to validate
+	 * @param excludedUserId user ID to exclude during update
+	 */
+	private void ensureUsernameAvailable(final String username, final String excludedUserId) {
 
-        Criteria criteria = Criteria.where("username").is(username);
+		Criteria criteria = Criteria.where("username").is(username);
 
-        if (excludedUserId != null) {
-            criteria = criteria.and("id").ne(excludedUserId);
-        }
+		if (excludedUserId != null) {
+			criteria = criteria.and("id").ne(excludedUserId);
+		}
 
-        if (userRepository.exists(Query.query(criteria))) {
+		if (userRepository.exists(Query.query(criteria))) {
 
-            throw new BusinessException(UserErrorConstants.USERNAME_ALREADY_EXISTS);
-        }
-    }
+			throw new BusinessException(UserErrorConstants.USERNAME_ALREADY_EXISTS);
+		}
+	}
 
-    /**
-     * Validates email uniqueness.
-     *
-     * @param email          email to validate
-     * @param excludedUserId user ID to exclude during update
-     */
-    private void ensureEmailAvailable(final Object email, final String excludedUserId) {
+	/**
+	 * Validates email uniqueness.
+	 *
+	 * @param email          email to validate
+	 * @param excludedUserId user ID to exclude during update
+	 */
+	private void ensureEmailAvailable(final Object email, final String excludedUserId) {
 
-        if (email == null) {
-            return;
-        }
+		if (email == null) {
+			return;
+		}
 
-        Criteria criteria = Criteria.where("email").is(email);
+		Criteria criteria = Criteria.where("email").is(email);
 
-        if (excludedUserId != null) {
-            criteria = criteria.and("id").ne(excludedUserId);
-        }
+		if (excludedUserId != null) {
+			criteria = criteria.and("id").ne(excludedUserId);
+		}
 
-        if (userRepository.exists(Query.query(criteria))) {
+		if (userRepository.exists(Query.query(criteria))) {
 
-            throw new BusinessException(UserErrorConstants.EMAIL_ALREADY_EXISTS);
-        }
-    }
+			throw new BusinessException(UserErrorConstants.EMAIL_ALREADY_EXISTS);
+		}
+	}
 
-    /**
-     * Validates phone-number uniqueness.
-     *
-     * @param phoneNumber    phone number to validate
-     * @param excludedUserId user ID to exclude during update
-     */
-    private void ensurePhoneNumberAvailable(final Object phoneNumber, final String excludedUserId) {
+	/**
+	 * Validates phone-number uniqueness.
+	 *
+	 * @param phoneNumber    phone number to validate
+	 * @param excludedUserId user ID to exclude during update
+	 */
+	private void ensurePhoneNumberAvailable(final Object phoneNumber, final String excludedUserId) {
 
-        if (phoneNumber == null) {
-            return;
-        }
+		if (phoneNumber == null) {
+			return;
+		}
 
-        Criteria criteria = Criteria.where("phoneNumber").is(phoneNumber);
+		Criteria criteria = Criteria.where("phoneNumber").is(phoneNumber);
 
-        if (excludedUserId != null) {
-            criteria = criteria.and("id").ne(excludedUserId);
-        }
+		if (excludedUserId != null) {
+			criteria = criteria.and("id").ne(excludedUserId);
+		}
 
-        if (userRepository.exists(Query.query(criteria))) {
-            throw new BusinessException(UserErrorConstants.PHONE_NUMBER_ALREADY_EXISTS);
-        }
-    }
+		if (userRepository.exists(Query.query(criteria))) {
+			throw new BusinessException(UserErrorConstants.PHONE_NUMBER_ALREADY_EXISTS);
+		}
+	}
 
-    /**
-     * Saves an account-state change and updates audit information.
-     *
-     * @param userEntity modified user entity
-     * @return updated user response
-     */
-    private IServiceOutput<UserResponse> saveAccountState(UserEntity userEntity) {
+	/**
+	 * Saves an account-state change and updates audit information.
+	 *
+	 * @param userEntity modified user entity
+	 * @return updated user response
+	 */
+	private IServiceOutput<UserResponse> saveAccountState(UserEntity userEntity) {
 
-        userEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+		userEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        if (serviceContext.getUserProfile() != null) {
+		if (serviceContext.getUserProfile() != null) {
 
-            userEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
+			userEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
 
-        } else {
+		} else {
 
-            userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
-        }
+			userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+		}
 
-        userEntity = userRepository.save(userEntity);
+		userEntity = userRepository.save(userEntity);
 
-        return new ServiceOutput<>(toUserResponse(userEntity));
-    }
+		return new ServiceOutput<>(toUserResponse(userEntity));
+	}
 
-    /**
-     * Creates the repository context required by persistence operations.
-     *
-     * @return repository context
-     */
-    private RepositoryContext buildRepositoryContext() {
+	/**
+	 * Creates the repository context required by persistence operations.
+	 *
+	 * @return repository context
+	 */
+	private RepositoryContext buildRepositoryContext() {
 
-        String currentUser = RoleType.ADMIN.getLabel();
+		String currentUser = RoleType.ADMIN.getLabel();
 
-        if (serviceContext.getUserProfile() != null) {
+		if (serviceContext.getUserProfile() != null) {
 
-            currentUser = serviceContext.getUserProfile().getUserNumber();
-        }
+			currentUser = serviceContext.getUserProfile().getUserNumber();
+		}
 
-        return RepositoryContext.of(currentUser, AppCalendar.getBusinessLocalDateTime());
-    }
+		return RepositoryContext.of(currentUser, AppCalendar.getBusinessLocalDateTime());
+	}
 
-    /**
-     * Converts a UserEntity into UserResponse.
-     *
-     * @param userEntity user entity
-     * @return user response
-     */
-    private UserResponse toUserResponse(UserEntity userEntity) {
+	/**
+	 * Converts a UserEntity into UserResponse.
+	 *
+	 * @param userEntity user entity
+	 * @return user response
+	 */
+	private UserResponse toUserResponse(UserEntity userEntity) {
 
-        UserResponse response = new UserResponse();
+		UserResponse response = new UserResponse();
 
-        response.setUserNumber(userEntity.getUserNumber());
+		response.setUserNumber(userEntity.getUserNumber());
 
-        response.setUsername(userEntity.getUsername());
+		response.setUsername(userEntity.getUsername());
 
-        response.setFirstName(userEntity.getFirstName());
+		response.setFirstName(userEntity.getFirstName());
 
-        response.setLastName(userEntity.getLastName());
+		response.setLastName(userEntity.getLastName());
 
-        String normalizedEmail = FreshMealUtilities.normalizeEmail(
-                userEntity.getEmail().getValue());
+		String normalizedEmail = FreshMealUtilities.normalizeEmail(userEntity.getEmail().getValue());
 
-        response.setEmail(
-                EmailAddress.builder()
-                        .value(normalizedEmail)
-                        .build());
+		response.setEmail(EmailAddress.builder().value(normalizedEmail).build());
 
-        response.setPhoneNumber(userEntity.getPhoneNumber());
+		response.setPhoneNumber(userEntity.getPhoneNumber());
 
-        response.setAddressNumbers(userEntity.getAddressNumbers());
+		response.setAddressNumbers(userEntity.getAddressNumbers());
 
-        response.setRoles(userEntity.getRoles());
+		response.setRoles(userEntity.getRoles());
 
-        return response;
-    }
+		return response;
+	}
 
-    @Override
-    public IServiceOutput<UserEntity> loadUserByEmail(
-            IServiceInput<EmailRequest> input) {
+	@Override
+	public IServiceOutput<UserEntity> loadUserByEmail(IServiceInput<EmailRequest> input) {
 
-        EmailRequest request = input.getInput();
+		EmailRequest request = input.getInput();
 
-        if (request == null
-                || request.getEmail() == null
-                || !FreshMealUtilities.hasText(
-                        request.getEmail().getValue())) {
+		if (request == null || request.getEmail() == null
+				|| !FreshMealUtilities.hasText(request.getEmail().getValue())) {
 
-            throw new BusinessException(
-                    UserErrorConstants.EMAIL_REQUIRED);
-        }
+			throw new BusinessException(UserErrorConstants.EMAIL_REQUIRED);
+		}
 
-        String email = FreshMealUtilities.normalizeEmail(
-                request.getEmail().getValue());
+		String email = FreshMealUtilities.normalizeEmail(request.getEmail().getValue());
 
-        Query query = Query.query(
-                Criteria.where("email.value").is(email));
+		Query query = Query.query(Criteria.where("email.value").is(email));
 
-        UserEntity userEntity = userRepository.findOne(query)
-                .orElseThrow(() -> new BusinessException(UserErrorConstants.USER_NOT_FOUND));
+		UserEntity userEntity = userRepository.findOne(query)
+				.orElseThrow(() -> new BusinessException(UserErrorConstants.USER_NOT_FOUND));
 
-        return new ServiceOutput<>(userEntity);
-    }
+		return new ServiceOutput<>(userEntity);
+	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * Creates a new FreshMeal user account specifically through the public
-     * registration workflow.
-     * </p>
-     *
-     * <p>
-     * Unlike {@link #addUser(IServiceInput)}, a newly registered account must
-     * complete email verification before authentication is permitted.
-     * Therefore, the account is created with {@code emailVerified = false}
-     * and {@code enabled = false}.
-     * </p>
-     *
-     * <h3>Registration Security</h3>
-     * <ul>
-     * <li>Username uniqueness is validated.</li>
-     * <li>Email uniqueness is validated.</li>
-     * <li>Phone-number uniqueness is validated.</li>
-     * <li>The default {@link RoleType#USER} role is assigned.</li>
-     * <li>The account remains disabled until email verification succeeds.</li>
-     * <li>Password handling remains outside this User service.</li>
-     * </ul>
-     *
-     * @param input service input containing registration information
-     * @return newly created, unverified user entity
-     */
-    @Override
-    public IServiceOutput<UserEntity> registerUser(
-            IServiceInput<UserInputDTO> input) {
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>
+	 * Creates a new FreshMeal user account specifically through the public
+	 * registration workflow.
+	 * </p>
+	 *
+	 * <p>
+	 * Unlike {@link #addUser(IServiceInput)}, a newly registered account must
+	 * complete email verification before authentication is permitted. Therefore,
+	 * the account is created with {@code emailVerified = false} and
+	 * {@code enabled = false}.
+	 * </p>
+	 *
+	 * <h3>Registration Security</h3>
+	 * <ul>
+	 * <li>Username uniqueness is validated.</li>
+	 * <li>Email uniqueness is validated.</li>
+	 * <li>Phone-number uniqueness is validated.</li>
+	 * <li>The default {@link RoleType#USER} role is assigned.</li>
+	 * <li>The account remains disabled until email verification succeeds.</li>
+	 * <li>Password handling remains outside this User service.</li>
+	 * </ul>
+	 *
+	 * @param input service input containing registration information
+	 * @return newly created, unverified user entity
+	 */
+	@Override
+	public IServiceOutput<UserEntity> registerUser(IServiceInput<UserInputDTO> input) {
 
-        UserInputDTO userInputDTO = input.getInput();
-        UserRequest userRequest = userInputDTO.getUserRequest();
+		UserInputDTO userInputDTO = input.getInput();
+		UserRequest userRequest = userInputDTO.getUserRequest();
 
-        /*
-         * Validate unique username before creating the entity.
-         */
-        ensureUsernameAvailable(
-                userRequest.getUsername(),
-                null);
+		/*
+		 * Validate unique username before creating the entity.
+		 */
+		ensureUsernameAvailable(userRequest.getUsername(), null);
 
-        /*
-         * Validate unique email before creating the entity.
-         */
-        String normalizedEmail = FreshMealUtilities.normalizeEmail(
-                userRequest.getEmail().getValue());
-        ensureEmailAvailable(
-                normalizedEmail,
-                null);
+		/*
+		 * Validate unique email before creating the entity.
+		 */
+		String normalizedEmail = FreshMealUtilities.normalizeEmail(userRequest.getEmail().getValue());
+		ensureEmailAvailable(normalizedEmail, null);
 
-        /*
-         * Validate unique phone number before creating the entity.
-         */
-        ensurePhoneNumberAvailable(
-                userRequest.getPhoneNumber(),
-                null);
+		/*
+		 * Validate unique phone number before creating the entity.
+		 */
+		ensurePhoneNumberAvailable(userRequest.getPhoneNumber(), null);
 
-        /*
-         * Create the user using the existing UserEntity creation infrastructure.
-         */
-        UserEntity userEntity = createUserEntity(input).getOutput();
+		/*
+		 * Create the user using the existing UserEntity creation infrastructure.
+		 */
+		UserEntity userEntity = createUserEntity(input).getOutput();
 
-        /*
-         * Registration requires email verification before authentication.
-         */
-        userEntity.setEmailVerified(false);
-        userEntity.setEnabled(false);
-
-        /*
-         * Persist the newly registered user.
-         */
-        userEntity = userRepository.save(userEntity);
-
-        return new ServiceOutput<>(userEntity);
-    }
-
-    /**
-     * =================================================================================================
-     * REGISTER USER
-     * =================================================================================================
-     *
-     * <p>
-     * Registers a new self-service user using an already encoded password.
-     * </p>
-     *
-     * <p>
-     * Password encoding is intentionally handled by the Authentication module.
-     * This service receives only the encoded password and remains responsible for
-     * user-domain validation, entity creation, registration state, and persistence.
-     * </p>
-     *
-     * <p>
-     * Self-registered accounts are created with {@code emailVerified = false} and
-     * {@code enabled = false}. The Authentication module is responsible for
-     * completing the subsequent email verification workflow.
-     * </p>
-     *
-     * @param input
-     *                        service input containing user registration information
-     * @param encodedPassword
-     *                        password already encoded by the Authentication module
-     * @return service output containing the persisted {@link UserEntity}
-     */
-    @Override
-    public IServiceOutput<UserEntity> registerUser(
-            final IServiceInput<UserInputDTO> input,
-            final String encodedPassword) {
-
-        if (encodedPassword == null || encodedPassword.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Encoded password must not be null or blank.");
-        }
-
-        final UserInputDTO userInputDTO = input.getInput();
-
-        final UserRequest userRequest = userInputDTO.getUserRequest();
-
-        /*
-         * Self-registration must respect the same uniqueness rules as
-         * the existing User module.
-         */
-        ensureUsernameAvailable(
-                userRequest.getUsername(),
-                null);
-
-        ensureEmailAvailable(
-                userRequest.getEmail(),
-                null);
-
-        ensurePhoneNumberAvailable(
-                userRequest.getPhoneNumber(),
-                null);
-
-        /*
-         * Reuse the existing entity creation flow so that ID generation,
-         * user-number generation, role assignment, profile mapping,
-         * and audit handling remain centralized.
-         */
-        final UserEntity userEntity = createUserEntity(input).getOutput();
-
-        /*
-         * Authentication owns password encoding.
-         * UserService only persists the already encoded value.
-         */
-        userEntity.setPassword(encodedPassword);
-
-        /*
-         * Self-registration requires email verification before
-         * the account becomes eligible for authentication.
-         */
-        userEntity.setEmailVerified(false);
-        userEntity.setEnabled(false);
-
-        final UserEntity savedUserEntity = userRepository.save(userEntity);
-
-        return new ServiceOutput<>(
-                savedUserEntity);
-    }
-
-    /**
-     * =================================================================================================
-     * ACTIVATE USER
-     * =================================================================================================
-     *
-     * <p>
-     * Activates a self-registered user after successful email verification.
-     * </p>
-     *
-     * <p>
-     * Activation marks the user's email address as verified and enables the
-     * account for authentication.
-     * </p>
-     *
-     * <p>
-     * This operation is intentionally owned by the User module so that the
-     * Authentication module does not directly modify or persist {@link UserEntity}.
-     * </p>
-     *
-     * <p>
-     * The operation is idempotent. If the user has already been verified and
-     * enabled, the existing user entity is returned without performing another
-     * persistence operation.
-     * </p>
-     *
-     * @param input service input containing the user business identifier
-     * @return service output containing the activated {@link UserEntity}
-     */
-    @Override
-    public IServiceOutput<UserEntity> activateUser(final IServiceInput<UserNumberRequest> input) {
-
-        final UserEntity userEntity = loadUserByUserNumber(input).getOutput();
-
-        /*
-         * Activation is idempotent.
-         *
-         * If the account has already completed email verification and is enabled,
-         * no further state change is required.
-         */
-        if (userEntity.isEmailVerified() && userEntity.isEnabled()) {
-
-            return new ServiceOutput<>(userEntity);
-        }
-
-        /*
-         * Mark the email address as verified and enable the account.
-         *
-         * These two state changes together represent successful activation
-         * of a self-registered user.
-         */
-        userEntity.setEmailVerified(true);
-        userEntity.setEnabled(true);
-
-        /*
-         * Populate update audit information using the same convention
-         * already used throughout this UserServiceImpl.
-         */
-        userEntity.setUpdatedAt(
-                AppCalendar.getBusinessLocalDateTime());
-
-        if (serviceContext.getUserProfile() != null) {
-
-            userEntity.setUpdatedBy(
-                    serviceContext.getUserProfile().getUserNumber());
-
-        } else {
-
-            userEntity.setUpdatedBy(
-                    RoleType.ADMIN.getLabel());
-        }
-
-        /*
-         * Persist the activated user.
-         */
-        final UserEntity savedUserEntity = userRepository.save(userEntity);
-
-        return new ServiceOutput<>(
-                savedUserEntity);
-    }
+		/*
+		 * Registration requires email verification before authentication.
+		 */
+		userEntity.setEmailVerified(false);
+		userEntity.setEnabled(false);
+
+		/*
+		 * Persist the newly registered user.
+		 */
+		userEntity = userRepository.save(userEntity);
+
+		return new ServiceOutput<>(userEntity);
+	}
+
+	/**
+	 * =================================================================================================
+	 * REGISTER USER
+	 * =================================================================================================
+	 *
+	 * <p>
+	 * Registers a new self-service user using an already encoded password.
+	 * </p>
+	 *
+	 * <p>
+	 * Password encoding is intentionally handled by the Authentication module. This
+	 * service receives only the encoded password and remains responsible for
+	 * user-domain validation, entity creation, registration state, and persistence.
+	 * </p>
+	 *
+	 * <p>
+	 * Self-registered accounts are created with {@code emailVerified = false} and
+	 * {@code enabled = false}. The Authentication module is responsible for
+	 * completing the subsequent email verification workflow.
+	 * </p>
+	 *
+	 * @param input           service input containing user registration information
+	 * @param encodedPassword password already encoded by the Authentication module
+	 * @return service output containing the persisted {@link UserEntity}
+	 */
+	@Override
+	public IServiceOutput<UserEntity> registerUser(final IServiceInput<UserInputDTO> input, final String encodedPassword) {
+
+		if (encodedPassword == null || encodedPassword.isBlank()) {
+			throw new IllegalArgumentException("Encoded password must not be null or blank.");
+		}
+
+		final UserInputDTO userInputDTO = input.getInput();
+
+		final UserRequest userRequest = userInputDTO.getUserRequest();
+
+		/*
+		 * Self-registration must respect the same uniqueness rules as the existing User
+		 * module.
+		 */
+		ensureUsernameAvailable(userRequest.getUsername(), null);
+
+		ensureEmailAvailable(userRequest.getEmail(), null);
+
+		ensurePhoneNumberAvailable(userRequest.getPhoneNumber(), null);
+
+		/*
+		 * Reuse the existing entity creation flow so that ID generation, user-number
+		 * generation, role assignment, profile mapping, and audit handling remain
+		 * centralized.
+		 */
+		final UserEntity userEntity = createUserEntity(input).getOutput();
+
+		/*
+		 * Authentication owns password encoding. UserService only persists the already
+		 * encoded value.
+		 */
+		userEntity.setPassword(encodedPassword);
+
+		/*
+		 * Self-registration requires email verification before the account becomes
+		 * eligible for authentication.
+		 */
+		userEntity.setEmailVerified(false);
+		userEntity.setEnabled(false);
+
+		final UserEntity savedUserEntity = userRepository.save(userEntity);
+
+		return new ServiceOutput<>(savedUserEntity);
+	}
+
+	/**
+	 * =================================================================================================
+	 * ACTIVATE USER
+	 * =================================================================================================
+	 *
+	 * <p>
+	 * Activates a self-registered user after successful email verification.
+	 * </p>
+	 *
+	 * <p>
+	 * Activation marks the user's email address as verified and enables the account
+	 * for authentication.
+	 * </p>
+	 *
+	 * <p>
+	 * This operation is intentionally owned by the User module so that the
+	 * Authentication module does not directly modify or persist {@link UserEntity}.
+	 * </p>
+	 *
+	 * <p>
+	 * The operation is idempotent. If the user has already been verified and
+	 * enabled, the existing user entity is returned without performing another
+	 * persistence operation.
+	 * </p>
+	 *
+	 * @param input service input containing the user business identifier
+	 * @return service output containing the activated {@link UserEntity}
+	 */
+	@Override
+	public IServiceOutput<UserEntity> activateUser(final IServiceInput<UserNumberRequest> input) {
+
+		final UserEntity userEntity = loadUserByUserNumber(input).getOutput();
+
+		/*
+		 * Activation is idempotent.
+		 *
+		 * If the account has already completed email verification and is enabled, no
+		 * further state change is required.
+		 */
+		if (userEntity.isEmailVerified() && userEntity.isEnabled()) {
+
+			return new ServiceOutput<>(userEntity);
+		}
+
+		/*
+		 * Mark the email address as verified and enable the account.
+		 *
+		 * These two state changes together represent successful activation of a
+		 * self-registered user.
+		 */
+		userEntity.setEmailVerified(true);
+		userEntity.setEnabled(true);
+
+		/*
+		 * Populate update audit information using the same convention already used
+		 * throughout this UserServiceImpl.
+		 */
+		userEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+
+		if (serviceContext.getUserProfile() != null) {
+
+			userEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
+
+		} else {
+
+			userEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+		}
+
+		/*
+		 * Persist the activated user.
+		 */
+		final UserEntity savedUserEntity = userRepository.save(userEntity);
+
+		return new ServiceOutput<>(savedUserEntity);
+	}
 
 }

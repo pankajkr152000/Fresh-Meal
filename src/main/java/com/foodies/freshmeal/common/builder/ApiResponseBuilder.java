@@ -49,371 +49,363 @@ import com.foodies.freshmeal.common.exception.IBusinessError;
  */
 public final class ApiResponseBuilder {
 
-    /**
-     * Private constructor.
-     */
-    private ApiResponseBuilder() {
-        throw new IllegalStateException("Utility class");
-    }
+	/**
+	 * Private constructor.
+	 */
+	private ApiResponseBuilder() {
+		throw new IllegalStateException("Utility class");
+	}
 
-    // =========================================================
-    // Success Responses
-    // =========================================================
+	// =========================================================
+	// Success Responses
+	// =========================================================
 
-    /**
-     * Returns HTTP 200 (OK).
-     *
-     * @return success response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> success() {
+	/**
+	 * Returns HTTP 200 (OK).
+	 *
+	 * @return success response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> success() {
 
-        return success(ApiMessageConstants.OPERATION_SUCCESSFUL, null);
-    }
+		return success(ApiMessageConstants.OPERATION_SUCCESSFUL, null);
+	}
 
-    /**
-     * Returns HTTP 200 (OK).
-     *
-     * @param data response payload
-     * @return success response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> success(T data) {
+	/**
+	 * Returns HTTP 200 (OK).
+	 *
+	 * @param data response payload
+	 * @return success response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> success(T data) {
 
-        return success(ApiMessageConstants.OPERATION_SUCCESSFUL, data);
-    }
+		return success(ApiMessageConstants.OPERATION_SUCCESSFUL, data);
+	}
 
-    /**
-     * Returns HTTP 200 (OK).
-     *
-     * @param message business message
-     * @return success response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> success(String message) {
+	/**
+	 * Returns HTTP 200 (OK).
+	 *
+	 * @param message business message
+	 * @return success response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> success(String message) {
 
-        return success(message, null);
-    }
+		return success(message, null);
+	}
 
-    /**
-     * Returns HTTP 200 (OK).
-     *
-     * @param message business message
-     * @param data    response payload
-     * @return success response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> success(String message, T data) {
+	/**
+	 * Returns HTTP 200 (OK).
+	 *
+	 * @param message business message
+	 * @param data    response payload
+	 * @return success response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> success(String message, T data) {
 
-        return buildResponse(true, HttpStatus.OK, null, message, null, data);
-    }
+		return buildResponse(true, HttpStatus.OK, null, message, null, data);
+	}
 
-    // =========================================================
-    // Created Responses
-    // =========================================================
+	// =========================================================
+	// Created Responses
+	// =========================================================
 
-    /**
-     * Returns HTTP 201 (Created).
-     *
-     * @param message business message
-     * @param data    response payload
-     * @return created response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> created(String message, T data) {
+	/**
+	 * Returns HTTP 201 (Created).
+	 *
+	 * @param message business message
+	 * @param data    response payload
+	 * @return created response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> created(String message, T data) {
 
-        return buildResponse(true, HttpStatus.CREATED, null, message, null, data);
-    }
+		return buildResponse(true, HttpStatus.CREATED, null, message, null, data);
+	}
 
-    /**
-     * Returns HTTP 201 (Created).
-     *
-     * @param data response payload
-     * @return created response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> created(T data) {
+	/**
+	 * Returns HTTP 201 (Created).
+	 *
+	 * @param data response payload
+	 * @return created response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> created(T data) {
 
-        return created(ApiMessageConstants.CREATED_SUCCESSFULLY, data);
-    }
+		return created(ApiMessageConstants.CREATED_SUCCESSFULLY, data);
+	}
 
-    // =========================================================
-    // Accepted Responses
-    // =========================================================
+	// =========================================================
+	// Accepted Responses
+	// =========================================================
 
-    /**
-     * Returns HTTP 202 (Accepted).
-     *
-     * @param message business message
-     * @return accepted response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> accepted(String message) {
+	/**
+	 * Returns HTTP 202 (Accepted).
+	 *
+	 * @param message business message
+	 * @return accepted response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> accepted(String message) {
 
-        return buildResponse(true, HttpStatus.ACCEPTED, null, message, null, null);
-    }
+		return buildResponse(true, HttpStatus.ACCEPTED, null, message, null, null);
+	}
 
-    /**
-     * Returns HTTP 202 (Accepted).
-     *
-     * @return accepted response
-     */
-    public static <T> ResponseEntity<ApiResponse<T>> accepted() {
+	/**
+	 * Returns HTTP 202 (Accepted).
+	 *
+	 * @return accepted response
+	 */
+	public static <T> ResponseEntity<ApiResponse<T>> accepted() {
 
-        return accepted(ApiMessageConstants.OPERATION_SUCCESSFUL);
-    }
+		return accepted(ApiMessageConstants.OPERATION_SUCCESSFUL);
+	}
 
-    // =========================================================
-    // No Content Response
-    // =========================================================
+	// =========================================================
+	// No Content Response
+	// =========================================================
 
-    /**
-     * Returns HTTP 204 (No Content).
-     *
-     * @return no content response
-     */
-    public static ResponseEntity<Void> noContent() {
+	/**
+	 * Returns HTTP 204 (No Content).
+	 *
+	 * @return no content response
+	 */
+	public static ResponseEntity<Void> noContent() {
 
-        return ResponseEntity.noContent().build();
-    }
+		return ResponseEntity.noContent().build();
+	}
 
-    // =========================================================
-    // Bad Request (400)
-    // =========================================================
+	// =========================================================
+	// Bad Request (400)
+	// =========================================================
 
-    /**
-     * Returns HTTP 400 (Bad Request).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return bad request response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode,
-    // String message) {
-    //
-    // return badRequest(errorCode, message, List.of(message));
-    // }
+	/**
+	 * Returns HTTP 400 (Bad Request).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return bad request response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode,
+	// String message) {
+	//
+	// return badRequest(errorCode, message, List.of(message));
+	// }
 
-    /**
-     * Returns HTTP 400 (Bad Request).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @param errors    validation errors
-     * @return bad request response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode,
-    // String message, List<String> errors) {
-    //
-    // return buildResponse(false, HttpStatus.BAD_REQUEST, errorCode, message,
-    // errors, null);
-    // }
+	/**
+	 * Returns HTTP 400 (Bad Request).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @param errors    validation errors
+	 * @return bad request response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> badRequest(String errorCode,
+	// String message, List<String> errors) {
+	//
+	// return buildResponse(false, HttpStatus.BAD_REQUEST, errorCode, message,
+	// errors, null);
+	// }
 
-    // =========================================================
-    // Unauthorized (401)
-    // =========================================================
+	// =========================================================
+	// Unauthorized (401)
+	// =========================================================
 
-    /**
-     * Returns HTTP 401 (Unauthorized).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return unauthorized response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> unauthorized(String
-    // errorCode, String message) {
-    //
-    // return buildResponse(false, HttpStatus.UNAUTHORIZED, errorCode, message,
-    // List.of(message), null);
-    // }
+	/**
+	 * Returns HTTP 401 (Unauthorized).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return unauthorized response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> unauthorized(String
+	// errorCode, String message) {
+	//
+	// return buildResponse(false, HttpStatus.UNAUTHORIZED, errorCode, message,
+	// List.of(message), null);
+	// }
 
-    // =========================================================
-    // Forbidden (403)
-    // =========================================================
+	// =========================================================
+	// Forbidden (403)
+	// =========================================================
 
-    /**
-     * Returns HTTP 403 (Forbidden).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return forbidden response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> forbidden(String errorCode,
-    // String message) {
-    //
-    // return buildResponse(false, HttpStatus.FORBIDDEN, errorCode, message,
-    // List.of(message), null);
-    // }
+	/**
+	 * Returns HTTP 403 (Forbidden).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return forbidden response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> forbidden(String errorCode,
+	// String message) {
+	//
+	// return buildResponse(false, HttpStatus.FORBIDDEN, errorCode, message,
+	// List.of(message), null);
+	// }
 
-    // =========================================================
-    // Not Found (404)
-    // =========================================================
+	// =========================================================
+	// Not Found (404)
+	// =========================================================
 
-    /**
-     * Returns HTTP 404 (Not Found).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return not found response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> notFound(String errorCode,
-    // String message) {
-    //
-    // return buildResponse(false, HttpStatus.NOT_FOUND, errorCode, message,
-    // List.of(message), null);
-    // }
+	/**
+	 * Returns HTTP 404 (Not Found).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return not found response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> notFound(String errorCode,
+	// String message) {
+	//
+	// return buildResponse(false, HttpStatus.NOT_FOUND, errorCode, message,
+	// List.of(message), null);
+	// }
 
-    // =========================================================
-    // Conflict (409)
-    // =========================================================
+	// =========================================================
+	// Conflict (409)
+	// =========================================================
 
-    /**
-     * Returns HTTP 409 (Conflict).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return conflict response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> conflict(String errorCode,
-    // String message) {
-    //
-    // return buildResponse(false, HttpStatus.CONFLICT, errorCode, message,
-    // List.of(message), null);
-    // }
+	/**
+	 * Returns HTTP 409 (Conflict).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return conflict response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> conflict(String errorCode,
+	// String message) {
+	//
+	// return buildResponse(false, HttpStatus.CONFLICT, errorCode, message,
+	// List.of(message), null);
+	// }
 
-    // =========================================================
-    // Method Not Allowed (405)
-    // =========================================================
+	// =========================================================
+	// Method Not Allowed (405)
+	// =========================================================
 
-    /**
-     * Returns HTTP 405 (Method Not Allowed).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return method not allowed response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> methodNotAllowed(String
-    // errorCode, String message) {
-    //
-    // return buildResponse(false, HttpStatus.METHOD_NOT_ALLOWED, errorCode,
-    // message, List.of(message), null);
-    // }
+	/**
+	 * Returns HTTP 405 (Method Not Allowed).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return method not allowed response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> methodNotAllowed(String
+	// errorCode, String message) {
+	//
+	// return buildResponse(false, HttpStatus.METHOD_NOT_ALLOWED, errorCode,
+	// message, List.of(message), null);
+	// }
 
-    // =========================================================
-    // Payload Too Large (413)
-    // =========================================================
+	// =========================================================
+	// Payload Too Large (413)
+	// =========================================================
 
-    /**
-     * Returns HTTP 413 (Payload Too Large).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return payload too large response
-     */
-    // @SuppressWarnings("deprecation")
-    // public static <T> ResponseEntity<ApiResponse<T>> payloadTooLarge(String
-    // errorCode, String message) {
-    //
-    // return buildResponse(false, HttpStatus.PAYLOAD_TOO_LARGE, errorCode, message,
-    // List.of(message), null);
-    // }
+	/**
+	 * Returns HTTP 413 (Payload Too Large).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return payload too large response
+	 */
+	// @SuppressWarnings("deprecation")
+	// public static <T> ResponseEntity<ApiResponse<T>> payloadTooLarge(String
+	// errorCode, String message) {
+	//
+	// return buildResponse(false, HttpStatus.PAYLOAD_TOO_LARGE, errorCode, message,
+	// List.of(message), null);
+	// }
 
-    // =========================================================
-    // Internal Server Error (500)
-    // =========================================================
+	// =========================================================
+	// Internal Server Error (500)
+	// =========================================================
 
-    /**
-     * Returns HTTP 500 (Internal Server Error).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @return internal server error response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String
-    // errorCode, String message) {
-    //
-    // return internalServerError(errorCode, message, List.of(message));
-    // }
+	/**
+	 * Returns HTTP 500 (Internal Server Error).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @return internal server error response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String
+	// errorCode, String message) {
+	//
+	// return internalServerError(errorCode, message, List.of(message));
+	// }
 
-    /**
-     * Returns HTTP 500 (Internal Server Error).
-     *
-     * @param errorCode application error code
-     * @param message   business message
-     * @param errors    validation/business errors
-     * @return internal server error response
-     */
-    // public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String
-    // errorCode, String message,
-    // List<String> errors) {
-    //
-    // return buildResponse(false, HttpStatus.NOT_FOUND, errorCode, message, errors,
-    // null);
-    // }
+	/**
+	 * Returns HTTP 500 (Internal Server Error).
+	 *
+	 * @param errorCode application error code
+	 * @param message   business message
+	 * @param errors    validation/business errors
+	 * @return internal server error response
+	 */
+	// public static <T> ResponseEntity<ApiResponse<T>> internalServerError(String
+	// errorCode, String message,
+	// List<String> errors) {
+	//
+	// return buildResponse(false, HttpStatus.NOT_FOUND, errorCode, message, errors,
+	// null);
+	// }
 
-    // =========================================================
-    // Common Response Builder
-    // =========================================================
+	// =========================================================
+	// Common Response Builder
+	// =========================================================
 
-    /**
-     * Builds a standardized API response.
-     *
-     * @param success   indicates whether request succeeded
-     * @param status    HTTP status
-     * @param errorCode enterprise error code
-     * @param message   business message
-     * @param errors    validation/business errors
-     * @param data      response payload
-     *
-     * @return standardized ResponseEntity<ApiResponse<T>>
-     */
-    private static <T> ResponseEntity<ApiResponse<T>> buildResponse(boolean success, HttpStatus status,
-            String errorCode, String message, List<String> errors, T data) {
+	/**
+	 * Builds a standardized API response.
+	 *
+	 * @param success   indicates whether request succeeded
+	 * @param status    HTTP status
+	 * @param errorCode enterprise error code
+	 * @param message   business message
+	 * @param errors    validation/business errors
+	 * @param data      response payload
+	 *
+	 * @return standardized ResponseEntity<ApiResponse<T>>
+	 */
+	private static <T> ResponseEntity<ApiResponse<T>> buildResponse(boolean success, HttpStatus status,
+			String errorCode, String message, List<String> errors, T data) {
 
-        ApiResponse<T> response = new ApiResponse<>();
+		ApiResponse<T> response = new ApiResponse<>();
 
-        response.setSuccess(success);
+		response.setSuccess(success);
 
-        response.setHttpStatusCode(status.value());
+		response.setHttpStatusCode(status.value());
 
-        response.setHttpStatusMessage(HttpStatusCode.getDescription(status.value()));
+		response.setHttpStatusMessage(HttpStatusCode.getDescription(status.value()));
 
-        response.setErrorCode(errorCode);
+		response.setErrorCode(errorCode);
 
-        response.setMessage(message);
+		response.setMessage(message);
 
-        response.setErrors(errors);
+		response.setErrors(errors);
 
-        response.setData(data);
+		response.setData(data);
 
-        return ResponseEntity.status(status).body(response);
-    }
+		return ResponseEntity.status(status).body(response);
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(String errorCode, String errorMessage) {
-        return buildResponse(false, HttpStatus.INTERNAL_SERVER_ERROR, errorCode, errorMessage, null, null);
-    }
+	public static <T> ResponseEntity<ApiResponse<T>> buildResponse(String errorCode, String errorMessage) {
+		return buildResponse(false, HttpStatus.INTERNAL_SERVER_ERROR, errorCode, errorMessage, null, null);
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(HttpStatusCode httpStatusCode, String errorCode,
-            String errorMessage, List<String> errors) {
+	public static <T> ResponseEntity<ApiResponse<T>> buildResponse(HttpStatusCode httpStatusCode, String errorCode,
+			String errorMessage, List<String> errors) {
 
-        return buildResponse(false, httpStatusCode.toHttpStatus(), errorCode, errorMessage, errors, null);
-    }
+		return buildResponse(false, httpStatusCode.toHttpStatus(), errorCode, errorMessage, errors, null);
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(HttpStatusCode httpStatusCode, String errorCode,
-            String errorMessage) {
+	public static <T> ResponseEntity<ApiResponse<T>> buildResponse(HttpStatusCode httpStatusCode, String errorCode,
+			String errorMessage) {
 
-        return buildResponse(httpStatusCode, errorCode, errorMessage, List.of(errorMessage));
-    }
+		return buildResponse(httpStatusCode, errorCode, errorMessage, List.of(errorMessage));
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(final IBusinessError error,
-            List<String> errors) {
-        return buildResponse(
-                error.getHttpStatusCode(),
-                error.getErrorCode(),
-                error.getErrorMessage(),
-                errors);
-    }
+	public static <T> ResponseEntity<ApiResponse<T>> buildResponse(final IBusinessError error, List<String> errors) {
+		return buildResponse(error.getHttpStatusCode(), error.getErrorCode(), error.getErrorMessage(), errors);
+	}
 
-    public static <T> ResponseEntity<ApiResponse<T>> buildResponse(final IBusinessError error) {
+	public static <T> ResponseEntity<ApiResponse<T>> buildResponse(final IBusinessError error) {
 
-        return buildResponse(
-                error.getHttpStatusCode(),
-                error.getErrorCode(),
-                error.getErrorMessage(),
-                List.of(error.getErrorMessage()));
-    }
+		return buildResponse(error.getHttpStatusCode(), error.getErrorCode(), error.getErrorMessage(),
+				List.of(error.getErrorMessage()));
+	}
 
 }

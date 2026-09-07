@@ -90,9 +90,9 @@ import com.foodies.freshmeal.common.constants.ApiBaseConstants;
  * <h3>Authorization Boundary</h3>
  *
  * <p>
- * This configuration establishes authentication boundaries only. Detailed
- * role- and permission-based authorization belongs to the Authorization module
- * and can be introduced without redesigning the authentication infrastructure.
+ * This configuration establishes authentication boundaries only. Detailed role-
+ * and permission-based authorization belongs to the Authorization module and
+ * can be introduced without redesigning the authentication infrastructure.
  * </p>
  *
  * ============================================================================
@@ -105,245 +105,220 @@ import com.foodies.freshmeal.common.constants.ApiBaseConstants;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final IUserDetailsService userDetailsService;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final IUserDetailsService userDetailsService;
 
-    /**
-     * Creates the security configuration.
-     *
-     * @param jwtAuthenticationFilter JWT request authentication filter.
-     * @param userDetailsService      FreshMeal user-details service.
-     */
-    public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            IUserDetailsService userDetailsService) {
+	/**
+	 * Creates the security configuration.
+	 *
+	 * @param jwtAuthenticationFilter JWT request authentication filter.
+	 * @param userDetailsService      FreshMeal user-details service.
+	 */
+	public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, IUserDetailsService userDetailsService) {
 
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.userDetailsService = userDetailsService;
-    }
+		this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+		this.userDetailsService = userDetailsService;
+	}
 
-    // =========================================================================
-    // Password Encoding
-    // =========================================================================
+	// =========================================================================
+	// Password Encoding
+	// =========================================================================
 
-    /**
-     * Provides the application's password encoder.
-     *
-     * <p>
-     * A delegating password encoder is used so that passwords are stored with
-     * an explicit encoding identifier. This allows FreshMeal to support secure
-     * password-encoding strategies and future migration without coupling the
-     * domain model to a concrete encoder implementation.
-     *
-     * <pre>
-     * {id}encoded-password
-     * </pre>
-     * </p>
-     *
-     * @return configured password encoder.
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
+	/**
+	 * Provides the application's password encoder.
+	 *
+	 * <p>
+	 * A delegating password encoder is used so that passwords are stored with an
+	 * explicit encoding identifier. This allows FreshMeal to support secure
+	 * password-encoding strategies and future migration without coupling the domain
+	 * model to a concrete encoder implementation.
+	 *
+	 * <pre>
+	 * {id}encoded-password
+	 * </pre>
+	 * </p>
+	 *
+	 * @return configured password encoder.
+	 */
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
 
-    // =========================================================================
-    // Spring Security UserDetails Adapter
-    // =========================================================================
+	// =========================================================================
+	// Spring Security UserDetails Adapter
+	// =========================================================================
 
-    /**
-     * Adapts the FreshMeal user-details service to Spring Security.
-     *
-     * <p>
-     * FreshMeal intentionally owns its own {@link IUserDetailsService}
-     * abstraction so authentication remains integrated with the application's
-     * existing service architecture.
-     * </p>
-     *
-     * <p>
-     * Spring Security's {@link DaoAuthenticationProvider}, however, consumes
-     * the standard {@link UserDetailsService} contract. This adapter bridges
-     * those two abstractions without forcing the FreshMeal service interface to
-     * extend or depend on Spring Security's service contract.
-     * </p>
-     *
-     * @return Spring Security user-details adapter.
-     */
-    @Bean
-    public UserDetailsService springUserDetailsService() {
-        return userDetailsService::loadUserByUsernameOrUserEmail;
-    }
+	/**
+	 * Adapts the FreshMeal user-details service to Spring Security.
+	 *
+	 * <p>
+	 * FreshMeal intentionally owns its own {@link IUserDetailsService} abstraction
+	 * so authentication remains integrated with the application's existing service
+	 * architecture.
+	 * </p>
+	 *
+	 * <p>
+	 * Spring Security's {@link DaoAuthenticationProvider}, however, consumes the
+	 * standard {@link UserDetailsService} contract. This adapter bridges those two
+	 * abstractions without forcing the FreshMeal service interface to extend or
+	 * depend on Spring Security's service contract.
+	 * </p>
+	 *
+	 * @return Spring Security user-details adapter.
+	 */
+	@Bean
+	public UserDetailsService springUserDetailsService() {
+		return userDetailsService::loadUserByUsernameOrUserEmail;
+	}
 
-    // =========================================================================
-    // Authentication Manager
-    // =========================================================================
+	// =========================================================================
+	// Authentication Manager
+	// =========================================================================
 
-    /**
-     * Creates the application's authentication manager.
-     *
-     * <p>
-     * Username/password authentication is delegated to Spring Security's
-     * {@link DaoAuthenticationProvider}. The provider loads the user through
-     * the FreshMeal user-details adapter and verifies the supplied password
-     * using the configured {@link PasswordEncoder}.
-     * </p>
-     *
-     * <pre>
-     * AuthenticationManager
-     *        |
-     *        v
-     * DaoAuthenticationProvider
-     *        |
-     *        +---- UserDetailsService
-     *        |
-     *        +---- PasswordEncoder
-     * </pre>
-     *
-     * @param springUserDetailsService Spring Security user-details adapter.
-     * @param passwordEncoder          configured password encoder.
-     *
-     * @return configured authentication manager.
-     */
-    @Bean
-    public AuthenticationManager authenticationManager(
-            UserDetailsService springUserDetailsService,
-            PasswordEncoder passwordEncoder) {
+	/**
+	 * Creates the application's authentication manager.
+	 *
+	 * <p>
+	 * Username/password authentication is delegated to Spring Security's
+	 * {@link DaoAuthenticationProvider}. The provider loads the user through the
+	 * FreshMeal user-details adapter and verifies the supplied password using the
+	 * configured {@link PasswordEncoder}.
+	 * </p>
+	 *
+	 * <pre>
+	 * AuthenticationManager
+	 *        |
+	 *        v
+	 * DaoAuthenticationProvider
+	 *        |
+	 *        +---- UserDetailsService
+	 *        |
+	 *        +---- PasswordEncoder
+	 * </pre>
+	 *
+	 * @param springUserDetailsService Spring Security user-details adapter.
+	 * @param passwordEncoder          configured password encoder.
+	 *
+	 * @return configured authentication manager.
+	 */
+	@Bean
+	public AuthenticationManager authenticationManager(UserDetailsService springUserDetailsService,
+			PasswordEncoder passwordEncoder) {
 
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(springUserDetailsService);
+		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(springUserDetailsService);
 
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
+		authenticationProvider.setPasswordEncoder(passwordEncoder);
 
-        return new ProviderManager(authenticationProvider);
-    }
+		return new ProviderManager(authenticationProvider);
+	}
 
-    // =========================================================================
-    // Security Filter Chain
-    // =========================================================================
+	// =========================================================================
+	// Security Filter Chain
+	// =========================================================================
 
-    /**
-     * Configures the FreshMeal HTTP security filter chain.
-     *
-     * <p>
-     * FreshMeal is a stateless REST API. Server-side HTTP sessions are therefore
-     * disabled and authentication is established through JWT access tokens.
-     * </p>
-     *
-     * <h3>Public Authentication Endpoints</h3>
-     *
-     * <p>
-     * Registration, email verification, OTP resend, login, token refresh and
-     * password recovery/reset endpoints must be accessible without an existing
-     * authentication token.
-     * </p>
-     *
-     * <h3>Authenticated Authentication Endpoints</h3>
-     *
-     * <p>
-     * Logout and password change require an authenticated principal.
-     * </p>
-     *
-     * <h3>Application Endpoints</h3>
-     *
-     * <p>
-     * Application APIs require authentication unless a more specific
-     * authorization rule is introduced by the Authorization module.
-     * </p>
-     *
-     * @param http HTTP security configuration.
-     *
-     * @return configured security filter chain.
-     *
-     * @throws Exception when the security configuration cannot be built.
-     */
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+	/**
+	 * Configures the FreshMeal HTTP security filter chain.
+	 *
+	 * <p>
+	 * FreshMeal is a stateless REST API. Server-side HTTP sessions are therefore
+	 * disabled and authentication is established through JWT access tokens.
+	 * </p>
+	 *
+	 * <h3>Public Authentication Endpoints</h3>
+	 *
+	 * <p>
+	 * Registration, email verification, OTP resend, login, token refresh and
+	 * password recovery/reset endpoints must be accessible without an existing
+	 * authentication token.
+	 * </p>
+	 *
+	 * <h3>Authenticated Authentication Endpoints</h3>
+	 *
+	 * <p>
+	 * Logout and password change require an authenticated principal.
+	 * </p>
+	 *
+	 * <h3>Application Endpoints</h3>
+	 *
+	 * <p>
+	 * Application APIs require authentication unless a more specific authorization
+	 * rule is introduced by the Authorization module.
+	 * </p>
+	 *
+	 * @param http HTTP security configuration.
+	 *
+	 * @return configured security filter chain.
+	 *
+	 * @throws Exception when the security configuration cannot be built.
+	 */
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                // =============================================================
-                // CSRF
-                // =============================================================
-                .csrf(csrf -> csrf.disable())
+		http
+				// =============================================================
+				// CSRF
+				// =============================================================
+				.csrf(csrf -> csrf.disable())
 
-                // =============================================================
-                // Stateless Authentication
-                // =============================================================
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS))
+				// =============================================================
+				// Stateless Authentication
+				// =============================================================
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // =============================================================
-                // JWT Authentication Filter
-                // =============================================================
-                .addFilterBefore(
-                        jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class)
+				// =============================================================
+				// JWT Authentication Filter
+				// =============================================================
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
-                // =============================================================
-                // Authorization Rules
-                // =============================================================
-                .authorizeHttpRequests(authorize -> authorize
+				// =============================================================
+				// Authorization Rules
+				// =============================================================
+				.authorizeHttpRequests(authorize -> authorize
 
-                        // -----------------------------------------------------
-                        // Public Authentication Endpoints
-                        // -----------------------------------------------------
-                        .requestMatchers(
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.REGISTER,
+						// -----------------------------------------------------
+						// Public Authentication Endpoints
+						// -----------------------------------------------------
+						.requestMatchers(ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.REGISTER,
 
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.VERIFY_EMAIL_OTP,
+								ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.VERIFY_EMAIL_OTP,
 
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.RESEND_EMAIL_OTP,
+								ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.RESEND_EMAIL_OTP,
 
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.LOGIN,
+								ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.LOGIN,
 
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.REFRESH,
+								ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.REFRESH,
 
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.FORGOT_PASSWORD,
+								ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.FORGOT_PASSWORD,
 
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.RESET_PASSWORD)
-                        .permitAll()
+								ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.RESET_PASSWORD)
+						.permitAll()
 
-                        // -----------------------------------------------------
-                        // Authenticated Authentication Endpoints
-                        // -----------------------------------------------------
-                        .requestMatchers(
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.LOGOUT,
+						// -----------------------------------------------------
+						// Authenticated Authentication Endpoints
+						// -----------------------------------------------------
+						.requestMatchers(ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.LOGOUT,
 
-                                ApiBaseConstants.AUTHENTICATION_BASE_URL
-                                        + AuthenticationApiConstants.CHANGE_PASSWORD)
-                        .authenticated()
+								ApiBaseConstants.AUTHENTICATION_BASE_URL + AuthenticationApiConstants.CHANGE_PASSWORD)
+						.authenticated()
 
-                        // -----------------------------------------------------
-                        // Swagger / OpenAPI
-                        // -----------------------------------------------------
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**")
-                        .permitAll()
+						// -----------------------------------------------------
+						// Swagger / OpenAPI
+						// -----------------------------------------------------
+						.requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
 
-                        // -----------------------------------------------------
-                        // Application Endpoints
-                        // -----------------------------------------------------
-                        .requestMatchers(
-                                ApiBaseConstants.USER_BASE_URL + "/**",
-                                ApiBaseConstants.ORDER_BASE_URL + "/**")
-                        .authenticated()
+						// -----------------------------------------------------
+						// Application Endpoints
+						// -----------------------------------------------------
+						.requestMatchers(ApiBaseConstants.USER_BASE_URL + "/**",
+								ApiBaseConstants.ORDER_BASE_URL + "/**")
+						.authenticated()
 
-                        // -----------------------------------------------------
-                        // Everything Else
-                        // -----------------------------------------------------
-                        .anyRequest()
-                        .authenticated());
+						// -----------------------------------------------------
+						// Everything Else
+						// -----------------------------------------------------
+						.anyRequest().authenticated());
 
-        return http.build();
-    }
+		return http.build();
+	}
 }

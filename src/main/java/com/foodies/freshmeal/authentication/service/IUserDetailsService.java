@@ -20,8 +20,8 @@ import com.foodies.freshmeal.user.service.IUserService;
  * <p>
  * This interface intentionally remains a FreshMeal-specific abstraction rather
  * than extending Spring Security's {@code UserDetailsService}. The
- * authentication
- * module owns the integration between this service and Spring Security.
+ * authentication module owns the integration between this service and Spring
+ * Security.
  * </p>
  *
  * <h3>Responsibilities</h3>
@@ -49,34 +49,33 @@ import com.foodies.freshmeal.user.service.IUserService;
  */
 public interface IUserDetailsService {
 
-    /**
-     * Loads a FreshMeal user using a username or email address.
-     *
-     * <p>
-     * The supplied identifier is resolved as either a username or an email
-     * address. The actual user lookup is delegated to {@link IUserService} so
-     * that authentication does not bypass the existing FreshMeal service and
-     * repository architecture.
-     * </p>
-     *
-     * <p>
-     * After the user is loaded, the user's business roles are converted into
-     * Spring Security authorities and wrapped in a {@link UserProfile}.
-     * </p>
-     *
-     * <p>
-     * The returned {@link UserDetails} is subsequently consumed by Spring
-     * Security's authentication infrastructure for credential and account-state
-     * validation.
-     * </p>
-     *
-     * @param identifier username or email address supplied for authentication.
-     *
-     * @return Spring Security compatible user details.
-     *
-     * @throws UsernameNotFoundException when the user cannot be found or the
-     *                                   supplied identifier is invalid.
-     */
-    UserDetails loadUserByUsernameOrUserEmail(String identifier)
-            throws UsernameNotFoundException;
+	/**
+	 * Loads a FreshMeal user using a username or email address.
+	 *
+	 * <p>
+	 * The supplied identifier is resolved as either a username or an email address.
+	 * The actual user lookup is delegated to {@link IUserService} so that
+	 * authentication does not bypass the existing FreshMeal service and repository
+	 * architecture.
+	 * </p>
+	 *
+	 * <p>
+	 * After the user is loaded, the user's business roles are converted into Spring
+	 * Security authorities and wrapped in a {@link UserProfile}.
+	 * </p>
+	 *
+	 * <p>
+	 * The returned {@link UserDetails} is subsequently consumed by Spring
+	 * Security's authentication infrastructure for credential and account-state
+	 * validation.
+	 * </p>
+	 *
+	 * @param identifier username or email address supplied for authentication.
+	 *
+	 * @return Spring Security compatible user details.
+	 *
+	 * @throws UsernameNotFoundException when the user cannot be found or the
+	 *                                   supplied identifier is invalid.
+	 */
+	UserDetails loadUserByUsernameOrUserEmail(String identifier) throws UsernameNotFoundException;
 }

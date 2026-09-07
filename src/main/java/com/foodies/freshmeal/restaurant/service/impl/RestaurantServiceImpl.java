@@ -74,584 +74,570 @@ import com.foodies.freshmeal.restaurant.service.IRestaurantService;
 @Service
 public class RestaurantServiceImpl implements IRestaurantService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestaurantServiceImpl.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestaurantServiceImpl.class);
 
-    private final IImageService imageService;
+	private final IImageService imageService;
 
-    private final IServiceContext serviceContext;
+	private final IServiceContext serviceContext;
 
-    private final IDatabaseSequenceService databaseSequenceService;
+	private final IDatabaseSequenceService databaseSequenceService;
 
-    private final IRestaurantRepository restaurantRepository;
+	private final IRestaurantRepository restaurantRepository;
 
-    private final RestaurantMapper restaurantMapper;
+	private final RestaurantMapper restaurantMapper;
 
-    /**
-     * Creates RestaurantServiceImpl.
-     *
-     * @param imageService            image service
-     * @param serviceContext          service execution context
-     * @param databaseSequenceService database sequence service
-     * @param restaurantRepository    restaurant repository
-     * @param restaurantMapper        restaurant mapper
-     */
-    public RestaurantServiceImpl(IImageService imageService, IServiceContext serviceContext,
-            IDatabaseSequenceService databaseSequenceService, IRestaurantRepository restaurantRepository,
-            RestaurantMapper restaurantMapper) {
+	/**
+	 * Creates RestaurantServiceImpl.
+	 *
+	 * @param imageService            image service
+	 * @param serviceContext          service execution context
+	 * @param databaseSequenceService database sequence service
+	 * @param restaurantRepository    restaurant repository
+	 * @param restaurantMapper        restaurant mapper
+	 */
+	public RestaurantServiceImpl(IImageService imageService, IServiceContext serviceContext,
+			IDatabaseSequenceService databaseSequenceService, IRestaurantRepository restaurantRepository,
+			RestaurantMapper restaurantMapper) {
 
-        this.imageService = imageService;
-        this.serviceContext = serviceContext;
-        this.databaseSequenceService = databaseSequenceService;
-        this.restaurantRepository = restaurantRepository;
-        this.restaurantMapper = restaurantMapper;
-    }
+		this.imageService = imageService;
+		this.serviceContext = serviceContext;
+		this.databaseSequenceService = databaseSequenceService;
+		this.restaurantRepository = restaurantRepository;
+		this.restaurantMapper = restaurantMapper;
+	}
 
-    // =========================================================================
-    // Create
-    // =========================================================================
+	// =========================================================================
+	// Create
+	// =========================================================================
 
-    /**
-     * Creates a new restaurant.
-     *
-     * <p>
-     * A single Restaurant sequence value is used to generate both the internal
-     * database identifier and external business restaurant number.
-     * </p>
-     *
-     * <p>
-     * Restaurant images are processed through the existing ImageService.
-     * </p>
-     *
-     * @param input restaurant creation input
-     *
-     * @return created restaurant details
-     */
-    @Override
-    public IServiceOutput<RestaurantDetailsResponse> create(IServiceInput<CreateRestaurantInputDTO> input) {
+	/**
+	 * Creates a new restaurant.
+	 *
+	 * <p>
+	 * A single Restaurant sequence value is used to generate both the internal
+	 * database identifier and external business restaurant number.
+	 * </p>
+	 *
+	 * <p>
+	 * Restaurant images are processed through the existing ImageService.
+	 * </p>
+	 *
+	 * @param input restaurant creation input
+	 *
+	 * @return created restaurant details
+	 */
+	@Override
+	public IServiceOutput<RestaurantDetailsResponse> create(IServiceInput<CreateRestaurantInputDTO> input) {
 
-        Objects.requireNonNull(input, "Restaurant service input must not be null.");
+		Objects.requireNonNull(input, "Restaurant service input must not be null.");
 
-        CreateRestaurantInputDTO request = input.getInput();
+		CreateRestaurantInputDTO request = input.getInput();
 
-        Objects.requireNonNull(request, "Restaurant create request must not be null.");
+		Objects.requireNonNull(request, "Restaurant create request must not be null.");
 
-        // ---------------------------------------------------------------------
-        // Process supplied images
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Process supplied images
+		// ---------------------------------------------------------------------
 
-        ImageEntity coverImageEntity = createImageForRestaurant(request.getCoverImageFile());
+		ImageEntity coverImageEntity = createImageForRestaurant(request.getCoverImageFile());
 
-        validateImageReference(coverImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_COVER_IMAGE_NOT_FOUND);
+		validateImageReference(coverImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_COVER_IMAGE_NOT_FOUND);
 
-        ImageEntity logoImageEntity = createImageForRestaurant(request.getLogoImageFile());
+		ImageEntity logoImageEntity = createImageForRestaurant(request.getLogoImageFile());
 
-        validateImageReference(logoImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_LOGO_IMAGE_NOT_FOUND);
+		validateImageReference(logoImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_LOGO_IMAGE_NOT_FOUND);
 
-        // ---------------------------------------------------------------------
-        // Generate Restaurant sequence
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Generate Restaurant sequence
+		// ---------------------------------------------------------------------
 
-        long sequence = databaseSequenceService.generateSequence(serviceContext, SequenceConstants.RESTAURANT_SEQUENCE);
+		long sequence = databaseSequenceService.generateSequence(serviceContext, SequenceConstants.RESTAURANT_SEQUENCE);
 
-        LOGGER.info("Generated Restaurant sequence [{}]", sequence);
+		LOGGER.info("Generated Restaurant sequence [{}]", sequence);
 
-        // ---------------------------------------------------------------------
-        // Map request → entity
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Map request → entity
+		// ---------------------------------------------------------------------
 
-        RestaurantEntity restaurant = restaurantMapper.toEntity(request);
+		RestaurantEntity restaurant = restaurantMapper.toEntity(request);
 
-        // ---------------------------------------------------------------------
-        // Assign generated identifiers
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Assign generated identifiers
+		// ---------------------------------------------------------------------
 
-        restaurant.setId(String.format(SequenceConstants.RESTAURANT_DB_ID_PATTERN, sequence));
+		restaurant.setId(String.format(SequenceConstants.RESTAURANT_DB_ID_PATTERN, sequence));
 
-        restaurant.setRestaurantNumber(String.format(SequenceConstants.RESTAURANT_NUMBER_PATTERN, sequence));
+		restaurant.setRestaurantNumber(String.format(SequenceConstants.RESTAURANT_NUMBER_PATTERN, sequence));
 
-        // ---------------------------------------------------------------------
-        // Persist
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Persist
+		// ---------------------------------------------------------------------
 
-        restaurant = restaurantRepository.save(restaurant);
+		restaurant = restaurantRepository.save(restaurant);
 
-        LOGGER.info("Restaurant created successfully. id=[{}], restaurantNumber=[{}]", restaurant.getId(),
-                restaurant.getRestaurantNumber());
+		LOGGER.info("Restaurant created successfully. id=[{}], restaurantNumber=[{}]", restaurant.getId(),
+				restaurant.getRestaurantNumber());
 
-        // ---------------------------------------------------------------------
-        // Map entity → response
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Map entity → response
+		// ---------------------------------------------------------------------
 
-        RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
+		RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
 
-        return new ServiceOutput<>(response);
-    }
+		return new ServiceOutput<>(response);
+	}
 
-    // =========================================================================
-    // Get By ID
-    // =========================================================================
+	// =========================================================================
+	// Get By ID
+	// =========================================================================
 
-    /**
-     * Retrieves an active restaurant by identifier.
-     *
-     * @param input restaurant identifier request
-     *
-     * @return restaurant details
-     */
-    @Override
-    public IServiceOutput<RestaurantDetailsResponse> getById(IServiceInput<RestaurantIdRequest> input) {
+	/**
+	 * Retrieves an active restaurant by identifier.
+	 *
+	 * @param input restaurant identifier request
+	 *
+	 * @return restaurant details
+	 */
+	@Override
+	public IServiceOutput<RestaurantDetailsResponse> getById(IServiceInput<RestaurantIdRequest> input) {
 
-        Objects.requireNonNull(input, "Restaurant service input must not be null.");
+		Objects.requireNonNull(input, "Restaurant service input must not be null.");
 
-        RestaurantIdRequest request = input.getInput();
+		RestaurantIdRequest request = input.getInput();
 
-        Objects.requireNonNull(request, "Restaurant id request must not be null.");
+		Objects.requireNonNull(request, "Restaurant id request must not be null.");
 
-        RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
-                .orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
+		RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
+				.orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
 
-        RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
+		RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
 
-        return new ServiceOutput<>(response);
-    }
+		return new ServiceOutput<>(response);
+	}
 
-    // =========================================================================
-    // Get All
-    // =========================================================================
+	// =========================================================================
+	// Get All
+	// =========================================================================
 
-    /**
-     * Retrieves all active restaurants.
-     *
-     * @param input service execution input
-     *
-     * @return active restaurants
-     */
-    @Override
-    public IServiceOutput<List<RestaurantListResponse>> getAll(IServiceInput<Void> input) {
+	/**
+	 * Retrieves all active restaurants.
+	 *
+	 * @param input service execution input
+	 *
+	 * @return active restaurants
+	 */
+	@Override
+	public IServiceOutput<List<RestaurantListResponse>> getAll(IServiceInput<Void> input) {
 
-        Objects.requireNonNull(input, "Restaurant service input must not be null.");
+		Objects.requireNonNull(input, "Restaurant service input must not be null.");
 
-        List<RestaurantEntity> restaurants = restaurantRepository.findAllActive();
+		List<RestaurantEntity> restaurants = restaurantRepository.findAllActive();
 
-        List<RestaurantListResponse> responses = restaurants.stream().map(restaurantMapper::toListResponse).toList();
+		List<RestaurantListResponse> responses = restaurants.stream().map(restaurantMapper::toListResponse).toList();
 
-        return new ServiceOutput<>(responses);
-    }
+		return new ServiceOutput<>(responses);
+	}
 
-    // =========================================================================
-    // Update
-    // =========================================================================
+	// =========================================================================
+	// Update
+	// =========================================================================
 
-    /**
-     * Updates standard business information of an existing restaurant.
-     *
-     * <p>
-     * Lifecycle status and operational availability are intentionally excluded from
-     * this operation.
-     * </p>
-     *
-     * <p>
-     * When a replacement image is supplied, the image is processed and the
-     * resulting snapshot supplied through the update input is applied to the
-     * restaurant. When no replacement image is supplied, the existing image
-     * reference remains unchanged.
-     * </p>
-     *
-     * @param input restaurant update input
-     *
-     * @return updated restaurant details
-     */
-    @Override
-    public IServiceOutput<RestaurantDetailsResponse> update(IServiceInput<UpdateRestaurantInputDTO> input) {
+	/**
+	 * Updates standard business information of an existing restaurant.
+	 *
+	 * <p>
+	 * Lifecycle status and operational availability are intentionally excluded from
+	 * this operation.
+	 * </p>
+	 *
+	 * <p>
+	 * When a replacement image is supplied, the image is processed and the
+	 * resulting snapshot supplied through the update input is applied to the
+	 * restaurant. When no replacement image is supplied, the existing image
+	 * reference remains unchanged.
+	 * </p>
+	 *
+	 * @param input restaurant update input
+	 *
+	 * @return updated restaurant details
+	 */
+	@Override
+	public IServiceOutput<RestaurantDetailsResponse> update(IServiceInput<UpdateRestaurantInputDTO> input) {
 
-        Objects.requireNonNull(input, "Restaurant service input must not be null.");
+		Objects.requireNonNull(input, "Restaurant service input must not be null.");
 
-        UpdateRestaurantInputDTO updateInput = input.getInput();
+		UpdateRestaurantInputDTO updateInput = input.getInput();
 
-        Objects.requireNonNull(updateInput, "Restaurant update input must not be null.");
+		Objects.requireNonNull(updateInput, "Restaurant update input must not be null.");
 
-        RestaurantUpdateRequest request = updateInput.getRestaurantRequest();
+		RestaurantUpdateRequest request = updateInput.getRestaurantRequest();
 
-        Objects.requireNonNull(request, "Restaurant update request must not be null.");
+		Objects.requireNonNull(request, "Restaurant update request must not be null.");
 
-        // ---------------------------------------------------------------------
-        // Retrieve active Restaurant
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Retrieve active Restaurant
+		// ---------------------------------------------------------------------
 
-        RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
-                .orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
+		RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
+				.orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
 
-        // ---------------------------------------------------------------------
-        // Update business information
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Update business information
+		// ---------------------------------------------------------------------
 
-        restaurant.setRestaurantName(request.getRestaurantName());
+		restaurant.setRestaurantName(request.getRestaurantName());
 
-        restaurant.setDescription(request.getDescription());
+		restaurant.setDescription(request.getDescription());
 
-        restaurant.setPhoneNumber(PhoneNumber.toPhoneNumber(request.getPhoneNumber()));
+		restaurant.setPhoneNumber(PhoneNumber.toPhoneNumber(request.getPhoneNumber()));
 
-        restaurant.setEmailAddress(EmailAddress.toEmailAddress(request.getEmailAddress()));
+		restaurant.setEmailAddress(EmailAddress.toEmailAddress(request.getEmailAddress()));
 
-        restaurant.setWebsite(request.getWebsite());
+		restaurant.setWebsite(request.getWebsite());
 
-        restaurant.setCuisineTypes(request.getCuisineTypes());
+		restaurant.setCuisineTypes(request.getCuisineTypes());
 
-        // ---------------------------------------------------------------------
-        // Process replacement logo
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Process replacement logo
+		// ---------------------------------------------------------------------
 
-        if (updateInput.getLogoImageFile() != null && !updateInput.getLogoImageFile().isEmpty()) {
+		if (updateInput.getLogoImageFile() != null && !updateInput.getLogoImageFile().isEmpty()) {
 
-            ImageEntity logoImageEntity = createImageForRestaurant(updateInput.getLogoImageFile());
+			ImageEntity logoImageEntity = createImageForRestaurant(updateInput.getLogoImageFile());
 
-            validateImageReference(logoImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_LOGO_IMAGE_NOT_FOUND);
+			validateImageReference(logoImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_LOGO_IMAGE_NOT_FOUND);
 
-            if (updateInput.getLogoImage() != null) {
-                restaurant.setRestaurantLogoImage(updateInput.getLogoImage());
-            }
-        }
+			if (updateInput.getLogoImage() != null) {
+				restaurant.setRestaurantLogoImage(updateInput.getLogoImage());
+			}
+		}
 
-        // ---------------------------------------------------------------------
-        // Process replacement cover image
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Process replacement cover image
+		// ---------------------------------------------------------------------
 
-        if (updateInput.getCoverImageFile() != null && !updateInput.getCoverImageFile().isEmpty()) {
+		if (updateInput.getCoverImageFile() != null && !updateInput.getCoverImageFile().isEmpty()) {
 
-            ImageEntity coverImageEntity = createImageForRestaurant(updateInput.getCoverImageFile());
+			ImageEntity coverImageEntity = createImageForRestaurant(updateInput.getCoverImageFile());
 
-            validateImageReference(coverImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_COVER_IMAGE_NOT_FOUND);
+			validateImageReference(coverImageEntity.getId(), RestaurantErrorConstants.RESTAURANT_COVER_IMAGE_NOT_FOUND);
 
-            if (updateInput.getCoverImage() != null) {
-                restaurant.setRestaurantCoverImage(updateInput.getCoverImage());
-            }
-        }
+			if (updateInput.getCoverImage() != null) {
+				restaurant.setRestaurantCoverImage(updateInput.getCoverImage());
+			}
+		}
 
-        // ---------------------------------------------------------------------
-        // Persist
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Persist
+		// ---------------------------------------------------------------------
 
-        restaurant = restaurantRepository.save(restaurant);
+		restaurant = restaurantRepository.save(restaurant);
 
-        LOGGER.info("Restaurant updated successfully. id=[{}], restaurantNumber=[{}]", restaurant.getId(),
-                restaurant.getRestaurantNumber());
+		LOGGER.info("Restaurant updated successfully. id=[{}], restaurantNumber=[{}]", restaurant.getId(),
+				restaurant.getRestaurantNumber());
 
-        RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
+		RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
 
-        return new ServiceOutput<>(response);
-    }
+		return new ServiceOutput<>(response);
+	}
 
-    // =========================================================================
-    // Update Status
-    // =========================================================================
+	// =========================================================================
+	// Update Status
+	// =========================================================================
 
-    /**
-     * Updates the lifecycle status of a restaurant.
-     *
-     * <p>
-     * Validates the requested transition against the Restaurant lifecycle rules.
-     * </p>
-     *
-     * <p>
-     * Any non-active lifecycle state automatically becomes operationally
-     * unavailable.
-     * </p>
-     *
-     * @param input restaurant status update input
-     *
-     * @return updated restaurant details
-     */
-    @Override
-    public IServiceOutput<RestaurantDetailsResponse> updateStatus(IServiceInput<RestaurantStatusUpdateRequest> input) {
+	/**
+	 * Updates the lifecycle status of a restaurant.
+	 *
+	 * <p>
+	 * Validates the requested transition against the Restaurant lifecycle rules.
+	 * </p>
+	 *
+	 * <p>
+	 * Any non-active lifecycle state automatically becomes operationally
+	 * unavailable.
+	 * </p>
+	 *
+	 * @param input restaurant status update input
+	 *
+	 * @return updated restaurant details
+	 */
+	@Override
+	public IServiceOutput<RestaurantDetailsResponse> updateStatus(IServiceInput<RestaurantStatusUpdateRequest> input) {
 
-        Objects.requireNonNull(input, "Restaurant service input must not be null.");
+		Objects.requireNonNull(input, "Restaurant service input must not be null.");
 
-        RestaurantStatusUpdateRequest request = input.getInput();
+		RestaurantStatusUpdateRequest request = input.getInput();
 
-        Objects.requireNonNull(request, "Restaurant status update request must not be null.");
+		Objects.requireNonNull(request, "Restaurant status update request must not be null.");
 
-        RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
-                .orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
+		RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
+				.orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
 
-        RestaurantStatusConstant currentStatus = restaurant.getStatus();
+		RestaurantStatusConstant currentStatus = restaurant.getStatus();
 
-        RestaurantStatusConstant requestedStatus = request.getStatus();
+		RestaurantStatusConstant requestedStatus = request.getStatus();
 
-        Objects.requireNonNull(currentStatus, "Current restaurant status must not be null.");
+		Objects.requireNonNull(currentStatus, "Current restaurant status must not be null.");
 
-        Objects.requireNonNull(requestedStatus, "Requested restaurant status must not be null.");
+		Objects.requireNonNull(requestedStatus, "Requested restaurant status must not be null.");
 
-        // ---------------------------------------------------------------------
-        // Validate duplicate status
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Validate duplicate status
+		// ---------------------------------------------------------------------
 
-        if (currentStatus == requestedStatus) {
+		if (currentStatus == requestedStatus) {
 
-            throw new IllegalStateException(getAlreadyStatusError(currentStatus).getErrorMessage());
-        }
+			throw new IllegalStateException(getAlreadyStatusError(currentStatus).getErrorMessage());
+		}
 
-        // ---------------------------------------------------------------------
-        // Validate transition
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Validate transition
+		// ---------------------------------------------------------------------
 
-        validateStatusTransition(currentStatus, requestedStatus);
+		validateStatusTransition(currentStatus, requestedStatus);
 
-        // ---------------------------------------------------------------------
-        // Apply lifecycle status
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Apply lifecycle status
+		// ---------------------------------------------------------------------
 
-        restaurant.setStatus(requestedStatus);
+		restaurant.setStatus(requestedStatus);
 
-        // ---------------------------------------------------------------------
-        // Non-active status cannot be available
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Non-active status cannot be available
+		// ---------------------------------------------------------------------
 
-        if (requestedStatus != RestaurantStatusConstant.ACTIVE) {
-            restaurant.setAvailable(false);
-        }
+		if (requestedStatus != RestaurantStatusConstant.ACTIVE) {
+			restaurant.setAvailable(false);
+		}
 
-        restaurant = restaurantRepository.save(restaurant);
+		restaurant = restaurantRepository.save(restaurant);
 
-        LOGGER.info("Restaurant status updated. id=[{}], oldStatus=[{}], newStatus=[{}]", restaurant.getId(),
-                currentStatus, requestedStatus);
+		LOGGER.info("Restaurant status updated. id=[{}], oldStatus=[{}], newStatus=[{}]", restaurant.getId(),
+				currentStatus, requestedStatus);
 
-        RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
+		RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
 
-        return new ServiceOutput<>(response);
-    }
+		return new ServiceOutput<>(response);
+	}
 
-    // =========================================================================
-    // Update Availability
-    // =========================================================================
+	// =========================================================================
+	// Update Availability
+	// =========================================================================
 
-    /**
-     * Updates the operational availability of a restaurant.
-     *
-     * <p>
-     * Availability can only be enabled while the Restaurant lifecycle status is
-     * {@link RestaurantStatusConstant#ACTIVE}.
-     * </p>
-     *
-     * <p>
-     * Lifecycle status and operational availability remain independent concerns.
-     * </p>
-     *
-     * @param input restaurant availability update input
-     *
-     * @return updated restaurant details
-     */
-    @Override
-    public IServiceOutput<RestaurantDetailsResponse> updateAvailability(
-            IServiceInput<RestaurantAvailabilityUpdateRequest> input) {
+	/**
+	 * Updates the operational availability of a restaurant.
+	 *
+	 * <p>
+	 * Availability can only be enabled while the Restaurant lifecycle status is
+	 * {@link RestaurantStatusConstant#ACTIVE}.
+	 * </p>
+	 *
+	 * <p>
+	 * Lifecycle status and operational availability remain independent concerns.
+	 * </p>
+	 *
+	 * @param input restaurant availability update input
+	 *
+	 * @return updated restaurant details
+	 */
+	@Override
+	public IServiceOutput<RestaurantDetailsResponse> updateAvailability(
+			IServiceInput<RestaurantAvailabilityUpdateRequest> input) {
 
-        Objects.requireNonNull(input, "Restaurant service input must not be null.");
+		Objects.requireNonNull(input, "Restaurant service input must not be null.");
 
-        RestaurantAvailabilityUpdateRequest request = input.getInput();
+		RestaurantAvailabilityUpdateRequest request = input.getInput();
 
-        Objects.requireNonNull(request, "Restaurant availability update request must not be null.");
+		Objects.requireNonNull(request, "Restaurant availability update request must not be null.");
 
-        RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
-                .orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
+		RestaurantEntity restaurant = restaurantRepository.findActiveById(request.getRestaurantId())
+				.orElseThrow(() -> new ResourceNotFoundException(RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
 
-        // ---------------------------------------------------------------------
-        // Validate lifecycle status before enabling availability
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Validate lifecycle status before enabling availability
+		// ---------------------------------------------------------------------
 
-        if (request.isAvailable() && restaurant.getStatus() != RestaurantStatusConstant.ACTIVE) {
+		if (request.isAvailable() && restaurant.getStatus() != RestaurantStatusConstant.ACTIVE) {
 
-            throw new IllegalStateException(RestaurantErrorConstants.INVALID_RESTAURANT_STATUS.getErrorMessage());
-        }
+			throw new IllegalStateException(RestaurantErrorConstants.INVALID_RESTAURANT_STATUS.getErrorMessage());
+		}
 
-        // ---------------------------------------------------------------------
-        // Validate duplicate availability
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Validate duplicate availability
+		// ---------------------------------------------------------------------
 
-        if (restaurant.isAvailable() == request.isAvailable()) {
+		if (restaurant.isAvailable() == request.isAvailable()) {
 
-            if (request.isAvailable()) {
+			if (request.isAvailable()) {
 
-                throw new IllegalStateException(
-                        RestaurantErrorConstants.RESTAURANT_ALREADY_AVAILABLE.getErrorMessage());
+				throw new IllegalStateException(
+						RestaurantErrorConstants.RESTAURANT_ALREADY_AVAILABLE.getErrorMessage());
 
-            }
+			}
 
-            throw new IllegalStateException(RestaurantErrorConstants.RESTAURANT_ALREADY_UNAVAILABLE.getErrorMessage());
-        }
+			throw new IllegalStateException(RestaurantErrorConstants.RESTAURANT_ALREADY_UNAVAILABLE.getErrorMessage());
+		}
 
-        // ---------------------------------------------------------------------
-        // Update availability
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		// Update availability
+		// ---------------------------------------------------------------------
 
-        restaurant.setAvailable(request.isAvailable());
+		restaurant.setAvailable(request.isAvailable());
 
-        restaurant = restaurantRepository.save(restaurant);
+		restaurant = restaurantRepository.save(restaurant);
 
-        LOGGER.info("Restaurant availability updated. id=[{}], available=[{}]", restaurant.getId(),
-                restaurant.isAvailable());
+		LOGGER.info("Restaurant availability updated. id=[{}], available=[{}]", restaurant.getId(),
+				restaurant.isAvailable());
 
-        RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
+		RestaurantDetailsResponse response = restaurantMapper.toDetailsResponse(restaurant);
 
-        return new ServiceOutput<>(response);
-    }
+		return new ServiceOutput<>(response);
+	}
 
-    // =========================================================================
-    // Status Transition Validation
-    // =========================================================================
+	// =========================================================================
+	// Status Transition Validation
+	// =========================================================================
 
-    /**
-     * Validates whether a Restaurant lifecycle status transition is permitted.
-     *
-     * <p>
-     * CLOSED is a terminal lifecycle state and cannot transition to another
-     * lifecycle state.
-     * </p>
-     *
-     * @param currentStatus   current lifecycle status
-     * @param requestedStatus requested lifecycle status
-     */
-    private void validateStatusTransition(RestaurantStatusConstant currentStatus,
-            RestaurantStatusConstant requestedStatus) {
+	/**
+	 * Validates whether a Restaurant lifecycle status transition is permitted.
+	 *
+	 * <p>
+	 * CLOSED is a terminal lifecycle state and cannot transition to another
+	 * lifecycle state.
+	 * </p>
+	 *
+	 * @param currentStatus   current lifecycle status
+	 * @param requestedStatus requested lifecycle status
+	 */
+	private void validateStatusTransition(RestaurantStatusConstant currentStatus,
+			RestaurantStatusConstant requestedStatus) {
 
-        boolean validTransition = switch (currentStatus) {
+		boolean validTransition = switch (currentStatus) {
 
-            case ACTIVE -> requestedStatus == RestaurantStatusConstant.INACTIVE
-                    || requestedStatus == RestaurantStatusConstant.SUSPENDED
-                    || requestedStatus == RestaurantStatusConstant.CLOSED;
+		case ACTIVE -> requestedStatus == RestaurantStatusConstant.INACTIVE
+				|| requestedStatus == RestaurantStatusConstant.SUSPENDED
+				|| requestedStatus == RestaurantStatusConstant.CLOSED;
 
-            case INACTIVE ->
-                requestedStatus == RestaurantStatusConstant.ACTIVE
-                        || requestedStatus == RestaurantStatusConstant.SUSPENDED
-                        || requestedStatus == RestaurantStatusConstant.CLOSED;
+		case INACTIVE ->
+			requestedStatus == RestaurantStatusConstant.ACTIVE || requestedStatus == RestaurantStatusConstant.SUSPENDED
+					|| requestedStatus == RestaurantStatusConstant.CLOSED;
 
-            case SUSPENDED ->
-                requestedStatus == RestaurantStatusConstant.ACTIVE
-                        || requestedStatus == RestaurantStatusConstant.INACTIVE
-                        || requestedStatus == RestaurantStatusConstant.CLOSED;
+		case SUSPENDED ->
+			requestedStatus == RestaurantStatusConstant.ACTIVE || requestedStatus == RestaurantStatusConstant.INACTIVE
+					|| requestedStatus == RestaurantStatusConstant.CLOSED;
 
-            case CLOSED -> false;
-        };
+		case CLOSED -> false;
+		};
 
-        if (!validTransition) {
+		if (!validTransition) {
 
-            throw new IllegalStateException(
-                    RestaurantErrorConstants.INVALID_RESTAURANT_STATUS_TRANSITION.getErrorMessage());
-        }
-    }
+			throw new IllegalStateException(
+					RestaurantErrorConstants.INVALID_RESTAURANT_STATUS_TRANSITION.getErrorMessage());
+		}
+	}
 
-    /**
-     * Resolves the appropriate already-active status error.
-     *
-     * <p>
-     * The existing error contract currently provides a dedicated
-     * {@code RESTAURANT_ALREADY_ACTIVE} error. Other duplicate lifecycle states are
-     * therefore represented by the generic invalid transition error until dedicated
-     * errors are introduced.
-     * </p>
-     *
-     * @param status current Restaurant status
-     *
-     * @return applicable business error
-     */
-    private RestaurantErrorConstants getAlreadyStatusError(RestaurantStatusConstant status) {
+	/**
+	 * Resolves the appropriate already-active status error.
+	 *
+	 * <p>
+	 * The existing error contract currently provides a dedicated
+	 * {@code RESTAURANT_ALREADY_ACTIVE} error. Other duplicate lifecycle states are
+	 * therefore represented by the generic invalid transition error until dedicated
+	 * errors are introduced.
+	 * </p>
+	 *
+	 * @param status current Restaurant status
+	 *
+	 * @return applicable business error
+	 */
+	private RestaurantErrorConstants getAlreadyStatusError(RestaurantStatusConstant status) {
 
-        if (status == RestaurantStatusConstant.ACTIVE) {
-            return RestaurantErrorConstants.RESTAURANT_ALREADY_ACTIVE;
-        }
+		if (status == RestaurantStatusConstant.ACTIVE) {
+			return RestaurantErrorConstants.RESTAURANT_ALREADY_ACTIVE;
+		}
 
-        return RestaurantErrorConstants.INVALID_RESTAURANT_STATUS_TRANSITION;
-    }
+		return RestaurantErrorConstants.INVALID_RESTAURANT_STATUS_TRANSITION;
+	}
 
-    // =========================================================================
-    // Image Validation
-    // =========================================================================
+	// =========================================================================
+	// Image Validation
+	// =========================================================================
 
-    /**
-     * Validates an optional Restaurant image reference.
-     *
-     * @param imageId image identifier
-     * @param error   error returned when the image cannot be resolved
-     */
-    private void validateImageReference(String imageId, com.foodies.freshmeal.common.exception.IBusinessError error) {
+	/**
+	 * Validates an optional Restaurant image reference.
+	 *
+	 * @param imageId image identifier
+	 * @param error   error returned when the image cannot be resolved
+	 */
+	private void validateImageReference(String imageId, com.foodies.freshmeal.common.exception.IBusinessError error) {
 
-        if (imageId == null || imageId.isBlank()) {
-            return;
-        }
+		if (imageId == null || imageId.isBlank()) {
+			return;
+		}
 
-        IServiceInput<String> imageInput = new ServiceInput<>();
+		IServiceInput<String> imageInput = new ServiceInput<>();
 
-        imageInput.setInput(imageId);
+		imageInput.setInput(imageId);
 
-        imageInput.setServiceContext(serviceContext);
+		imageInput.setServiceContext(serviceContext);
 
-        IServiceOutput<ImageEntity> imageOutput = imageService.getImageEntityById(imageInput);
+		IServiceOutput<ImageEntity> imageOutput = imageService.getImageEntityById(imageInput);
 
-        if (imageOutput == null || imageOutput.getOutput() == null) {
+		if (imageOutput == null || imageOutput.getOutput() == null) {
 
-            throw new ResourceNotFoundException(error);
-        }
+			throw new ResourceNotFoundException(error);
+		}
 
-        LOGGER.debug("Validated Restaurant image reference [{}]", imageId);
-    }
+		LOGGER.debug("Validated Restaurant image reference [{}]", imageId);
+	}
 
-    // =========================================================================
-    // Restaurant Image Creation
-    // =========================================================================
+	// =========================================================================
+	// Restaurant Image Creation
+	// =========================================================================
 
-    /**
-     * Creates an ImageEntity for a Restaurant image.
-     *
-     * <p>
-     * When no file is supplied, the existing FreshMeal default image
-     * configuration is used.
-     * </p>
-     *
-     * @param imageFile uploaded image
-     *
-     * @return Restaurant image entity
-     */
-    private ImageEntity createImageForRestaurant(
-            MultipartFile imageFile) {
+	/**
+	 * Creates an ImageEntity for a Restaurant image.
+	 *
+	 * <p>
+	 * When no file is supplied, the existing FreshMeal default image configuration
+	 * is used.
+	 * </p>
+	 *
+	 * @param imageFile uploaded image
+	 *
+	 * @return Restaurant image entity
+	 */
+	private ImageEntity createImageForRestaurant(MultipartFile imageFile) {
 
-        ImageEntity imageEntity = (ImageEntity) EntityFactory.createEntity(
-                EntityName.IMAGE_ENTITY);
+		ImageEntity imageEntity = (ImageEntity) EntityFactory.createEntity(EntityName.IMAGE_ENTITY);
 
-        if (imageFile == null
-                || imageFile.isEmpty()) {
+		if (imageFile == null || imageFile.isEmpty()) {
 
-            imageEntity.setImageName(
-                    DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
+			imageEntity.setImageName(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
 
-            imageEntity.setImageUrl(
-                    DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
+			imageEntity.setImageUrl(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
 
-            return imageEntity;
-        }
+			return imageEntity;
+		}
 
-        IServiceInput<CreateImageInputDTO> imageServiceInput = new ServiceInput<>();
+		IServiceInput<CreateImageInputDTO> imageServiceInput = new ServiceInput<>();
 
-        CreateImageInputDTO createImageInputDTO = new CreateImageInputDTO();
+		CreateImageInputDTO createImageInputDTO = new CreateImageInputDTO();
 
-        createImageInputDTO.setFile(imageFile);
+		createImageInputDTO.setFile(imageFile);
 
-        imageServiceInput.setInput(
-                createImageInputDTO);
+		imageServiceInput.setInput(createImageInputDTO);
 
-        imageServiceInput.setServiceContext(
-                serviceContext);
+		imageServiceInput.setServiceContext(serviceContext);
 
-        IServiceOutput<ImageEntity> imageEntityOutput = imageService.uploadImageToS3(
-                imageServiceInput);
+		IServiceOutput<ImageEntity> imageEntityOutput = imageService.uploadImageToS3(imageServiceInput);
 
-        Objects.requireNonNull(
-                imageEntityOutput,
-                "Image service output must not be null.");
+		Objects.requireNonNull(imageEntityOutput, "Image service output must not be null.");
 
-        imageEntity = imageEntityOutput.getOutput();
+		imageEntity = imageEntityOutput.getOutput();
 
-        Objects.requireNonNull(
-                imageEntity,
-                "Image service image entity must not be null.");
+		Objects.requireNonNull(imageEntity, "Image service image entity must not be null.");
 
-        return imageEntity;
-    }
+		return imageEntity;
+	}
 }

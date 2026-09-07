@@ -26,8 +26,8 @@ import com.foodies.freshmeal.common.dto.ApiResponse;
  * Defines the public HTTP API contract for FreshMeal authentication operations.
  *
  * <p>
- * This interface represents the API boundary between authentication clients
- * and the FreshMeal authentication service. It defines the complete set of
+ * This interface represents the API boundary between authentication clients and
+ * the FreshMeal authentication service. It defines the complete set of
  * authentication-related endpoints without exposing implementation details.
  * </p>
  *
@@ -70,123 +70,114 @@ import com.foodies.freshmeal.common.dto.ApiResponse;
  */
 public interface IAuthenticationController {
 
-    // =========================================================================
-    // Registration
-    // =========================================================================
+	// =========================================================================
+	// Registration
+	// =========================================================================
 
-    /**
-     * Registers a new FreshMeal user account.
-     *
-     * <p>
-     * Registration creates the account in a pending verification state and
-     * initiates the email verification workflow.
-     * </p>
-     *
-     * @param request Registration request.
-     * @return Registration API response.
-     */
-    ResponseEntity<ApiResponse<RegisterResponse>> register(
-            RegisterRequest request);
+	/**
+	 * Registers a new FreshMeal user account.
+	 *
+	 * <p>
+	 * Registration creates the account in a pending verification state and
+	 * initiates the email verification workflow.
+	 * </p>
+	 *
+	 * @param request Registration request.
+	 * @return Registration API response.
+	 */
+	ResponseEntity<ApiResponse<RegisterResponse>> register(RegisterRequest request);
 
-    // =========================================================================
-    // Email Verification
-    // =========================================================================
+	// =========================================================================
+	// Email Verification
+	// =========================================================================
 
-    /**
-     * Verifies a user's email address using an email verification OTP.
-     *
-     * @param request Email OTP verification request.
-     * @return Email verification API response.
-     */
-    ResponseEntity<ApiResponse<VerifyEmailOtpResponse>> verifyEmailOtp(
-            VerifyEmailOtpRequest request);
+	/**
+	 * Verifies a user's email address using an email verification OTP.
+	 *
+	 * @param request Email OTP verification request.
+	 * @return Email verification API response.
+	 */
+	ResponseEntity<ApiResponse<VerifyEmailOtpResponse>> verifyEmailOtp(VerifyEmailOtpRequest request);
 
-    /**
-     * Requests a new email verification OTP for a pending account.
-     *
-     * @param request Email OTP resend request.
-     * @return Registration/verification API response.
-     */
-    ResponseEntity<ApiResponse<RegisterResponse>> resendEmailOtp(
-            ResendEmailOtpRequest request);
+	/**
+	 * Requests a new email verification OTP for a pending account.
+	 *
+	 * @param request Email OTP resend request.
+	 * @return Registration/verification API response.
+	 */
+	ResponseEntity<ApiResponse<RegisterResponse>> resendEmailOtp(ResendEmailOtpRequest request);
 
-    // =========================================================================
-    // Login
-    // =========================================================================
+	// =========================================================================
+	// Login
+	// =========================================================================
 
-    /**
-     * Authenticates a FreshMeal user using a username or email address and
-     * password.
-     *
-     * <p>
-     * Successful authentication returns an access token and a refresh token.
-     * </p>
-     *
-     * @param request Login request.
-     * @return Login API response containing authentication tokens.
-     */
-    ResponseEntity<ApiResponse<LoginResponse>> login(
-            LoginRequest request);
+	/**
+	 * Authenticates a FreshMeal user using a username or email address and
+	 * password.
+	 *
+	 * <p>
+	 * Successful authentication returns an access token and a refresh token.
+	 * </p>
+	 *
+	 * @param request Login request.
+	 * @return Login API response containing authentication tokens.
+	 */
+	ResponseEntity<ApiResponse<LoginResponse>> login(LoginRequest request);
 
-    // =========================================================================
-    // Token Management
-    // =========================================================================
+	// =========================================================================
+	// Token Management
+	// =========================================================================
 
-    /**
-     * Refreshes authentication tokens using a valid refresh token.
-     *
-     * @param request Refresh-token request.
-     * @return Newly issued authentication token information.
-     */
-    ResponseEntity<ApiResponse<TokenResponse>> refreshToken(
-            RefreshTokenRequest request);
+	/**
+	 * Refreshes authentication tokens using a valid refresh token.
+	 *
+	 * @param request Refresh-token request.
+	 * @return Newly issued authentication token information.
+	 */
+	ResponseEntity<ApiResponse<TokenResponse>> refreshToken(RefreshTokenRequest request);
 
-    // =========================================================================
-    // Logout
-    // =========================================================================
+	// =========================================================================
+	// Logout
+	// =========================================================================
 
-    /**
-     * Logs out the currently authenticated user.
-     *
-     * @param request Logout request.
-     * @return API response indicating whether logout was completed.
-     */
-    ResponseEntity<ApiResponse<Boolean>> logout(
-            LogoutRequest request);
+	/**
+	 * Logs out the currently authenticated user.
+	 *
+	 * @param request Logout request.
+	 * @return API response indicating whether logout was completed.
+	 */
+	ResponseEntity<ApiResponse<Boolean>> logout(LogoutRequest request);
 
-    // =========================================================================
-    // Password Management
-    // =========================================================================
+	// =========================================================================
+	// Password Management
+	// =========================================================================
 
-    /**
-     * Changes the password of the currently authenticated user.
-     *
-     * @param request Change-password request.
-     * @return API response indicating whether the password was changed.
-     */
-    ResponseEntity<ApiResponse<Boolean>> changePassword(
-            ChangePasswordRequest request);
+	/**
+	 * Changes the password of the currently authenticated user.
+	 *
+	 * @param request Change-password request.
+	 * @return API response indicating whether the password was changed.
+	 */
+	ResponseEntity<ApiResponse<Boolean>> changePassword(ChangePasswordRequest request);
 
-    /**
-     * Initiates password recovery for the supplied email address.
-     *
-     * <p>
-     * The implementation must not reveal whether an account exists for the
-     * supplied email address.
-     * </p>
-     *
-     * @param request Forgot-password request.
-     * @return Generic password-recovery API response.
-     */
-    ResponseEntity<ApiResponse<Boolean>> forgotPassword(
-            ForgotPasswordRequest request);
+	/**
+	 * Initiates password recovery for the supplied email address.
+	 *
+	 * <p>
+	 * The implementation must not reveal whether an account exists for the supplied
+	 * email address.
+	 * </p>
+	 *
+	 * @param request Forgot-password request.
+	 * @return Generic password-recovery API response.
+	 */
+	ResponseEntity<ApiResponse<Boolean>> forgotPassword(ForgotPasswordRequest request);
 
-    /**
-     * Resets a user's password using a valid password-reset token.
-     *
-     * @param request Password-reset request.
-     * @return API response indicating whether the password was reset.
-     */
-    ResponseEntity<ApiResponse<Boolean>> resetPassword(
-            ResetPasswordRequest request);
+	/**
+	 * Resets a user's password using a valid password-reset token.
+	 *
+	 * @param request Password-reset request.
+	 * @return API response indicating whether the password was reset.
+	 */
+	ResponseEntity<ApiResponse<Boolean>> resetPassword(ResetPasswordRequest request);
 }

@@ -1,7 +1,7 @@
 package com.foodies.freshmeal.authentication.controller.impl;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -97,7 +97,6 @@ import jakarta.validation.Valid;
  * @since 1.0
  */
 @RestController
-@Validated
 @RequestMapping(ApiBaseConstants.AUTHENTICATION_BASE_URL)
 public class AuthenticationController implements IAuthenticationController {
 
@@ -125,9 +124,7 @@ public class AuthenticationController implements IAuthenticationController {
      * @param authenticationService authentication business service.
      * @param serviceContext        current FreshMeal service context.
      */
-    public AuthenticationController(
-            IAuthenticationService authenticationService,
-            IServiceContext serviceContext) {
+    public AuthenticationController(IAuthenticationService authenticationService, IServiceContext serviceContext) {
 
         this.authenticationService = authenticationService;
         this.serviceContext = serviceContext;
@@ -150,9 +147,8 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.REGISTER, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.REGISTER)
-    public ResponseEntity<ApiResponse<RegisterResponse>> register(
-            @Valid @RequestBody RegisterRequest request) {
+    @PostMapping(AuthenticationApiConstants.REGISTER)
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(@Valid @RequestBody RegisterRequest request) {
 
         RegisterInputDTO inputDTO = new RegisterInputDTO();
 
@@ -165,9 +161,7 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.register(input);
 
-        return ApiResponseBuilder.created(
-                AuthenticationMessageConstants.REGISTRATION_SUCCESSFUL,
-                output.getOutput());
+        return ApiResponseBuilder.created(AuthenticationMessageConstants.REGISTRATION_SUCCESSFUL, output.getOutput());
     }
 
     // =========================================================================
@@ -182,7 +176,7 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.VERIFY_EMAIL_OTP, module = ModuleType.AUTHENTICATION, method = MethodType.UPDATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.VERIFY_EMAIL_OTP)
+    @PostMapping(AuthenticationApiConstants.VERIFY_EMAIL_OTP)
     public ResponseEntity<ApiResponse<VerifyEmailOtpResponse>> verifyEmailOtp(
             @Valid @RequestBody VerifyEmailOtpRequest request) {
 
@@ -197,8 +191,7 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.verifyEmailOtp(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.EMAIL_VERIFICATION_SUCCESSFUL,
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.EMAIL_VERIFICATION_SUCCESSFUL,
                 output.getOutput());
     }
 
@@ -210,7 +203,7 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.RESEND_EMAIL_OTP, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.RESEND_EMAIL_OTP)
+    @PostMapping(AuthenticationApiConstants.RESEND_EMAIL_OTP)
     public ResponseEntity<ApiResponse<RegisterResponse>> resendEmailOtp(
             @Valid @RequestBody ResendEmailOtpRequest request) {
 
@@ -225,9 +218,7 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.resendEmailOtp(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.REGISTRATION_SUCCESSFUL,
-                output.getOutput());
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.REGISTRATION_SUCCESSFUL, output.getOutput());
     }
 
     // =========================================================================
@@ -242,9 +233,8 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.LOGIN, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.LOGIN)
-    public ResponseEntity<ApiResponse<LoginResponse>> login(
-            @Valid @RequestBody LoginRequest request) {
+    @PostMapping(AuthenticationApiConstants.LOGIN)
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
 
         LoginInputDTO inputDTO = new LoginInputDTO();
 
@@ -257,9 +247,7 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.login(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.LOGIN_SUCCESSFUL,
-                output.getOutput());
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.LOGIN_SUCCESSFUL, output.getOutput());
     }
 
     // =========================================================================
@@ -274,9 +262,8 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.REFRESH_TOKEN, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.REFRESH_TOKEN)
-    public ResponseEntity<ApiResponse<TokenResponse>> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest request) {
+    @PostMapping(AuthenticationApiConstants.REFRESH_TOKEN)
+    public ResponseEntity<ApiResponse<TokenResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
 
         RefreshTokenInputDTO inputDTO = new RefreshTokenInputDTO();
 
@@ -289,9 +276,7 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.refreshToken(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.TOKEN_REFRESHED,
-                output.getOutput());
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.TOKEN_REFRESHED, output.getOutput());
     }
 
     // =========================================================================
@@ -306,9 +291,8 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.LOGOUT, module = ModuleType.AUTHENTICATION, method = MethodType.UPDATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.LOGOUT)
-    public ResponseEntity<ApiResponse<Boolean>> logout(
-            @Valid @RequestBody LogoutRequest request) {
+    @PostMapping(AuthenticationApiConstants.LOGOUT)
+    public ResponseEntity<ApiResponse<Boolean>> logout(@Valid @RequestBody LogoutRequest request) {
 
         LogoutInputDTO inputDTO = new LogoutInputDTO();
 
@@ -321,9 +305,7 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.logout(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.LOGOUT_SUCCESSFUL,
-                output.getOutput());
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.LOGOUT_SUCCESSFUL, output.getOutput());
     }
 
     // =========================================================================
@@ -338,9 +320,8 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.CHANGE_PASSWORD, module = ModuleType.AUTHENTICATION, method = MethodType.UPDATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.CHANGE_PASSWORD)
-    public ResponseEntity<ApiResponse<Boolean>> changePassword(
-            @Valid @RequestBody ChangePasswordRequest request) {
+    @PostMapping(AuthenticationApiConstants.CHANGE_PASSWORD)
+    public ResponseEntity<ApiResponse<Boolean>> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
 
         ChangePasswordInputDTO inputDTO = new ChangePasswordInputDTO();
 
@@ -353,17 +334,15 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.changePassword(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.PASSWORD_CHANGED,
-                output.getOutput());
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.PASSWORD_CHANGED, output.getOutput());
     }
 
     /**
      * Initiates password recovery for the supplied email address.
      *
      * <p>
-     * The response must remain generic and must not disclose whether an
-     * account exists for the supplied email address.
+     * The response must remain generic and must not disclose whether an account
+     * exists for the supplied email address.
      * </p>
      *
      * @param request forgot-password request.
@@ -371,9 +350,8 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.FORGOT_PASSWORD, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.FORGOT_PASSWORD)
-    public ResponseEntity<ApiResponse<Boolean>> forgotPassword(
-            @Valid @RequestBody ForgotPasswordRequest request) {
+    @PostMapping(AuthenticationApiConstants.FORGOT_PASSWORD)
+    public ResponseEntity<ApiResponse<Boolean>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
 
         ForgotPasswordInputDTO inputDTO = new ForgotPasswordInputDTO();
 
@@ -386,8 +364,7 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.forgotPassword(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.PASSWORD_RECOVERY_REQUESTED,
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.PASSWORD_RECOVERY_REQUESTED,
                 output.getOutput());
     }
 
@@ -399,9 +376,8 @@ public class AuthenticationController implements IAuthenticationController {
      */
     @Override
     @AuditApi(action = ActionType.RESET_PASSWORD, module = ModuleType.AUTHENTICATION, method = MethodType.UPDATE)
-    @org.springframework.web.bind.annotation.PostMapping(AuthenticationApiConstants.RESET_PASSWORD)
-    public ResponseEntity<ApiResponse<Boolean>> resetPassword(
-            @Valid @RequestBody ResetPasswordRequest request) {
+    @PostMapping(AuthenticationApiConstants.RESET_PASSWORD)
+    public ResponseEntity<ApiResponse<Boolean>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
 
         ResetPasswordInputDTO inputDTO = new ResetPasswordInputDTO();
 
@@ -414,8 +390,6 @@ public class AuthenticationController implements IAuthenticationController {
 
         var output = authenticationService.resetPassword(input);
 
-        return ApiResponseBuilder.success(
-                AuthenticationMessageConstants.PASSWORD_RESET_SUCCESSFUL,
-                output.getOutput());
+        return ApiResponseBuilder.success(AuthenticationMessageConstants.PASSWORD_RESET_SUCCESSFUL, output.getOutput());
     }
 }

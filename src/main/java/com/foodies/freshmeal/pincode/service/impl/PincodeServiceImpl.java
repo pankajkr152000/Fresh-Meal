@@ -18,13 +18,10 @@ import com.foodies.freshmeal.pincode.valueObject.PincodeDetails;
  * Pincode Service Implementation
  * =============================================================================
  *
- * Responsibilities
- * ----------------
- * • Validate the supplied pincode.
- * • Call the external pincode API through PincodeApiClient.
- * • Validate the external API response.
- * • Extract the required location information.
- * • Convert the external response into FreshMeal's PincodeDetails.
+ * Responsibilities ---------------- • Validate the supplied pincode. • Call the
+ * external pincode API through PincodeApiClient. • Validate the external API
+ * response. • Extract the required location information. • Convert the external
+ * response into FreshMeal's PincodeDetails.
  *
  * The service does not expose external API DTOs to the controller or other
  * application modules.
@@ -33,68 +30,54 @@ import com.foodies.freshmeal.pincode.valueObject.PincodeDetails;
 @Service
 public class PincodeServiceImpl implements IPincodeService {
 
-    private final PincodeApiClient pincodeApiClient;
+	private final PincodeApiClient pincodeApiClient;
 
-    public PincodeServiceImpl(PincodeApiClient pincodeApiClient) {
-        this.pincodeApiClient = pincodeApiClient;
-    }
+	public PincodeServiceImpl(PincodeApiClient pincodeApiClient) {
+		this.pincodeApiClient = pincodeApiClient;
+	}
 
-    @Override
-    public IServiceOutput<PincodeDetails> getPincodeDetails(
-            IServiceInput<PincodeLookupRequest> request) {
+	@Override
+	public IServiceOutput<PincodeDetails> getPincodeDetails(IServiceInput<PincodeLookupRequest> request) {
 
-        PincodeLookupRequest pincodeRequest = request.getInput();
+		PincodeLookupRequest pincodeRequest = request.getInput();
 
-        validatePincode(pincodeRequest);
+		validatePincode(pincodeRequest);
 
-        PincodeApiResponse response = pincodeApiClient.getPincodeDetails(
-                pincodeRequest.pincode());
+		PincodeApiResponse response = pincodeApiClient.getPincodeDetails(pincodeRequest.pincode());
 
-        if (response == null
-                || !Boolean.TRUE.equals(response.getSuccess())
-                || response.getData() == null
-                || response.getData().getPostOffices() == null
-                || response.getData().getPostOffices().isEmpty()) {
+		if (response == null || !Boolean.TRUE.equals(response.getSuccess()) || response.getData() == null
+				|| response.getData().getPostOffices() == null || response.getData().getPostOffices().isEmpty()) {
 
-            throw new IllegalStateException(
-                    "No details found for pincode : "
-                            + pincodeRequest.pincode());
+			throw new IllegalStateException("No details found for pincode : " + pincodeRequest.pincode());
 
-        }
+		}
 
-        PincodeApiData pincodeData = response.getData();
+		PincodeApiData pincodeData = response.getData();
 
-        PincodePostOffice postOffice = pincodeData.getPostOffices().get(0);
+		PincodePostOffice postOffice = pincodeData.getPostOffices().get(0);
 
-        PincodeDetails output = new PincodeDetails(
-                pincodeData.getPincode(),
-                "India",
-                postOffice.getState(),
-                postOffice.getDistrict());
+		PincodeDetails output = new PincodeDetails(pincodeData.getPincode(), "India", postOffice.getState(), postOffice.getDistrict());
 
-        return new ServiceOutput<>(output);
-    }
+		return new ServiceOutput<>(output);
+	}
 
-    /**
-     * Validates the supplied pincode.
-     *
-     * @param request pincode lookup request
-     */
-    private void validatePincode(PincodeLookupRequest request) {
+	/**
+	 * Validates the supplied pincode.
+	 *
+	 * @param request pincode lookup request
+	 */
+	private void validatePincode(PincodeLookupRequest request) {
 
-        if (request == null || request.pincode() == null) {
-            throw new IllegalArgumentException(
-                    "Pincode must not be null");
-        }
+		if (request == null || request.pincode() == null) {
+			throw new IllegalArgumentException("Pincode must not be null");
+		}
 
-        if (request.pincode().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Pincode must not be empty");
-        }
+		if (request.pincode().isBlank()) {
+			throw new IllegalArgumentException("Pincode must not be empty");
+		}
 
-        if (!request.pincode().matches("\\d{6}")) {
-            throw new IllegalArgumentException(
-                    "Pincode must contain exactly 6 digits");
-        }
-    }
+		if (!request.pincode().matches("\\d{6}")) {
+			throw new IllegalArgumentException("Pincode must contain exactly 6 digits");
+		}
+	}
 }

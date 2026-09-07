@@ -56,9 +56,9 @@ import com.foodies.freshmeal.user.service.IUserService;
  * </p>
  *
  * <p>
- * This component also does not access the user repository directly. User
- * lookup remains the responsibility of {@link IUserService}, preserving the
- * existing FreshMeal service-layer architecture.
+ * This component also does not access the user repository directly. User lookup
+ * remains the responsibility of {@link IUserService}, preserving the existing
+ * FreshMeal service-layer architecture.
  * </p>
  *
  * <h3>Authentication Flow</h3>
@@ -94,195 +94,179 @@ import com.foodies.freshmeal.user.service.IUserService;
 @Service
 public class UserDetailsServiceImpl implements IUserDetailsService {
 
-    // =========================================================================
-    // Dependencies
-    // =========================================================================
+	// =========================================================================
+	// Dependencies
+	// =========================================================================
 
-    /**
-     * FreshMeal user service responsible for user identity lookup.
-     */
-    private final IUserService userService;
+	/**
+	 * FreshMeal user service responsible for user identity lookup.
+	 */
+	private final IUserService userService;
 
-    // =========================================================================
-    // Constructor
-    // =========================================================================
+	// =========================================================================
+	// Constructor
+	// =========================================================================
 
-    /**
-     * Creates the FreshMeal user-details service.
-     *
-     * @param userService FreshMeal user service.
-     */
-    public UserDetailsServiceImpl(IUserService userService) {
+	/**
+	 * Creates the FreshMeal user-details service.
+	 *
+	 * @param userService FreshMeal user service.
+	 */
+	public UserDetailsServiceImpl(IUserService userService) {
 
-        this.userService = userService;
-    }
+		this.userService = userService;
+	}
 
-    // =========================================================================
-    // User Details
-    // =========================================================================
+	// =========================================================================
+	// User Details
+	// =========================================================================
 
-    /**
-     * Loads a FreshMeal user using either a username or an email address.
-     *
-     * <p>
-     * The supplied identifier is routed to the appropriate user-service
-     * lookup operation. The resulting {@link UserEntity} is then converted
-     * into a {@link UserProfile} containing the user's credentials, account
-     * state, and Spring Security authorities.
-     * </p>
-     *
-     * @param identifier username or email supplied during authentication.
-     * @return Spring Security user details.
-     * @throws UsernameNotFoundException when the user cannot be resolved.
-     */
-    @Override
-    public UserDetails loadUserByUsernameOrUserEmail(
-            String identifier) {
+	/**
+	 * Loads a FreshMeal user using either a username or an email address.
+	 *
+	 * <p>
+	 * The supplied identifier is routed to the appropriate user-service lookup
+	 * operation. The resulting {@link UserEntity} is then converted into a
+	 * {@link UserProfile} containing the user's credentials, account state, and
+	 * Spring Security authorities.
+	 * </p>
+	 *
+	 * @param identifier username or email supplied during authentication.
+	 * @return Spring Security user details.
+	 * @throws UsernameNotFoundException when the user cannot be resolved.
+	 */
+	@Override
+	public UserDetails loadUserByUsernameOrUserEmail(String identifier) {
 
-        if (identifier == null || identifier.isBlank()) {
-            throw new UsernameNotFoundException(
-                    AuthenticationErrorConstants.AUTHENTICATION_FAILED);
-        }
+		if (identifier == null || identifier.isBlank()) {
+			throw new UsernameNotFoundException(AuthenticationErrorConstants.AUTHENTICATION_FAILED);
+		}
 
-        UserEntity userEntity;
+		UserEntity userEntity;
 
-        if (isEmailIdentifier(identifier)) {
-            userEntity = loadUserByEmail(identifier);
-        } else {
-            userEntity = loadUserByUsername(identifier);
-        }
+		if (isEmailIdentifier(identifier)) {
+			userEntity = loadUserByEmail(identifier);
+		} else {
+			userEntity = loadUserByUsername(identifier);
+		}
 
-        Collection<? extends GrantedAuthority> authorities = buildAuthorities(userEntity.getRoles());
+		Collection<? extends GrantedAuthority> authorities = buildAuthorities(userEntity.getRoles());
 
-        return UserProfile.create(
-                userEntity,
-                authorities);
-    }
+		return UserProfile.create(userEntity, authorities);
+	}
 
-    // =========================================================================
-    // User Lookup
-    // =========================================================================
+	// =========================================================================
+	// User Lookup
+	// =========================================================================
 
-    /**
-     * Loads a user using a username.
-     *
-     * @param username username used for authentication.
-     * @return matching active user entity.
-     * @throws UsernameNotFoundException when the user cannot be resolved.
-     */
-    private UserEntity loadUserByUsername(
-            String username) {
+	/**
+	 * Loads a user using a username.
+	 *
+	 * @param username username used for authentication.
+	 * @return matching active user entity.
+	 * @throws UsernameNotFoundException when the user cannot be resolved.
+	 */
+	private UserEntity loadUserByUsername(String username) {
 
-        UsernameRequest request = new UsernameRequest();
+		UsernameRequest request = new UsernameRequest();
 
-        request.setUsername(username);
+		request.setUsername(username);
 
-        IServiceInput<UsernameRequest> input = new ServiceInput<>();
+		IServiceInput<UsernameRequest> input = new ServiceInput<>();
 
-        input.setInput(request);
+		input.setInput(request);
 
-        IServiceOutput<UserEntity> output = userService.loadUserByUsername(input);
+		IServiceOutput<UserEntity> output = userService.loadUserByUsername(input);
 
-        if (output == null || output.getOutput() == null) {
-            throw new UsernameNotFoundException(
-                    AuthenticationErrorConstants.AUTHENTICATION_FAILED);
-        }
+		if (output == null || output.getOutput() == null) {
+			throw new UsernameNotFoundException(AuthenticationErrorConstants.AUTHENTICATION_FAILED);
+		}
 
-        return output.getOutput();
-    }
+		return output.getOutput();
+	}
 
-    /**
-     * Loads a user using an email address.
-     *
-     * <p>
-     * The existing FreshMeal {@link EmailAddress} value object is used rather
-     * than constructing the value object directly.
-     * </p>
-     *
-     * @param email email address used for authentication.
-     * @return matching active user entity.
-     * @throws UsernameNotFoundException when the user cannot be resolved.
-     */
-    private UserEntity loadUserByEmail(
-            String email) {
+	/**
+	 * Loads a user using an email address.
+	 *
+	 * <p>
+	 * The existing FreshMeal {@link EmailAddress} value object is used rather than
+	 * constructing the value object directly.
+	 * </p>
+	 *
+	 * @param email email address used for authentication.
+	 * @return matching active user entity.
+	 * @throws UsernameNotFoundException when the user cannot be resolved.
+	 */
+	private UserEntity loadUserByEmail(String email) {
 
-        EmailRequest request = new EmailRequest();
+		EmailRequest request = new EmailRequest();
 
-        request.setEmail(
-                EmailAddress.toEmailAddress(email));
+		request.setEmail(EmailAddress.toEmailAddress(email));
 
-        IServiceInput<EmailRequest> input = new ServiceInput<>();
+		IServiceInput<EmailRequest> input = new ServiceInput<>();
 
-        input.setInput(request);
+		input.setInput(request);
 
-        IServiceOutput<UserEntity> output = userService.loadUserByEmail(input);
+		IServiceOutput<UserEntity> output = userService.loadUserByEmail(input);
 
-        if (output == null || output.getOutput() == null) {
-            throw new UsernameNotFoundException(
-                    AuthenticationErrorConstants.AUTHENTICATION_FAILED);
-        }
+		if (output == null || output.getOutput() == null) {
+			throw new UsernameNotFoundException(AuthenticationErrorConstants.AUTHENTICATION_FAILED);
+		}
 
-        return output.getOutput();
-    }
+		return output.getOutput();
+	}
 
-    // =========================================================================
-    // Authority Mapping
-    // =========================================================================
+	// =========================================================================
+	// Authority Mapping
+	// =========================================================================
 
-    /**
-     * Converts FreshMeal domain roles into Spring Security authorities.
-     *
-     * <p>
-     * FreshMeal roles are business-level roles. Spring Security receives the
-     * conventional {@code ROLE_} prefixed representation.
-     * </p>
-     *
-     * <pre>
-     * ADMIN            -&gt; ROLE_ADMIN
-     * USER             -&gt; ROLE_USER
-     * RESTAURANT_OWNER -&gt; ROLE_RESTAURANT_OWNER
-     * DELIVERY_PARTNER -&gt; ROLE_DELIVERY_PARTNER
-     * </pre>
-     *
-     * @param roles FreshMeal domain roles.
-     * @return immutable collection of Spring Security authorities.
-     */
-    private Collection<? extends GrantedAuthority> buildAuthorities(
-            Collection<RoleType> roles) {
+	/**
+	 * Converts FreshMeal domain roles into Spring Security authorities.
+	 *
+	 * <p>
+	 * FreshMeal roles are business-level roles. Spring Security receives the
+	 * conventional {@code ROLE_} prefixed representation.
+	 * </p>
+	 *
+	 * <pre>
+	 * ADMIN            -&gt; ROLE_ADMIN
+	 * USER             -&gt; ROLE_USER
+	 * RESTAURANT_OWNER -&gt; ROLE_RESTAURANT_OWNER
+	 * DELIVERY_PARTNER -&gt; ROLE_DELIVERY_PARTNER
+	 * </pre>
+	 *
+	 * @param roles FreshMeal domain roles.
+	 * @return immutable collection of Spring Security authorities.
+	 */
+	private Collection<? extends GrantedAuthority> buildAuthorities(Collection<RoleType> roles) {
 
-        if (roles == null || roles.isEmpty()) {
-            return Collections.emptyList();
-        }
+		if (roles == null || roles.isEmpty()) {
+			return Collections.emptyList();
+		}
 
-        return Collections.unmodifiableList(
-                roles.stream()
-                        .filter(role -> role != null)
-                        .map(roleType -> roleType.name())
-                        .map(role -> new SimpleGrantedAuthority(
-                                "ROLE_" + role))
-                        .collect(Collectors.toList()));
-    }
+		return Collections.unmodifiableList(roles.stream().filter(role -> role != null).map(roleType -> roleType.name())
+				.map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList()));
+	}
 
-    // =========================================================================
-    // Identifier Resolution
-    // =========================================================================
+	// =========================================================================
+	// Identifier Resolution
+	// =========================================================================
 
-    /**
-     * Determines whether the supplied authentication identifier represents an
-     * email address.
-     *
-     * <p>
-     * This method performs only identifier routing. Actual email validation
-     * remains the responsibility of the FreshMeal {@link EmailAddress} value
-     * object and user-service validation rules.
-     * </p>
-     *
-     * @param identifier authentication identifier.
-     * @return {@code true} when the identifier appears to be an email address.
-     */
-    private boolean isEmailIdentifier(
-            String identifier) {
+	/**
+	 * Determines whether the supplied authentication identifier represents an email
+	 * address.
+	 *
+	 * <p>
+	 * This method performs only identifier routing. Actual email validation remains
+	 * the responsibility of the FreshMeal {@link EmailAddress} value object and
+	 * user-service validation rules.
+	 * </p>
+	 *
+	 * @param identifier authentication identifier.
+	 * @return {@code true} when the identifier appears to be an email address.
+	 */
+	private boolean isEmailIdentifier(String identifier) {
 
-        return identifier.contains("@");
-    }
+		return identifier.contains("@");
+	}
 }

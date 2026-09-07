@@ -41,9 +41,9 @@ import com.foodies.freshmeal.user.service.ILoginHistoryService;
  *
  * <p>
  * Login history is maintained independently from
- * {@link com.foodies.freshmeal.user.entity.UserEntity}
- * so that the user entity represents current account state while authentication
- * history represents historical login and session activity.
+ * {@link com.foodies.freshmeal.user.entity.UserEntity} so that the user entity
+ * represents current account state while authentication history represents
+ * historical login and session activity.
  * </p>
  *
  * <h3>Responsibilities</h3>
@@ -60,8 +60,8 @@ import com.foodies.freshmeal.user.service.ILoginHistoryService;
  *
  * <h3>Security Boundary</h3>
  * <p>
- * This service never persists passwords, password hashes, JWTs, refresh
- * tokens, API keys, or other authentication secrets.
+ * This service never persists passwords, password hashes, JWTs, refresh tokens,
+ * API keys, or other authentication secrets.
  * </p>
  *
  * ============================================================================
@@ -72,405 +72,336 @@ import com.foodies.freshmeal.user.service.ILoginHistoryService;
 @Service
 public class LoginHistoryServiceImpl implements ILoginHistoryService {
 
-    // =========================================================================
-    // Dependencies
-    // =========================================================================
-
-    /**
-     * Database sequence service.
-     */
-    private final IDatabaseSequenceService databaseSequenceService;
-
-    /**
-     * Login-history repository.
-     */
-    private final ILoginHistoryRepository loginHistoryRepository;
-
-    /**
-     * Current service context.
-     */
-    private final IServiceContext serviceContext;
-
-    // =========================================================================
-    // Constructor
-    // =========================================================================
-
-    /**
-     * Creates a LoginHistoryServiceImpl.
-     *
-     * @param databaseSequenceService database sequence service
-     * @param loginHistoryRepository  login-history repository
-     * @param serviceContext          current service context
-     * @param tokenRevocationService  token revocation service
-     */
-    public LoginHistoryServiceImpl(
-            final IDatabaseSequenceService databaseSequenceService,
-            final ILoginHistoryRepository loginHistoryRepository,
-            final IServiceContext serviceContext) {
-
-        this.databaseSequenceService = databaseSequenceService;
-        this.loginHistoryRepository = loginHistoryRepository;
-        this.serviceContext = serviceContext;
-    }
-
-    // =========================================================================
-    // Business Identifier
-    // =========================================================================
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<String> generateLoginHistoryNumber(
-            final IServiceInput<LoginHistoryInputDTO> input) {
-
-        final long sequence = databaseSequenceService.generateSequence(
-                input.getServiceContext(),
-                SequenceConstants.LOGIN_HISTORY_ENTITY_SEQUENCE);
-
-        input.getServiceContext().setAttribute(
-                DataContext.LOGIN_HISTORY_SEQUENCE,
-                sequence);
-
-        final String loginHistoryNumber = String.format(
-                SequenceConstants.LOGIN_HISTORY_NUMBER_PATTERN,
-                sequence);
-
-        return new ServiceOutput<>(
-                loginHistoryNumber);
-    }
-
-    // =========================================================================
-    // Create
-    // =========================================================================
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<LoginHistoryEntity> createLoginHistory(
-            final IServiceInput<LoginHistoryInputDTO> input) {
-
-        final LoginHistoryInputDTO inputDTO = input.getInput();
-
-        if (inputDTO == null) {
-
-            throw new BusinessException(
-                    CommonErrorConstants.INVALID_REQUEST);
-        }
-
-        if (inputDTO.getUserNumber() == null
-                || inputDTO.getUserNumber().isBlank()) {
-
-            throw new BusinessException(
-                    CommonErrorConstants.INVALID_REQUEST);
-        }
-
-        if (inputDTO.getLoginStatus() == null) {
-
-            throw new BusinessException(
-                    CommonErrorConstants.INVALID_REQUEST);
-        }
-
-        final LoginHistoryEntity loginHistoryEntity = (LoginHistoryEntity) EntityFactory.createEntity(
-                EntityName.LOGIN_HISTORY_ENTITY);
+	// =========================================================================
+	// Dependencies
+	// =========================================================================
 
-        /*
-         * Generate business-facing login-history number.
-         */
-        final String loginHistoryNumber = generateLoginHistoryNumber(input).getOutput();
+	/**
+	 * Database sequence service.
+	 */
+	private final IDatabaseSequenceService databaseSequenceService;
 
-        loginHistoryEntity.setLoginHistoryNumber(
-                loginHistoryNumber);
+	/**
+	 * Login-history repository.
+	 */
+	private final ILoginHistoryRepository loginHistoryRepository;
 
-        /*
-         * Copy authentication audit information.
-         */
-        loginHistoryEntity.setUserNumber(
-                inputDTO.getUserNumber());
+	/**
+	 * Current service context.
+	 */
+	private final IServiceContext serviceContext;
 
-        loginHistoryEntity.setLoginStatus(
-                inputDTO.getLoginStatus());
+	// =========================================================================
+	// Constructor
+	// =========================================================================
 
-        loginHistoryEntity.setLoginTime(
-                inputDTO.getLoginTime() != null
-                        ? inputDTO.getLoginTime()
-                        : AppCalendar.getBusinessLocalDateTime());
+	/**
+	 * Creates a LoginHistoryServiceImpl.
+	 *
+	 * @param databaseSequenceService database sequence service
+	 * @param loginHistoryRepository  login-history repository
+	 * @param serviceContext          current service context
+	 * @param tokenRevocationService  token revocation service
+	 */
+	public LoginHistoryServiceImpl(final IDatabaseSequenceService databaseSequenceService,
+			final ILoginHistoryRepository loginHistoryRepository, final IServiceContext serviceContext) {
 
-        loginHistoryEntity.setSessionId(
-                inputDTO.getSessionId());
+		this.databaseSequenceService = databaseSequenceService;
+		this.loginHistoryRepository = loginHistoryRepository;
+		this.serviceContext = serviceContext;
+	}
 
-        loginHistoryEntity.setIpAddress(
-                inputDTO.getIpAddress());
+	// =========================================================================
+	// Business Identifier
+	// =========================================================================
 
-        loginHistoryEntity.setUserAgent(
-                inputDTO.getUserAgent());
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<String> generateLoginHistoryNumber(final IServiceInput<LoginHistoryInputDTO> input) {
 
-        loginHistoryEntity.setLoginServerName(
-                inputDTO.getLoginServerName());
+		final long sequence = databaseSequenceService.generateSequence(input.getServiceContext(),
+				SequenceConstants.LOGIN_HISTORY_ENTITY_SEQUENCE);
 
-        /*
-         * Populate creation audit information.
-         */
-        loginHistoryEntity.setCreatedAt(
-                AppCalendar.getBusinessLocalDateTime());
+		input.getServiceContext().setAttribute(DataContext.LOGIN_HISTORY_SEQUENCE, sequence);
 
-        if (serviceContext.getUserProfile() != null) {
+		final String loginHistoryNumber = String.format(SequenceConstants.LOGIN_HISTORY_NUMBER_PATTERN, sequence);
 
-            loginHistoryEntity.setCreatedBy(
-                    serviceContext.getUserProfile().getUserNumber());
+		return new ServiceOutput<>(loginHistoryNumber);
+	}
 
-        } else {
+	// =========================================================================
+	// Create
+	// =========================================================================
 
-            loginHistoryEntity.setCreatedBy(
-                    RoleType.ADMIN.getLabel());
-        }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<LoginHistoryEntity> createLoginHistory(final IServiceInput<LoginHistoryInputDTO> input) {
 
-        final LoginHistoryEntity savedEntity = loginHistoryRepository.save(loginHistoryEntity);
+		final LoginHistoryInputDTO inputDTO = input.getInput();
 
-        return new ServiceOutput<>(
-                savedEntity);
-    }
+		if (inputDTO == null) {
 
-    // =========================================================================
-    // Load
-    // =========================================================================
+			throw new BusinessException(CommonErrorConstants.INVALID_REQUEST);
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<LoginHistoryEntity> loadLoginHistory(
-            final IServiceInput<String> input) {
+		if (inputDTO.getUserNumber() == null || inputDTO.getUserNumber().isBlank()) {
 
-        final String id = input.getInput();
+			throw new BusinessException(CommonErrorConstants.INVALID_REQUEST);
+		}
 
-        final LoginHistoryEntity entity = loginHistoryRepository.findActiveById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        CommonErrorConstants.RESOURCE_NOT_FOUND));
+		if (inputDTO.getLoginStatus() == null) {
 
-        return new ServiceOutput<>(
-                entity);
-    }
+			throw new BusinessException(CommonErrorConstants.INVALID_REQUEST);
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<LoginHistoryEntity> loadLoginHistoryByNumber(
-            final IServiceInput<LoginHistoryNumberRequest> input) {
+		final LoginHistoryEntity loginHistoryEntity = (LoginHistoryEntity) EntityFactory
+				.createEntity(EntityName.LOGIN_HISTORY_ENTITY);
 
-        final LoginHistoryNumberRequest request = input.getInput();
-
-        final Query query = Query.query(
-                Criteria.where("loginHistoryNumber")
-                        .is(request.getLoginHistoryNumber()));
+		/*
+		 * Generate business-facing login-history number.
+		 */
+		final String loginHistoryNumber = generateLoginHistoryNumber(input).getOutput();
 
-        final LoginHistoryEntity entity = loginHistoryRepository.findOne(query)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        CommonErrorConstants.RESOURCE_NOT_FOUND));
+		loginHistoryEntity.setLoginHistoryNumber(loginHistoryNumber);
 
-        return new ServiceOutput<>(
-                entity);
-    }
+		/*
+		 * Copy authentication audit information.
+		 */
+		loginHistoryEntity.setUserNumber(inputDTO.getUserNumber());
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<List<LoginHistoryEntity>> loadLoginHistoriesByUserNumber(
-            final IServiceInput<UserNumberRequest> input) {
+		loginHistoryEntity.setLoginStatus(inputDTO.getLoginStatus());
 
-        final UserNumberRequest request = input.getInput();
+		loginHistoryEntity.setLoginTime(
+				inputDTO.getLoginTime() != null ? inputDTO.getLoginTime() : AppCalendar.getBusinessLocalDateTime());
 
-        final Query query = Query.query(
-                Criteria.where("userNumber")
-                        .is(request.getUserNumber()));
+		loginHistoryEntity.setSessionId(inputDTO.getSessionId());
 
-        final List<LoginHistoryEntity> histories = loginHistoryRepository.findAll(query);
+		loginHistoryEntity.setIpAddress(inputDTO.getIpAddress());
 
-        return new ServiceOutput<>(
-                histories);
-    }
+		loginHistoryEntity.setUserAgent(inputDTO.getUserAgent());
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<List<LoginHistoryEntity>> loadSuccessfulLoginHistories(
-            final IServiceInput<UserNumberRequest> input) {
+		loginHistoryEntity.setLoginServerName(inputDTO.getLoginServerName());
 
-        final UserNumberRequest request = input.getInput();
+		/*
+		 * Populate creation audit information.
+		 */
+		loginHistoryEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        final Query query = Query.query(
-                Criteria.where("userNumber")
-                        .is(request.getUserNumber())
-                        .and("loginStatus")
-                        .is(LoginStatus.SUCCESS));
+		if (serviceContext.getUserProfile() != null) {
 
-        final List<LoginHistoryEntity> histories = loginHistoryRepository.findAll(query);
+			loginHistoryEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
 
-        return new ServiceOutput<>(
-                histories);
-    }
+		} else {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<List<LoginHistoryEntity>> loadActiveLoginHistories(
-            final IServiceInput<UserNumberRequest> input) {
+			loginHistoryEntity.setCreatedBy(RoleType.ADMIN.getLabel());
+		}
 
-        final UserNumberRequest request = input.getInput();
+		final LoginHistoryEntity savedEntity = loginHistoryRepository.save(loginHistoryEntity);
 
-        final Query query = Query.query(
-                Criteria.where("userNumber")
-                        .is(request.getUserNumber())
-                        .and("loginStatus")
-                        .is(LoginStatus.SUCCESS)
-                        .and("logoutTime")
-                        .exists(false));
+		return new ServiceOutput<>(savedEntity);
+	}
 
-        final List<LoginHistoryEntity> histories = loginHistoryRepository.findAll(query);
+	// =========================================================================
+	// Load
+	// =========================================================================
 
-        return new ServiceOutput<>(
-                histories);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<LoginHistoryEntity> loadLoginHistory(final IServiceInput<String> input) {
 
-    // =========================================================================
-    // Logout
-    // =========================================================================
+		final String id = input.getInput();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<LoginHistoryEntity> recordLogout(
-            final IServiceInput<LoginHistoryNumberRequest> input) {
+		final LoginHistoryEntity entity = loginHistoryRepository.findActiveById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        final LoginHistoryEntity loginHistoryEntity = loadLoginHistoryByNumber(input).getOutput();
+		return new ServiceOutput<>(entity);
+	}
 
-        /*
-         * A logout timestamp must not be overwritten.
-         */
-        if (loginHistoryEntity.getLogoutTime() != null) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<LoginHistoryEntity> loadLoginHistoryByNumber(
+			final IServiceInput<LoginHistoryNumberRequest> input) {
 
-            return new ServiceOutput<>(
-                    loginHistoryEntity);
-        }
+		final LoginHistoryNumberRequest request = input.getInput();
 
-        loginHistoryEntity.setLogoutTime(
-                AppCalendar.getBusinessLocalDateTime());
+		final Query query = Query.query(Criteria.where("loginHistoryNumber").is(request.getLoginHistoryNumber()));
 
-        loginHistoryEntity.setUpdatedAt(
-                AppCalendar.getBusinessLocalDateTime());
+		final LoginHistoryEntity entity = loginHistoryRepository.findOne(query)
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
 
-        if (serviceContext.getUserProfile() != null) {
+		return new ServiceOutput<>(entity);
+	}
 
-            loginHistoryEntity.setUpdatedBy(
-                    serviceContext.getUserProfile().getUserNumber());
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<List<LoginHistoryEntity>> loadLoginHistoriesByUserNumber(
+			final IServiceInput<UserNumberRequest> input) {
 
-        } else {
+		final UserNumberRequest request = input.getInput();
 
-            loginHistoryEntity.setUpdatedBy(
-                    RoleType.ADMIN.getLabel());
-        }
+		final Query query = Query.query(Criteria.where("userNumber").is(request.getUserNumber()));
 
-        final LoginHistoryEntity savedEntity = loginHistoryRepository.save(
-                loginHistoryEntity);
+		final List<LoginHistoryEntity> histories = loginHistoryRepository.findAll(query);
 
-        return new ServiceOutput<>(
-                savedEntity);
-    }
+		return new ServiceOutput<>(histories);
+	}
 
-    // =========================================================================
-    // Delete
-    // =========================================================================
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<List<LoginHistoryEntity>> loadSuccessfulLoginHistories(
+			final IServiceInput<UserNumberRequest> input) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<Boolean> deleteLoginHistory(
-            final IServiceInput<String> input) {
+		final UserNumberRequest request = input.getInput();
 
-        final RepositoryContext repositoryContext = buildRepositoryContext();
+		final Query query = Query.query(
+				Criteria.where("userNumber").is(request.getUserNumber()).and("loginStatus").is(LoginStatus.SUCCESS));
 
-        loginHistoryRepository.softDelete(
-                input.getInput(),
-                repositoryContext);
+		final List<LoginHistoryEntity> histories = loginHistoryRepository.findAll(query);
 
-        return new ServiceOutput<>(
-                Boolean.TRUE);
-    }
+		return new ServiceOutput<>(histories);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public IServiceOutput<Boolean> permanentlyDeleteLoginHistory(
-            final IServiceInput<String> input) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<List<LoginHistoryEntity>> loadActiveLoginHistories(
+			final IServiceInput<UserNumberRequest> input) {
 
-        loginHistoryRepository.deletePermanently(
-                input.getInput());
+		final UserNumberRequest request = input.getInput();
 
-        return new ServiceOutput<>(
-                Boolean.TRUE);
-    }
+		final Query query = Query.query(Criteria.where("userNumber").is(request.getUserNumber()).and("loginStatus")
+				.is(LoginStatus.SUCCESS).and("logoutTime").exists(false));
 
-    // =========================================================================
-    // Private Helpers
-    // =========================================================================
+		final List<LoginHistoryEntity> histories = loginHistoryRepository.findAll(query);
 
-    /**
-     * Creates repository context using the current service user.
-     *
-     * @return repository context
-     */
-    private RepositoryContext buildRepositoryContext() {
+		return new ServiceOutput<>(histories);
+	}
 
-        String currentUser = RoleType.ADMIN.getLabel();
+	// =========================================================================
+	// Logout
+	// =========================================================================
 
-        if (serviceContext.getUserProfile() != null) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<LoginHistoryEntity> recordLogout(final IServiceInput<LoginHistoryNumberRequest> input) {
 
-            currentUser = serviceContext.getUserProfile().getUserNumber();
-        }
+		final LoginHistoryEntity loginHistoryEntity = loadLoginHistoryByNumber(input).getOutput();
 
-        return RepositoryContext.of(
-                currentUser,
-                AppCalendar.getBusinessLocalDateTime());
-    }
+		/*
+		 * A logout timestamp must not be overwritten.
+		 */
+		if (loginHistoryEntity.getLogoutTime() != null) {
 
-    @Override
-    public IServiceOutput<LoginHistoryEntity> loadLoginHistoryBySessionId(
-            IServiceInput<String> input) {
+			return new ServiceOutput<>(loginHistoryEntity);
+		}
 
-        String sessionId = input.getInput();
+		loginHistoryEntity.setLogoutTime(AppCalendar.getBusinessLocalDateTime());
 
-        if (!hasText(sessionId)) {
-            throw new BusinessException(CommonErrorConstants.INVALID_REQUEST);
-        }
+		loginHistoryEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        final Query query = Query.query(
-                Criteria.where("sessionId")
-                        .is(sessionId));
+		if (serviceContext.getUserProfile() != null) {
 
-        final LoginHistoryEntity entity = loginHistoryRepository.findOne(query)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        CommonErrorConstants.RESOURCE_NOT_FOUND));
+			loginHistoryEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
 
-        return new ServiceOutput<>(entity);
-    }
+		} else {
 
-    /**
-     * Determines whether a value contains meaningful text.
-     *
-     * @param value value to validate
-     * @return {@code true} when the value contains non-whitespace characters
-     */
-    private boolean hasText(final String value) {
+			loginHistoryEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+		}
 
-        return value != null
-                && !value.isBlank();
-    }
+		final LoginHistoryEntity savedEntity = loginHistoryRepository.save(loginHistoryEntity);
+
+		return new ServiceOutput<>(savedEntity);
+	}
+
+	// =========================================================================
+	// Delete
+	// =========================================================================
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<Boolean> deleteLoginHistory(final IServiceInput<String> input) {
+
+		final RepositoryContext repositoryContext = buildRepositoryContext();
+
+		loginHistoryRepository.softDelete(input.getInput(), repositoryContext);
+
+		return new ServiceOutput<>(Boolean.TRUE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public IServiceOutput<Boolean> permanentlyDeleteLoginHistory(final IServiceInput<String> input) {
+
+		loginHistoryRepository.deletePermanently(input.getInput());
+
+		return new ServiceOutput<>(Boolean.TRUE);
+	}
+
+	// =========================================================================
+	// Private Helpers
+	// =========================================================================
+
+	/**
+	 * Creates repository context using the current service user.
+	 *
+	 * @return repository context
+	 */
+	private RepositoryContext buildRepositoryContext() {
+
+		String currentUser = RoleType.ADMIN.getLabel();
+
+		if (serviceContext.getUserProfile() != null) {
+
+			currentUser = serviceContext.getUserProfile().getUserNumber();
+		}
+
+		return RepositoryContext.of(currentUser, AppCalendar.getBusinessLocalDateTime());
+	}
+
+	@Override
+	public IServiceOutput<LoginHistoryEntity> loadLoginHistoryBySessionId(IServiceInput<String> input) {
+
+		String sessionId = input.getInput();
+
+		if (!hasText(sessionId)) {
+			throw new BusinessException(CommonErrorConstants.INVALID_REQUEST);
+		}
+
+		final Query query = Query.query(Criteria.where("sessionId").is(sessionId));
+
+		final LoginHistoryEntity entity = loginHistoryRepository.findOne(query)
+				.orElseThrow(() -> new ResourceNotFoundException(CommonErrorConstants.RESOURCE_NOT_FOUND));
+
+		return new ServiceOutput<>(entity);
+	}
+
+	/**
+	 * Determines whether a value contains meaningful text.
+	 *
+	 * @param value value to validate
+	 * @return {@code true} when the value contains non-whitespace characters
+	 */
+	private boolean hasText(final String value) {
+
+		return value != null && !value.isBlank();
+	}
 }

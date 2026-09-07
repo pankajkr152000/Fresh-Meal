@@ -13,8 +13,8 @@ import java.io.Serializable;
  *
  * <p>
  * The result intentionally contains only the information required by the
- * authentication layer. OTP values, hashes, and other sensitive information
- * are never exposed.
+ * authentication layer. OTP values, hashes, and other sensitive information are
+ * never exposed.
  * </p>
  *
  * <h3>Business Meaning</h3>
@@ -31,9 +31,7 @@ import java.io.Serializable;
  *
  * =================================================================================================
  */
-public record OtpVerificationResult(
-        boolean verified,
-        int attemptsRemaining) implements Serializable {
+public record OtpVerificationResult(boolean verified, int attemptsRemaining) implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 }

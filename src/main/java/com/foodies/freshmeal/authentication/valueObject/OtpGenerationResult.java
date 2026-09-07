@@ -26,9 +26,7 @@ import java.io.Serializable;
  * @param verificationNumber persistent OTP verification identifier
  * @param rawOtp             plaintext OTP for one-time email delivery
  */
-public record OtpGenerationResult(
-        String verificationNumber,
-        String rawOtp) implements Serializable {
+public record OtpGenerationResult(String verificationNumber, String rawOtp) implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 }

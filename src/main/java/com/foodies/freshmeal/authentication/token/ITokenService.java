@@ -23,22 +23,18 @@ import com.foodies.freshmeal.user.entity.UserProfile;
  * <h3>Token Types</h3>
  *
  * <ul>
- * <li>
- * <b>Access Token</b> - short-lived token used to access protected
- * application APIs.
- * </li>
- * <li>
- * <b>Refresh Token</b> - longer-lived token used to obtain a new
- * access token.
- * </li>
+ * <li><b>Access Token</b> - short-lived token used to access protected
+ * application APIs.</li>
+ * <li><b>Refresh Token</b> - longer-lived token used to obtain a new access
+ * token.</li>
  * </ul>
  *
  * <h3>Security Boundary</h3>
  *
  * <p>
  * JWT signing, parsing, validation, and claim extraction are isolated behind
- * this interface so the rest of FreshMeal does not depend directly on the
- * JWT implementation library.
+ * this interface so the rest of FreshMeal does not depend directly on the JWT
+ * implementation library.
  * </p>
  *
  * <p>
@@ -62,116 +58,116 @@ import com.foodies.freshmeal.user.entity.UserProfile;
  */
 public interface ITokenService {
 
-    /**
-     * Generates a short-lived access token for the authenticated user.
-     *
-     * @param userProfile authenticated FreshMeal user.
-     *
-     * @return signed access token.
-     */
-    String generateAccessToken(UserProfile userProfile, String sessionId);
+	/**
+	 * Generates a short-lived access token for the authenticated user.
+	 *
+	 * @param userProfile authenticated FreshMeal user.
+	 *
+	 * @return signed access token.
+	 */
+	String generateAccessToken(UserProfile userProfile, String sessionId);
 
-    /**
-     * Generates a longer-lived refresh token for the authenticated user.
-     *
-     * @param userProfile authenticated FreshMeal user.
-     *
-     * @return signed refresh token.
-     */
-    String generateRefreshToken(UserProfile userProfile, String sessionId);
+	/**
+	 * Generates a longer-lived refresh token for the authenticated user.
+	 *
+	 * @param userProfile authenticated FreshMeal user.
+	 *
+	 * @return signed refresh token.
+	 */
+	String generateRefreshToken(UserProfile userProfile, String sessionId);
 
-    /**
-     * Validates a FreshMeal access token.
-     *
-     * <p>
-     * Validation must include signature verification, expiration validation,
-     * and verification that the token represents an access token.
-     * </p>
-     *
-     * @param token access token.
-     *
-     * @return {@code true} when the token is valid.
-     */
-    boolean isAccessTokenValid(String token);
+	/**
+	 * Validates a FreshMeal access token.
+	 *
+	 * <p>
+	 * Validation must include signature verification, expiration validation, and
+	 * verification that the token represents an access token.
+	 * </p>
+	 *
+	 * @param token access token.
+	 *
+	 * @return {@code true} when the token is valid.
+	 */
+	boolean isAccessTokenValid(String token);
 
-    /**
-     * Validates a FreshMeal refresh token.
-     *
-     * <p>
-     * Validation must include signature verification, expiration validation,
-     * and verification that the token represents a refresh token.
-     * </p>
-     *
-     * @param token refresh token.
-     *
-     * @return {@code true} when the token is valid.
-     */
-    boolean isRefreshTokenValid(String token);
+	/**
+	 * Validates a FreshMeal refresh token.
+	 *
+	 * <p>
+	 * Validation must include signature verification, expiration validation, and
+	 * verification that the token represents a refresh token.
+	 * </p>
+	 *
+	 * @param token refresh token.
+	 *
+	 * @return {@code true} when the token is valid.
+	 */
+	boolean isRefreshTokenValid(String token);
 
-    /**
-     * Extracts the username from a cryptographically verified token.
-     *
-     * @param token JWT token.
-     *
-     * @return username contained in the verified token.
-     */
-    String getUsername(String token);
+	/**
+	 * Extracts the username from a cryptographically verified token.
+	 *
+	 * @param token JWT token.
+	 *
+	 * @return username contained in the verified token.
+	 */
+	String getUsername(String token);
 
-    /**
-     * Extracts the FreshMeal business user number from a cryptographically
-     * verified token.
-     *
-     * @param token JWT token.
-     *
-     * @return FreshMeal user number contained in the verified token.
-     */
-    String getUserNumber(String token);
+	/**
+	 * Extracts the FreshMeal business user number from a cryptographically verified
+	 * token.
+	 *
+	 * @param token JWT token.
+	 *
+	 * @return FreshMeal user number contained in the verified token.
+	 */
+	String getUserNumber(String token);
 
-    /**
-     * Extracts the token type from a cryptographically verified token.
-     *
-     * <p>
-     * The returned value identifies whether the token is an access token or
-     * refresh token according to the FreshMeal token contract.
-     * </p>
-     *
-     * @param token JWT token.
-     *
-     * @return token type contained in the verified token.
-     */
-    String getTokenType(String token);
+	/**
+	 * Extracts the token type from a cryptographically verified token.
+	 *
+	 * <p>
+	 * The returned value identifies whether the token is an access token or refresh
+	 * token according to the FreshMeal token contract.
+	 * </p>
+	 *
+	 * @param token JWT token.
+	 *
+	 * @return token type contained in the verified token.
+	 */
+	String getTokenType(String token);
 
-    /**
-     * Extracts FreshMeal business roles from a cryptographically verified
-     * access token.
-     *
-     * <p>
-     * The returned roles contain business role names rather than Spring
-     * Security authority prefixes. For example, {@code USER} is returned
-     * rather than {@code ROLE_USER}.
-     * </p>
-     *
-     * @param token JWT access token.
-     *
-     * @return business roles contained in the verified token.
-     */
-    List<String> getRoles(String token);
+	/**
+	 * Extracts FreshMeal business roles from a cryptographically verified access
+	 * token.
+	 *
+	 * <p>
+	 * The returned roles contain business role names rather than Spring Security
+	 * authority prefixes. For example, {@code USER} is returned rather than
+	 * {@code ROLE_USER}.
+	 * </p>
+	 *
+	 * @param token JWT access token.
+	 *
+	 * @return business roles contained in the verified token.
+	 */
+	List<String> getRoles(String token);
 
-    /**
-     * {@inheritDoc}
-     */
-    long getAccessTokenExpirationSeconds();
+	/**
+	 * {@inheritDoc}
+	 */
+	long getAccessTokenExpirationSeconds();
 
-    String getTokenId(String token);
+	String getTokenId(String token);
 
-    /**
-     * Returns the FreshMeal authentication-session identifier contained
-     * in the token.
-     *
-     * @param token JWT token.
-     * @return authentication-session identifier.
-     */
-    String getSessionId(String token);
+	/**
+	 * Returns the FreshMeal authentication-session identifier contained in the
+	 * token.
+	 *
+	 * @param token JWT token.
+	 * @return authentication-session identifier.
+	 */
+	String getSessionId(String token);
 
-    LocalDateTime getExpiration(String token);
+	LocalDateTime getExpiration(String token);
 }
