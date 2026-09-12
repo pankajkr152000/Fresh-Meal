@@ -1,5 +1,7 @@
 package com.foodies.freshmeal.authentication.dto;
 
+import com.foodies.freshmeal.common.audit.annotation.Sensitive;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -13,6 +15,7 @@ public class LoginRequest {
     @Size(max = 100, message = "Username or email must not exceed 100 characters.")
     private String identifier;
 
+    @Sensitive
     @NotBlank(message = "Password is required.")
     @Size(max = 100, message = "Password must not exceed 100 characters.")
     private String password;
