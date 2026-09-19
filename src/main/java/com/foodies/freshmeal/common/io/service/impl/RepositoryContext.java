@@ -88,10 +88,8 @@ public record RepositoryContext(
     public static RepositoryContext system() {
 
         return RepositoryContext.builder()
-                .currentUser(
-                        RepositoryConstants.SYSTEM_USER)
-                .currentDateTime(
-                        AppCalendar.getBusinessLocalDateTime())
+                .currentUser(RepositoryConstants.SYSTEM_USER)
+                .currentDateTime(AppCalendar.getBusinessLocalDateTime())
                 .build();
     }
 
@@ -108,17 +106,11 @@ public record RepositoryContext(
      *
      * @return repository context
      */
-    public static RepositoryContext of(
-            String userName,
-            LocalDateTime businessLocalDateTime) {
+    public static RepositoryContext of(String userName, LocalDateTime businessLocalDateTime) {
 
         return RepositoryContext.builder()
                 .currentUser(userName)
-                .currentDateTime(
-                        businessLocalDateTime != null
-                                ? businessLocalDateTime
-                                : AppCalendar
-                                        .getBusinessLocalDateTime())
+                .currentDateTime(businessLocalDateTime != null ? businessLocalDateTime : AppCalendar.getBusinessLocalDateTime())
                 .build();
     }
 
@@ -137,8 +129,7 @@ public record RepositoryContext(
 
         return RepositoryContext.builder()
                 .currentUser(userName)
-                .currentDateTime(
-                        AppCalendar.getBusinessLocalDateTime())
+                .currentDateTime(AppCalendar.getBusinessLocalDateTime())
                 .build();
     }
 
@@ -155,17 +146,11 @@ public record RepositoryContext(
      *
      * @return system repository context
      */
-    public static RepositoryContext system(
-            LocalDateTime businessLocalDateTime) {
+    public static RepositoryContext system(LocalDateTime businessLocalDateTime) {
 
         return RepositoryContext.builder()
-                .currentUser(
-                        RepositoryConstants.SYSTEM_USER)
-                .currentDateTime(
-                        businessLocalDateTime != null
-                                ? businessLocalDateTime
-                                : AppCalendar
-                                        .getBusinessLocalDateTime())
+                .currentUser(RepositoryConstants.SYSTEM_USER)
+                .currentDateTime(businessLocalDateTime != null ? businessLocalDateTime : AppCalendar.getBusinessLocalDateTime())
                 .build();
     }
 }

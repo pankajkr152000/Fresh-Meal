@@ -163,16 +163,25 @@ public class JwtTokenService implements ITokenService {
 		Instant issuedAt = Instant.now();
 		Instant expiration = issuedAt.plus(accessTokenExpiration);
 
-		List<String> roles = userProfile.getAuthorities().stream().map(authority -> authority.getAuthority())
+		List<String> roles = userProfile.getAuthorities()
+				.stream()
+				.map(authority -> authority.getAuthority())
 				.filter(authority -> authority != null && authority.startsWith("ROLE_"))
 				.map(authority -> authority.substring("ROLE_".length())).toList();
 
 		validateSessionId(sessionId);
 
-		return Jwts.builder().subject(userProfile.getUsername()).claim("userNumber", userProfile.getUserNumber())
-				.claim("roles", roles).claim("sessionId", sessionId).claim("tokenType", TokenType.ACCESS.name())
-				.issuedAt(Date.from(issuedAt)).expiration(Date.from(expiration)).id(UUID.randomUUID().toString())
-				.signWith(signingKey).compact();
+		return Jwts.builder()
+				.subject(userProfile.getUsername())
+				.claim("userNumber", userProfile.getUserNumber())
+				.claim("roles", roles)
+				.claim("sessionId", sessionId)
+				.claim("tokenType", TokenType.ACCESS.name())
+				.issuedAt(Date.from(issuedAt))
+				.expiration(Date.from(expiration))
+				.id(UUID.randomUUID().toString())
+				.signWith(signingKey)
+				.compact();
 	}
 
 	// =========================================================================
@@ -194,10 +203,16 @@ public class JwtTokenService implements ITokenService {
 		Instant issuedAt = Instant.now();
 		Instant expiration = issuedAt.plus(refreshTokenExpiration);
 
-		return Jwts.builder().subject(userProfile.getUsername()).claim("userNumber", userProfile.getUserNumber())
-				.claim("sessionId", sessionId).claim("tokenType", TokenType.REFRESH.name())
-				.issuedAt(Date.from(issuedAt)).expiration(Date.from(expiration)).id(UUID.randomUUID().toString())
-				.signWith(signingKey).compact();
+		return Jwts.builder()
+				.subject(userProfile.getUsername())
+				.claim("userNumber", userProfile.getUserNumber())
+				.claim("sessionId", sessionId)
+				.claim("tokenType", TokenType.REFRESH.name())
+				.issuedAt(Date.from(issuedAt))
+				.expiration(Date.from(expiration))
+				.id(UUID.randomUUID().toString())
+				.signWith(signingKey)
+				.compact();
 	}
 
 	// =========================================================================
