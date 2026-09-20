@@ -1,5 +1,6 @@
 package com.foodies.freshmeal.authentication.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,10 +26,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LogoutRequest {
-    /*
-     * Intentionally empty.
+	/**
+     * Identifies the login session that should be terminated.
      *
-     * The authenticated user is obtained from Spring Security's
-     * SecurityContext rather than from client-supplied identity data.
+     * <p>
+     * The value is obtained from the authenticated session established during
+     * login and is used by the backend to terminate the appropriate session.
+     * </p>
      */
+    @NotBlank(message = "Login session ID is required.")
+    private String loginSessionId;
+    
+    /**
+     * Indicates whether all active login sessions should be terminated.
+     */
+   // private boolean logoutFromAllDevices;
+    
 }
