@@ -62,270 +62,244 @@ import com.foodies.freshmeal.user.service.IUserService;
 @RequestMapping(ApiBaseConstants.USER_BASE_URL)
 public class UserController implements IUserController {
 
-    /**
-     * User service.
-     */
-    private final IUserService userService;
+	/**
+	 * User service.
+	 */
+	private final IUserService userService;
 
-    /**
-     * Current service context.
-     */
-    private final IServiceContext serviceContext;
+	/**
+	 * Current service context.
+	 */
+	private final IServiceContext serviceContext;
 
-    /**
-     * Creates a UserController.
-     *
-     * @param userService    User service
-     * @param serviceContext current service context
-     */
-    public UserController(
-            IUserService userService,
-            IServiceContext serviceContext) {
+	/**
+	 * Creates a UserController.
+	 *
+	 * @param userService    User service
+	 * @param serviceContext current service context
+	 */
+	public UserController(IUserService userService, IServiceContext serviceContext) {
 
-        this.userService = userService;
-        this.serviceContext = serviceContext;
-    }
-
-    // =========================================================================
-    // Create User
-    // =========================================================================
+		this.userService = userService;
+		this.serviceContext = serviceContext;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
-    @AuditApi(action = ActionType.ADD_USER, module = ModuleType.USER, method = MethodType.CREATE)
-    @PostMapping(UserApiConstants.ADD)
-    public ResponseEntity<ApiResponse<UserResponse>> addUser(
-            @RequestBody UserRequest request) {
+	// =========================================================================
+	// Create User
+	// =========================================================================
 
-        IServiceInput<UserInputDTO> input = new ServiceInput<>();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
+	@AuditApi(action = ActionType.ADD_USER, module = ModuleType.USER, method = MethodType.CREATE)
+	@PostMapping(UserApiConstants.ADD)
+	public ResponseEntity<ApiResponse<UserResponse>> addUser(@RequestBody UserRequest request) {
 
-        input.setServiceContext(serviceContext);
+		IServiceInput<UserInputDTO> input = new ServiceInput<>();
 
-        UserInputDTO userInputDTO = new UserInputDTO();
+		input.setServiceContext(serviceContext);
 
-        userInputDTO.setUserRequest(request);
+		UserInputDTO userInputDTO = new UserInputDTO();
 
-        input.setInput(userInputDTO);
+		userInputDTO.setUserRequest(request);
 
-        IServiceOutput<UserResponse> output = userService.addUser(input);
-
-        return ApiResponseBuilder.created(
-                ApiMessageConstants.USER_CREATED,
-                output.getOutput());
-    }
+		input.setInput(userInputDTO);
 
-    // =========================================================================
-    // View User
-    // =========================================================================
+		IServiceOutput<UserResponse> output = userService.addUser(input);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.ADMIN_OR_SELF)
-    @PostMapping(UserApiConstants.GET_BY_USER_NUMBER)
-    public ResponseEntity<ApiResponse<UserResponse>> getUserByUserNumber(
-            @RequestBody UserNumberRequest request) {
+		return ApiResponseBuilder.created(ApiMessageConstants.USER_CREATED, output.getOutput());
+	}
 
-        IServiceInput<UserNumberRequest> input = new ServiceInput<>();
+	// =========================================================================
+	// View User
+	// =========================================================================
 
-        input.setServiceContext(serviceContext);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.ADMIN_OR_SELF)
+	@PostMapping(UserApiConstants.GET_BY_USER_NUMBER)
+	public ResponseEntity<ApiResponse<UserResponse>> getUserByUserNumber(@RequestBody UserNumberRequest request) {
 
-        input.setInput(request);
+		IServiceInput<UserNumberRequest> input = new ServiceInput<>();
 
-        IServiceOutput<UserEntity> output = userService.loadUserByUserNumber(input);
+		input.setServiceContext(serviceContext);
 
-        UserEntity userEntity = output.getOutput();
+		input.setInput(request);
 
-        UserResponse response = toUserResponse(userEntity);
+		IServiceOutput<UserEntity> output = userService.loadUserByUserNumber(input);
 
-        return ApiResponseBuilder.success(
-                ApiMessageConstants.USER_FOUND,
-                response);
-    }
+		UserEntity userEntity = output.getOutput();
 
-    // =========================================================================
-    // Update User
-    // =========================================================================
+		UserResponse response = toUserResponse(userEntity);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.ADMIN_OR_SELF)
-    @PostMapping(UserApiConstants.UPDATE)
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(
-            @RequestBody UpdateUserInputDTO request) {
+		return ApiResponseBuilder.success(ApiMessageConstants.USER_FOUND, response);
+	}
 
-        IServiceInput<UpdateUserInputDTO> input = new ServiceInput<>();
+	// =========================================================================
+	// Update User
+	// =========================================================================
 
-        input.setServiceContext(serviceContext);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.ADMIN_OR_SELF)
+	@PostMapping(UserApiConstants.UPDATE)
+	public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UpdateUserInputDTO request) {
 
-        input.setInput(request);
+		IServiceInput<UpdateUserInputDTO> input = new ServiceInput<>();
 
-        IServiceOutput<UserResponse> output = userService.updateUser(input);
+		input.setServiceContext(serviceContext);
 
-        return ApiResponseBuilder.success(
-                ApiMessageConstants.USER_UPDATED,
-                output.getOutput());
-    }
+		input.setInput(request);
 
-    // =========================================================================
-    // Delete User
-    // =========================================================================
+		IServiceOutput<UserResponse> output = userService.updateUser(input);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
-    @PostMapping(UserApiConstants.DELETE)
-    public ResponseEntity<ApiResponse<Boolean>> deleteUser(
-            @RequestBody UserIdRequest request) {
+		return ApiResponseBuilder.success(ApiMessageConstants.USER_UPDATED, output.getOutput());
+	}
 
-        IServiceInput<UserIdRequest> input = new ServiceInput<>();
+	// =========================================================================
+	// Delete User
+	// =========================================================================
 
-        input.setServiceContext(serviceContext);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
+	@PostMapping(UserApiConstants.DELETE)
+	public ResponseEntity<ApiResponse<Boolean>> deleteUser(@RequestBody UserIdRequest request) {
 
-        input.setInput(request);
+		IServiceInput<UserIdRequest> input = new ServiceInput<>();
 
-        IServiceOutput<Boolean> output = userService.deleteUser(input);
+		input.setServiceContext(serviceContext);
 
-        return ApiResponseBuilder.success(
-                ApiMessageConstants.USER_DELETED,
-                output.getOutput());
-    }
+		input.setInput(request);
 
-    // =========================================================================
-    // Enable User
-    // =========================================================================
+		IServiceOutput<Boolean> output = userService.deleteUser(input);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
-    @PostMapping(UserApiConstants.ENABLE)
-    public ResponseEntity<ApiResponse<UserResponse>> enableUser(
-            @RequestBody UserNumberRequest request) {
+		return ApiResponseBuilder.success(ApiMessageConstants.USER_DELETED, output.getOutput());
+	}
 
-        IServiceInput<UserNumberRequest> input = new ServiceInput<>();
+	// =========================================================================
+	// Enable User
+	// =========================================================================
 
-        input.setServiceContext(serviceContext);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
+	@PostMapping(UserApiConstants.ENABLE)
+	public ResponseEntity<ApiResponse<UserResponse>> enableUser(@RequestBody UserNumberRequest request) {
 
-        input.setInput(request);
+		IServiceInput<UserNumberRequest> input = new ServiceInput<>();
 
-        IServiceOutput<UserResponse> output = userService.enableUser(input);
+		input.setServiceContext(serviceContext);
 
-        return ApiResponseBuilder.success(
-                ApiMessageConstants.USER_ENABLED,
-                output.getOutput());
-    }
+		input.setInput(request);
 
-    // =========================================================================
-    // Disable User
-    // =========================================================================
+		IServiceOutput<UserResponse> output = userService.enableUser(input);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
-    @PostMapping(UserApiConstants.DISABLE)
-    public ResponseEntity<ApiResponse<UserResponse>> disableUser(
-            @RequestBody UserNumberRequest request) {
+		return ApiResponseBuilder.success(ApiMessageConstants.USER_ENABLED, output.getOutput());
+	}
 
-        IServiceInput<UserNumberRequest> input = new ServiceInput<>();
+	// =========================================================================
+	// Disable User
+	// =========================================================================
 
-        input.setServiceContext(serviceContext);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
+	@PostMapping(UserApiConstants.DISABLE)
+	public ResponseEntity<ApiResponse<UserResponse>> disableUser(@RequestBody UserNumberRequest request) {
 
-        input.setInput(request);
+		IServiceInput<UserNumberRequest> input = new ServiceInput<>();
 
-        IServiceOutput<UserResponse> output = userService.disableUser(input);
+		input.setServiceContext(serviceContext);
 
-        return ApiResponseBuilder.success(
-                ApiMessageConstants.USER_DISABLED,
-                output.getOutput());
-    }
+		input.setInput(request);
 
-    // =========================================================================
-    // Lock User
-    // =========================================================================
+		IServiceOutput<UserResponse> output = userService.disableUser(input);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PostMapping(UserApiConstants.LOCK)
-    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
-    public ResponseEntity<ApiResponse<UserResponse>> lockUser(
-            @RequestBody UserNumberRequest request) {
+		return ApiResponseBuilder.success(ApiMessageConstants.USER_DISABLED, output.getOutput());
+	}
 
-        IServiceInput<UserNumberRequest> input = new ServiceInput<>();
+	// =========================================================================
+	// Lock User
+	// =========================================================================
 
-        input.setServiceContext(serviceContext);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PostMapping(UserApiConstants.LOCK)
+	@PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
+	public ResponseEntity<ApiResponse<UserResponse>> lockUser(@RequestBody UserNumberRequest request) {
 
-        input.setInput(request);
+		IServiceInput<UserNumberRequest> input = new ServiceInput<>();
 
-        IServiceOutput<UserResponse> output = userService.lockUser(input);
+		input.setServiceContext(serviceContext);
 
-        return ApiResponseBuilder.success(
-                ApiMessageConstants.USER_LOCKED,
-                output.getOutput());
-    }
+		input.setInput(request);
 
-    // =========================================================================
-    // Unlock User
-    // =========================================================================
+		IServiceOutput<UserResponse> output = userService.lockUser(input);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
-    @PostMapping(UserApiConstants.UNLOCK)
-    public ResponseEntity<ApiResponse<UserResponse>> unlockUser(
-            @RequestBody UserNumberRequest request) {
+		return ApiResponseBuilder.success(ApiMessageConstants.USER_LOCKED, output.getOutput());
+	}
 
-        IServiceInput<UserNumberRequest> input = new ServiceInput<>();
+	// =========================================================================
+	// Unlock User
+	// =========================================================================
 
-        input.setServiceContext(serviceContext);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
+	@PostMapping(UserApiConstants.UNLOCK)
+	public ResponseEntity<ApiResponse<UserResponse>> unlockUser(@RequestBody UserNumberRequest request) {
 
-        input.setInput(request);
+		IServiceInput<UserNumberRequest> input = new ServiceInput<>();
 
-        IServiceOutput<UserResponse> output = userService.unlockUser(input);
+		input.setServiceContext(serviceContext);
 
-        return ApiResponseBuilder.success(
-                ApiMessageConstants.USER_UNLOCKED,
-                output.getOutput());
-    }
+		input.setInput(request);
 
-    // =========================================================================
-    // Private Helper Methods
-    // =========================================================================
+		IServiceOutput<UserResponse> output = userService.unlockUser(input);
 
-    /**
-     * Converts a UserEntity into a UserResponse.
-     *
-     * @param userEntity user entity
-     * @return user response
-     */
-    private UserResponse toUserResponse(UserEntity userEntity) {
+		return ApiResponseBuilder.success(ApiMessageConstants.USER_UNLOCKED, output.getOutput());
+	}
 
-        UserResponse response = new UserResponse();
+	// =========================================================================
+	// Private Helper Methods
+	// =========================================================================
 
-        response.setUserNumber(userEntity.getUserNumber());
-        response.setUsername(userEntity.getUsername());
-        response.setFirstName(userEntity.getFirstName());
-        response.setLastName(userEntity.getLastName());
-        response.setEmail(userEntity.getEmail());
-        response.setPhoneNumber(userEntity.getPhoneNumber());
-        response.setAddressNumbers(userEntity.getAddressNumbers());
-        response.setRoles(userEntity.getRoles());
+	/**
+	 * Converts a UserEntity into a UserResponse.
+	 *
+	 * @param userEntity user entity
+	 * @return user response
+	 */
+	private UserResponse toUserResponse(UserEntity userEntity) {
 
-        return response;
-    }
+		UserResponse response = new UserResponse();
+
+		response.setUserNumber(userEntity.getUserNumber());
+		response.setUsername(userEntity.getUsername());
+		response.setFirstName(userEntity.getFirstName());
+		response.setLastName(userEntity.getLastName());
+		response.setEmail(userEntity.getEmail());
+		response.setPhoneNumber(userEntity.getPhoneNumber());
+		response.setAddressNumbers(userEntity.getAddressNumbers());
+		response.setRoles(userEntity.getRoles());
+
+		return response;
+	}
 }

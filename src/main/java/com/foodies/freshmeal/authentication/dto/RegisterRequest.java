@@ -1,5 +1,6 @@
 package com.foodies.freshmeal.authentication.dto;
 
+import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 
@@ -26,9 +27,29 @@ import jakarta.validation.constraints.Size;
  * <ul>
  * <li>Collect user-provided identity information.</li>
  * <li>Collect credentials required to create the account.</li>
+ * <li>Collect the role requested for self-registration.</li>
  * <li>Validate the password confirmation at the API boundary.</li>
  * <li>Provide email information required for email OTP verification.</li>
  * </ul>
+ *
+ * <h3>Role Selection</h3>
+ *
+ * <p>
+ * A public registration request may select only a role explicitly permitted
+ * for self-registration:
+ * </p>
+ *
+ * <ul>
+ * <li>{@link RoleType#USER}</li>
+ * <li>{@link RoleType#RESTAURANT_OWNER}</li>
+ * <li>{@link RoleType#DELIVERY_PARTNER}</li>
+ * </ul>
+ *
+ * <p>
+ * {@link RoleType#ADMIN} must never be accepted through this public
+ * registration flow. Administrative role assignment belongs to an authorized
+ * administrative workflow.
+ * </p>
  *
  * <h3>Server-Controlled Information</h3>
  *
@@ -39,7 +60,7 @@ import jakarta.validation.constraints.Size;
  * <ul>
  * <li>User persistence identifier</li>
  * <li>User number</li>
- * <li>User roles</li>
+ * <li>Unauthorized roles</li>
  * <li>Account state flags</li>
  * <li>Address associations</li>
  * <li>Audit information</li>
@@ -48,9 +69,13 @@ import jakarta.validation.constraints.Size;
  * </ul>
  *
  * <p>
- * A successfully registered account receives the default
- * {@code RoleType.USER} role and remains subject to the email OTP
- * verification process defined by the Authentication module.
+ * The requested role is validated by the server before it is added to the
+ * user's domain roles.
+ * </p>
+ *
+ * <p>
+ * A newly created account remains subject to the email OTP verification
+ * process defined by the Authentication module.
  * </p>
  *
  * <p>
@@ -109,13 +134,31 @@ public class RegisterRequest {
     @Size(max = 100, message = "Last name must not exceed 100 characters.")
     private String lastName;
 
+    /**
+     * Email address used for account registration and email verification.
+     */
     @NotNull(message = "Email is required.")
     @Valid
     private EmailAddress email;
 
+    /**
+     * Phone number associated with the account.
+     */
     @NotNull(message = "Phone number is required.")
     @Valid
     private PhoneNumber phoneNumber;
+
+    /**
+     * Role requested during public self-registration.
+     *
+     * <p>
+     * The value is validated by the Authentication module against the roles
+     * permitted for public registration. In particular, {@link RoleType#ADMIN}
+     * must never be accepted from this request.
+     * </p>
+     */
+    @NotNull(message = "Registration role is required.")
+    private RoleType requestedRole;
 
     /**
      * Returns the username.
@@ -241,5 +284,23 @@ public class RegisterRequest {
      */
     public void setPhoneNumber(final PhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    /**
+     * Returns the role requested during registration.
+     *
+     * @return Requested registration role.
+     */
+    public RoleType getRequestedRole() {
+        return requestedRole;
+    }
+
+    /**
+     * Sets the role requested during registration.
+     *
+     * @param requestedRole Requested registration role.
+     */
+    public void setRequestedRole(final RoleType requestedRole) {
+        this.requestedRole = requestedRole;
     }
 }

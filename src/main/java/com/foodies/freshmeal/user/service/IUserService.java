@@ -8,6 +8,7 @@ import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
 import com.foodies.freshmeal.user.dto.UserNumberRequest;
+import com.foodies.freshmeal.user.dto.UserRegistrationInputDTO;
 import com.foodies.freshmeal.user.dto.UserResponse;
 import com.foodies.freshmeal.user.dto.UsernameRequest;
 import com.foodies.freshmeal.user.entity.UserEntity;
@@ -121,8 +122,7 @@ public interface IUserService {
      * @param input service input containing {@link UserInputDTO}
      * @return service output containing the generated identifier
      */
-    IServiceOutput<String> generateUserId(
-            IServiceInput<UserInputDTO> input);
+    IServiceOutput<String> generateUserId(IServiceInput<UserInputDTO> input);
 
     /**
      * Generates the business-facing user number.
@@ -130,8 +130,7 @@ public interface IUserService {
      * @param input service input containing {@link UserInputDTO}
      * @return service output containing the generated user number
      */
-    IServiceOutput<String> generateUserNumber(
-            IServiceInput<UserInputDTO> input);
+    IServiceOutput<String> generateUserNumber(IServiceInput<UserInputDTO> input);
 
     /**
      * Creates and initializes a new {@link UserEntity}.
@@ -139,8 +138,7 @@ public interface IUserService {
      * @param input service input containing {@link UserInputDTO}
      * @return service output containing the newly created entity
      */
-    IServiceOutput<UserEntity> createUserEntity(
-            IServiceInput<UserInputDTO> input);
+    IServiceOutput<UserEntity> createUserEntity(IServiceInput<UserInputDTO> input);
 
     /**
      * Adds a new user to the FreshMeal system.
@@ -148,11 +146,9 @@ public interface IUserService {
      * @param input service input containing {@link UserInputDTO}
      * @return service output containing the created {@link UserResponse}
      */
-    IServiceOutput<UserResponse> addUser(
-            IServiceInput<UserInputDTO> input);
+    IServiceOutput<UserResponse> addUser(IServiceInput<UserInputDTO> input);
 
-    IServiceOutput<UserEntity> registerUser(
-            IServiceInput<UserInputDTO> input);
+    IServiceOutput<UserEntity> registerUser(IServiceInput<UserInputDTO> input);
 
     /**
      * Updates an existing user.
@@ -160,8 +156,7 @@ public interface IUserService {
      * @param input service input containing the user update information
      * @return service output containing the updated {@link UserResponse}
      */
-    IServiceOutput<UserResponse> updateUser(
-            IServiceInput<UpdateUserInputDTO> input);
+    IServiceOutput<UserResponse> updateUser(IServiceInput<UpdateUserInputDTO> input);
 
     /**
      * Deletes an existing user using its internal persistence identifier.
@@ -169,8 +164,7 @@ public interface IUserService {
      * @param input service input containing {@link UserIdRequest}
      * @return service output indicating completion of the operation
      */
-    IServiceOutput<Boolean> deleteUser(
-            IServiceInput<UserIdRequest> input);
+    IServiceOutput<Boolean> deleteUser(IServiceInput<UserIdRequest> input);
 
     /**
      * Enables a user account.
@@ -178,8 +172,7 @@ public interface IUserService {
      * @param input service input containing {@link UserNumberRequest}
      * @return service output containing the updated {@link UserResponse}
      */
-    IServiceOutput<UserResponse> enableUser(
-            IServiceInput<UserNumberRequest> input);
+    IServiceOutput<UserResponse> enableUser(IServiceInput<UserNumberRequest> input);
 
     /**
      * Disables a user account.
@@ -187,8 +180,7 @@ public interface IUserService {
      * @param input service input containing {@link UserNumberRequest}
      * @return service output containing the updated {@link UserResponse}
      */
-    IServiceOutput<UserResponse> disableUser(
-            IServiceInput<UserNumberRequest> input);
+    IServiceOutput<UserResponse> disableUser(IServiceInput<UserNumberRequest> input);
 
     /**
      * Locks a user account.
@@ -196,8 +188,7 @@ public interface IUserService {
      * @param input service input containing {@link UserNumberRequest}
      * @return service output containing the updated {@link UserResponse}
      */
-    IServiceOutput<UserResponse> lockUser(
-            IServiceInput<UserNumberRequest> input);
+    IServiceOutput<UserResponse> lockUser(IServiceInput<UserNumberRequest> input);
 
     /**
      * Unlocks a user account.
@@ -205,38 +196,7 @@ public interface IUserService {
      * @param input service input containing {@link UserNumberRequest}
      * @return service output containing the updated {@link UserResponse}
      */
-    IServiceOutput<UserResponse> unlockUser(
-            IServiceInput<UserNumberRequest> input);
-
-    /**
-     * =================================================================================================
-     * REGISTER USER
-     * =================================================================================================
-     *
-     * <p>
-     * Registers a self-service user using a password that has already been encoded
-     * by the Authentication module.
-     * </p>
-     *
-     * <p>
-     * The Authentication module owns password validation and password encoding.
-     * The User module owns user creation and persistence.
-     * </p>
-     *
-     * <p>
-     * Self-registered users are initially created with email verification pending
-     * and the account disabled until the authentication workflow completes email
-     * verification.
-     * </p>
-     *
-     * @param input
-     *                        service input containing the user registration
-     *                        information
-     * @param encodedPassword
-     *                        password already encoded by the Authentication module
-     * @return service output containing the persisted {@link UserEntity}
-     */
-    IServiceOutput<UserEntity> registerUser(IServiceInput<UserInputDTO> input, String encodedPassword);
+    IServiceOutput<UserResponse> unlockUser(IServiceInput<UserNumberRequest> input);
 
     /**
      * =================================================================================================
@@ -278,5 +238,51 @@ public interface IUserService {
      * @return {@link UserResponse} representing the updated user
      */
     IServiceOutput<UserResponse> updatePassword(IServiceInput<UpdatePasswordInputDTO> input);
+
+    /**
+     * ============================================================================
+     * REGISTER USER
+     * ============================================================================
+     *
+     * <p>
+     * Registers a self-service user using a password that has already been encoded
+     * by the Authentication module.
+     * </p>
+     *
+     * <p>
+     * The Authentication module owns password validation and password encoding.
+     * The User module owns user identity resolution, role assignment, user
+     * creation/update, and persistence.
+     * </p>
+     *
+     * <p>
+     * The registration workflow supports both:
+     * </p>
+     *
+     * <ul>
+     * <li>Creation of a new user with the requested registration role.</li>
+     * <li>
+     * Addition of a new role to an existing user identity without creating a
+     * duplicate {@link UserEntity}.
+     * </li>
+     * </ul>
+     *
+     * <p>
+     * A role must never be duplicated within the user's role collection.
+     * </p>
+     *
+     * <p>
+     * Self-registered users that require email verification are initially created
+     * with email verification pending and the account disabled until the
+     * Authentication workflow completes verification.
+     * </p>
+     *
+     * @param input
+     *                        service input containing user registration information
+     *                        and the requested role
+     * @param encodedPassword password already encoded by the Authentication module
+     * @return service output containing the persisted {@link UserEntity}
+     */
+    IServiceOutput<UserEntity> registerUser(IServiceInput<UserRegistrationInputDTO> input, String encodedPassword);
 
 }

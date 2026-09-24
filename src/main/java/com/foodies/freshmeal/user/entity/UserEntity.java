@@ -283,4 +283,78 @@ public class UserEntity extends ABaseEntity {
      * Indicates whether the user account is enabled.
      */
     private boolean enabled = true;
+    
+    
+    
+    // =========================================================================
+    // Role Utility Methods
+    // =========================================================================
+
+    /**
+     * Adds a role to the user.
+     *
+     * <p>
+     * A role is added only when it is not already assigned to the user.
+     * This prevents duplicate role assignments while keeping the role
+     * collection internally managed by the entity.
+     * </p>
+     *
+     * @param role role to add
+     * @return {@code true} when the role was added; {@code false} when the role
+     *         is null or already assigned
+     */
+    public boolean addRole(final RoleType role) {
+
+    	if (role == null) {
+            return false;
+        }
+
+        if (roles == null) {
+            roles = new ArrayList<>();
+        }
+
+        if (roles.contains(role)) {
+            return false;
+        }
+
+        return roles.add(role);
+    }
+
+    /**
+     * Removes a role from the user.
+     *
+     * @param role role to remove
+     * @return {@code true} when the role was removed; {@code false} when the
+     *         role is null or not assigned
+     */
+    public boolean removeRole(final RoleType role) {
+
+        if (role == null) {
+            return false;
+        }
+
+        return roles.remove(role);
+    }
+
+    /**
+     * Checks whether the user has the specified role.
+     *
+     * @param role role to check
+     * @return {@code true} when the role is assigned to the user;
+     *         {@code false} otherwise
+     */
+    public boolean hasRole(final RoleType role) {
+
+        return role != null && roles.contains(role);
+    }
+
+    /**
+     * Checks whether the user has no roles assigned.
+     *
+     * @return {@code true} when no roles are assigned; {@code false} otherwise
+     */
+    public boolean isRolesEmpty() {
+
+        return roles == null || roles.isEmpty();
+    }
 }

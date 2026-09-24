@@ -76,8 +76,8 @@ import com.foodies.freshmeal.user.constants.LoginStatus;
 import com.foodies.freshmeal.user.constants.UserErrorConstants;
 import com.foodies.freshmeal.user.dto.EmailRequest;
 import com.foodies.freshmeal.user.dto.UpdatePasswordInputDTO;
-import com.foodies.freshmeal.user.dto.UserInputDTO;
 import com.foodies.freshmeal.user.dto.UserNumberRequest;
+import com.foodies.freshmeal.user.dto.UserRegistrationInputDTO;
 import com.foodies.freshmeal.user.dto.UserRequest;
 import com.foodies.freshmeal.user.dto.UsernameRequest;
 import com.foodies.freshmeal.user.entity.LoginHistoryEntity;
@@ -333,33 +333,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 		return new ServiceOutput<>(loginResponse);
 	}
 
-	// =========================================================================
-	// Registration
-	// =========================================================================
-
-	/**
-	 * Registers a new FreshMeal user and initiates email verification.
-	 *
-	 * <p>
-	 * Password validation and encoding are performed by the Authentication module.
-	 * The encoded password is then passed to the User module, which owns user
-	 * creation and persistence.
-	 * </p>
-	 *
-	 * <p>
-	 * After the user is persisted, a verification OTP is generated and sent through
-	 * {@code IEmailService}. The OTP is marked as successfully sent only after the
-	 * email service accepts the email for delivery.
-	 * </p>
-	 *
-	 * <p>
-	 * A self-registered account remains disabled and email-unverified until the
-	 * email verification workflow is successfully completed.
-	 * </p>
-	 *
-	 * @param input registration service input
-	 * @return registration response containing verification status
-	 */
 	@Override
 	@AuditApi(action = ActionType.REGISTER, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
 	public IServiceOutput<RegisterResponse> register(final IServiceInput<RegisterInputDTO> input) {
@@ -367,54 +340,66 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 		final RegisterRequest registerRequest = input.getInput().getRegisterRequest();
 
 		validateRegistrationPasswords(registerRequest);
+		validatePublicRegistrationRole(registerRequest.getRequestedRole());
 
 		final String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
 
 		final UserRequest userRequest = new UserRequest();
 
 		userRequest.setUsername(registerRequest.getUsername());
-
 		userRequest.setFirstName(registerRequest.getFirstName());
-
 		userRequest.setLastName(registerRequest.getLastName());
-
 		userRequest.setEmail(registerRequest.getEmail());
-
 		userRequest.setPhoneNumber(registerRequest.getPhoneNumber());
 
-		final UserInputDTO userInputDTO = new UserInputDTO();
+		/*
+		 * Registration-specific information is intentionally separated from the generic
+		 * UserInputDTO.
+		 *
+		 * The requested role is part of the public registration workflow and must not
+		 * become part of generic user operations.
+		 */
+		final UserRegistrationInputDTO registrationInput = new UserRegistrationInputDTO();
 
-		userInputDTO.setUserRequest(userRequest);
+		registrationInput.setUserRequest(userRequest);
+		registrationInput.setRequestedRole(registerRequest.getRequestedRole());
 
-		final ServiceInput<UserInputDTO> userServiceInput = new ServiceInput<>();
+		final ServiceInput<UserRegistrationInputDTO> userServiceInput = new ServiceInput<>();
 
-		userServiceInput.setInput(userInputDTO);
-
+		userServiceInput.setInput(registrationInput);
 		userServiceInput.setServiceContext(input.getServiceContext());
-
 		userServiceInput.setDataContext(input.getDataContext());
 
 		final UserEntity userEntity = userService.registerUser(userServiceInput, encodedPassword).getOutput();
 
-		final OtpGenerationResult otpGenerationResult = otpService.generateEmailVerificationOtp(
-				userEntity.getUserNumber(), userEntity.getEmail().getValue(), input.getServiceContext());
-
 		final String email = userEntity.getEmail().getValue();
 
-		final String emailBody = buildVerificationEmailBody(userEntity.getFirstName(), otpGenerationResult.rawOtp());
-
 		/*
-		 * sentAt is intentionally updated only after the email service successfully
-		 * accepts the email for delivery.
+		 * An existing verified user registering for an additional role does not need to
+		 * verify the same email address again.
+		 *
+		 * New users and existing users whose email is still unverified continue through
+		 * the normal email-verification workflow.
 		 */
-		emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
+		if (!userEntity.isEmailVerified()) {
 
-		otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(), input.getServiceContext());
+			final OtpGenerationResult otpGenerationResult = otpService.generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
+
+			final String emailBody = buildVerificationEmailBody(userEntity.getFirstName(), otpGenerationResult.rawOtp());
+
+			/*
+			 * sentAt is intentionally updated only after the email service successfully
+			 * accepts the email for delivery.
+			 */
+			emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
+
+			otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(), input.getServiceContext());
+		}
 
 		final RegisterResponse response = new RegisterResponse();
 
 		response.setEmail(email);
-		response.setVerificationRequired(true);
+		response.setVerificationRequired(!userEntity.isEmailVerified());
 
 		return new ServiceOutput<>(response);
 	}
@@ -1652,5 +1637,41 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 				Regards,
 				FreshMeal Team
 				""".formatted(recipientName, resetToken);
+	}
+	
+	/**
+	 * Validates whether the requested role is permitted through public
+	 * self-registration.
+	 *
+	 * <p>
+	 * Administrative access must never be granted through public registration.
+	 * The ADMIN role is assigned only through an authorized administrative
+	 * workflow.
+	 * </p>
+	 *
+	 * <p>
+	 * The currently supported public registration roles are:
+	 * </p>
+	 *
+	 * <ul>
+	 * <li>{@link RoleType#USER}</li>
+	 * <li>{@link RoleType#RESTAURANT_OWNER}</li>
+	 * <li>{@link RoleType#DELIVERY_PARTNER}</li>
+	 * </ul>
+	 *
+	 * @param requestedRole role requested by the registrant
+	 */
+	private void validatePublicRegistrationRole(final RoleType requestedRole) {
+
+	    if (requestedRole == null) {
+	        throw new BusinessException(UserErrorConstants.ROLE_REQUIRED);
+	    }
+
+	    if (requestedRole != RoleType.USER
+	            && requestedRole != RoleType.RESTAURANT_OWNER
+	            && requestedRole != RoleType.DELIVERY_PARTNER) {
+
+	        throw new BusinessException(UserErrorConstants.INVALID_USER_ROLE);
+	    }
 	}
 }

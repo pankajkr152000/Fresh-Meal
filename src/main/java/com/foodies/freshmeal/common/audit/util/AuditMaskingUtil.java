@@ -2,14 +2,18 @@ package com.foodies.freshmeal.common.audit.util;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.foodies.freshmeal.common.audit.annotation.Sensitive;
 
@@ -117,6 +121,12 @@ import com.foodies.freshmeal.common.audit.annotation.Sensitive;
 public final class AuditMaskingUtil {
 
     /**
+     * Represents a circular object reference encountered during recursive
+     * audit masking.
+     */
+    private static final String CIRCULAR_REFERENCE_MASK = "[CIRCULAR_REFERENCE]";
+
+    /**
      * Private constructor prevents utility class instantiation.
      */
     private AuditMaskingUtil() {
@@ -147,7 +157,16 @@ public final class AuditMaskingUtil {
      */
     public static Object maskObject(Object source) {
 
-        return maskValue(source);
+        /*
+         * Identity-based tracking is intentionally used instead of equals().
+         *
+         * Two different objects may be logically equal but still represent
+         * different nodes in the object graph. We only want to detect actual
+         * object-reference cycles.
+         */
+        final Set<Object> processingObjects = Collections.newSetFromMap(new IdentityHashMap<>());
+
+        return maskValue(source, processingObjects);
     }
 
     /**
@@ -164,11 +183,20 @@ public final class AuditMaskingUtil {
      * Java objects.
      * </p>
      *
-     * @param value value to process
+     * <p>
+     * Circular object references are detected using identity-based tracking so
+     * that recursive audit masking can never overflow the stack because of a
+     * cyclic object graph.
+     * </p>
+     *
+     * @param value             value to process
+     * @param processingObjects objects currently being processed
      *
      * @return masked audit-safe representation
      */
-    private static Object maskValue(Object value) {
+    private static Object maskValue(
+            Object value,
+            Set<Object> processingObjects) {
 
         if (value == null) {
             return null;
@@ -182,33 +210,57 @@ public final class AuditMaskingUtil {
         }
 
         /*
-         * Map values are recursively inspected because sensitive objects may
-         * exist inside a map.
+         * A value that is already present in the current traversal path indicates
+         * a circular reference.
+         *
+         * Identity comparison is important here. We are detecting the same
+         * physical object instance, not logical equality.
          */
-        if (value instanceof Map<?, ?> map) {
-            return maskMap(map);
+        if (!processingObjects.add(value)) {
+            return CIRCULAR_REFERENCE_MASK;
         }
 
-        /*
-         * Collections are recursively inspected because their elements may
-         * contain nested sensitive fields.
-         */
-        if (value instanceof Collection<?> collection) {
-            return maskCollection(collection);
-        }
+        try {
 
-        /*
-         * Java arrays require reflection because the component type may be
-         * primitive or an arbitrary object type.
-         */
-        if (value.getClass().isArray()) {
-            return maskArray(value);
-        }
+            /*
+             * Map values are recursively inspected because sensitive objects may
+             * exist inside a map.
+             */
+            if (value instanceof Map<?, ?> map) {
+                return maskMap(map, processingObjects);
+            }
 
-        /*
-         * Regular Java objects are inspected field by field.
-         */
-        return maskPojo(value);
+            /*
+             * Collections are recursively inspected because their elements may
+             * contain nested sensitive fields.
+             */
+            if (value instanceof Collection<?> collection) {
+                return maskCollection(collection, processingObjects);
+            }
+
+            /*
+             * Java arrays require reflection because the component type may be
+             * primitive or an arbitrary object type.
+             */
+            if (value.getClass().isArray()) {
+                return maskArray(value, processingObjects);
+            }
+
+            /*
+             * Regular Java objects are inspected field by field.
+             */
+            return maskPojo(value, processingObjects);
+
+        } finally {
+
+            /*
+             * Remove the object after processing so that the same object may
+             * legitimately appear again in another branch of the object graph.
+             *
+             * This makes the tracking path-based rather than globally visited.
+             */
+            processingObjects.remove(value);
+        }
     }
 
     /**
@@ -229,7 +281,7 @@ public final class AuditMaskingUtil {
      *
      * @return masked object representation
      */
-    private static Object maskPojo(Object source) {
+    private static Object maskPojo(Object source, Set<Object> processingObjects) {
 
         Class<?> clazz = source.getClass();
 
@@ -247,7 +299,7 @@ public final class AuditMaskingUtil {
                  * Static fields are implementation metadata rather than object
                  * state and should not be included in audit payloads.
                  */
-                if (java.lang.reflect.Modifier.isStatic(field.getModifiers())) {
+                if (Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
 
@@ -272,7 +324,7 @@ public final class AuditMaskingUtil {
 
                 Object fieldValue = field.get(source);
 
-                target.put(field.getName(), maskValue(fieldValue));
+				target.put(field.getName(), maskValue(fieldValue, processingObjects));
             }
 
             return target;
@@ -306,7 +358,7 @@ public final class AuditMaskingUtil {
      *
      * @return masked map
      */
-    private static Map<Object, Object> maskMap(Map<?, ?> source) {
+    private static Map<Object, Object> maskMap(Map<?, ?> source, Set<Object> processingObjects) {
 
         Map<Object, Object> target = new LinkedHashMap<>();
 
@@ -315,7 +367,7 @@ public final class AuditMaskingUtil {
             Object key = entry.getKey();
             Object value = entry.getValue();
 
-            target.put(key, maskValue(value));
+            target.put(key,  maskValue(value, processingObjects));
         }
 
         return target;
@@ -334,12 +386,12 @@ public final class AuditMaskingUtil {
      *
      * @return masked collection
      */
-    private static List<Object> maskCollection(Collection<?> source) {
+    private static List<Object> maskCollection(Collection<?> source, Set<Object> processingObjects) {
 
         List<Object> target = new ArrayList<>(source.size());
 
         for (Object element : source) {
-            target.add(maskValue(element));
+            target.add( maskValue(element, processingObjects));
         }
 
         return target;
@@ -358,7 +410,7 @@ public final class AuditMaskingUtil {
      *
      * @return masked array representation
      */
-    private static List<Object> maskArray(Object source) {
+    private static List<Object> maskArray(Object source, Set<Object> processingObjects) {
 
         int length = Array.getLength(source);
 
@@ -368,7 +420,7 @@ public final class AuditMaskingUtil {
 
             Object element = Array.get(source, i);
 
-            target.add(maskValue(element));
+            target.add( maskValue(element, processingObjects));
         }
 
         return target;

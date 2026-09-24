@@ -424,14 +424,23 @@ public class OtpServiceImpl implements IOtpService {
 	 * @param email      normalized email address
 	 * @return active OTP or {@code null} when none exists
 	 */
-	private EmailVerificationOtpEntity findActiveOtp(final String userNumber, final String email) {
+	private EmailVerificationOtpEntity findActiveOtp(
+	        final String userNumber,
+	        final String email) {
 
-		final Query query = new Query(new Criteria().andOperator(Criteria.where("userNumber").is(userNumber),
-				Criteria.where("email").is(email), Criteria.where("used").is(false),
-				Criteria.where("revoked").is(false)));
+	    final Query query = new Query(
+	            new Criteria()
+	                    .andOperator(
+	                            Criteria.where("userNumber")
+	                                    .is(userNumber),
+	                            Criteria.where("email")
+	                                    .is(email),
+	                            Criteria.where("used")
+	                                    .is(false),
+	                            Criteria.where("revoked")
+	                                    .is(false)));
 
-		return otpRepository.findOne(query)
-				.orElseThrow(() -> new BusinessException(AuthenticationErrorConstants.EMAIL_VERIFICATION_FAILED));
+	    return otpRepository.findOne(query).orElse(null);
 	}
 
 	/**
