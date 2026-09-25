@@ -182,4 +182,18 @@ public final class RestaurantApiConstants {
      */
     public static final String UPDATE_AVAILABILITY = "/availability";
 
+    // =========================================================================
+    // Restaurant Onboarding APIs
+    // =========================================================================
+
+    /**
+     * Onboards an authenticated restaurant owner by creating the restaurant
+     * business profile and its initial branch.
+     *
+     * <p>
+     * POST /api/restaurants/onboarding
+     * </p>
+     */
+    public static final String ONBOARD = "/onboarding";
+
 }

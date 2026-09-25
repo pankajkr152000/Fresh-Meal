@@ -1,6 +1,6 @@
 package com.foodies.freshmeal.food.dto;
 
-import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
+import com.foodies.freshmeal.food.constants.FoodStatusConstant;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -32,6 +32,6 @@ import lombok.Setter;
 public class UpdateFoodStatusRequest {
 
     @NotNull(message = "Food status is required.")
-    private DisplayOptionResponse status;
+    private FoodStatusConstant status;
 
 }

@@ -180,1498 +180,1519 @@ import com.foodies.freshmeal.user.service.IUserService;
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
 
-	// =========================================================================
-	// Dependencies
-	// =========================================================================
-
-	/**
-	 * Spring Security authentication manager.
-	 */
-	private final AuthenticationManager authenticationManager;
-
-	/**
-	 * FreshMeal JWT token service.
-	 */
-	private final ITokenService tokenService;
-
-	/**
-	 * FreshMeal user service responsible for user-domain persistence.
-	 */
-	private final IUserService userService;
-
-	/**
-	 * Password encoder used to encode registration passwords.
-	 */
-	private final PasswordEncoder passwordEncoder;
-
-	/**
-	 * OTP service responsible for email verification OTP lifecycle.
-	 */
-	private final IOtpService otpService;
-
-	/**
-	 * Email service responsible for email delivery.
-	 */
-	private final IEmailService emailService;
-
-	/**
-	 * Service responsible for authentication login-history records.
-	 */
-	private final ILoginHistoryService loginHistoryService;
-
-	/**
-	 * Server-side JWT token and authentication-session revocation service.
-	 */
-	private final ITokenRevocationService tokenRevocationService;
-
-	final IPasswordResetTokenRepository passwordResetTokenRepository;
-	final IDatabaseSequenceService databaseSequenceService;
-
-	// =========================================================================
-	// Constructor
-	// =========================================================================
-
-	/**
-	 * Creates the authentication service.
-	 *
-	 * @param authenticationManager  Spring Security authentication manager
-	 * @param tokenService           FreshMeal JWT token service
-	 * @param userService            FreshMeal user service
-	 * @param passwordEncoder        password encoder
-	 * @param otpService             email verification OTP service
-	 * @param emailService           email delivery service
-	 * @param loginHistoryService    login history service
-	 * @param tokenRevocationService server-side JWT token and
-	 *                               authentication-session revocation service
-	 */
-	public AuthenticationServiceImpl(final AuthenticationManager authenticationManager,
-			final ITokenService tokenService, final IUserService userService, final PasswordEncoder passwordEncoder,
-			final IOtpService otpService, final IEmailService emailService,
-			final ILoginHistoryService loginHistoryService, final ITokenRevocationService tokenRevocationService,
-			final IPasswordResetTokenRepository passwordResetTokenRepository,
-			final IDatabaseSequenceService databaseSequenceService) {
-
-		this.authenticationManager = authenticationManager;
-		this.tokenService = tokenService;
-		this.userService = userService;
-		this.passwordEncoder = passwordEncoder;
-		this.otpService = otpService;
-		this.emailService = emailService;
-		this.loginHistoryService = loginHistoryService;
-		this.tokenRevocationService = tokenRevocationService;
-		this.passwordResetTokenRepository = passwordResetTokenRepository;
-		this.databaseSequenceService = databaseSequenceService;
-	}
-
-	// =========================================================================
-	// Login
-	// =========================================================================
-
-	/**
-	 * Authenticates a FreshMeal user and generates an authentication token pair.
-	 *
-	 * <p>
-	 * The login identifier may represent either a username or an email address. The
-	 * configured {@code UserDetailsService} resolves the identifier while Spring
-	 * Security performs password verification.
-	 * </p>
-	 *
-	 * @param input login service input
-	 * @return authenticated token response
-	 */
-	@Override
-	public IServiceOutput<LoginResponse> login(final IServiceInput<LoginInputDTO> input) {
+    // =========================================================================
+    // Dependencies
+    // =========================================================================
+
+    /**
+     * Spring Security authentication manager.
+     */
+    private final AuthenticationManager authenticationManager;
+
+    /**
+     * FreshMeal JWT token service.
+     */
+    private final ITokenService tokenService;
+
+    /**
+     * FreshMeal user service responsible for user-domain persistence.
+     */
+    private final IUserService userService;
+
+    /**
+     * Password encoder used to encode registration passwords.
+     */
+    private final PasswordEncoder passwordEncoder;
+
+    /**
+     * OTP service responsible for email verification OTP lifecycle.
+     */
+    private final IOtpService otpService;
+
+    /**
+     * Email service responsible for email delivery.
+     */
+    private final IEmailService emailService;
+
+    /**
+     * Service responsible for authentication login-history records.
+     */
+    private final ILoginHistoryService loginHistoryService;
+
+    /**
+     * Server-side JWT token and authentication-session revocation service.
+     */
+    private final ITokenRevocationService tokenRevocationService;
+
+    final IPasswordResetTokenRepository passwordResetTokenRepository;
+    final IDatabaseSequenceService databaseSequenceService;
+
+    // =========================================================================
+    // Constructor
+    // =========================================================================
+
+    /**
+     * Creates the authentication service.
+     *
+     * @param authenticationManager  Spring Security authentication manager
+     * @param tokenService           FreshMeal JWT token service
+     * @param userService            FreshMeal user service
+     * @param passwordEncoder        password encoder
+     * @param otpService             email verification OTP service
+     * @param emailService           email delivery service
+     * @param loginHistoryService    login history service
+     * @param tokenRevocationService server-side JWT token and
+     *                               authentication-session revocation service
+     */
+    public AuthenticationServiceImpl(final AuthenticationManager authenticationManager,
+            final ITokenService tokenService, final IUserService userService, final PasswordEncoder passwordEncoder,
+            final IOtpService otpService, final IEmailService emailService,
+            final ILoginHistoryService loginHistoryService, final ITokenRevocationService tokenRevocationService,
+            final IPasswordResetTokenRepository passwordResetTokenRepository,
+            final IDatabaseSequenceService databaseSequenceService) {
+
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.otpService = otpService;
+        this.emailService = emailService;
+        this.loginHistoryService = loginHistoryService;
+        this.tokenRevocationService = tokenRevocationService;
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.databaseSequenceService = databaseSequenceService;
+    }
+
+    // =========================================================================
+    // Login
+    // =========================================================================
+
+    /**
+     * Authenticates a FreshMeal user and generates an authentication token pair.
+     *
+     * <p>
+     * The login identifier may represent either a username or an email address. The
+     * configured {@code UserDetailsService} resolves the identifier while Spring
+     * Security performs password verification.
+     * </p>
+     *
+     * @param input login service input
+     * @return authenticated token response
+     */
+    @Override
+    public IServiceOutput<LoginResponse> login(final IServiceInput<LoginInputDTO> input) {
 
-		final LoginInputDTO inputDTO = input.getInput();
+        final LoginInputDTO inputDTO = input.getInput();
 
-		final String identifier = inputDTO.getLoginRequest().getIdentifier();
+        final String identifier = inputDTO.getLoginRequest().getIdentifier();
 
-		final String password = inputDTO.getLoginRequest().getPassword();
+        final String password = inputDTO.getLoginRequest().getPassword();
 
-		final UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
-				.unauthenticated(identifier, password);
+        final UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken
+                .unauthenticated(identifier, password);
 
-		final Authentication authentication;
+        final Authentication authentication;
 
-		try {
+        try {
 
-			authentication = authenticationManager.authenticate(authenticationToken);
+            authentication = authenticationManager.authenticate(authenticationToken);
 
-		} catch (AuthenticationException exception) {
+        } catch (AuthenticationException exception) {
 
-			recordFailedLogin(identifier, exception, input);
+            recordFailedLogin(identifier, exception, input);
 
-			throw exception;
-		}
+            throw exception;
+        }
 
-		final Object principal = authentication.getPrincipal();
+        final Object principal = authentication.getPrincipal();
 
-		if (!(principal instanceof UserProfile userProfile)) {
+        if (!(principal instanceof UserProfile userProfile)) {
 
-			throw new IllegalStateException("Authenticated principal must be a UserProfile.");
-		}
-		final String sessionId = UUID.randomUUID().toString();
+            throw new IllegalStateException("Authenticated principal must be a UserProfile.");
+        }
+        /*
+         * The authenticated UserProfile is stored in the request-scoped service context
+         * for downstream service operations. This allows the service layer to access
+         * the authenticated user without relying on Spring Security's static context.
+         *
+         * The service context is passed to downstream services, ensuring that the
+         * authenticated user identity is consistently available throughout the request
+         * lifecycle.
+         *
+         * Note: The service context is intentionally not stored in a static or global
+         * context to avoid potential security risks and to maintain request isolation.
+         *
+         * The authenticated user's identity is resolved by the service layer from
+         * {@link IServiceContext}. The client must not provide an owner user number
+         * as part of the onboarding request.
+         */
+        input.getServiceContext().setUserProfile(userProfile);
 
-		final String accessToken = tokenService.generateAccessToken(userProfile, sessionId);
+        final String sessionId = UUID.randomUUID().toString();
 
-		final String refreshToken = tokenService.generateRefreshToken(userProfile, sessionId);
+        final String accessToken = tokenService.generateAccessToken(userProfile, sessionId);
 
-		final TokenResponse tokenResponse = new TokenResponse();
+        final String refreshToken = tokenService.generateRefreshToken(userProfile, sessionId);
 
-		tokenResponse.setAccessToken(accessToken);
-		tokenResponse.setRefreshToken(refreshToken);
-		tokenResponse.setLoginSessionId(sessionId);
-		tokenResponse.setTokenType("Bearer");
-		tokenResponse.setExpiresIn(tokenService.getAccessTokenExpirationSeconds());
+        final TokenResponse tokenResponse = new TokenResponse();
 
-		recordSuccessfulLogin(userProfile, sessionId, input);
+        tokenResponse.setAccessToken(accessToken);
+        tokenResponse.setRefreshToken(refreshToken);
+        tokenResponse.setLoginSessionId(sessionId);
+        tokenResponse.setTokenType("Bearer");
+        tokenResponse.setExpiresIn(tokenService.getAccessTokenExpirationSeconds());
 
-		final LoginResponse loginResponse = new LoginResponse();
+        recordSuccessfulLogin(userProfile, sessionId, input);
 
-		loginResponse.setToken(tokenResponse);
+        final LoginResponse loginResponse = new LoginResponse();
 
-		return new ServiceOutput<>(loginResponse);
-	}
+        loginResponse.setToken(tokenResponse);
 
-	@Override
-	@AuditApi(action = ActionType.REGISTER, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
-	public IServiceOutput<RegisterResponse> register(final IServiceInput<RegisterInputDTO> input) {
+        return new ServiceOutput<>(loginResponse);
+    }
 
-		final RegisterRequest registerRequest = input.getInput().getRegisterRequest();
+    @Override
+    @AuditApi(action = ActionType.REGISTER, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
+    public IServiceOutput<RegisterResponse> register(final IServiceInput<RegisterInputDTO> input) {
 
-		validateRegistrationPasswords(registerRequest);
-		validatePublicRegistrationRole(registerRequest.getRequestedRole());
+        final RegisterRequest registerRequest = input.getInput().getRegisterRequest();
 
-		final String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
+        validateRegistrationPasswords(registerRequest);
+        validatePublicRegistrationRole(registerRequest.getRequestedRole());
 
-		final UserRequest userRequest = new UserRequest();
+        final String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
 
-		userRequest.setUsername(registerRequest.getUsername());
-		userRequest.setFirstName(registerRequest.getFirstName());
-		userRequest.setLastName(registerRequest.getLastName());
-		userRequest.setEmail(registerRequest.getEmail());
-		userRequest.setPhoneNumber(registerRequest.getPhoneNumber());
+        final UserRequest userRequest = new UserRequest();
 
-		/*
-		 * Registration-specific information is intentionally separated from the generic
-		 * UserInputDTO.
-		 *
-		 * The requested role is part of the public registration workflow and must not
-		 * become part of generic user operations.
-		 */
-		final UserRegistrationInputDTO registrationInput = new UserRegistrationInputDTO();
+        userRequest.setUsername(registerRequest.getUsername());
+        userRequest.setFirstName(registerRequest.getFirstName());
+        userRequest.setLastName(registerRequest.getLastName());
+        userRequest.setEmail(registerRequest.getEmail());
+        userRequest.setPhoneNumber(registerRequest.getPhoneNumber());
 
-		registrationInput.setUserRequest(userRequest);
-		registrationInput.setRequestedRole(registerRequest.getRequestedRole());
+        /*
+         * Registration-specific information is intentionally separated from the generic
+         * UserInputDTO.
+         *
+         * The requested role is part of the public registration workflow and must not
+         * become part of generic user operations.
+         */
+        final UserRegistrationInputDTO registrationInput = new UserRegistrationInputDTO();
 
-		final ServiceInput<UserRegistrationInputDTO> userServiceInput = new ServiceInput<>();
+        registrationInput.setUserRequest(userRequest);
+        registrationInput.setRequestedRole(registerRequest.getRequestedRole());
+
+        final ServiceInput<UserRegistrationInputDTO> userServiceInput = new ServiceInput<>();
 
-		userServiceInput.setInput(registrationInput);
-		userServiceInput.setServiceContext(input.getServiceContext());
-		userServiceInput.setDataContext(input.getDataContext());
+        userServiceInput.setInput(registrationInput);
+        userServiceInput.setServiceContext(input.getServiceContext());
+        userServiceInput.setDataContext(input.getDataContext());
 
-		final UserEntity userEntity = userService.registerUser(userServiceInput, encodedPassword).getOutput();
+        final UserEntity userEntity = userService.registerUser(userServiceInput, encodedPassword).getOutput();
 
-		final String email = userEntity.getEmail().getValue();
+        final String email = userEntity.getEmail().getValue();
 
-		/*
-		 * An existing verified user registering for an additional role does not need to
-		 * verify the same email address again.
-		 *
-		 * New users and existing users whose email is still unverified continue through
-		 * the normal email-verification workflow.
-		 */
-		if (!userEntity.isEmailVerified()) {
+        /*
+         * An existing verified user registering for an additional role does not need to
+         * verify the same email address again.
+         *
+         * New users and existing users whose email is still unverified continue through
+         * the normal email-verification workflow.
+         */
+        if (!userEntity.isEmailVerified()) {
+
+            final OtpGenerationResult otpGenerationResult = otpService
+                    .generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
 
-			final OtpGenerationResult otpGenerationResult = otpService.generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
+            final String emailBody = buildVerificationEmailBody(userEntity.getFirstName(),
+                    otpGenerationResult.rawOtp());
 
-			final String emailBody = buildVerificationEmailBody(userEntity.getFirstName(), otpGenerationResult.rawOtp());
+            /*
+             * sentAt is intentionally updated only after the email service successfully
+             * accepts the email for delivery.
+             */
+            emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
 
-			/*
-			 * sentAt is intentionally updated only after the email service successfully
-			 * accepts the email for delivery.
-			 */
-			emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
+            otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(),
+                    input.getServiceContext());
+        }
 
-			otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(), input.getServiceContext());
-		}
+        final RegisterResponse response = new RegisterResponse();
+
+        response.setEmail(email);
+        response.setVerificationRequired(!userEntity.isEmailVerified());
+
+        return new ServiceOutput<>(response);
+    }
+
+    /**
+     * Validates registration password fields.
+     *
+     * @param registerRequest registration request
+     */
+    private void validateRegistrationPasswords(final RegisterRequest registerRequest) {
 
-		final RegisterResponse response = new RegisterResponse();
+        if (registerRequest.getPassword() == null || registerRequest.getPassword().isBlank()) {
+
+            throw new IllegalArgumentException("Password is required.");
+        }
 
-		response.setEmail(email);
-		response.setVerificationRequired(!userEntity.isEmailVerified());
+        if (registerRequest.getConfirmPassword() == null || registerRequest.getConfirmPassword().isBlank()) {
 
-		return new ServiceOutput<>(response);
-	}
+            throw new IllegalArgumentException("Password confirmation is required.");
+        }
+
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
 
-	/**
-	 * Validates registration password fields.
-	 *
-	 * @param registerRequest registration request
-	 */
-	private void validateRegistrationPasswords(final RegisterRequest registerRequest) {
+            throw new IllegalArgumentException("Password and confirm password must match.");
+        }
+    }
 
-		if (registerRequest.getPassword() == null || registerRequest.getPassword().isBlank()) {
+    /**
+     * =================================================================================================
+     * VERIFY EMAIL OTP
+     * =================================================================================================
+     *
+     * <p>
+     * Verifies the email verification OTP submitted by a newly registered user.
+     * </p>
+     *
+     * <p>
+     * A successful verification activates the user account through
+     * {@link IUserService#activateUser(IServiceInput)} and sends the user a welcome
+     * email.
+     * </p>
+     *
+     * <h3>Verification Flow</h3>
+     * <ul>
+     * <li>Find the user using the normalized email address.</li>
+     * <li>Verify the submitted OTP through {@link IOtpService}.</li>
+     * <li>Activate the user through {@link IUserService}.</li>
+     * <li>Send the welcome email.</li>
+     * <li>Return the email verification result.</li>
+     * </ul>
+     *
+     * <p>
+     * OTP validation, expiration, attempt limits and lockout remain the
+     * responsibility of the OTP service.
+     * </p>
+     *
+     * @param input service input containing email and verification OTP
+     * @return email verification response
+     */
+    @Override
+    public IServiceOutput<VerifyEmailOtpResponse> verifyEmailOtp(final IServiceInput<VerifyEmailOtpInputDTO> input) {
 
-			throw new IllegalArgumentException("Password is required.");
-		}
+        final VerifyEmailOtpInputDTO verifyInput = input.getInput();
 
-		if (registerRequest.getConfirmPassword() == null || registerRequest.getConfirmPassword().isBlank()) {
+        final VerifyEmailOtpRequest request = verifyInput.getVerifyEmailOtpRequest();
 
-			throw new IllegalArgumentException("Password confirmation is required.");
-		}
+        /*
+         * Normalize the email before performing the user lookup.
+         *
+         * Email normalization belongs to the Authentication workflow boundary; the
+         * EmailAddress value object remains responsible only for representing an email
+         * address.
+         */
+        final String email = FreshMealUtilities.normalizeEmail(request.getEmail().getValue());
 
-		if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+        /*
+         * Locate the user associated with the verification request.
+         */
+        final EmailRequest emailRequest = new EmailRequest();
 
-			throw new IllegalArgumentException("Password and confirm password must match.");
-		}
-	}
+        emailRequest.setEmail(EmailAddress.toEmailAddress(email));
 
-	/**
-	 * =================================================================================================
-	 * VERIFY EMAIL OTP
-	 * =================================================================================================
-	 *
-	 * <p>
-	 * Verifies the email verification OTP submitted by a newly registered user.
-	 * </p>
-	 *
-	 * <p>
-	 * A successful verification activates the user account through
-	 * {@link IUserService#activateUser(IServiceInput)} and sends the user a welcome
-	 * email.
-	 * </p>
-	 *
-	 * <h3>Verification Flow</h3>
-	 * <ul>
-	 * <li>Find the user using the normalized email address.</li>
-	 * <li>Verify the submitted OTP through {@link IOtpService}.</li>
-	 * <li>Activate the user through {@link IUserService}.</li>
-	 * <li>Send the welcome email.</li>
-	 * <li>Return the email verification result.</li>
-	 * </ul>
-	 *
-	 * <p>
-	 * OTP validation, expiration, attempt limits and lockout remain the
-	 * responsibility of the OTP service.
-	 * </p>
-	 *
-	 * @param input service input containing email and verification OTP
-	 * @return email verification response
-	 */
-	@Override
-	public IServiceOutput<VerifyEmailOtpResponse> verifyEmailOtp(final IServiceInput<VerifyEmailOtpInputDTO> input) {
+        final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>();
 
-		final VerifyEmailOtpInputDTO verifyInput = input.getInput();
+        userServiceInput.setInput(emailRequest);
+        userServiceInput.setServiceContext(input.getServiceContext());
 
-		final VerifyEmailOtpRequest request = verifyInput.getVerifyEmailOtpRequest();
+        final UserEntity userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
 
-		/*
-		 * Normalize the email before performing the user lookup.
-		 *
-		 * Email normalization belongs to the Authentication workflow boundary; the
-		 * EmailAddress value object remains responsible only for representing an email
-		 * address.
-		 */
-		final String email = FreshMealUtilities.normalizeEmail(request.getEmail().getValue());
+        /*
+         * Verify the OTP using the user's business identifier.
+         *
+         * OTP expiration, used-state, attempt limits and lockout are handled entirely
+         * by the OTP service.
+         */
+        otpService.verifyEmailVerificationOtp(userEntity.getUserNumber(), email, request.getOtp(),
+                input.getServiceContext());
 
-		/*
-		 * Locate the user associated with the verification request.
-		 */
-		final EmailRequest emailRequest = new EmailRequest();
+        /*
+         * The OTP has been successfully verified.
+         *
+         * Delegate account activation to the User module rather than modifying
+         * UserEntity directly from AuthenticationService.
+         */
+        final UserNumberRequest userNumberRequest = new UserNumberRequest();
 
-		emailRequest.setEmail(EmailAddress.toEmailAddress(email));
+        userNumberRequest.setUserNumber(userEntity.getUserNumber());
 
-		final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>();
+        final IServiceInput<UserNumberRequest> activationInput = new ServiceInput<>();
 
-		userServiceInput.setInput(emailRequest);
-		userServiceInput.setServiceContext(input.getServiceContext());
+        activationInput.setInput(userNumberRequest);
+        activationInput.setServiceContext(input.getServiceContext());
 
-		final UserEntity userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
+        userService.activateUser(activationInput);
 
-		/*
-		 * Verify the OTP using the user's business identifier.
-		 *
-		 * OTP expiration, used-state, attempt limits and lockout are handled entirely
-		 * by the OTP service.
-		 */
-		otpService.verifyEmailVerificationOtp(userEntity.getUserNumber(), email, request.getOtp(),
-				input.getServiceContext());
+        /*
+         * Send the welcome email only after successful account activation.
+         */
+        final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
+                : userEntity.getUsername();
 
-		/*
-		 * The OTP has been successfully verified.
-		 *
-		 * Delegate account activation to the User module rather than modifying
-		 * UserEntity directly from AuthenticationService.
-		 */
-		final UserNumberRequest userNumberRequest = new UserNumberRequest();
+        final String welcomeEmailBody = buildWelcomeEmailBody(firstName);
 
-		userNumberRequest.setUserNumber(userEntity.getUserNumber());
+        emailService.sendEmail(email, "Welcome to FreshMeal", welcomeEmailBody);
 
-		final IServiceInput<UserNumberRequest> activationInput = new ServiceInput<>();
+        /*
+         * Build the authentication response.
+         *
+         * No JWT or automatic login is performed here.
+         */
+        final VerifyEmailOtpResponse response = new VerifyEmailOtpResponse();
 
-		activationInput.setInput(userNumberRequest);
-		activationInput.setServiceContext(input.getServiceContext());
+        response.setEmail(email);
 
-		userService.activateUser(activationInput);
+        response.setEmailVerified(true);
 
-		/*
-		 * Send the welcome email only after successful account activation.
-		 */
-		final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
-				: userEntity.getUsername();
+        return new ServiceOutput<>(response);
+    }
 
-		final String welcomeEmailBody = buildWelcomeEmailBody(firstName);
+    @Override
+    public IServiceOutput<RegisterResponse> resendEmailOtp(final IServiceInput<ResendEmailOtpInputDTO> input) {
 
-		emailService.sendEmail(email, "Welcome to FreshMeal", welcomeEmailBody);
+        final ResendEmailOtpInputDTO resendInput = input.getInput();
 
-		/*
-		 * Build the authentication response.
-		 *
-		 * No JWT or automatic login is performed here.
-		 */
-		final VerifyEmailOtpResponse response = new VerifyEmailOtpResponse();
+        final ResendEmailOtpRequest request = resendInput.getResendEmailOtpRequest();
 
-		response.setEmail(email);
+        /*
+         * Normalize the email before performing the user lookup.
+         */
+        final String email = FreshMealUtilities.normalizeEmail(request.getEmail().getValue());
 
-		response.setEmailVerified(true);
+        /*
+         * Find the user associated with the email address.
+         */
+        final EmailRequest emailRequest = new EmailRequest();
 
-		return new ServiceOutput<>(response);
-	}
+        emailRequest.setEmail(EmailAddress.toEmailAddress(email));
 
-	@Override
-	public IServiceOutput<RegisterResponse> resendEmailOtp(final IServiceInput<ResendEmailOtpInputDTO> input) {
+        final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>();
 
-		final ResendEmailOtpInputDTO resendInput = input.getInput();
+        userServiceInput.setInput(emailRequest);
+        userServiceInput.setServiceContext(input.getServiceContext());
 
-		final ResendEmailOtpRequest request = resendInput.getResendEmailOtpRequest();
+        final UserEntity userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
 
-		/*
-		 * Normalize the email before performing the user lookup.
-		 */
-		final String email = FreshMealUtilities.normalizeEmail(request.getEmail().getValue());
+        /*
+         * An already verified account must not receive another email-verification OTP.
+         */
+        if (userEntity.isEmailVerified()) {
 
-		/*
-		 * Find the user associated with the email address.
-		 */
-		final EmailRequest emailRequest = new EmailRequest();
+            throw new BusinessException(AuthenticationErrorConstants.EMAIL_VERIFICATION_FAILED);
+        }
 
-		emailRequest.setEmail(EmailAddress.toEmailAddress(email));
+        /*
+         * Generate a new OTP.
+         *
+         * IOtpService owns the resend cooldown, active OTP replacement, expiration and
+         * attempt-limit policies.
+         */
+        final OtpGenerationResult otpGenerationResult = otpService
+                .generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
 
-		final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>();
+        /*
+         * Send the newly generated OTP to the user's email address.
+         */
+        final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
+                : userEntity.getUsername();
 
-		userServiceInput.setInput(emailRequest);
-		userServiceInput.setServiceContext(input.getServiceContext());
+        final String emailBody = buildVerificationEmailBody(firstName, otpGenerationResult.rawOtp());
 
-		final UserEntity userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
+        emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
 
-		/*
-		 * An already verified account must not receive another email-verification OTP.
-		 */
-		if (userEntity.isEmailVerified()) {
+        /*
+         * Mark the exact OTP as successfully sent.
+         *
+         * sentAt must only be populated after the email dispatch succeeds.
+         */
+        otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(), input.getServiceContext());
 
-			throw new BusinessException(AuthenticationErrorConstants.EMAIL_VERIFICATION_FAILED);
-		}
+        /*
+         * Return the same registration-oriented response structure.
+         *
+         * The raw OTP is never returned to the client.
+         */
+        final RegisterResponse response = new RegisterResponse();
 
-		/*
-		 * Generate a new OTP.
-		 *
-		 * IOtpService owns the resend cooldown, active OTP replacement, expiration and
-		 * attempt-limit policies.
-		 */
-		final OtpGenerationResult otpGenerationResult = otpService
-				.generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
+        response.setEmail(email);
 
-		/*
-		 * Send the newly generated OTP to the user's email address.
-		 */
-		final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
-				: userEntity.getUsername();
+        response.setVerificationRequired(true);
 
-		final String emailBody = buildVerificationEmailBody(firstName, otpGenerationResult.rawOtp());
+        return new ServiceOutput<>(response);
+    }
 
-		emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
+    @Override
+    public IServiceOutput<Boolean> logout(final IServiceInput<LogoutInputDTO> input) {
 
-		/*
-		 * Mark the exact OTP as successfully sent.
-		 *
-		 * sentAt must only be populated after the email dispatch succeeds.
-		 */
-		otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(), input.getServiceContext());
+        final IServiceContext serviceContext = input.getServiceContext();
 
-		/*
-		 * Return the same registration-oriented response structure.
-		 *
-		 * The raw OTP is never returned to the client.
-		 */
-		final RegisterResponse response = new RegisterResponse();
+        final Object tokenAttribute = serviceContext.getAttribute(DataContext.CURRENT_ACCESS_TOKEN);
 
-		response.setEmail(email);
+        if (!(tokenAttribute instanceof String token) || token.isBlank()) {
 
-		response.setVerificationRequired(true);
+            SecurityContextHolder.clearContext();
 
-		return new ServiceOutput<>(response);
-	}
+            return new ServiceOutput<>(Boolean.TRUE);
+        }
 
-	@Override
-	public IServiceOutput<Boolean> logout(final IServiceInput<LogoutInputDTO> input) {
+        try {
 
-		final IServiceContext serviceContext = input.getServiceContext();
+            /*
+             * The logout endpoint is an authenticated access-token operation. Validate the
+             * token again at the business boundary rather than trusting only the presence
+             * of a DataContext attribute.
+             */
+            if (!tokenService.isAccessTokenValid(token)) {
 
-		final Object tokenAttribute = serviceContext.getAttribute(DataContext.CURRENT_ACCESS_TOKEN);
+                SecurityContextHolder.clearContext();
 
-		if (!(tokenAttribute instanceof String token) || token.isBlank()) {
+                return new ServiceOutput<>(Boolean.TRUE);
+            }
 
-			SecurityContextHolder.clearContext();
+            final String sessionId = tokenService.getSessionId(token);
 
-			return new ServiceOutput<>(Boolean.TRUE);
-		}
+            final String userNumber = tokenService.getUserNumber(token);
 
-		try {
+            if (!hasText(sessionId) || !hasText(userNumber)) {
 
-			/*
-			 * The logout endpoint is an authenticated access-token operation. Validate the
-			 * token again at the business boundary rather than trusting only the presence
-			 * of a DataContext attribute.
-			 */
-			if (!tokenService.isAccessTokenValid(token)) {
+                SecurityContextHolder.clearContext();
 
-				SecurityContextHolder.clearContext();
+                return new ServiceOutput<>(Boolean.TRUE);
+            }
 
-				return new ServiceOutput<>(Boolean.TRUE);
-			}
+            /*
+             * Revoke the complete authentication session.
+             *
+             * This invalidates both the access token and refresh token associated with this
+             * login session.
+             */
+            tokenRevocationService.revokeSession(sessionId, userNumber, serviceContext);
 
-			final String sessionId = tokenService.getSessionId(token);
+            /*
+             * Close the LoginHistory record associated with this exact session.
+             */
+            LoginHistoryEntity loginHistory = loginHistoryService
+                    .loadLoginHistoryBySessionId(new ServiceInput<>(sessionId, serviceContext)).getOutput();
 
-			final String userNumber = tokenService.getUserNumber(token);
+            if (loginHistory != null && loginHistory.getLoginHistoryNumber() != null) {
 
-			if (!hasText(sessionId) || !hasText(userNumber)) {
+                LoginHistoryNumberRequest historyRequest = new LoginHistoryNumberRequest();
 
-				SecurityContextHolder.clearContext();
+                historyRequest.setLoginHistoryNumber(loginHistory.getLoginHistoryNumber());
 
-				return new ServiceOutput<>(Boolean.TRUE);
-			}
+                loginHistoryService.recordLogout(new ServiceInput<>(historyRequest, serviceContext));
+            }
 
-			/*
-			 * Revoke the complete authentication session.
-			 *
-			 * This invalidates both the access token and refresh token associated with this
-			 * login session.
-			 */
-			tokenRevocationService.revokeSession(sessionId, userNumber, serviceContext);
+            /*
+             * Remove authentication from the current request.
+             */
+            SecurityContextHolder.clearContext();
 
-			/*
-			 * Close the LoginHistory record associated with this exact session.
-			 */
-			LoginHistoryEntity loginHistory = loginHistoryService
-					.loadLoginHistoryBySessionId(new ServiceInput<>(sessionId, serviceContext)).getOutput();
+            return new ServiceOutput<>(Boolean.TRUE);
 
-			if (loginHistory != null && loginHistory.getLoginHistoryNumber() != null) {
+        } catch (RuntimeException exception) {
 
-				LoginHistoryNumberRequest historyRequest = new LoginHistoryNumberRequest();
+            /*
+             * Always clear the current security context when logout processing exits
+             * unexpectedly.
+             */
+            SecurityContextHolder.clearContext();
 
-				historyRequest.setLoginHistoryNumber(loginHistory.getLoginHistoryNumber());
+            throw exception;
+        }
+    }
 
-				loginHistoryService.recordLogout(new ServiceInput<>(historyRequest, serviceContext));
-			}
+    // =========================================================================
+    // Refresh Token
+    // =========================================================================
 
-			/*
-			 * Remove authentication from the current request.
-			 */
-			SecurityContextHolder.clearContext();
+    /**
+     * Refreshes an authenticated user's token pair.
+     *
+     * <p>
+     * The supplied token must be a valid, unexpired refresh token. Both the
+     * individual refresh token and its associated authentication session are
+     * checked for revocation before new tokens are issued.
+     * </p>
+     *
+     * <p>
+     * Refresh-token rotation is used so that the previously supplied refresh token
+     * cannot be reused after a successful refresh operation.
+     * </p>
+     *
+     * <p>
+     * The authentication {@code sessionId} remains unchanged during rotation, while
+     * both newly generated JWTs receive new token identifiers ({@code jti} values).
+     * </p>
+     *
+     * <h3>Security Model</h3>
+     * 
+     * <pre>
+     * userNumber -> identifies the user
+     * sessionId  -> identifies the authentication session
+     * jti        -> identifies the exact JWT
+     * </pre>
+     *
+     * @param input refresh-token service input
+     * @return newly generated access and refresh tokens
+     */
+    @Override
+    public IServiceOutput<TokenResponse> refreshToken(final IServiceInput<RefreshTokenInputDTO> input) {
 
-			return new ServiceOutput<>(Boolean.TRUE);
+        final RefreshTokenInputDTO inputDTO = input.getInput();
 
-		} catch (RuntimeException exception) {
+        final String refreshToken = inputDTO.getRefreshTokenRequest().getRefreshToken();
 
-			/*
-			 * Always clear the current security context when logout processing exits
-			 * unexpectedly.
-			 */
-			SecurityContextHolder.clearContext();
+        /*
+         * The DTO is normally validated at the controller boundary. This defensive
+         * check ensures the service never attempts to parse an empty token.
+         */
+        if (refreshToken == null || refreshToken.isBlank()) {
 
-			throw exception;
-		}
-	}
+            throw new BusinessException(AuthenticationErrorConstants.REFRESH_TOKEN_REQUIRED);
+        }
 
-	// =========================================================================
-	// Refresh Token
-	// =========================================================================
+        /*
+         * Validate the JWT signature, expiration and token purpose.
+         *
+         * isRefreshTokenValid() accepts only JWTs whose tokenType claim is REFRESH.
+         */
+        if (!tokenService.isRefreshTokenValid(refreshToken)) {
 
-	/**
-	 * Refreshes an authenticated user's token pair.
-	 *
-	 * <p>
-	 * The supplied token must be a valid, unexpired refresh token. Both the
-	 * individual refresh token and its associated authentication session are
-	 * checked for revocation before new tokens are issued.
-	 * </p>
-	 *
-	 * <p>
-	 * Refresh-token rotation is used so that the previously supplied refresh token
-	 * cannot be reused after a successful refresh operation.
-	 * </p>
-	 *
-	 * <p>
-	 * The authentication {@code sessionId} remains unchanged during rotation, while
-	 * both newly generated JWTs receive new token identifiers ({@code jti} values).
-	 * </p>
-	 *
-	 * <h3>Security Model</h3>
-	 * 
-	 * <pre>
-	 * userNumber -> identifies the user
-	 * sessionId  -> identifies the authentication session
-	 * jti        -> identifies the exact JWT
-	 * </pre>
-	 *
-	 * @param input refresh-token service input
-	 * @return newly generated access and refresh tokens
-	 */
-	@Override
-	public IServiceOutput<TokenResponse> refreshToken(final IServiceInput<RefreshTokenInputDTO> input) {
+            throw new BusinessException(AuthenticationErrorConstants.INVALID_REFRESH_TOKEN);
+        }
 
-		final RefreshTokenInputDTO inputDTO = input.getInput();
+        /*
+         * Check whether this exact refresh token has already been revoked.
+         *
+         * This is what makes refresh-token rotation effective. Once the old refresh
+         * token is revoked, replaying it will fail.
+         */
+        if (tokenRevocationService.isTokenRevoked(refreshToken)) {
 
-		final String refreshToken = inputDTO.getRefreshTokenRequest().getRefreshToken();
+            throw new BusinessException(AuthenticationErrorConstants.REFRESH_TOKEN_REVOKED);
+        }
 
-		/*
-		 * The DTO is normally validated at the controller boundary. This defensive
-		 * check ensures the service never attempts to parse an empty token.
-		 */
-		if (refreshToken == null || refreshToken.isBlank()) {
+        final String userNumber = tokenService.getUserNumber(refreshToken);
 
-			throw new BusinessException(AuthenticationErrorConstants.REFRESH_TOKEN_REQUIRED);
-		}
+        final String sessionId = tokenService.getSessionId(refreshToken);
 
-		/*
-		 * Validate the JWT signature, expiration and token purpose.
-		 *
-		 * isRefreshTokenValid() accepts only JWTs whose tokenType claim is REFRESH.
-		 */
-		if (!tokenService.isRefreshTokenValid(refreshToken)) {
+        /*
+         * A refresh token without a valid authentication identity or session cannot
+         * participate in the refresh workflow.
+         */
+        if (userNumber == null || userNumber.isBlank() || sessionId == null || sessionId.isBlank()) {
 
-			throw new BusinessException(AuthenticationErrorConstants.INVALID_REFRESH_TOKEN);
-		}
+            throw new BusinessException(AuthenticationErrorConstants.INVALID_REFRESH_TOKEN);
+        }
 
-		/*
-		 * Check whether this exact refresh token has already been revoked.
-		 *
-		 * This is what makes refresh-token rotation effective. Once the old refresh
-		 * token is revoked, replaying it will fail.
-		 */
-		if (tokenRevocationService.isTokenRevoked(refreshToken)) {
+        /*
+         * A logout operation revokes the entire authentication session.
+         *
+         * Therefore a refresh token belonging to a revoked session must never be
+         * allowed to create another access token.
+         */
+        if (tokenRevocationService.isSessionRevoked(sessionId)) {
 
-			throw new BusinessException(AuthenticationErrorConstants.REFRESH_TOKEN_REVOKED);
-		}
+            throw new BusinessException(AuthenticationErrorConstants.REFRESH_TOKEN_REVOKED);
+        }
 
-		final String userNumber = tokenService.getUserNumber(refreshToken);
+        /*
+         * Load the current active user.
+         *
+         * UserService remains responsible for user-domain persistence and active user
+         * resolution.
+         */
+        final UserNumberRequest userNumberRequest = new UserNumberRequest();
 
-		final String sessionId = tokenService.getSessionId(refreshToken);
+        userNumberRequest.setUserNumber(userNumber);
 
-		/*
-		 * A refresh token without a valid authentication identity or session cannot
-		 * participate in the refresh workflow.
-		 */
-		if (userNumber == null || userNumber.isBlank() || sessionId == null || sessionId.isBlank()) {
+        final IServiceInput<UserNumberRequest> userServiceInput = new ServiceInput<>(userNumberRequest,
+                input.getServiceContext());
 
-			throw new BusinessException(AuthenticationErrorConstants.INVALID_REFRESH_TOKEN);
-		}
+        final UserEntity userEntity = userService.loadUserByUserNumber(userServiceInput).getOutput();
 
-		/*
-		 * A logout operation revokes the entire authentication session.
-		 *
-		 * Therefore a refresh token belonging to a revoked session must never be
-		 * allowed to create another access token.
-		 */
-		if (tokenRevocationService.isSessionRevoked(sessionId)) {
+        /*
+         * Re-check account state.
+         *
+         * A previously issued refresh token must not bypass a later account
+         * disable/lock/verification state change.
+         */
+        if (!userEntity.isEnabled()) {
 
-			throw new BusinessException(AuthenticationErrorConstants.REFRESH_TOKEN_REVOKED);
-		}
+            throw new BusinessException(AuthenticationErrorConstants.ACCOUNT_DISABLED);
+        }
 
-		/*
-		 * Load the current active user.
-		 *
-		 * UserService remains responsible for user-domain persistence and active user
-		 * resolution.
-		 */
-		final UserNumberRequest userNumberRequest = new UserNumberRequest();
+        if (!userEntity.isAccountNonLocked()) {
 
-		userNumberRequest.setUserNumber(userNumber);
+            throw new BusinessException(AuthenticationErrorConstants.ACCOUNT_LOCKED);
+        }
 
-		final IServiceInput<UserNumberRequest> userServiceInput = new ServiceInput<>(userNumberRequest,
-				input.getServiceContext());
+        if (!userEntity.isAccountNonExpired()) {
 
-		final UserEntity userEntity = userService.loadUserByUserNumber(userServiceInput).getOutput();
+            throw new BusinessException(AuthenticationErrorConstants.ACCOUNT_EXPIRED);
+        }
 
-		/*
-		 * Re-check account state.
-		 *
-		 * A previously issued refresh token must not bypass a later account
-		 * disable/lock/verification state change.
-		 */
-		if (!userEntity.isEnabled()) {
+        if (!userEntity.isCredentialsNonExpired()) {
 
-			throw new BusinessException(AuthenticationErrorConstants.ACCOUNT_DISABLED);
-		}
+            throw new BusinessException(AuthenticationErrorConstants.CREDENTIALS_EXPIRED);
+        }
 
-		if (!userEntity.isAccountNonLocked()) {
+        /*
+         * Reconstruct the same security principal used during normal authentication.
+         */
+        final UserProfile userProfile = new UserProfile(userEntity, userEntity.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getValue())).collect(Collectors.toList()));
 
-			throw new BusinessException(AuthenticationErrorConstants.ACCOUNT_LOCKED);
-		}
+        /*
+         * IMPORTANT:
+         *
+         * Revoke the old refresh token before issuing its replacement.
+         *
+         * The session remains valid. Only this exact refresh-token jti is invalidated.
+         */
+        tokenRevocationService.revokeToken(refreshToken, input.getServiceContext());
 
-		if (!userEntity.isAccountNonExpired()) {
+        /*
+         * Rotate the token pair while preserving the authentication session.
+         */
+        final String newAccessToken = tokenService.generateAccessToken(userProfile, sessionId);
 
-			throw new BusinessException(AuthenticationErrorConstants.ACCOUNT_EXPIRED);
-		}
+        final String newRefreshToken = tokenService.generateRefreshToken(userProfile, sessionId);
 
-		if (!userEntity.isCredentialsNonExpired()) {
+        final TokenResponse tokenResponse = new TokenResponse();
 
-			throw new BusinessException(AuthenticationErrorConstants.CREDENTIALS_EXPIRED);
-		}
+        tokenResponse.setAccessToken(newAccessToken);
+        tokenResponse.setRefreshToken(newRefreshToken);
+        tokenResponse.setLoginSessionId(sessionId);
+        tokenResponse.setTokenType("Bearer");
+        tokenResponse.setExpiresIn(tokenService.getAccessTokenExpirationSeconds());
 
-		/*
-		 * Reconstruct the same security principal used during normal authentication.
-		 */
-		final UserProfile userProfile = new UserProfile(userEntity, userEntity.getRoles().stream()
-				.map(role -> new SimpleGrantedAuthority(role.getValue())).collect(Collectors.toList()));
+        return new ServiceOutput<>(tokenResponse);
+    }
 
-		/*
-		 * IMPORTANT:
-		 *
-		 * Revoke the old refresh token before issuing its replacement.
-		 *
-		 * The session remains valid. Only this exact refresh-token jti is invalidated.
-		 */
-		tokenRevocationService.revokeToken(refreshToken, input.getServiceContext());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<Boolean> changePassword(final IServiceInput<ChangePasswordInputDTO> input) {
 
-		/*
-		 * Rotate the token pair while preserving the authentication session.
-		 */
-		final String newAccessToken = tokenService.generateAccessToken(userProfile, sessionId);
+        final ChangePasswordInputDTO inputDTO = input.getInput();
 
-		final String newRefreshToken = tokenService.generateRefreshToken(userProfile, sessionId);
+        final String currentPassword = inputDTO.getChangePasswordRequest().getCurrentPassword();
 
-		final TokenResponse tokenResponse = new TokenResponse();
+        final String newPassword = inputDTO.getChangePasswordRequest().getNewPassword();
 
-		tokenResponse.setAccessToken(newAccessToken);
-		tokenResponse.setRefreshToken(newRefreshToken);
-		tokenResponse.setLoginSessionId(sessionId);
-		tokenResponse.setTokenType("Bearer");
-		tokenResponse.setExpiresIn(tokenService.getAccessTokenExpirationSeconds());
+        if (currentPassword == null || currentPassword.isBlank()) {
+            throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
+        }
 
-		return new ServiceOutput<>(tokenResponse);
-	}
+        if (newPassword == null || newPassword.isBlank()) {
+            throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IServiceOutput<Boolean> changePassword(final IServiceInput<ChangePasswordInputDTO> input) {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		final ChangePasswordInputDTO inputDTO = input.getInput();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserProfile userProfile)) {
 
-		final String currentPassword = inputDTO.getChangePasswordRequest().getCurrentPassword();
+            throw new BusinessException(AuthenticationErrorConstants.AUTHENTICATION_REQUIRED);
+        }
 
-		final String newPassword = inputDTO.getChangePasswordRequest().getNewPassword();
+        final String userNumber = userProfile.getUserNumber();
 
-		if (currentPassword == null || currentPassword.isBlank()) {
-			throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
-		}
+        if (!hasText(userNumber)) {
+            throw new BusinessException(AuthenticationErrorConstants.AUTHENTICATION_REQUIRED);
+        }
 
-		if (newPassword == null || newPassword.isBlank()) {
-			throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
-		}
+        final UserNumberRequest userNumberRequest = new UserNumberRequest();
 
-		final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        userNumberRequest.setUserNumber(userNumber);
 
-		if (authentication == null || !(authentication.getPrincipal() instanceof UserProfile userProfile)) {
+        final IServiceInput<UserNumberRequest> userServiceInput = new ServiceInput<>(userNumberRequest,
+                input.getServiceContext());
 
-			throw new BusinessException(AuthenticationErrorConstants.AUTHENTICATION_REQUIRED);
-		}
+        final UserEntity userEntity = userService.loadUserByUserNumber(userServiceInput).getOutput();
 
-		final String userNumber = userProfile.getUserNumber();
+        if (userEntity == null) {
+            throw new BusinessException(UserErrorConstants.USER_NOT_FOUND);
+        }
 
-		if (!hasText(userNumber)) {
-			throw new BusinessException(AuthenticationErrorConstants.AUTHENTICATION_REQUIRED);
-		}
+        /*
+         * Verify the current password against the encoded password stored for the
+         * authenticated user.
+         */
+        if (!passwordEncoder.matches(currentPassword, userEntity.getPassword())) {
 
-		final UserNumberRequest userNumberRequest = new UserNumberRequest();
+            throw new BusinessException(AuthenticationErrorConstants.INVALID_NEW_PASSWORD);
+        }
 
-		userNumberRequest.setUserNumber(userNumber);
+        /*
+         * Prevent changing the password to the same password.
+         */
+        if (passwordEncoder.matches(newPassword, userEntity.getPassword())) {
 
-		final IServiceInput<UserNumberRequest> userServiceInput = new ServiceInput<>(userNumberRequest,
-				input.getServiceContext());
+            throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_SAME_AS_OLD_PASSWORD);
+        }
 
-		final UserEntity userEntity = userService.loadUserByUserNumber(userServiceInput).getOutput();
+        /*
+         * Apply the existing FreshMeal password validation rules.
+         */
+        validatePassword(newPassword);
 
-		if (userEntity == null) {
-			throw new BusinessException(UserErrorConstants.USER_NOT_FOUND);
-		}
+        final String encodedPassword = passwordEncoder.encode(newPassword);
 
-		/*
-		 * Verify the current password against the encoded password stored for the
-		 * authenticated user.
-		 */
-		if (!passwordEncoder.matches(currentPassword, userEntity.getPassword())) {
+        final UpdatePasswordInputDTO updatePasswordInput = new UpdatePasswordInputDTO(userNumber, encodedPassword);
 
-			throw new BusinessException(AuthenticationErrorConstants.INVALID_NEW_PASSWORD);
-		}
+        userService.updatePassword(new ServiceInput<>(updatePasswordInput, input.getServiceContext()));
 
-		/*
-		 * Prevent changing the password to the same password.
-		 */
-		if (passwordEncoder.matches(newPassword, userEntity.getPassword())) {
+        /*
+         * Password change invalidates every existing authentication session.
+         */
+        final IServiceOutput<List<LoginHistoryEntity>> activeSessions = loginHistoryService
+                .loadActiveLoginHistories(new ServiceInput<>(userNumberRequest, input.getServiceContext()));
 
-			throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_SAME_AS_OLD_PASSWORD);
-		}
+        if (activeSessions.getOutput() != null) {
 
-		/*
-		 * Apply the existing FreshMeal password validation rules.
-		 */
-		validatePassword(newPassword);
+            activeSessions.getOutput().forEach(loginHistory -> {
 
-		final String encodedPassword = passwordEncoder.encode(newPassword);
+                final String sessionId = loginHistory.getSessionId();
 
-		final UpdatePasswordInputDTO updatePasswordInput = new UpdatePasswordInputDTO(userNumber, encodedPassword);
+                if (hasText(sessionId)) {
 
-		userService.updatePassword(new ServiceInput<>(updatePasswordInput, input.getServiceContext()));
+                    tokenRevocationService.revokeSession(sessionId, userNumber, input.getServiceContext());
+                }
+            });
+        }
 
-		/*
-		 * Password change invalidates every existing authentication session.
-		 */
-		final IServiceOutput<List<LoginHistoryEntity>> activeSessions = loginHistoryService
-				.loadActiveLoginHistories(new ServiceInput<>(userNumberRequest, input.getServiceContext()));
+        SecurityContextHolder.clearContext();
 
-		if (activeSessions.getOutput() != null) {
+        return new ServiceOutput<>(Boolean.TRUE);
+    }
 
-			activeSessions.getOutput().forEach(loginHistory -> {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<Boolean> forgotPassword(final IServiceInput<ForgotPasswordInputDTO> input) {
 
-				final String sessionId = loginHistory.getSessionId();
+        final ForgotPasswordInputDTO inputDTO = input.getInput();
 
-				if (hasText(sessionId)) {
+        final String requestedEmail = inputDTO.getForgotPasswordRequest().getEmail().getValue();
 
-					tokenRevocationService.revokeSession(sessionId, userNumber, input.getServiceContext());
-				}
-			});
-		}
+        /*
+         * Always normalize the email before performing any lookup.
+         */
+        final String email = FreshMealUtilities.normalizeEmail(requestedEmail);
 
-		SecurityContextHolder.clearContext();
+        /*
+         * Password recovery must never disclose whether an account exists.
+         *
+         * If the email does not belong to a FreshMeal account, simply return the same
+         * generic response as a successful recovery request.
+         */
+        final EmailRequest emailRequest = new EmailRequest();
 
-		return new ServiceOutput<>(Boolean.TRUE);
-	}
+        emailRequest.setEmail(EmailAddress.toEmailAddress(email));
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IServiceOutput<Boolean> forgotPassword(final IServiceInput<ForgotPasswordInputDTO> input) {
+        final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>(emailRequest,
+                input.getServiceContext());
 
-		final ForgotPasswordInputDTO inputDTO = input.getInput();
+        final UserEntity userEntity;
 
-		final String requestedEmail = inputDTO.getForgotPasswordRequest().getEmail().getValue();
+        try {
 
-		/*
-		 * Always normalize the email before performing any lookup.
-		 */
-		final String email = FreshMealUtilities.normalizeEmail(requestedEmail);
+            userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
 
-		/*
-		 * Password recovery must never disclose whether an account exists.
-		 *
-		 * If the email does not belong to a FreshMeal account, simply return the same
-		 * generic response as a successful recovery request.
-		 */
-		final EmailRequest emailRequest = new EmailRequest();
+        } catch (ResourceNotFoundException exception) {
 
-		emailRequest.setEmail(EmailAddress.toEmailAddress(email));
+            return new ServiceOutput<>(Boolean.TRUE);
+        }
 
-		final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>(emailRequest,
-				input.getServiceContext());
+        /*
+         * Only active and usable accounts should receive password-reset instructions.
+         *
+         * We still return the same generic response for non-usable accounts.
+         */
+        if (!userEntity.isEnabled() || !userEntity.isAccountNonLocked() || !userEntity.isAccountNonExpired()
+                || !userEntity.isCredentialsNonExpired()) {
 
-		final UserEntity userEntity;
+            return new ServiceOutput<>(Boolean.TRUE);
+        }
 
-		try {
+        /*
+         * Invalidate all previously active reset tokens for this user.
+         *
+         * A new password-recovery request therefore invalidates older recovery
+         * credentials.
+         */
+        final Query activeResetTokenQuery = Query
+                .query(new Criteria().andOperator(Criteria.where("userNumber").is(userEntity.getUserNumber()),
+                        Criteria.where("used").is(false), Criteria.where("revoked").is(false)));
 
-			userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
+        final List<PasswordResetTokenEntity> activeTokens = passwordResetTokenRepository.findAll(activeResetTokenQuery);
 
-		} catch (ResourceNotFoundException exception) {
+        final LocalDateTime now = AppCalendar.getBusinessLocalDateTime();
 
-			return new ServiceOutput<>(Boolean.TRUE);
-		}
+        for (final PasswordResetTokenEntity resetToken : activeTokens) {
 
-		/*
-		 * Only active and usable accounts should receive password-reset instructions.
-		 *
-		 * We still return the same generic response for non-usable accounts.
-		 */
-		if (!userEntity.isEnabled() || !userEntity.isAccountNonLocked() || !userEntity.isAccountNonExpired()
-				|| !userEntity.isCredentialsNonExpired()) {
+            resetToken.setRevoked(true);
+            resetToken.setRevokedAt(now);
+            resetToken.setUpdatedAt(now);
 
-			return new ServiceOutput<>(Boolean.TRUE);
-		}
+            if (input.getServiceContext().getUserProfile() != null) {
+                resetToken.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
+            } else {
+                resetToken.setUpdatedBy(RoleType.ADMIN.getLabel());
+            }
 
-		/*
-		 * Invalidate all previously active reset tokens for this user.
-		 *
-		 * A new password-recovery request therefore invalidates older recovery
-		 * credentials.
-		 */
-		final Query activeResetTokenQuery = Query
-				.query(new Criteria().andOperator(Criteria.where("userNumber").is(userEntity.getUserNumber()),
-						Criteria.where("used").is(false), Criteria.where("revoked").is(false)));
+            passwordResetTokenRepository.save(resetToken);
+        }
 
-		final List<PasswordResetTokenEntity> activeTokens = passwordResetTokenRepository.findAll(activeResetTokenQuery);
+        /*
+         * Generate a cryptographically secure random reset token.
+         *
+         * The raw token exists only in memory and is used to construct the email.
+         */
+        final String rawResetToken = generatePasswordResetToken();
 
-		final LocalDateTime now = AppCalendar.getBusinessLocalDateTime();
+        /*
+         * Store only the SHA-256 hash of the reset token.
+         */
+        final String tokenHash = hashPasswordResetToken(rawResetToken);
 
-		for (final PasswordResetTokenEntity resetToken : activeTokens) {
+        /*
+         * Generate the business-facing reset number using the existing FreshMeal
+         * database sequence infrastructure.
+         */
+        final long sequence = databaseSequenceService.generateSequence(input.getServiceContext(),
+                SequenceConstants.PASSWORD_RESET_TOKEN_SEQUENCE);
 
-			resetToken.setRevoked(true);
-			resetToken.setRevokedAt(now);
-			resetToken.setUpdatedAt(now);
+        final String resetNumber = String.format(SequenceConstants.PASSWORD_RESET_TOKEN_NUMBER_PATTERN, sequence);
 
-			if (input.getServiceContext().getUserProfile() != null) {
-				resetToken.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
-			} else {
-				resetToken.setUpdatedBy(RoleType.ADMIN.getLabel());
-			}
+        final PasswordResetTokenEntity resetToken = (PasswordResetTokenEntity) EntityFactory
+                .createEntity(EntityName.PASSWORD_RESET_TOKEN_ENTITY);
 
-			passwordResetTokenRepository.save(resetToken);
-		}
+        resetToken.setResetNumber(resetNumber);
+        resetToken.setUserNumber(userEntity.getUserNumber());
+        resetToken.setEmail(email);
+        resetToken.setTokenHash(tokenHash);
 
-		/*
-		 * Generate a cryptographically secure random reset token.
-		 *
-		 * The raw token exists only in memory and is used to construct the email.
-		 */
-		final String rawResetToken = generatePasswordResetToken();
+        /*
+         * Password reset tokens are intentionally short-lived.
+         */
+        resetToken.setExpiresAt(now.plusMinutes(15));
 
-		/*
-		 * Store only the SHA-256 hash of the reset token.
-		 */
-		final String tokenHash = hashPasswordResetToken(rawResetToken);
+        /*
+         * sentAt remains null until email delivery succeeds.
+         */
+        resetToken.setSentAt(null);
 
-		/*
-		 * Generate the business-facing reset number using the existing FreshMeal
-		 * database sequence infrastructure.
-		 */
-		final long sequence = databaseSequenceService.generateSequence(input.getServiceContext(),
-				SequenceConstants.PASSWORD_RESET_TOKEN_SEQUENCE);
+        resetToken.setUsed(false);
+        resetToken.setUsedAt(null);
+        resetToken.setRevoked(false);
+        resetToken.setRevokedAt(null);
 
-		final String resetNumber = String.format(SequenceConstants.PASSWORD_RESET_TOKEN_NUMBER_PATTERN, sequence);
+        resetToken.setCreatedAt(now);
+        resetToken.setUpdatedAt(now);
 
-		final PasswordResetTokenEntity resetToken = (PasswordResetTokenEntity) EntityFactory
-				.createEntity(EntityName.PASSWORD_RESET_TOKEN_ENTITY);
+        if (input.getServiceContext().getUserProfile() != null) {
+            resetToken.setCreatedBy(input.getServiceContext().getUserProfile().getUserNumber());
 
-		resetToken.setResetNumber(resetNumber);
-		resetToken.setUserNumber(userEntity.getUserNumber());
-		resetToken.setEmail(email);
-		resetToken.setTokenHash(tokenHash);
+            resetToken.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
+        } else {
+            resetToken.setCreatedBy(RoleType.ADMIN.getLabel());
 
-		/*
-		 * Password reset tokens are intentionally short-lived.
-		 */
-		resetToken.setExpiresAt(now.plusMinutes(15));
+            resetToken.setUpdatedBy(RoleType.ADMIN.getLabel());
+        }
 
-		/*
-		 * sentAt remains null until email delivery succeeds.
-		 */
-		resetToken.setSentAt(null);
+        passwordResetTokenRepository.save(resetToken);
 
-		resetToken.setUsed(false);
-		resetToken.setUsedAt(null);
-		resetToken.setRevoked(false);
-		resetToken.setRevokedAt(null);
+        /*
+         * Build the reset email.
+         *
+         * The raw token is never persisted or logged.
+         */
+        final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
+                : userEntity.getUsername();
 
-		resetToken.setCreatedAt(now);
-		resetToken.setUpdatedAt(now);
+        final String emailBody = buildPasswordResetEmailBody(firstName, rawResetToken);
 
-		if (input.getServiceContext().getUserProfile() != null) {
-			resetToken.setCreatedBy(input.getServiceContext().getUserProfile().getUserNumber());
+        /*
+         * Mark sentAt only after successful email dispatch.
+         */
+        emailService.sendEmail(email, "FreshMeal Password Reset", emailBody);
 
-			resetToken.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
-		} else {
-			resetToken.setCreatedBy(RoleType.ADMIN.getLabel());
+        resetToken.setSentAt(AppCalendar.getBusinessLocalDateTime());
 
-			resetToken.setUpdatedBy(RoleType.ADMIN.getLabel());
-		}
+        resetToken.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
-		passwordResetTokenRepository.save(resetToken);
+        passwordResetTokenRepository.save(resetToken);
 
-		/*
-		 * Build the reset email.
-		 *
-		 * The raw token is never persisted or logged.
-		 */
-		final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
-				: userEntity.getUsername();
+        /*
+         * Always return a generic success response.
+         */
+        return new ServiceOutput<>(Boolean.TRUE);
+    }
 
-		final String emailBody = buildPasswordResetEmailBody(firstName, rawResetToken);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IServiceOutput<Boolean> resetPassword(final IServiceInput<ResetPasswordInputDTO> input) {
 
-		/*
-		 * Mark sentAt only after successful email dispatch.
-		 */
-		emailService.sendEmail(email, "FreshMeal Password Reset", emailBody);
+        final ResetPasswordInputDTO inputDTO = input.getInput();
 
-		resetToken.setSentAt(AppCalendar.getBusinessLocalDateTime());
+        final String resetToken = inputDTO.getResetPasswordRequest().getResetToken();
 
-		resetToken.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+        final String newPassword = inputDTO.getResetPasswordRequest().getNewPassword();
 
-		passwordResetTokenRepository.save(resetToken);
+        if (!hasText(resetToken)) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_REQUIRED);
+        }
 
-		/*
-		 * Always return a generic success response.
-		 */
-		return new ServiceOutput<>(Boolean.TRUE);
-	}
+        if (!hasText(newPassword)) {
+            throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public IServiceOutput<Boolean> resetPassword(final IServiceInput<ResetPasswordInputDTO> input) {
+        /*
+         * Hash the supplied raw token before performing the database lookup.
+         *
+         * The raw token must never be persisted or queried directly.
+         */
+        final String tokenHash = hashPasswordResetToken(resetToken);
 
-		final ResetPasswordInputDTO inputDTO = input.getInput();
+        final Query tokenQuery = Query.query(Criteria.where("tokenHash").is(tokenHash));
 
-		final String resetToken = inputDTO.getResetPasswordRequest().getResetToken();
+        final PasswordResetTokenEntity resetTokenEntity = passwordResetTokenRepository.findOne(tokenQuery)
+                .orElseThrow(() -> new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN));
 
-		final String newPassword = inputDTO.getResetPasswordRequest().getNewPassword();
+        /*
+         * Explicitly reject tokens that have already been revoked.
+         */
+        if (resetTokenEntity.isRevoked()) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_REVOKED);
+        }
 
-		if (!hasText(resetToken)) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_REQUIRED);
-		}
+        /*
+         * A reset token can only be consumed once.
+         */
+        if (resetTokenEntity.isUsed()) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_ALREADY_USED);
+        }
 
-		if (!hasText(newPassword)) {
-			throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
-		}
+        /*
+         * Check expiration using the business-local application time.
+         */
+        final LocalDateTime now = AppCalendar.getBusinessLocalDateTime();
 
-		/*
-		 * Hash the supplied raw token before performing the database lookup.
-		 *
-		 * The raw token must never be persisted or queried directly.
-		 */
-		final String tokenHash = hashPasswordResetToken(resetToken);
+        if (resetTokenEntity.getExpiresAt() == null || !now.isBefore(resetTokenEntity.getExpiresAt())) {
 
-		final Query tokenQuery = Query.query(Criteria.where("tokenHash").is(tokenHash));
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_EXPIRED);
+        }
 
-		final PasswordResetTokenEntity resetTokenEntity = passwordResetTokenRepository.findOne(tokenQuery)
-				.orElseThrow(() -> new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN));
+        /*
+         * Validate the new raw password before encoding it.
+         */
+        validatePassword(newPassword);
 
-		/*
-		 * Explicitly reject tokens that have already been revoked.
-		 */
-		if (resetTokenEntity.isRevoked()) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_REVOKED);
-		}
+        /*
+         * Load the associated active user.
+         */
+        final UserNumberRequest userNumberRequest = new UserNumberRequest();
 
-		/*
-		 * A reset token can only be consumed once.
-		 */
-		if (resetTokenEntity.isUsed()) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_ALREADY_USED);
-		}
+        userNumberRequest.setUserNumber(resetTokenEntity.getUserNumber());
 
-		/*
-		 * Check expiration using the business-local application time.
-		 */
-		final LocalDateTime now = AppCalendar.getBusinessLocalDateTime();
+        final IServiceInput<UserNumberRequest> userServiceInput = new ServiceInput<>(userNumberRequest,
+                input.getServiceContext());
 
-		if (resetTokenEntity.getExpiresAt() == null || !now.isBefore(resetTokenEntity.getExpiresAt())) {
+        final UserEntity userEntity = userService.loadUserByUserNumber(userServiceInput).getOutput();
 
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_RESET_TOKEN_EXPIRED);
-		}
+        if (userEntity == null) {
+            throw new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN);
+        }
 
-		/*
-		 * Validate the new raw password before encoding it.
-		 */
-		validatePassword(newPassword);
+        /*
+         * Do not allow the user to reset the password to the existing password.
+         */
+        if (passwordEncoder.matches(newPassword, userEntity.getPassword())) {
 
-		/*
-		 * Load the associated active user.
-		 */
-		final UserNumberRequest userNumberRequest = new UserNumberRequest();
+            throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_SAME_AS_OLD_PASSWORD);
+        }
 
-		userNumberRequest.setUserNumber(resetTokenEntity.getUserNumber());
+        /*
+         * Encode the new password before handing it to the User module.
+         */
+        final String encodedPassword = passwordEncoder.encode(newPassword);
 
-		final IServiceInput<UserNumberRequest> userServiceInput = new ServiceInput<>(userNumberRequest,
-				input.getServiceContext());
+        final UpdatePasswordInputDTO updatePasswordInput = new UpdatePasswordInputDTO(userEntity.getUserNumber(),
+                encodedPassword);
 
-		final UserEntity userEntity = userService.loadUserByUserNumber(userServiceInput).getOutput();
+        userService.updatePassword(new ServiceInput<>(updatePasswordInput, input.getServiceContext()));
 
-		if (userEntity == null) {
-			throw new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN);
-		}
+        /*
+         * Consume the reset token.
+         *
+         * It is marked as used rather than physically deleted so that the security
+         * lifecycle remains auditable.
+         */
+        resetTokenEntity.setUsed(true);
+        resetTokenEntity.setUsedAt(now);
+        resetTokenEntity.setUpdatedAt(now);
 
-		/*
-		 * Do not allow the user to reset the password to the existing password.
-		 */
-		if (passwordEncoder.matches(newPassword, userEntity.getPassword())) {
+        if (input.getServiceContext().getUserProfile() != null) {
 
-			throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_SAME_AS_OLD_PASSWORD);
-		}
+            resetTokenEntity.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
 
-		/*
-		 * Encode the new password before handing it to the User module.
-		 */
-		final String encodedPassword = passwordEncoder.encode(newPassword);
+        } else {
 
-		final UpdatePasswordInputDTO updatePasswordInput = new UpdatePasswordInputDTO(userEntity.getUserNumber(),
-				encodedPassword);
+            resetTokenEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+        }
 
-		userService.updatePassword(new ServiceInput<>(updatePasswordInput, input.getServiceContext()));
+        passwordResetTokenRepository.save(resetTokenEntity);
 
-		/*
-		 * Consume the reset token.
-		 *
-		 * It is marked as used rather than physically deleted so that the security
-		 * lifecycle remains auditable.
-		 */
-		resetTokenEntity.setUsed(true);
-		resetTokenEntity.setUsedAt(now);
-		resetTokenEntity.setUpdatedAt(now);
+        /*
+         * Password reset invalidates every existing authentication session.
+         *
+         * This prevents previously issued access/refresh tokens from remaining usable
+         * after the password has been changed.
+         */
+        final IServiceOutput<List<LoginHistoryEntity>> activeSessions = loginHistoryService
+                .loadActiveLoginHistories(new ServiceInput<>(userNumberRequest, input.getServiceContext()));
 
-		if (input.getServiceContext().getUserProfile() != null) {
+        if (activeSessions.getOutput() != null) {
 
-			resetTokenEntity.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
+            activeSessions.getOutput().forEach(loginHistory -> {
 
-		} else {
+                final String sessionId = loginHistory.getSessionId();
 
-			resetTokenEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
-		}
+                if (hasText(sessionId)) {
 
-		passwordResetTokenRepository.save(resetTokenEntity);
+                    tokenRevocationService.revokeSession(sessionId, userEntity.getUserNumber(),
+                            input.getServiceContext());
+                }
+            });
+        }
 
-		/*
-		 * Password reset invalidates every existing authentication session.
-		 *
-		 * This prevents previously issued access/refresh tokens from remaining usable
-		 * after the password has been changed.
-		 */
-		final IServiceOutput<List<LoginHistoryEntity>> activeSessions = loginHistoryService
-				.loadActiveLoginHistories(new ServiceInput<>(userNumberRequest, input.getServiceContext()));
+        /*
+         * A password reset is normally an unauthenticated operation, so there should
+         * not be an authenticated SecurityContext to clear. Clearing it defensively
+         * ensures that no stale authentication survives the reset.
+         */
+        SecurityContextHolder.clearContext();
 
-		if (activeSessions.getOutput() != null) {
+        return new ServiceOutput<>(Boolean.TRUE);
+    }
 
-			activeSessions.getOutput().forEach(loginHistory -> {
+    /**
+     * Builds the welcome email sent after successful email verification.
+     *
+     * @param firstName user's first name
+     * @return welcome email body
+     */
+    private String buildWelcomeEmailBody(final String firstName) {
 
-				final String sessionId = loginHistory.getSessionId();
+        return String.format("""
+                Hello %s,
 
-				if (hasText(sessionId)) {
+                Welcome to FreshMeal!
 
-					tokenRevocationService.revokeSession(sessionId, userEntity.getUserNumber(),
-							input.getServiceContext());
-				}
-			});
-		}
+                Your email address has been successfully verified and your
+                FreshMeal account is now active.
 
-		/*
-		 * A password reset is normally an unauthenticated operation, so there should
-		 * not be an authenticated SecurityContext to clear. Clearing it defensively
-		 * ensures that no stale authentication survives the reset.
-		 */
-		SecurityContextHolder.clearContext();
+                You can now log in and start using FreshMeal.
 
-		return new ServiceOutput<>(Boolean.TRUE);
-	}
+                Regards,
+                FreshMeal Team
+                """, firstName);
+    }
 
-	/**
-	 * Builds the welcome email sent after successful email verification.
-	 *
-	 * @param firstName user's first name
-	 * @return welcome email body
-	 */
-	private String buildWelcomeEmailBody(final String firstName) {
+    /**
+     * Builds the email body used for email verification.
+     *
+     * <p>
+     * The raw OTP is intentionally used only while constructing the transient email
+     * body. It must never be persisted or logged.
+     * </p>
+     *
+     * @param firstName user's first name
+     * @param otp       generated raw OTP
+     * @return email body
+     */
+    private String buildVerificationEmailBody(final String firstName, final String otp) {
 
-		return String.format("""
-				Hello %s,
+        final String recipientName = firstName == null || firstName.isBlank() ? "there" : firstName;
 
-				Welcome to FreshMeal!
+        return """
+                Hello %s,
 
-				Your email address has been successfully verified and your
-				FreshMeal account is now active.
+                Welcome to FreshMeal!
 
-				You can now log in and start using FreshMeal.
+                Your email verification OTP is:
 
-				Regards,
-				FreshMeal Team
-				""", firstName);
-	}
+                %s
 
-	/**
-	 * Builds the email body used for email verification.
-	 *
-	 * <p>
-	 * The raw OTP is intentionally used only while constructing the transient email
-	 * body. It must never be persisted or logged.
-	 * </p>
-	 *
-	 * @param firstName user's first name
-	 * @param otp       generated raw OTP
-	 * @return email body
-	 */
-	private String buildVerificationEmailBody(final String firstName, final String otp) {
+                This OTP is valid for 10 minutes.
 
-		final String recipientName = firstName == null || firstName.isBlank() ? "there" : firstName;
+                If you did not create a FreshMeal account,
+                please ignore this email.
 
-		return """
-				Hello %s,
+                Regards,
+                FreshMeal Team
+                """.formatted(recipientName, otp);
+    }
 
-				Welcome to FreshMeal!
+    /**
+     * ============================================================================
+     * LOGIN HISTORY
+     * ============================================================================
+     */
 
-				Your email verification OTP is:
+    /**
+     * Records a successful authentication event.
+     *
+     * <p>
+     * The login history record uses the same authentication-session identifier that
+     * was embedded into the access and refresh tokens during login.
+     * </p>
+     *
+     * <p>
+     * No additional JWT is generated while recording login history. The
+     * authentication operation must have exactly one session identifier and one
+     * access/refresh token pair.
+     * </p>
+     *
+     * @param userProfile authenticated user profile
+     * @param sessionId   authentication-session identifier
+     * @param input       original authentication service input
+     */
+    private void recordSuccessfulLogin(final UserProfile userProfile, final String sessionId,
+            final IServiceInput<LoginInputDTO> input) {
 
-				%s
+        final LoginHistoryInputDTO historyInput = new LoginHistoryInputDTO();
 
-				This OTP is valid for 10 minutes.
+        historyInput.setUserNumber(userProfile.getUserNumber());
 
-				If you did not create a FreshMeal account,
-				please ignore this email.
+        historyInput.setLoginStatus(LoginStatus.SUCCESS);
 
-				Regards,
-				FreshMeal Team
-				""".formatted(recipientName, otp);
-	}
+        historyInput.setLoginTime(AppCalendar.getBusinessLocalDateTime());
 
-	/**
-	 * ============================================================================
-	 * LOGIN HISTORY
-	 * ============================================================================
-	 */
+        historyInput.setSessionId(sessionId);
 
-	/**
-	 * Records a successful authentication event.
-	 *
-	 * <p>
-	 * The login history record uses the same authentication-session identifier that
-	 * was embedded into the access and refresh tokens during login.
-	 * </p>
-	 *
-	 * <p>
-	 * No additional JWT is generated while recording login history. The
-	 * authentication operation must have exactly one session identifier and one
-	 * access/refresh token pair.
-	 * </p>
-	 *
-	 * @param userProfile authenticated user profile
-	 * @param sessionId   authentication-session identifier
-	 * @param input       original authentication service input
-	 */
-	private void recordSuccessfulLogin(final UserProfile userProfile, final String sessionId,
-			final IServiceInput<LoginInputDTO> input) {
+        /*
+         * Request metadata is already available through the request-scoped DataContext.
+         */
+        historyInput.setIpAddress((String) input.getServiceContext().getAttribute(DataContext.IP_ADDRESS));
 
-		final LoginHistoryInputDTO historyInput = new LoginHistoryInputDTO();
+        historyInput.setUserAgent((String) input.getServiceContext().getAttribute(DataContext.USER_AGENT));
 
-		historyInput.setUserNumber(userProfile.getUserNumber());
+        historyInput.setLoginServerName(null);
 
-		historyInput.setLoginStatus(LoginStatus.SUCCESS);
+        final IServiceInput<LoginHistoryInputDTO> historyServiceInput = new ServiceInput<>(historyInput,
+                input.getServiceContext());
 
-		historyInput.setLoginTime(AppCalendar.getBusinessLocalDateTime());
+        loginHistoryService.createLoginHistory(historyServiceInput);
+    }
 
-		historyInput.setSessionId(sessionId);
+    /**
+     * Records a failed authentication event when the supplied identifier can be
+     * safely associated with an existing user.
+     *
+     * <p>
+     * Authentication itself remains completely controlled by Spring Security. This
+     * method exists only for audit recording and must never replace or alter the
+     * original authentication exception.
+     * </p>
+     *
+     * @param identifier authentication identifier supplied by the client
+     * @param exception  authentication failure
+     * @param input      original authentication service input
+     */
+    private void recordFailedLogin(final String identifier, final AuthenticationException exception,
+            final IServiceInput<LoginInputDTO> input) {
 
-		/*
-		 * Request metadata is already available through the request-scoped DataContext.
-		 */
-		historyInput.setIpAddress((String) input.getServiceContext().getAttribute(DataContext.IP_ADDRESS));
+        final LoginStatus loginStatus = resolveLoginStatus(exception);
 
-		historyInput.setUserAgent((String) input.getServiceContext().getAttribute(DataContext.USER_AGENT));
+        /*
+         * At this stage the identifier may represent:
+         *
+         * 1. an existing username, 2. an existing email address, or 3. an identifier
+         * that does not belong to any account.
+         *
+         * We only create user-linked history when the account can be resolved.
+         */
+        try {
 
-		historyInput.setLoginServerName(null);
+            final UserEntity userEntity;
 
-		final IServiceInput<LoginHistoryInputDTO> historyServiceInput = new ServiceInput<>(historyInput,
-				input.getServiceContext());
+            if (identifier != null && identifier.contains("@")) {
 
-		loginHistoryService.createLoginHistory(historyServiceInput);
-	}
+                final EmailRequest emailRequest = new EmailRequest();
 
-	/**
-	 * Records a failed authentication event when the supplied identifier can be
-	 * safely associated with an existing user.
-	 *
-	 * <p>
-	 * Authentication itself remains completely controlled by Spring Security. This
-	 * method exists only for audit recording and must never replace or alter the
-	 * original authentication exception.
-	 * </p>
-	 *
-	 * @param identifier authentication identifier supplied by the client
-	 * @param exception  authentication failure
-	 * @param input      original authentication service input
-	 */
-	private void recordFailedLogin(final String identifier, final AuthenticationException exception,
-			final IServiceInput<LoginInputDTO> input) {
+                emailRequest.setEmail(EmailAddress.toEmailAddress(FreshMealUtilities.normalizeEmail(identifier)));
 
-		final LoginStatus loginStatus = resolveLoginStatus(exception);
+                final IServiceInput<EmailRequest> userInput = new ServiceInput<>(emailRequest,
+                        input.getServiceContext());
 
-		/*
-		 * At this stage the identifier may represent:
-		 *
-		 * 1. an existing username, 2. an existing email address, or 3. an identifier
-		 * that does not belong to any account.
-		 *
-		 * We only create user-linked history when the account can be resolved.
-		 */
-		try {
+                userEntity = userService.loadUserByEmail(userInput).getOutput();
 
-			final UserEntity userEntity;
+            } else {
 
-			if (identifier != null && identifier.contains("@")) {
+                final UsernameRequest usernameRequest = new UsernameRequest();
 
-				final EmailRequest emailRequest = new EmailRequest();
+                usernameRequest.setUsername(identifier);
 
-				emailRequest.setEmail(EmailAddress.toEmailAddress(FreshMealUtilities.normalizeEmail(identifier)));
+                final IServiceInput<UsernameRequest> userInput = new ServiceInput<>(usernameRequest,
+                        input.getServiceContext());
 
-				final IServiceInput<EmailRequest> userInput = new ServiceInput<>(emailRequest,
-						input.getServiceContext());
+                userEntity = userService.loadUserByUsername(userInput).getOutput();
+            }
 
-				userEntity = userService.loadUserByEmail(userInput).getOutput();
+            if (userEntity == null) {
+                return;
+            }
 
-			} else {
+            final LoginHistoryInputDTO historyInput = new LoginHistoryInputDTO();
 
-				final UsernameRequest usernameRequest = new UsernameRequest();
+            historyInput.setUserNumber(userEntity.getUserNumber());
 
-				usernameRequest.setUsername(identifier);
+            historyInput.setLoginStatus(loginStatus);
 
-				final IServiceInput<UsernameRequest> userInput = new ServiceInput<>(usernameRequest,
-						input.getServiceContext());
+            historyInput.setLoginTime(AppCalendar.getBusinessLocalDateTime());
 
-				userEntity = userService.loadUserByUsername(userInput).getOutput();
-			}
+            historyInput.setSessionId(null);
+            historyInput.setIpAddress(null);
+            historyInput.setUserAgent(null);
+            historyInput.setLoginServerName(null);
 
-			if (userEntity == null) {
-				return;
-			}
+            final IServiceInput<LoginHistoryInputDTO> historyServiceInput = new ServiceInput<>(historyInput,
+                    input.getServiceContext());
 
-			final LoginHistoryInputDTO historyInput = new LoginHistoryInputDTO();
+            loginHistoryService.createLoginHistory(historyServiceInput);
 
-			historyInput.setUserNumber(userEntity.getUserNumber());
+        } catch (RuntimeException ignored) {
 
-			historyInput.setLoginStatus(loginStatus);
+            /*
+             * Login auditing must never replace the original authentication failure. The
+             * caller rethrows the original AuthenticationException.
+             */
+        }
+    }
 
-			historyInput.setLoginTime(AppCalendar.getBusinessLocalDateTime());
+    /**
+     * Resolves the domain login status represented by a Spring Security
+     * authentication exception.
+     *
+     * @param exception Spring Security authentication exception
+     * @return corresponding FreshMeal login status
+     */
+    private LoginStatus resolveLoginStatus(final AuthenticationException exception) {
 
-			historyInput.setSessionId(null);
-			historyInput.setIpAddress(null);
-			historyInput.setUserAgent(null);
-			historyInput.setLoginServerName(null);
+        if (exception instanceof LockedException) {
 
-			final IServiceInput<LoginHistoryInputDTO> historyServiceInput = new ServiceInput<>(historyInput,
-					input.getServiceContext());
+            return LoginStatus.LOCKED;
+        }
 
-			loginHistoryService.createLoginHistory(historyServiceInput);
+        if (exception instanceof DisabledException) {
 
-		} catch (RuntimeException ignored) {
+            return LoginStatus.DISABLED;
+        }
 
-			/*
-			 * Login auditing must never replace the original authentication failure. The
-			 * caller rethrows the original AuthenticationException.
-			 */
-		}
-	}
+        if (exception instanceof AccountExpiredException) {
 
-	/**
-	 * Resolves the domain login status represented by a Spring Security
-	 * authentication exception.
-	 *
-	 * @param exception Spring Security authentication exception
-	 * @return corresponding FreshMeal login status
-	 */
-	private LoginStatus resolveLoginStatus(final AuthenticationException exception) {
+            return LoginStatus.ACCOUNT_EXPIRED;
+        }
 
-		if (exception instanceof LockedException) {
+        if (exception instanceof CredentialsExpiredException) {
 
-			return LoginStatus.LOCKED;
-		}
+            return LoginStatus.CREDENTIALS_EXPIRED;
+        }
 
-		if (exception instanceof DisabledException) {
+        if (exception instanceof BadCredentialsException) {
 
-			return LoginStatus.DISABLED;
-		}
+            return LoginStatus.FAILED;
+        }
 
-		if (exception instanceof AccountExpiredException) {
+        /*
+         * Authentication failures that do not map to a more specific account-state
+         * category are treated as failed authentication.
+         */
+        return LoginStatus.FAILED;
+    }
 
-			return LoginStatus.ACCOUNT_EXPIRED;
-		}
+    private boolean hasText(String str) {
+        return str != null && !str.isBlank();
+    }
 
-		if (exception instanceof CredentialsExpiredException) {
+    /**
+     * =========================================================================
+     * Password Validation
+     * =========================================================================
+     */
 
-			return LoginStatus.CREDENTIALS_EXPIRED;
-		}
+    /**
+     * Validates the password supplied during authentication-sensitive operations.
+     *
+     * <p>
+     * Passwords must satisfy the minimum security requirements before they are
+     * encoded and persisted.
+     * </p>
+     *
+     * @param password raw password to validate
+     */
+    private void validatePassword(final String password) {
 
-		if (exception instanceof BadCredentialsException) {
+        if (password == null || password.isBlank()) {
+            throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
+        }
 
-			return LoginStatus.FAILED;
-		}
+        if (password.length() < 6) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_TOO_SHORT);
+        }
 
-		/*
-		 * Authentication failures that do not map to a more specific account-state
-		 * category are treated as failed authentication.
-		 */
-		return LoginStatus.FAILED;
-	}
+        if (password.length() > 16) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_TOO_LONG);
+        }
 
-	private boolean hasText(String str) {
-		return str != null && !str.isBlank();
-	}
+        if (!password.matches(".*[A-Z].*")) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_UPPERCASE_REQUIRED);
+        }
 
-	/**
-	 * =========================================================================
-	 * Password Validation
-	 * =========================================================================
-	 */
+        if (!password.matches(".*[a-z].*")) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_LOWERCASE_REQUIRED);
+        }
 
-	/**
-	 * Validates the password supplied during authentication-sensitive operations.
-	 *
-	 * <p>
-	 * Passwords must satisfy the minimum security requirements before they are
-	 * encoded and persisted.
-	 * </p>
-	 *
-	 * @param password raw password to validate
-	 */
-	private void validatePassword(final String password) {
+        if (!password.matches(".*\\d.*")) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_DIGIT_REQUIRED);
+        }
 
-		if (password == null || password.isBlank()) {
-			throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
-		}
+        if (!password.matches(".*[^a-zA-Z0-9].*")) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_SPECIAL_CHARACTER_REQUIRED);
+        }
+    }
 
-		if (password.length() < 6) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_TOO_SHORT);
-		}
+    /**
+     * Generates a cryptographically secure password-reset token.
+     *
+     * <p>
+     * The generated token is intentionally returned only to the caller so that it
+     * can be included in the password-reset email. Only its hash is persisted.
+     * </p>
+     *
+     * @return cryptographically secure reset token
+     */
+    private String generatePasswordResetToken() {
 
-		if (password.length() > 16) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_TOO_LONG);
-		}
+        final byte[] tokenBytes = new byte[32];
 
-		if (!password.matches(".*[A-Z].*")) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_UPPERCASE_REQUIRED);
-		}
+        new SecureRandom().nextBytes(tokenBytes);
 
-		if (!password.matches(".*[a-z].*")) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_LOWERCASE_REQUIRED);
-		}
+        return HexFormat.of().formatHex(tokenBytes);
+    }
 
-		if (!password.matches(".*\\d.*")) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_DIGIT_REQUIRED);
-		}
+    /**
+     * Creates the SHA-256 hash used to persist a password-reset token.
+     *
+     * @param rawToken raw reset token
+     * @return hexadecimal SHA-256 hash
+     */
+    private String hashPasswordResetToken(final String rawToken) {
 
-		if (!password.matches(".*[^a-zA-Z0-9].*")) {
-			throw new BusinessException(AuthenticationErrorConstants.PASSWORD_SPECIAL_CHARACTER_REQUIRED);
-		}
-	}
+        try {
 
-	/**
-	 * Generates a cryptographically secure password-reset token.
-	 *
-	 * <p>
-	 * The generated token is intentionally returned only to the caller so that it
-	 * can be included in the password-reset email. Only its hash is persisted.
-	 * </p>
-	 *
-	 * @return cryptographically secure reset token
-	 */
-	private String generatePasswordResetToken() {
+            final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
 
-		final byte[] tokenBytes = new byte[32];
+            final byte[] digest = messageDigest.digest(rawToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
 
-		new SecureRandom().nextBytes(tokenBytes);
+            return HexFormat.of().formatHex(digest);
 
-		return HexFormat.of().formatHex(tokenBytes);
-	}
+        } catch (NoSuchAlgorithmException exception) {
 
-	/**
-	 * Creates the SHA-256 hash used to persist a password-reset token.
-	 *
-	 * @param rawToken raw reset token
-	 * @return hexadecimal SHA-256 hash
-	 */
-	private String hashPasswordResetToken(final String rawToken) {
+            throw new IllegalStateException("SHA-256 algorithm is not available.", exception);
+        }
+    }
 
-		try {
+    /**
+     * Builds the password-reset email body.
+     *
+     * <p>
+     * The raw reset token is used only for email delivery and must never be
+     * persisted or logged.
+     * </p>
+     *
+     * @param firstName  user's first name
+     * @param resetToken raw password-reset token
+     * @return password-reset email body
+     */
+    private String buildPasswordResetEmailBody(final String firstName, final String resetToken) {
 
-			final MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+        final String recipientName = FreshMealUtilities.hasText(firstName) ? firstName : "there";
 
-			final byte[] digest = messageDigest.digest(rawToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        return """
+                Hello %s,
 
-			return HexFormat.of().formatHex(digest);
+                We received a request to reset your FreshMeal password.
 
-		} catch (NoSuchAlgorithmException exception) {
+                Your password reset token is:
 
-			throw new IllegalStateException("SHA-256 algorithm is not available.", exception);
-		}
-	}
+                %s
 
-	/**
-	 * Builds the password-reset email body.
-	 *
-	 * <p>
-	 * The raw reset token is used only for email delivery and must never be
-	 * persisted or logged.
-	 * </p>
-	 *
-	 * @param firstName  user's first name
-	 * @param resetToken raw password-reset token
-	 * @return password-reset email body
-	 */
-	private String buildPasswordResetEmailBody(final String firstName, final String resetToken) {
+                This token is valid for 15 minutes and can be used only once.
 
-		final String recipientName = FreshMealUtilities.hasText(firstName) ? firstName : "there";
+                If you did not request a password reset, please ignore this email.
+                Your password will not be changed unless the reset process is
+                successfully completed.
 
-		return """
-				Hello %s,
+                Regards,
+                FreshMeal Team
+                """.formatted(recipientName, resetToken);
+    }
 
-				We received a request to reset your FreshMeal password.
+    /**
+     * Validates whether the requested role is permitted through public
+     * self-registration.
+     *
+     * <p>
+     * Administrative access must never be granted through public registration.
+     * The ADMIN role is assigned only through an authorized administrative
+     * workflow.
+     * </p>
+     *
+     * <p>
+     * The currently supported public registration roles are:
+     * </p>
+     *
+     * <ul>
+     * <li>{@link RoleType#USER}</li>
+     * <li>{@link RoleType#RESTAURANT_OWNER}</li>
+     * <li>{@link RoleType#DELIVERY_PARTNER}</li>
+     * </ul>
+     *
+     * @param requestedRole role requested by the registrant
+     */
+    private void validatePublicRegistrationRole(final RoleType requestedRole) {
 
-				Your password reset token is:
+        if (requestedRole == null) {
+            throw new BusinessException(UserErrorConstants.ROLE_REQUIRED);
+        }
 
-				%s
+        if (requestedRole != RoleType.USER
+                && requestedRole != RoleType.RESTAURANT_OWNER
+                && requestedRole != RoleType.DELIVERY_PARTNER) {
 
-				This token is valid for 15 minutes and can be used only once.
-
-				If you did not request a password reset, please ignore this email.
-				Your password will not be changed unless the reset process is
-				successfully completed.
-
-				Regards,
-				FreshMeal Team
-				""".formatted(recipientName, resetToken);
-	}
-	
-	/**
-	 * Validates whether the requested role is permitted through public
-	 * self-registration.
-	 *
-	 * <p>
-	 * Administrative access must never be granted through public registration.
-	 * The ADMIN role is assigned only through an authorized administrative
-	 * workflow.
-	 * </p>
-	 *
-	 * <p>
-	 * The currently supported public registration roles are:
-	 * </p>
-	 *
-	 * <ul>
-	 * <li>{@link RoleType#USER}</li>
-	 * <li>{@link RoleType#RESTAURANT_OWNER}</li>
-	 * <li>{@link RoleType#DELIVERY_PARTNER}</li>
-	 * </ul>
-	 *
-	 * @param requestedRole role requested by the registrant
-	 */
-	private void validatePublicRegistrationRole(final RoleType requestedRole) {
-
-	    if (requestedRole == null) {
-	        throw new BusinessException(UserErrorConstants.ROLE_REQUIRED);
-	    }
-
-	    if (requestedRole != RoleType.USER
-	            && requestedRole != RoleType.RESTAURANT_OWNER
-	            && requestedRole != RoleType.DELIVERY_PARTNER) {
-
-	        throw new BusinessException(UserErrorConstants.INVALID_USER_ROLE);
-	    }
-	}
+            throw new BusinessException(UserErrorConstants.INVALID_USER_ROLE);
+        }
+    }
 }

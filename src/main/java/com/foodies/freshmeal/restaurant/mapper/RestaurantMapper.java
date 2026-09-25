@@ -30,85 +30,85 @@ import com.foodies.freshmeal.restaurant.entity.RestaurantEntity;
 @Component
 public class RestaurantMapper {
 
-	/**
-	 * Maps RestaurantCreateRequest to RestaurantEntity.
-	 *
-	 * <p>
-	 * Server-managed fields such as restaurantNumber, status, availability, and
-	 * audit information are intentionally not populated here.
-	 * </p>
-	 *
-	 * @param request restaurant creation request
-	 *
-	 * @return restaurant entity
-	 */
-	public RestaurantEntity toEntity(CreateRestaurantInputDTO request) {
+    /**
+     * Maps RestaurantCreateRequest to RestaurantEntity.
+     *
+     * <p>
+     * Server-managed fields such as restaurantNumber, status, availability, and
+     * audit information are intentionally not populated here.
+     * </p>
+     *
+     * @param request restaurant creation request
+     *
+     * @return restaurant entity
+     */
+    public RestaurantEntity toEntity(CreateRestaurantInputDTO request) {
 
-		RestaurantEntity entity = (RestaurantEntity) EntityFactory.createEntity(EntityName.RESTAURANT_ENTITY);
-		entity.setRestaurantName(request.getRestaurantRequest().getRestaurantName());
-		entity.setDescription(request.getRestaurantRequest().getDescription());
+        RestaurantEntity entity = (RestaurantEntity) EntityFactory.createEntity(EntityName.RESTAURANT_ENTITY);
+        entity.setRestaurantName(request.getRestaurantRequest().getRestaurantName());
+        entity.setDescription(request.getRestaurantRequest().getDescription());
 
-		entity.setPhoneNumber(PhoneNumber.builder().value(request.getRestaurantRequest().getPhoneNumber()).build());
+        entity.setPhoneNumber(PhoneNumber.builder().value(request.getRestaurantRequest().getPhoneNumber()).build());
 
-		entity.setEmailAddress(EmailAddress.builder().value(request.getRestaurantRequest().getEmailAddress()).build());
+        entity.setEmailAddress(EmailAddress.builder().value(request.getRestaurantRequest().getEmailAddress()).build());
 
-		entity.setWebsite(request.getRestaurantRequest().getWebsite());
-		entity.setCuisineTypes(request.getRestaurantRequest().getCuisineTypes());
-    	
-		entity.setRestaurantCoverImage(request.getCoverImage());
-		entity.setRestaurantLogoImage(request.getLogoImage());;
+        entity.setWebsite(request.getRestaurantRequest().getWebsite());
+        entity.setCuisineTypes(request.getRestaurantRequest().getCuisineTypes());
 
-		return entity;
-	}
+        entity.setRestaurantCoverImage(request.getCoverImage());
+        entity.setRestaurantLogoImage(request.getLogoImage());
 
-	/**
-	 * Maps RestaurantEntity to the restaurant list projection.
-	 *
-	 * @param entity restaurant entity
-	 *
-	 * @return restaurant list response
-	 */
-	public RestaurantListResponse toListResponse(RestaurantEntity entity) {
+        return entity;
+    }
 
-		return RestaurantListResponse.builder().id(entity.getId()).restaurantNumber(entity.getRestaurantNumber())
-				.restaurantName(entity.getRestaurantName())
-				.description(entity.getDescription())
-				.cuisineTypes(DisplayOptionMapperUtil.fromSet(entity.getCuisineTypes()))
-				.status(DisplayOptionMapperUtil.from(entity.getStatus()))
-				.isAvailable(entity.isAvailable()).build();
-	}
+    /**
+     * Maps RestaurantEntity to the restaurant list projection.
+     *
+     * @param entity restaurant entity
+     *
+     * @return restaurant list response
+     */
+    public RestaurantListResponse toListResponse(RestaurantEntity entity) {
 
-	/**
-	 * Maps RestaurantEntity to the detailed restaurant projection.
-	 *
-	 * @param entity restaurant entity
-	 *
-	 * @return restaurant details response
-	 */
-	public RestaurantDetailsResponse toDetailsResponse(RestaurantEntity entity) {
+        return RestaurantListResponse.builder().id(entity.getId()).restaurantNumber(entity.getRestaurantNumber())
+                .restaurantName(entity.getRestaurantName())
+                .description(entity.getDescription())
+                .cuisineTypes(DisplayOptionMapperUtil.fromSet(entity.getCuisineTypes()))
+                .status(DisplayOptionMapperUtil.from(entity.getStatus()))
+                .isAvailable(entity.isAvailable()).build();
+    }
 
-		return RestaurantDetailsResponse.builder().id(entity.getId()).restaurantNumber(entity.getRestaurantNumber())
-				.restaurantName(entity.getRestaurantName())
-				.description(entity.getDescription())
+    /**
+     * Maps RestaurantEntity to the detailed restaurant projection.
+     *
+     * @param entity restaurant entity
+     *
+     * @return restaurant details response
+     */
+    public RestaurantDetailsResponse toDetailsResponse(RestaurantEntity entity) {
 
-				.phoneNumber(entity.getPhoneNumber() != null ? entity.getPhoneNumber().getValue() : null)
+        return RestaurantDetailsResponse.builder().id(entity.getId()).restaurantNumber(entity.getRestaurantNumber())
+                .restaurantName(entity.getRestaurantName())
+                .description(entity.getDescription())
 
-				.emailAddress(entity.getEmailAddress() != null ? entity.getEmailAddress().getValue() : null)
+                .phoneNumber(entity.getPhoneNumber() != null ? entity.getPhoneNumber().getValue() : null)
 
-				.website(entity.getWebsite())
+                .emailAddress(entity.getEmailAddress() != null ? entity.getEmailAddress().getValue() : null)
 
-				.cuisineTypes(DisplayOptionMapperUtil.fromSet(entity.getCuisineTypes()))
+                .website(entity.getWebsite())
 
-				.status(DisplayOptionMapperUtil.from(entity.getStatus()))
+                .cuisineTypes(DisplayOptionMapperUtil.fromSet(entity.getCuisineTypes()))
 
-				.statusUpdatedAt(entity.getUpdatedAt())
-				.statusUpdatedBy(entity.getUpdatedBy())
-				.isAvailable(entity.isAvailable())
+                .status(DisplayOptionMapperUtil.from(entity.getStatus()))
 
-				.createdAt(entity.getCreatedAt())
-				.createdBy(entity.getCreatedBy())
-				.updatedAt(entity.getUpdatedAt())
-				.updatedBy(entity.getUpdatedBy())
-				.build();
-	}
+                .statusUpdatedAt(entity.getUpdatedAt())
+                .statusUpdatedBy(entity.getUpdatedBy())
+                .isAvailable(entity.isAvailable())
+
+                .createdAt(entity.getCreatedAt())
+                .createdBy(entity.getCreatedBy())
+                .updatedAt(entity.getUpdatedAt())
+                .updatedBy(entity.getUpdatedBy())
+                .build();
+    }
 }

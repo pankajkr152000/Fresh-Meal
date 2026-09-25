@@ -43,6 +43,24 @@ public class FoodEntity extends ABaseEntity {
     private DietCategoryConstant dietCategory; // veg or non-veg
     private CuisineTypeConstant cuisineType;
     private Set<CategoryGroupConstant> categoryGroups;
+
+    /**
+     * Business identifier of the restaurant that owns this food item.
+     *
+     * <p>
+     * Food items belong to the restaurant-level menu. The relationship is stored
+     * using the restaurant business identifier rather than embedding the complete
+     * {@code RestaurantEntity}.
+     * </p>
+     *
+     * <p>
+     * This identifier is also used to enforce restaurant-level ownership and
+     * authorization when restaurant users manage food items.
+     * </p>
+     */
+    @Indexed
+    private String restaurantNumber;
+
     /**
      * Current lifecycle status of the food.
      *

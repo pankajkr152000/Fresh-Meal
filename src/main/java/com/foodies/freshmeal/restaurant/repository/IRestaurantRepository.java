@@ -28,7 +28,6 @@ import com.foodies.freshmeal.restaurant.entity.RestaurantEntity;
  * ============================================================================
  */
 @Repository
-public interface IRestaurantRepository
-        extends IBaseRepository<RestaurantEntity, String> {
+public interface IRestaurantRepository extends IBaseRepository<RestaurantEntity, String> {
 
 }

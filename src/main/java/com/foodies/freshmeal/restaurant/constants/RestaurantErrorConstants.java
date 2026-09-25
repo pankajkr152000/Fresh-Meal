@@ -68,6 +68,11 @@ public enum RestaurantErrorConstants implements IBusinessError {
             "Restaurant has already been permanently deleted.",
             HttpStatusCode.GONE),
 
+    RESTAURANT_OPERATION_NOT_ALLOWED(
+            "FM-RST-006",
+            "Operation not allowed on the restaurant.",
+            HttpStatusCode.FORBIDDEN),
+
     // =========================================================================
     // Status
     // =========================================================================

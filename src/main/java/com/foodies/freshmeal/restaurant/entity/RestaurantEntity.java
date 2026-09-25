@@ -58,6 +58,19 @@ public class RestaurantEntity extends ABaseEntity {
     private String restaurantNumber;
 
     /**
+     * Business identifier of the FreshMeal user who owns the restaurant.
+     *
+     * <p>
+     * References the {@code userNumber} of the associated
+     * {@link com.foodies.freshmeal.user.entity.UserEntity}.
+     * The user identity and authentication information remain managed by
+     * {@code UserEntity}; this field only establishes the restaurant ownership
+     * relationship.
+     * </p>
+     */
+    @Indexed
+    private String ownerUserNumber;
+    /**
      * Business/display name of the restaurant.
      */
     private String restaurantName;
