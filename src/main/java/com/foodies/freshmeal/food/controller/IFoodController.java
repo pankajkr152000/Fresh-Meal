@@ -102,7 +102,7 @@ public interface IFoodController {
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Foods retrieved successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
-    ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods()
+    ResponseEntity<ApiResponse<List<FoodResponse>>> readFoodsForManagement()
             throws JsonProcessingException;
 
     /**

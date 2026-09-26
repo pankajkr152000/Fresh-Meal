@@ -563,6 +563,9 @@ public class FoodServiceImpl implements IFoodService {
 
         final ImageSnapshot imageSnapshot = new ImageSnapshot();
 
+        imageSnapshot.setImageId(
+                imageEntity.getId());
+
         imageSnapshot.setImageName(
                 imageEntity.getImageName());
 
@@ -599,7 +602,7 @@ public class FoodServiceImpl implements IFoodService {
      *                              to access Food management data
      */
     @Override
-    public IServiceOutput<List<FoodResponse>> readFoods(
+    public IServiceOutput<List<FoodResponse>> readFoodsForManagement(
             final IServiceInput<Void> input) {
 
         Objects.requireNonNull(
@@ -1886,15 +1889,22 @@ public class FoodServiceImpl implements IFoodService {
      *
      * @param food Food entity.
      */
-    private void deleteFoodImage(
-            @SuppressWarnings("unused") final FoodEntity food) {
+    private void deleteFoodImage(final FoodEntity food) {
 
-        /*
-         * Future Implementation
-         *
-         * imageService.deleteImage(
-         * food.getImageName());
-         */
+        if (food == null || food.getFoodImage() == null) {
+            return;
+        }
+
+        final String imageId = food.getFoodImage().getImageId();
+
+        if (imageId == null || imageId.isBlank()) {
+            return;
+        }
+
+        final IServiceInput<String> input = new ServiceInput<>();
+        input.setInput(imageId);
+
+        imageService.deleteImageFromS3(input);
     }
 
     // ============================================================================

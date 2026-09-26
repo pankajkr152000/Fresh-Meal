@@ -13,8 +13,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.foodies.freshmeal.authentication.token.ITokenRevocationService;
 import com.foodies.freshmeal.authentication.token.ITokenService;
+import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.io.DataContext;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
+import com.foodies.freshmeal.common.io.service.IServiceInput;
+import com.foodies.freshmeal.common.io.service.IServiceOutput;
+import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
+import com.foodies.freshmeal.user.dto.UserNumberRequest;
+import com.foodies.freshmeal.user.entity.UserEntity;
+import com.foodies.freshmeal.user.entity.UserProfile;
+import com.foodies.freshmeal.user.service.IUserService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,16 +35,29 @@ import jakarta.servlet.http.HttpServletResponse;
  * ============================================================================
  *
  * <p>
- * Establishes Spring Security authentication from a FreshMeal JWT access token.
+ * Establishes Spring Security authentication and the FreshMeal request-scoped
+ * {@link IServiceContext} from a validated JWT access token.
  * </p>
  *
  * <p>
- * This filter processes the HTTP {@code Authorization} header and extracts a
- * Bearer access token. The token is validated through {@link ITokenService}.
- * When valid, the identity and business roles contained in the
- * cryptographically verified token are converted into a Spring Security
- * {@link Authentication} and placed into the current
- * {@link SecurityContextHolder}.
+ * The filter performs the following responsibilities:
+ * </p>
+ *
+ * <ul>
+ * <li>Extract the bearer access token.</li>
+ * <li>Validate the access token.</li>
+ * <li>Validate token and login-session revocation state.</li>
+ * <li>Resolve the authenticated {@link UserEntity} using the JWT user
+ * number.</li>
+ * <li>Create the application's {@link UserProfile}.</li>
+ * <li>Populate Spring Security's {@link SecurityContextHolder}.</li>
+ * <li>Populate the current request-scoped {@link IServiceContext}.</li>
+ * </ul>
+ *
+ * <p>
+ * The JWT remains the authentication credential. The user lookup is performed
+ * only to reconstruct the FreshMeal security profile required by the
+ * application service layer.
  * </p>
  *
  * <h3>Authentication Flow</h3>
@@ -51,64 +72,45 @@ import jakarta.servlet.http.HttpServletResponse;
  * JWT validation
  *      |
  *      v
- * username + userNumber + business roles
+ * Token / Session revocation validation
  *      |
  *      v
- * Spring Security authorities
+ * userNumber + username + roles
  *      |
  *      v
- * Authentication
+ * IUserService.loadUserByUserNumber(...)
  *      |
  *      v
- * SecurityContext
+ * UserEntity
+ *      |
+ *      v
+ * UserProfile
+ *      |
+ *      +----------------------+
+ *      |                      |
+ *      v                      v
+ * SecurityContext       IServiceContext
+ *                              |
+ *                              v
+ *                     Application Services
  * </pre>
  *
- * <h3>Stateless Authentication</h3>
+ * <h3>Request Context</h3>
  *
  * <p>
- * The filter does not load the user from MongoDB for every request. The
- * identity and authorization roles required for the request are read from the
- * cryptographically signed access token.
- * </p>
- *
- * <h3>Token Purpose</h3>
- *
- * <p>
- * Only tokens validated as {@code ACCESS} tokens by {@link ITokenService} are
- * accepted by this filter. Refresh tokens therefore cannot be used as bearer
- * access tokens.
- * </p>
- *
- * <h3>Role Conversion</h3>
- *
- * <p>
- * FreshMeal JWTs contain business role names such as {@code USER},
- * {@code ADMIN}, and {@code RESTAURANT_OWNER}. This filter converts those
- * values into Spring Security's conventional {@code ROLE_} authorities.
- * </p>
- *
- * <pre>
- * JWT role          Spring authority
- * --------          ----------------
- * USER       ->     ROLE_USER
- * ADMIN      ->     ROLE_ADMIN
- * </pre>
- *
- * <h3>Security Context</h3>
- *
- * <p>
- * An authentication is established only when the current security context does
- * not already contain an authentication. This prevents the filter from
- * unnecessarily replacing an existing authentication.
+ * {@link IServiceContext} is request-scoped. Therefore the authenticated
+ * {@link UserProfile} must be populated during every authenticated HTTP
+ * request. It must not be expected to survive from the login request into
+ * subsequent requests.
  * </p>
  *
  * <h3>Invalid Token Handling</h3>
  *
  * <p>
- * Invalid, expired, malformed, or incorrectly purposed JWTs never establish
- * authentication. The request is allowed to continue through the filter chain
- * so Spring Security can determine whether authentication is required for the
- * requested resource.
+ * Invalid, expired, malformed, revoked, or incorrectly purposed JWTs never
+ * establish authentication. The request is allowed to continue through the
+ * filter chain so Spring Security can determine whether the requested resource
+ * requires authentication.
  * </p>
  *
  * ============================================================================
@@ -119,289 +121,371 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	// =========================================================================
-	// Constants
-	// =========================================================================
+    // =========================================================================
+    // Constants
+    // =========================================================================
 
-	/**
-	 * HTTP authorization header.
-	 */
-	private static final String AUTHORIZATION_HEADER = "Authorization";
+    /**
+     * HTTP authorization header.
+     */
+    private static final String AUTHORIZATION_HEADER = "Authorization";
 
-	/**
-	 * Bearer authentication scheme.
-	 */
-	private static final String BEARER_PREFIX = "Bearer ";
+    /**
+     * Bearer authentication scheme.
+     */
+    private static final String BEARER_PREFIX = "Bearer ";
 
-	/**
-	 * Spring Security role authority prefix.
-	 */
-	private static final String ROLE_PREFIX = "ROLE_";
+    /**
+     * Spring Security role authority prefix.
+     */
+    private static final String ROLE_PREFIX = "ROLE_";
 
-	// =========================================================================
-	// Dependencies
-	// =========================================================================
+    // =========================================================================
+    // Dependencies
+    // =========================================================================
 
-	/**
-	 * Current request-scoped FreshMeal service context.
-	 */
-	private final IServiceContext serviceContext;
+    /**
+     * Current request-scoped FreshMeal service context.
+     */
+    private final IServiceContext serviceContext;
 
-	/**
-	 * FreshMeal JWT token service.
-	 */
-	private final ITokenService tokenService;
+    /**
+     * FreshMeal JWT token service.
+     */
+    private final ITokenService tokenService;
 
-	/**
-	 * Server-side JWT token and session revocation service.
-	 */
-	private final ITokenRevocationService tokenRevocationService;
+    /**
+     * Server-side JWT token and session revocation service.
+     */
+    private final ITokenRevocationService tokenRevocationService;
 
-	// =========================================================================
-	// Constructor
-	// =========================================================================
+    /**
+     * FreshMeal user service responsible for resolving the authenticated
+     * application's user entity.
+     */
+    private final IUserService userService;
 
-	/**
-	 * Creates the JWT authentication filter.
-	 *
-	 * @param tokenService           FreshMeal JWT token service.
-	 * @param tokenRevocationService server-side token and session revocation
-	 *                               service.
-	 * @param serviceContext         current request-scoped service context.
-	 */
-	public JwtAuthenticationFilter(ITokenService tokenService, ITokenRevocationService tokenRevocationService,
-			IServiceContext serviceContext) {
+    // =========================================================================
+    // Constructor
+    // =========================================================================
 
-		this.tokenService = tokenService;
-		this.tokenRevocationService = tokenRevocationService;
-		this.serviceContext = serviceContext;
-	}
+    /**
+     * Creates the JWT authentication filter.
+     *
+     * @param tokenService           FreshMeal JWT token service.
+     * @param tokenRevocationService server-side token and session revocation
+     *                               service.
+     * @param serviceContext         current request-scoped service context.
+     * @param userService            FreshMeal user service.
+     */
+    public JwtAuthenticationFilter(
+            ITokenService tokenService,
+            ITokenRevocationService tokenRevocationService,
+            IServiceContext serviceContext,
+            IUserService userService) {
 
-	// =========================================================================
-	// Filter Processing
-	// =========================================================================
+        this.tokenService = tokenService;
+        this.tokenRevocationService = tokenRevocationService;
+        this.serviceContext = serviceContext;
+        this.userService = userService;
+    }
 
-	/**
-	 * Processes the current HTTP request for a JWT bearer token.
-	 *
-	 * <p>
-	 * Requests without a bearer token are allowed to continue so that public
-	 * endpoints remain accessible. Protected endpoints will subsequently be
-	 * rejected by Spring Security when no authenticated principal exists.
-	 * </p>
-	 *
-	 * @param request     current HTTP request.
-	 * @param response    current HTTP response.
-	 * @param filterChain remaining servlet filter chain.
-	 *
-	 * @throws ServletException when servlet processing fails.
-	 * @throws IOException      when request processing fails.
-	 */
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+    // =========================================================================
+    // Filter Processing
+    // =========================================================================
 
-		serviceContext.setAttribute(DataContext.IP_ADDRESS, request.getRemoteAddr());
+    /**
+     * Processes the current HTTP request for a JWT bearer token.
+     *
+     * @param request     current HTTP request.
+     * @param response    current HTTP response.
+     * @param filterChain remaining servlet filter chain.
+     *
+     * @throws ServletException when servlet processing fails.
+     * @throws IOException      when request processing fails.
+     */
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
+            throws ServletException, IOException {
 
-		serviceContext.setAttribute(DataContext.USER_AGENT, request.getHeader("User-Agent"));
+        serviceContext.setAttribute(
+                DataContext.IP_ADDRESS,
+                request.getRemoteAddr());
 
-		String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+        serviceContext.setAttribute(
+                DataContext.USER_AGENT,
+                request.getHeader("User-Agent"));
 
-		if (authorizationHeader == null || !authorizationHeader.startsWith(BEARER_PREFIX)) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
 
-			filterChain.doFilter(request, response);
-			return;
-		}
+        if (authorizationHeader == null
+                || !authorizationHeader.startsWith(BEARER_PREFIX)) {
 
-		String token = authorizationHeader.substring(BEARER_PREFIX.length()).trim();
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		if (token.isEmpty()) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+        String token = authorizationHeader.substring(BEARER_PREFIX.length()).trim();
 
-		serviceContext.setAttribute(DataContext.CURRENT_ACCESS_TOKEN, token);
+        if (token.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
+        serviceContext.setAttribute(
+                DataContext.CURRENT_ACCESS_TOKEN,
+                token);
 
-		if (currentAuthentication != null && currentAuthentication.isAuthenticated()) {
+        Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
-			filterChain.doFilter(request, response);
-			return;
-		}
+        if (currentAuthentication != null
+                && currentAuthentication.isAuthenticated()) {
 
-		authenticateRequest(request, token);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-		filterChain.doFilter(request, response);
-	}
+        authenticateRequest(request, token);
 
-	// =========================================================================
-	// Authentication
-	// =========================================================================
+        filterChain.doFilter(request, response);
+    }
 
-	/**
-	 * Establishes authentication when the supplied access token is valid.
-	 *
-	 * <p>
-	 * The token must first pass access-token validation. Identity and role claims
-	 * are then extracted from the cryptographically verified token.
-	 * </p>
-	 *
-	 * <p>
-	 * No database lookup is performed. This keeps the request authentication path
-	 * stateless and avoids unnecessary database access for every authenticated
-	 * request.
-	 * </p>
-	 *
-	 * @param request HTTP request.
-	 * @param token   bearer access token.
-	 */
-	private void authenticateRequest(HttpServletRequest request, String token) {
+    // =========================================================================
+    // Authentication
+    // =========================================================================
 
-		try {
+    /**
+     * Establishes authentication when the supplied access token is valid.
+     *
+     * <p>
+     * The token is first validated and checked against server-side token and
+     * session revocation state. The verified user number is then used to
+     * resolve the current {@link UserEntity}. A {@link UserProfile} is created
+     * from that entity and the verified JWT authorities.
+     * </p>
+     *
+     * <p>
+     * The resulting authentication is stored in Spring Security and the
+     * resulting {@link UserProfile} is also stored in the current request-scoped
+     * {@link IServiceContext}.
+     * </p>
+     *
+     * @param request HTTP request.
+     * @param token   bearer access token.
+     */
+    private void authenticateRequest(
+            HttpServletRequest request,
+            String token) {
 
-			// -----------------------------------------------------------------
-			// Validate Access Token
-			// -----------------------------------------------------------------
+        try {
 
-			if (!tokenService.isAccessTokenValid(token)) {
-				return;
-			}
+            // -----------------------------------------------------------------
+            // Validate Access Token
+            // -----------------------------------------------------------------
 
-			// -----------------------------------------------------------------
-			// Check Token Revocation
-			// -----------------------------------------------------------------
+            if (!tokenService.isAccessTokenValid(token)) {
+                return;
+            }
 
-			if (tokenRevocationService.isTokenRevoked(token)) {
-				return;
-			}
+            // -----------------------------------------------------------------
+            // Check Token Revocation
+            // -----------------------------------------------------------------
 
-			// -----------------------------------------------------------------
-			// Check Session Revocation
-			// -----------------------------------------------------------------
+            if (tokenRevocationService.isTokenRevoked(token)) {
+                return;
+            }
 
-			String sessionId = tokenService.getSessionId(token);
+            // -----------------------------------------------------------------
+            // Check Session Revocation
+            // -----------------------------------------------------------------
 
-			if (!hasText(sessionId)) {
-				return;
-			}
+            String sessionId = tokenService.getSessionId(token);
 
-			if (tokenRevocationService.isSessionRevoked(sessionId)) {
-				return;
-			}
+            if (!hasText(sessionId)) {
+                return;
+            }
 
-			// -----------------------------------------------------------------
-			// Extract Identity
-			// -----------------------------------------------------------------
+            if (tokenRevocationService.isSessionRevoked(sessionId)) {
+                return;
+            }
 
-			String username = tokenService.getUsername(token);
-			String userNumber = tokenService.getUserNumber(token);
+            // -----------------------------------------------------------------
+            // Extract Identity
+            // -----------------------------------------------------------------
 
-			if (!hasText(username) || !hasText(userNumber)) {
-				return;
-			}
+            String username = tokenService.getUsername(token);
 
-			// -----------------------------------------------------------------
-			// Extract and Convert Roles
-			// -----------------------------------------------------------------
+            String userNumber = tokenService.getUserNumber(token);
 
-			List<SimpleGrantedAuthority> authorities = buildAuthorities(tokenService.getRoles(token));
+            if (!hasText(username)
+                    || !hasText(userNumber)) {
+                return;
+            }
 
-			// -----------------------------------------------------------------
-			// Establish Spring Security Authentication
-			// -----------------------------------------------------------------
+            // -----------------------------------------------------------------
+            // Extract and Convert Roles
+            // -----------------------------------------------------------------
 
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null,
-					authorities);
+            List<SimpleGrantedAuthority> authorities = buildAuthorities(tokenService.getRoles(token));
 
-			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // -----------------------------------------------------------------
+            // Resolve FreshMeal User
+            // -----------------------------------------------------------------
 
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserEntity userEntity = loadUserByUserNumber(userNumber);
 
-		} catch (Exception exception) {
+            if (userEntity == null) {
+                return;
+            }
 
-			/*
-			 * Invalid JWTs must never establish authentication.
-			 *
-			 * The request is intentionally allowed to continue so that the normal Spring
-			 * Security authorization mechanism can determine whether the requested resource
-			 * requires authentication.
-			 */
-			SecurityContextHolder.clearContext();
-		}
-	}
+            // -----------------------------------------------------------------
+            // Create FreshMeal User Profile
+            // -----------------------------------------------------------------
 
-	// =========================================================================
-	// Authority Construction
-	// =========================================================================
+            UserProfile userProfile = UserProfile.create(userEntity, authorities);
 
-	/**
-	 * Converts FreshMeal business roles into Spring Security authorities.
-	 *
-	 * <p>
-	 * JWT roles intentionally contain only FreshMeal business role names, such as
-	 * {@code USER} or {@code ADMIN}. The {@code ROLE_} prefix is introduced here at
-	 * the Spring Security boundary.
-	 * </p>
-	 *
-	 * @param roles FreshMeal business roles extracted from the verified JWT.
-	 *
-	 * @return Spring Security role authorities.
-	 */
-	private List<SimpleGrantedAuthority> buildAuthorities(List<String> roles) {
+            // -----------------------------------------------------------------
+            // Populate Request Service Context
+            // -----------------------------------------------------------------
 
-		if (roles == null || roles.isEmpty()) {
-			return List.of();
-		}
+            serviceContext.setUserProfile(userProfile);
 
-		return roles.stream().filter(this::isValidRole).map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
-				.toList();
-	}
+            // -----------------------------------------------------------------
+            // Establish Spring Security Authentication
+            // -----------------------------------------------------------------
 
-	// =========================================================================
-	// Role Validation
-	// =========================================================================
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userProfile,
+                    null,
+                    authorities);
 
-	/**
-	 * Determines whether a JWT role is a valid FreshMeal business role.
-	 *
-	 * <p>
-	 * Only known {@link com.foodies.freshmeal.common.constants.RoleType} values are
-	 * accepted. This prevents arbitrary strings from being promoted into Spring
-	 * Security authorities merely because they were present in a signed token.
-	 * </p>
-	 *
-	 * @param role FreshMeal business role.
-	 *
-	 * @return {@code true} when the role is a known FreshMeal role.
-	 */
-	private boolean isValidRole(String role) {
+            authentication.setDetails(
+                    new WebAuthenticationDetailsSource()
+                            .buildDetails(request));
 
-		if (!hasText(role)) {
-			return false;
-		}
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
 
-		try {
-			com.foodies.freshmeal.common.constants.RoleType.valueOf(role);
-			return true;
-		} catch (IllegalArgumentException exception) {
-			return false;
-		}
-	}
+        } catch (Exception exception) {
 
-	// =========================================================================
-	// Text Validation
-	// =========================================================================
+            /*
+             * Invalid JWTs or user-resolution failures must never establish
+             * authentication.
+             *
+             * The request is intentionally allowed to continue so that the
+             * normal Spring Security authorization mechanism can determine
+             * whether the requested resource requires authentication.
+             */
+            SecurityContextHolder.clearContext();
+        }
+    }
 
-	/**
-	 * Determines whether a value contains meaningful text.
-	 *
-	 * @param value value to validate.
-	 *
-	 * @return {@code true} when the value is not null and contains non-whitespace
-	 *         characters.
-	 */
-	private boolean hasText(String value) {
-		return value != null && !value.isBlank();
-	}
+    // =========================================================================
+    // User Resolution
+    // =========================================================================
+
+    /**
+     * Resolves the authenticated FreshMeal user using the business user number
+     * contained in the verified JWT.
+     *
+     * <p>
+     * User persistence access remains behind {@link IUserService}. The security
+     * filter therefore does not access a repository directly.
+     * </p>
+     *
+     * @param userNumber FreshMeal business user number.
+     *
+     * @return resolved active user entity, or {@code null} when the user cannot
+     *         be resolved.
+     */
+    private UserEntity loadUserByUserNumber(String userNumber) {
+
+        UserNumberRequest request = new UserNumberRequest();
+
+        request.setUserNumber(userNumber);
+
+        IServiceInput<UserNumberRequest> input = new ServiceInput<>();
+
+        input.setInput(request);
+
+        IServiceOutput<UserEntity> output = userService.loadUserByUserNumber(input);
+
+        if (output == null) {
+            return null;
+        }
+
+        return output.getOutput();
+    }
+
+    // =========================================================================
+    // Authority Construction
+    // =========================================================================
+
+    /**
+     * Converts FreshMeal business roles into Spring Security authorities.
+     *
+     * @param roles FreshMeal business roles extracted from the verified JWT.
+     *
+     * @return Spring Security role authorities.
+     */
+    private List<SimpleGrantedAuthority> buildAuthorities(
+            List<String> roles) {
+
+        if (roles == null || roles.isEmpty()) {
+            return List.of();
+        }
+
+        return roles.stream()
+                .filter(this::isValidRole)
+                .map(role -> new SimpleGrantedAuthority(
+                        ROLE_PREFIX + role))
+                .toList();
+    }
+
+    // =========================================================================
+    // Role Validation
+    // =========================================================================
+
+    /**
+     * Determines whether a JWT role is a valid FreshMeal business role.
+     *
+     * @param role FreshMeal business role.
+     *
+     * @return {@code true} when the role is a known FreshMeal role.
+     */
+    private boolean isValidRole(String role) {
+
+        if (!hasText(role)) {
+            return false;
+        }
+
+        try {
+
+            RoleType.valueOf(role);
+            return true;
+
+        } catch (IllegalArgumentException exception) {
+
+            return false;
+        }
+    }
+
+    // =========================================================================
+    // Text Validation
+    // =========================================================================
+
+    /**
+     * Determines whether a value contains meaningful text.
+     *
+     * @param value value to validate.
+     *
+     * @return {@code true} when the value is not null and contains
+     *         non-whitespace characters.
+     */
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
+    }
 }

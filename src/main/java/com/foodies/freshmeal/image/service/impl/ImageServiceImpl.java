@@ -166,9 +166,9 @@ public class ImageServiceImpl implements IImageService {
 
     @Override
     public IServiceOutput<String> getImageName(IServiceInput<String> input) {
-        String imgeId = input.getInput();
-        ImageEntity imageEntity = imageRepository.findById(imgeId)
-                .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imgeId));
+        String imageId = input.getInput();
+        ImageEntity imageEntity = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imageId));
         String imageName = imageEntity.getImageName();
         IServiceOutput<String> output = new ServiceOutput<>();
         output.setOutput(imageName);
@@ -177,7 +177,11 @@ public class ImageServiceImpl implements IImageService {
 
     @Override
     public IServiceOutput<Boolean> deleteImageFromS3(IServiceInput<String> input) {
+
         String imageId = input.getInput();
+        if (imageId == null || imageId.isEmpty()) {
+            throw new RuntimeException("Image ID cannot be null or empty");
+        }
         ImageEntity imageEntity = imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imageId));
         String imageName = imageEntity.getImageName();

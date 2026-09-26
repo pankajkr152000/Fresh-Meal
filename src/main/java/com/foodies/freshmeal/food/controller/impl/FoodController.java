@@ -187,13 +187,13 @@ public class FoodController implements IFoodController {
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @AuditApi(action = ActionType.READ_ALL_FOODS, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.READ_ALL_FOODS)
-    public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods()
+    public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoodsForManagement()
             throws JsonProcessingException {
 
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
 
-        IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
+        IServiceOutput<List<FoodResponse>> output = foodService.readFoodsForManagement(input);
 
         return ApiResponseBuilder.success(
                 ApiMessageConstants.FOOD_LIST_FOUND,

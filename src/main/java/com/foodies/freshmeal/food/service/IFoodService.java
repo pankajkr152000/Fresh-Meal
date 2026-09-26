@@ -33,7 +33,7 @@ public interface IFoodService {
 
     IServiceOutput<FoodResponse> editFood(IServiceInput<EditFoodInputDTO> input);
 
-    IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input);
+    IServiceOutput<List<FoodResponse>> readFoodsForManagement(IServiceInput<Void> input);
 
     IServiceOutput<List<DisplayOptionResponse>> getFoodCategories(IServiceInput<Void> input);
 
