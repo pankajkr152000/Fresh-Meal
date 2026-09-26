@@ -20,211 +20,224 @@ import com.foodies.freshmeal.food.dto.RestoreFoodRequest;
 @Component
 public class FoodValidator extends AbstractValidator {
 
-    protected void doValidate(FoodRequest request) {
+	// ============================================================================
+	// Food Request Validation
+	// ============================================================================
 
-        if (request == null) {
-            reject("request", "Request cannot be null.");
-            return;
-        }
+	/**
+	 * Validates the food creation/update request.
+	 *
+	 * <p>
+	 * This validation is intentionally limited to validating the contents of the
+	 * food request. Restaurant ownership, authorization, restaurant resolution,
+	 * status transitions, and persistence-related validation belong to the
+	 * service/business layer.
+	 *
+	 * @param request Food request.
+	 */
+	protected void doValidate(final FoodRequest request) {
 
-        if (request.getFoodName() == null || request.getFoodName().isBlank()) {
+		if (request == null) {
+			reject("request", "Request cannot be null.");
+			return;
+		}
 
-            reject("foodName", "Food name is required.");
-        }
+		if (CommonUtils.isBlank(request.getFoodName())) {
+			reject("foodName", "Food name is required.");
+		}
 
-        if (request.getPrice() <= 0) {
+		if (request.getPrice() <= 0) {
+			reject("price", "Price must be greater than zero.");
+		}
 
-            reject("price", "Price must be greater than zero.");
-        }
+		if (request.getDietCategory() == null) {
+			reject("dietCategory", "Diet category is required.");
+		}
 
-        if (request.getDietCategory() == null) {
+		if (request.getCuisineType() == null) {
+			reject("cuisineType", "Cuisine type is required.");
+		}
+	}
 
-            reject("dietCategory", "Diet category is required.");
-        }
+	// ============================================================================
+	// Archive Validation
+	// ============================================================================
 
-        if (request.getCuisineType() == null) {
+	/**
+	 * Validates archive food request.
+	 *
+	 * @param input Archive food request.
+	 */
+	public void validateArchiveFood(final IServiceInput<ArchiveFoodRequest> input) {
 
-            reject("cuisineType", "Cuisine type is required.");
-        }
-    }
+		final ArchiveFoodRequest request = input.getInput();
+		final ValidationResult validationResult = new ValidationResult();
 
-    // ============================================================================
-    // Archive Validation
-    // ============================================================================
+		validateRequest(request, validationResult);
 
-    /**
-     * Validates archive food request.
-     *
-     * @param input Archive food request.
-     */
-    public void validateArchiveFood(IServiceInput<ArchiveFoodRequest> input) {
+		if (request != null) {
+			validateFoodId(request.getFoodId(), validationResult);
+		}
 
-        ArchiveFoodRequest request = input.getInput();
+		validate(validationResult);
+	}
 
-        ValidationResult validationResult = new ValidationResult();
+	/**
+	 * Validates bulk archive food request.
+	 *
+	 * @param input Bulk archive request.
+	 */
+	public void validateBulkArchiveFoods(final IServiceInput<BulkArchiveFoodRequest> input) {
 
-        validateRequest(request, validationResult);
+		final BulkArchiveFoodRequest request = input.getInput();
+		final ValidationResult validationResult = new ValidationResult();
 
-        if (request != null) {
-            validateFoodId(request.getFoodId(), validationResult);
-        }
+		validateRequest(request, validationResult);
 
-        validate(validationResult);
-    }
+		if (request != null) {
+			validateFoodIds(request.getFoodIds(), validationResult);
+		}
 
-    /**
-     * Validates bulk archive food request.
-     *
-     * @param input Bulk archive request.
-     */
-    public void validateBulkArchiveFoods(IServiceInput<BulkArchiveFoodRequest> input) {
+		validate(validationResult);
+	}
 
-        BulkArchiveFoodRequest request = input.getInput();
+	// ============================================================================
+	// Restore Validation
+	// ============================================================================
 
-        ValidationResult validationResult = new ValidationResult();
+	/**
+	 * Validates restore food request.
+	 *
+	 * @param input Restore food request.
+	 */
+	public void validateRestoreFood(final IServiceInput<RestoreFoodRequest> input) {
 
-        validateRequest(request, validationResult);
+		final RestoreFoodRequest request = input.getInput();
+		final ValidationResult validationResult = new ValidationResult();
 
-        if (request != null) {
-            validateFoodIds(request.getFoodIds(), validationResult);
-        }
+		validateRequest(request, validationResult);
 
-        validate(validationResult);
-    }
+		if (request != null) {
+			validateFoodId(request.getFoodId(), validationResult);
+		}
 
-    // ============================================================================
-    // Restore Validation
-    // ============================================================================
+		validate(validationResult);
+	}
 
-    /**
-     * Validates restore food request.
-     *
-     * @param input Restore food request.
-     */
-    public void validateRestoreFood(IServiceInput<RestoreFoodRequest> input) {
+	/**
+	 * Validates bulk restore food request.
+	 *
+	 * @param input Bulk restore request.
+	 */
+	public void validateBulkRestoreFoods(final IServiceInput<BulkRestoreFoodRequest> input) {
 
-        RestoreFoodRequest request = input.getInput();
+		final BulkRestoreFoodRequest request = input.getInput();
+		final ValidationResult validationResult = new ValidationResult();
 
-        ValidationResult validationResult = new ValidationResult();
+		validateRequest(request, validationResult);
 
-        validateRequest(request, validationResult);
+		if (request != null) {
+			validateFoodIds(request.getFoodIds(), validationResult);
+		}
 
-        if (request != null) {
-            validateFoodId(request.getFoodId(), validationResult);
-        }
+		validate(validationResult);
+	}
 
-        validate(validationResult);
-    }
+	// ============================================================================
+	// Permanent Delete Validation
+	// ============================================================================
 
-    /**
-     * Validates bulk restore food request.
-     *
-     * @param input Bulk restore request.
-     */
-    public void validateBulkRestoreFoods(IServiceInput<BulkRestoreFoodRequest> input) {
+	/**
+	 * Validates permanent delete food request.
+	 *
+	 * @param input Permanent delete request.
+	 */
+	public void validatePermanentDeleteFood(final IServiceInput<PermanentDeleteFoodRequest> input) {
 
-        BulkRestoreFoodRequest request = input.getInput();
+		final PermanentDeleteFoodRequest request = input.getInput();
+		final ValidationResult validationResult = new ValidationResult();
 
-        ValidationResult validationResult = new ValidationResult();
+		validateRequest(request, validationResult);
 
-        validateRequest(request, validationResult);
+		if (request != null) {
+			validateFoodId(request.getFoodId(), validationResult);
+		}
 
-        if (request != null) {
-            validateFoodIds(request.getFoodIds(), validationResult);
-        }
+		validate(validationResult);
+	}
 
-        validate(validationResult);
-    }
+	/**
+	 * Validates bulk permanent delete request.
+	 *
+	 * @param input Bulk permanent delete request.
+	 */
+	public void validateBulkPermanentDeleteFoods(final IServiceInput<BulkDeleteFoodRequest> input) {
 
-    // ============================================================================
-    // Permanent Delete Validation
-    // ============================================================================
+		final BulkDeleteFoodRequest request = input.getInput();
+		final ValidationResult validationResult = new ValidationResult();
 
-    /**
-     * Validates permanent delete food request.
-     *
-     * @param input Permanent delete request.
-     */
-    public void validatePermanentDeleteFood(IServiceInput<PermanentDeleteFoodRequest> input) {
+		validateRequest(request, validationResult);
 
-        PermanentDeleteFoodRequest request = input.getInput();
+		if (request != null) {
+			validateFoodIds(request.getFoodIds(), validationResult);
+		}
 
-        ValidationResult validationResult = new ValidationResult();
+		validate(validationResult);
+	}
 
-        validateRequest(request, validationResult);
+	// ============================================================================
+	// Common Validation Helpers
+	// ============================================================================
 
-        if (request != null) {
-            validateFoodId(request.getFoodId(), validationResult);
-        }
+	/**
+	 * Validates a single food identifier.
+	 *
+	 * @param foodId           Food identifier.
+	 * @param validationResult Validation result.
+	 */
+	private void validateFoodId(final String foodId, final ValidationResult validationResult) {
 
-        validate(validationResult);
-    }
+		if (CommonUtils.isBlank(foodId)) {
+			validationResult.addError(ValidationError.of("foodId", "Food Id is required."));
+		}
+	}
 
-    /**
-     * Validates bulk permanent delete request.
-     *
-     * @param input Bulk permanent delete request.
-     */
-    public void validateBulkPermanentDeleteFoods(IServiceInput<BulkDeleteFoodRequest> input) {
+	/**
+	 * Validates multiple food identifiers.
+	 *
+	 * <p>
+	 * Each identifier is validated individually to prevent blank identifiers from
+	 * being accepted inside an otherwise non-empty collection.
+	 *
+	 * @param foodIds          Food identifiers.
+	 * @param validationResult Validation result.
+	 */
+	private void validateFoodIds(final List<String> foodIds, final ValidationResult validationResult) {
 
-        BulkDeleteFoodRequest request = input.getInput();
+		if (foodIds == null || foodIds.isEmpty()) {
+			validationResult.addError(ValidationError.of("foodIds", "At least one Food Id is required."));
+			return;
+		}
 
-        ValidationResult validationResult = new ValidationResult();
+		for (int index = 0; index < foodIds.size(); index++) {
 
-        validateRequest(request, validationResult);
+			if (CommonUtils.isBlank(foodIds.get(index))) {
+				validationResult.addError(ValidationError.of("foodIds[" + index + "]", "Food Id cannot be blank."));
+			}
+		}
+	}
 
-        if (request != null) {
-            validateFoodIds(request.getFoodIds(), validationResult);
-        }
+	/**
+	 * Validates request object.
+	 *
+	 * @param request          Request object.
+	 * @param validationResult Validation result.
+	 */
+	@Override
+	protected void validateRequest(final Object request, final ValidationResult validationResult) {
 
-        validate(validationResult);
-    }
-
-    // ============================================================================
-    // Common Validation Helpers
-    // ============================================================================
-
-    /**
-     * Validates a single food identifier.
-     *
-     * @param foodId           Food identifier.
-     * @param validationResult Validation result.
-     */
-    private void validateFoodId(final String foodId, final ValidationResult validationResult) {
-
-        if (CommonUtils.isBlank(foodId)) {
-
-            validationResult.addError(ValidationError.of("foodId", "Food Id is required."));
-        }
-    }
-
-    /**
-     * Validates multiple food identifiers.
-     *
-     * @param foodIds          Food identifiers.
-     * @param validationResult Validation result.
-     */
-    private void validateFoodIds(final List<String> foodIds, final ValidationResult validationResult) {
-
-        if (foodIds == null || foodIds.isEmpty()) {
-
-            validationResult.addError(ValidationError.of("foodIds", "At least one Food Id is required."));
-        }
-    }
-
-    /**
-     * Validates request object.
-     *
-     * @param request          Request object.
-     * @param validationResult Validation result.
-     */
-    @Override
-    protected void validateRequest(final Object request, final ValidationResult validationResult) {
-
-        if (request == null) {
-
-            validationResult.addError(ValidationError.of("request", "Request cannot be null."));
-        }
-    }
-
+		if (request == null) {
+			validationResult.addError(ValidationError.of("request", "Request cannot be null."));
+		}
+	}
 }

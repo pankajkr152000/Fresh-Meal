@@ -15,6 +15,7 @@ import com.foodies.freshmeal.food.dto.BulkArchiveFoodRequest;
 import com.foodies.freshmeal.food.dto.BulkDeleteFoodRequest;
 import com.foodies.freshmeal.food.dto.BulkRestoreFoodRequest;
 import com.foodies.freshmeal.food.dto.FoodMetadataResponse;
+import com.foodies.freshmeal.food.dto.FoodRequest;
 import com.foodies.freshmeal.food.dto.FoodResponse;
 import com.foodies.freshmeal.food.dto.FoodStatusRequest;
 import com.foodies.freshmeal.food.dto.PermanentDeleteFoodRequest;
@@ -72,15 +73,23 @@ public interface IFoodController {
      *
      * @throws JsonProcessingException if food JSON cannot be parsed
      */
-    @Operation(summary = "Add food", description = "Creates a new food item with optional food image.")
-    @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Food created successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid food request or validation failure.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Food already exists.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
-    })
-    ResponseEntity<ApiResponse<FoodResponse>> addFood(
-            String foodJson,
-            MultipartFile imageFile) throws JsonProcessingException;
+    // @Operation(summary = "Add food", description = "Creates a new food item with
+    // optional food image.")
+    // @ApiResponses({
+    // @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
+    // description = "Food created successfully.", content = @Content(mediaType =
+    // "application/json", schema = @Schema(implementation = ApiResponse.class))),
+    // @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
+    // description = "Invalid food request or validation failure.", content =
+    // @Content(mediaType = "application/json", schema = @Schema(implementation =
+    // ApiResponse.class))),
+    // @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409",
+    // description = "Food already exists.", content = @Content(mediaType =
+    // "application/json", schema = @Schema(implementation = ApiResponse.class)))
+    // })
+    // ResponseEntity<ApiResponse<FoodResponse>> addFood(
+    // String foodJson,
+    // MultipartFile imageFile) throws JsonProcessingException;
 
     /**
      * Retrieves all active food items.
@@ -356,4 +365,55 @@ public interface IFoodController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Archived foods retrieved successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     ResponseEntity<ApiResponse<List<FoodResponse>>> readArchivedFoods();
+
+    /**
+     * =========================================================================
+     * Create Food
+     * =========================================================================
+     *
+     * <p>
+     * Creates a new food item for the specified restaurant branch.
+     * </p>
+     *
+     * <p>
+     * Supported multipart request parts:
+     * </p>
+     * <ul>
+     * <li>
+     * {@code food} - JSON representation of {@link FoodRequest}
+     * </li>
+     * <li>
+     * {@code restaurantNumber} - restaurant business identifier
+     * </li>
+     * <li>
+     * {@code restaurantBranchNumber} - restaurant branch business
+     * identifier
+     * </li>
+     * <li>
+     * {@code image} - optional food image
+     * </li>
+     * </ul>
+     *
+     * <p>
+     * The controller only transports the restaurant and branch context to the
+     * service layer. The service layer is responsible for validating that the
+     * restaurant exists, the branch belongs to that restaurant, and the
+     * authenticated user is authorized to operate on the specified branch.
+     * </p>
+     *
+     * @param foodJsonRequest        food details as JSON
+     * @param restaurantNumber       restaurant business identifier
+     * @param restaurantBranchNumber restaurant branch business identifier
+     * @param imageFile              optional food image
+     * @return created food information
+     * @throws JsonProcessingException if the food JSON cannot be parsed
+     */
+    @Operation(summary = "Add food", description = "Creates a new food item with optional food image.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Food created successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid food request or validation failure.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Food already exists.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ResponseEntity<ApiResponse<FoodResponse>> addFood(String foodJsonRequest, String restaurantNumber,
+            String restaurantBranchNumber, MultipartFile imageFile) throws JsonProcessingException;
 }

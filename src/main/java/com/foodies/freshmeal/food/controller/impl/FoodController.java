@@ -41,6 +41,7 @@ import com.foodies.freshmeal.food.dto.BulkArchiveFoodRequest;
 import com.foodies.freshmeal.food.dto.BulkDeleteFoodRequest;
 import com.foodies.freshmeal.food.dto.BulkRestoreFoodRequest;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
+import com.foodies.freshmeal.food.dto.EditFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodMetadataResponse;
 import com.foodies.freshmeal.food.dto.FoodRequest;
 import com.foodies.freshmeal.food.dto.FoodResponse;
@@ -57,18 +58,29 @@ import jakarta.validation.Valid;
  * Food Controller
  * ============================================================================
  *
- * Responsibilities
- * ----------------
- * • Receive HTTP requests.
- * • Validate request payload.
- * • Delegate business logic to the service layer.
- * • Return standardized ApiResponse.
+ * <p>
+ * Handles HTTP requests related to food management.
+ * </p>
  *
- * The controller should NEVER contain business logic.
- * ============================================================================
- */
-/*
- * {"/api/foods"}
+ * <p>
+ * Responsibilities:
+ * </p>
+ * <ul>
+ * <li>Receive HTTP requests.</li>
+ * <li>Validate request payloads.</li>
+ * <li>Build service-layer input objects.</li>
+ * <li>Delegate business operations to the service layer.</li>
+ * <li>Return standardized {@link ApiResponse} responses.</li>
+ * </ul>
+ *
+ * <p>
+ * The controller must not contain business or ownership validation logic.
+ * Restaurant and branch ownership authorization is handled by the service
+ * layer.
+ * </p>
+ *
+ * @author Pankaj Kumar
+ *         ============================================================================
  */
 @RestController
 @RequestMapping(ApiBaseConstants.FOOD_BASE_URL)
@@ -78,164 +90,210 @@ public class FoodController implements IFoodController {
     private final ObjectMapper objectMapper;
     private final IServiceContext serviceContext;
 
-    public FoodController(IFoodService foodService, ObjectMapper objectMapper, IServiceContext serviceContext) {
+    public FoodController(
+            IFoodService foodService,
+            ObjectMapper objectMapper,
+            IServiceContext serviceContext) {
+
         this.foodService = foodService;
         this.objectMapper = objectMapper;
         this.serviceContext = serviceContext;
     }
 
     /**
-     * Creates a new food item.
+     * =========================================================================
+     * Create Food
+     * =========================================================================
      *
-     * Supported Request Parts:
-     * - food : FoodRequest (required)
-     * - image : MultipartFile (optional)
+     * <p>
+     * Creates a new food item for the specified restaurant branch.
+     * </p>
      *
-     * @param request food details
-     * @param image   optional food image
+     * <p>
+     * Supported multipart request parts:
+     * </p>
+     * <ul>
+     * <li>
+     * {@code food} - JSON representation of {@link FoodRequest}
+     * </li>
+     * <li>
+     * {@code restaurantNumber} - restaurant business identifier
+     * </li>
+     * <li>
+     * {@code restaurantBranchNumber} - restaurant branch business
+     * identifier
+     * </li>
+     * <li>
+     * {@code image} - optional food image
+     * </li>
+     * </ul>
+     *
+     * <p>
+     * The controller only transports the restaurant and branch context to the
+     * service layer. The service layer is responsible for validating that the
+     * restaurant exists, the branch belongs to that restaurant, and the
+     * authenticated user is authorized to operate on the specified branch.
+     * </p>
+     *
+     * @param foodJsonRequest        food details as JSON
+     * @param restaurantNumber       restaurant business identifier
+     * @param restaurantBranchNumber restaurant branch business identifier
+     * @param imageFile              optional food image
      * @return created food information
-     */
-    /*
-     * ("/add")
+     * @throws JsonProcessingException if the food JSON cannot be parsed
      */
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(action = ActionType.ADD_FOOD, module = ModuleType.FOOD, method = MethodType.CREATE)
     @PostMapping(value = FoodApiConstants.ADD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<FoodResponse>> addFood(@RequestPart("food") String foodJsonRequest,
+    public ResponseEntity<ApiResponse<FoodResponse>> addFood(
+            @RequestPart("food") String foodJsonRequest,
+            @RequestPart("restaurantNumber") String restaurantNumber,
+            @RequestPart("restaurantBranchNumber") String restaurantBranchNumber,
             @RequestPart(value = "image", required = false) MultipartFile imageFile)
             throws JsonProcessingException {
 
-        FoodRequest foodRequest = objectMapper.readValue(
+        final FoodRequest foodRequest = objectMapper.readValue(
                 foodJsonRequest,
                 FoodRequest.class);
 
         serviceContext.setAttribute("foodRequest", foodJsonRequest);
 
-        IServiceInput<CreateFoodInputDTO> input = new ServiceInput<>();
-        CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO();
+        final IServiceInput<CreateFoodInputDTO> input = new ServiceInput<>();
+
+        final CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO();
         createFoodInputDTO.setFoodRequest(foodRequest);
+        createFoodInputDTO.setRestaurantNumber(restaurantNumber);
+        createFoodInputDTO.setRestaurantBranchNumber(restaurantBranchNumber);
         createFoodInputDTO.setImageFile(imageFile);
+
         input.setInput(createFoodInputDTO);
         input.setServiceContext(serviceContext);
-        IServiceOutput<FoodResponse> output = foodService.addFood(input);
 
-        return ApiResponseBuilder.created(ApiMessageConstants.FOOD_CREATED, output.getOutput());
+        final IServiceOutput<FoodResponse> output = foodService.addFood(input);
+
+        return ApiResponseBuilder.created(
+                ApiMessageConstants.FOOD_CREATED,
+                output.getOutput());
     }
 
     /*
-     * ("/readAllFoods")
+     * =========================================================================
+     * Read Operations
+     * =========================================================================
      */
+
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @AuditApi(action = ActionType.READ_ALL_FOODS, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.READ_ALL_FOODS)
-    public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods() throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<List<FoodResponse>>> readFoods()
+            throws JsonProcessingException {
+
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
+
         IServiceOutput<List<FoodResponse>> output = foodService.readFoods(input);
-        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_LIST_FOUND, output.getOutput());
+
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FOOD_LIST_FOUND,
+                output.getOutput());
     }
 
     /*
-     * ("/metadata/food-categories")
+     * =========================================================================
+     * Food Metadata
+     * =========================================================================
      */
-    // @AuditApi
+
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.FOOD_CATEGORIES)
-    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> foodCategories() throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> foodCategories()
+            throws JsonProcessingException {
+
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
+
         foodService.getFoodCategories(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
-    /*
-     * ("/metadata/diet-categories")
-     */
-    // @AuditApi
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.DIET_CATEGORIES)
-    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> dietCategories() throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> dietCategories()
+            throws JsonProcessingException {
+
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
+
         foodService.getDietCategories(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
-    /*
-     * ("/metadata/cuisine-categories")
-     */
-    // @AuditApi
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.CUISINE_CATEGORIES)
-    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> cuisineCategories() throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> cuisineCategories()
+            throws JsonProcessingException {
+
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
+
         foodService.getCuisineCategories(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
-    /*
-     * ("/metadata/group-categories")
-     */
-    // @AuditApi
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.GROUP_CATEGORIES)
-    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> groupCategories() throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> groupCategories()
+            throws JsonProcessingException {
+
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
+
         foodService.getGroupCategories(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY);
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FETCHED_SUCCESSFULLY);
     }
 
-    /*
-     * ("/foodCategoryMetadata")
-     */
-    // @AuditApi
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @GetMapping(FoodApiConstants.FOOD_CATEGORY_METADATA)
-    public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata() throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata()
+            throws JsonProcessingException {
+
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
+
         IServiceOutput<FoodMetadataResponse> response = foodService.foodCategoryMetadata(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FETCHED_SUCCESSFULLY, response.getOutput());
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FETCHED_SUCCESSFULLY,
+                response.getOutput());
     }
 
-    /**
+    /*
      * =========================================================================
-     * Update Food Status
-     * =========================================================================
-     *
-     * PATCH /api/admin/foods/{foodId}/status
-     *
-     * Example Request
-     *
-     * {
-     * "status":"OUT_OF_STOCK"
-     * }
-     *
+     * Food Status
      * =========================================================================
      */
 
-    /*
-     * ("/{foodId}/status")
-     */
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(action = ActionType.UPDATE_FOOD_STATUS, module = ModuleType.FOOD, method = MethodType.UPDATE)
     @PatchMapping(FoodApiConstants.UPDATE_FOOD_STATUS)
-    public ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(@PathVariable String foodId,
+    public ResponseEntity<ApiResponse<FoodResponse>> updateFoodStatus(
+            @PathVariable String foodId,
             @Valid @RequestBody UpdateFoodStatusRequest updateRequest) {
 
         FoodStatusRequest request = FoodStatusRequest.builder()
@@ -246,14 +304,20 @@ public class FoodController implements IFoodController {
         IServiceInput<FoodStatusRequest> input = new ServiceInput<>();
         input.setInput(request);
         input.setServiceContext(serviceContext);
+
         IServiceOutput<FoodResponse> output = foodService.updateFoodStatus(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_STATUS_UPDATED, output.getOutput());
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FOOD_STATUS_UPDATED,
+                output.getOutput());
     }
 
     /*
-     * {"/view"}
+     * =========================================================================
+     * View Food
+     * =========================================================================
      */
+
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
     @AuditApi(action = ActionType.VIEW_FOOD, module = ModuleType.FOOD, method = MethodType.READ)
@@ -261,51 +325,61 @@ public class FoodController implements IFoodController {
     public ResponseEntity<ApiResponse<EntityViewResponse<FoodResponse>>> getFoodByFoodId(
             @RequestBody FoodStatusRequest foodRequest)
             throws JsonProcessingException {
+
         IServiceInput<FoodStatusRequest> input = new ServiceInput<>();
         input.setInput(foodRequest);
         input.setServiceContext(serviceContext);
+
         IServiceOutput<EntityViewResponse<FoodResponse>> output = foodService.getFoodByFoodId(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_FOUND, output.getOutput());
-
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FOOD_FOUND,
+                output.getOutput());
     }
 
     /*
-     * {"/edit"}
+     * =========================================================================
+     * Edit Food
+     * =========================================================================
      */
+
     @Override
     @AuditApi(action = ActionType.UPDATE_FOOD, module = ModuleType.FOOD, method = MethodType.UPDATE)
     @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @PutMapping(value = FoodApiConstants.EDIT_FOOD, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<FoodResponse>> editFood(@RequestPart("food") String foodJsonRequest,
-            @RequestPart(value = "image", required = false) MultipartFile imageFile) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse<FoodResponse>> editFood(
+            @RequestPart("food") String foodJsonRequest,
+            @RequestPart(value = "image", required = false) MultipartFile imageFile)
+            throws JsonProcessingException {
 
-        FoodRequest foodRequest = objectMapper.readValue(
+        final EditFoodInputDTO editFoodInputDTO = objectMapper.readValue(
                 foodJsonRequest,
-                FoodRequest.class);
+                EditFoodInputDTO.class);
 
-        serviceContext.setAttribute("foodRequest", foodJsonRequest);
+        editFoodInputDTO.setImageFile(imageFile);
 
-        IServiceInput<CreateFoodInputDTO> input = new ServiceInput<>();
+        serviceContext.setAttribute(
+                "foodRequest",
+                foodJsonRequest);
+
+        final IServiceInput<EditFoodInputDTO> input = new ServiceInput<>();
+
+        input.setInput(editFoodInputDTO);
         input.setServiceContext(serviceContext);
-        CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO();
-        createFoodInputDTO.setFoodRequest(foodRequest);
-        createFoodInputDTO.setImageFile(imageFile);
-        input.setInput(createFoodInputDTO);
-        input.setServiceContext(serviceContext);
 
-        IServiceOutput<FoodResponse> output = foodService.editFood(input);
+        final IServiceOutput<FoodResponse> output = foodService.editFood(input);
 
-        return ApiResponseBuilder.success(ApiMessageConstants.FOOD_UPDATED, output.getOutput());
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.FOOD_UPDATED,
+                output.getOutput());
     }
 
-    // ============================================================================
-    // Archive Operations
-    // ============================================================================
-
-    /**
-     * {@inheritDoc}
+    /*
+     * =========================================================================
+     * Archive Operations
+     * =========================================================================
      */
+
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.ARCHIVE_FOOD, method = MethodType.UPDATE)
@@ -322,9 +396,6 @@ public class FoodController implements IFoodController {
         return ApiResponseBuilder.success(serviceOutput.getOutput());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.ARCHIVE_FOOD, method = MethodType.UPDATE)
@@ -341,13 +412,12 @@ public class FoodController implements IFoodController {
         return ApiResponseBuilder.success();
     }
 
-    // ============================================================================
-    // Restore Operations
-    // ============================================================================
-
-    /**
-     * {@inheritDoc}
+    /*
+     * =========================================================================
+     * Restore Operations
+     * =========================================================================
      */
+
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.RESTORE_FOOD, method = MethodType.UPDATE)
@@ -364,9 +434,6 @@ public class FoodController implements IFoodController {
         return ApiResponseBuilder.success(serviceOutput.getOutput());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.RESTORE_FOOD, method = MethodType.UPDATE)
@@ -383,13 +450,12 @@ public class FoodController implements IFoodController {
         return ApiResponseBuilder.success();
     }
 
-    // ============================================================================
-    // Permanent Delete Operations
-    // ============================================================================
-
-    /**
-     * {@inheritDoc}
+    /*
+     * =========================================================================
+     * Permanent Delete Operations
+     * =========================================================================
      */
+
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.PERMANENT_DELETE_FOOD, method = MethodType.DELETE)
@@ -406,9 +472,6 @@ public class FoodController implements IFoodController {
         return ApiResponseBuilder.success();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_ONLY)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.PERMANENT_DELETE_FOOD, method = MethodType.DELETE)
@@ -425,20 +488,21 @@ public class FoodController implements IFoodController {
         return ApiResponseBuilder.success();
     }
 
-    // ============================================================================
-    // Archived Food Operations
-    // ============================================================================
-
-    /**
-     * {@inheritDoc}
+    /*
+     * =========================================================================
+     * Archived Food Operations
+     * =========================================================================
      */
+
     @Override
     @PreAuthorize(AuthorizationConstants.ADMIN_OR_RESTAURANT_OWNER)
     @AuditApi(module = ModuleType.FOOD, action = ActionType.READ_ARCHIVED_FOODS, method = MethodType.READ)
     @GetMapping(FoodApiConstants.GET_ARCHIVED_FOODS)
     public ResponseEntity<ApiResponse<List<FoodResponse>>> readArchivedFoods() {
+
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
+
         IServiceOutput<List<FoodResponse>> serviceOutput = foodService.readArchivedFoods();
 
         return ApiResponseBuilder.success(serviceOutput.getOutput());

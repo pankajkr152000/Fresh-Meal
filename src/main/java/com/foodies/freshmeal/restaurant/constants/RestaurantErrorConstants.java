@@ -203,6 +203,11 @@ public enum RestaurantErrorConstants implements IBusinessError {
             "Restaurant branch operating hours are invalid.",
             HttpStatusCode.BAD_REQUEST),
 
+    RESTAURANT_BRANCH_NOT_BELONG_TO_RESTAURANT(
+            "FM-RST-704",
+            "Restaurant branch does not belong to the specified restaurant.",
+            HttpStatusCode.BAD_REQUEST),
+
     // =========================================================================
     // Archive
     // =========================================================================

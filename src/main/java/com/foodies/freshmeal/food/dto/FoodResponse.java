@@ -61,6 +61,11 @@ public class FoodResponse {
      * Business identifier of the restaurant that owns the food item.
      */
     private String restaurantNumber;
+    
+    /**
+     * Business identifier of the restaurant branch that owns the food item.
+     */
+    private String restaurantBranchNumber;
 
     /**
      * Name of the food image.

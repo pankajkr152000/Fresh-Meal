@@ -1,6 +1,5 @@
 package com.foodies.freshmeal.food.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -9,6 +8,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,11 +20,9 @@ import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 import com.foodies.freshmeal.common.dto.view.EntityViewResponse;
-import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.exception.BusinessException;
 import com.foodies.freshmeal.common.exception.InvalidFoodStatusTransitionException;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
-import com.foodies.freshmeal.common.factory.EntityFactory;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
@@ -45,6 +44,7 @@ import com.foodies.freshmeal.food.dto.BulkArchiveFoodRequest;
 import com.foodies.freshmeal.food.dto.BulkDeleteFoodRequest;
 import com.foodies.freshmeal.food.dto.BulkRestoreFoodRequest;
 import com.foodies.freshmeal.food.dto.CreateFoodInputDTO;
+import com.foodies.freshmeal.food.dto.EditFoodInputDTO;
 import com.foodies.freshmeal.food.dto.FoodIdRequest;
 import com.foodies.freshmeal.food.dto.FoodMetadataResponse;
 import com.foodies.freshmeal.food.dto.FoodRequest;
@@ -53,6 +53,7 @@ import com.foodies.freshmeal.food.dto.FoodStatusRequest;
 import com.foodies.freshmeal.food.dto.PermanentDeleteFoodRequest;
 import com.foodies.freshmeal.food.dto.RestoreFoodRequest;
 import com.foodies.freshmeal.food.entity.FoodEntity;
+import com.foodies.freshmeal.food.mapper.FoodMapper;
 import com.foodies.freshmeal.food.repository.IFoodRepository;
 import com.foodies.freshmeal.food.service.IFoodNavigationService;
 import com.foodies.freshmeal.food.service.IFoodService;
@@ -62,6 +63,15 @@ import com.foodies.freshmeal.image.dto.ImageSnapshot;
 import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.image.service.IImageService;
 import com.foodies.freshmeal.image.service.impl.ImageServiceImpl;
+import com.foodies.freshmeal.restaurant.constants.RestaurantBranchFieldConstants;
+import com.foodies.freshmeal.restaurant.constants.RestaurantErrorConstants;
+import com.foodies.freshmeal.restaurant.constants.RestaurantFieldConstants;
+import com.foodies.freshmeal.restaurant.entity.RestaurantBranchEntity;
+import com.foodies.freshmeal.restaurant.entity.RestaurantEntity;
+import com.foodies.freshmeal.restaurant.repository.IRestaurantBranchRepository;
+import com.foodies.freshmeal.restaurant.repository.IRestaurantRepository;
+import com.foodies.freshmeal.user.entity.UserEntity;
+import com.foodies.freshmeal.user.entity.UserProfile;
 
 @Service
 public class FoodServiceImpl implements IFoodService {
@@ -74,6 +84,9 @@ public class FoodServiceImpl implements IFoodService {
     private final IFoodRepository foodRepository;
     private final IFoodNavigationService foodNavigationService;
     private final FoodValidator foodValidator;
+    private final IRestaurantRepository restaurantRepository;
+    private final IRestaurantBranchRepository restaurantBranchRepository;
+    private final FoodMapper foodMapper;
 
     public FoodServiceImpl(
             IImageService imageService,
@@ -81,28 +94,67 @@ public class FoodServiceImpl implements IFoodService {
             IDatabaseSequenceService databaseSequenceService,
             IFoodRepository foodRepository,
             IFoodNavigationService foodNavigationService,
-            FoodValidator foodValidator) {
+            FoodValidator foodValidator,
+            IRestaurantRepository restaurantRepository,
+            IRestaurantBranchRepository restaurantBranchRepository,
+            FoodMapper foodMapper) {
+
         this.imageService = imageService;
         this.serviceContext = serviceContext;
         this.databaseSequenceService = databaseSequenceService;
         this.foodRepository = foodRepository;
         this.foodNavigationService = foodNavigationService;
         this.foodValidator = foodValidator;
+        this.restaurantRepository = restaurantRepository;
+        this.restaurantBranchRepository = restaurantBranchRepository;
+        this.foodMapper = foodMapper;
     }
 
-    /*
-     * get the food entity using food id
+    /**
+     * ============================================================================
+     * Load Active Food
+     * ============================================================================
+     *
+     * Loads an active Food entity using its identifier.
+     *
+     * <p>
+     * This method is the common active-Food loading path used by Food operations
+     * such as editing, status updates, and archiving.
+     * </p>
+     *
+     * <p>
+     * The repository's active-record contract is used instead of the raw
+     * Spring Data {@code findById(...)} operation so logically deleted Foods
+     * are not returned through active operations.
+     * </p>
+     *
+     * @param request service input containing the Food identifier
+     *
+     * @return service output containing the active Food entity
+     *
+     * @throws NullPointerException      when the request or request payload is null
+     * @throws ResourceNotFoundException when the Food does not exist as an
+     *                                   active record
      */
     @Override
-    public IServiceOutput<FoodEntity> loadFood(IServiceInput<FoodIdRequest> request) {
+    public IServiceOutput<FoodEntity> loadFood(
+            final IServiceInput<FoodIdRequest> request) {
 
-        FoodIdRequest foodRequest = request.getInput();
-        FoodEntity output = foodRepository
-                .findById(foodRequest.getFoodId()).orElseThrow(
-                        () -> new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND));
+        Objects.requireNonNull(
+                request,
+                "Food load service input must not be null.");
 
-        return new ServiceOutput<>(output);
+        final FoodIdRequest foodRequest = Objects.requireNonNull(
+                request.getInput(),
+                "Food id request must not be null.");
 
+        final FoodEntity foodEntity = foodRepository.findActiveById(
+                foodRequest.getFoodId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                FoodErrorConstants.FOOD_NOT_FOUND));
+
+        return new ServiceOutput<>(foodEntity);
     }
 
     @Override
@@ -145,128 +197,560 @@ public class FoodServiceImpl implements IFoodService {
         IServiceOutput<FoodEntity> foodEntityOutput = createFoodEntity(input);
         FoodEntity foodEntity = foodEntityOutput.getOutput();
 
-        FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
+        FoodResponse foodResponse = convertToFoodResponse(foodEntity);
 
         IServiceOutput<FoodResponse> output = new ServiceOutput<>();
         output.setOutput(foodResponse);
         return output;
     }
 
-    private FoodResponse convertToFoodResponse(FoodEntity foodEntity, FoodResponse foodResponse) {
-        foodResponse.setId(foodEntity.getId());
-        foodResponse.setFoodNumber(foodEntity.getFoodNumber());
-        foodResponse.setImageName(foodEntity.getFoodImage().getImageName());
-        foodResponse.setFoodName(foodEntity.getFoodName());
-        foodResponse.setDescription(foodEntity.getDescription());
-        foodResponse.setPrice(foodEntity.getPrice());
-        foodResponse.setFoodCategories(DisplayOptionMapperUtil.fromSet(foodEntity.getFoodCategories()));
-        foodResponse.setImageUrl(foodEntity.getFoodImage().getImageURL());
-        foodResponse.setDietCategory(DisplayOptionMapperUtil.from(foodEntity.getDietCategory()));
-        foodResponse.setCuisineType(DisplayOptionMapperUtil.from(foodEntity.getCuisineType()));
-        foodResponse.setCategoryGroups(DisplayOptionMapperUtil.fromSet(foodEntity.getCategoryGroups()));
-        foodResponse.setFoodStatus(DisplayOptionMapperUtil.from(foodEntity.getStatus()));
-        foodResponse.setAvailable(foodEntity.isAvailable());
-        foodResponse.setAllowedStatuses(foodEntity.getStatus().getAllowedTransitionOptions());
-        foodResponse.setPreviousStatus(foodEntity.getStatus().getLabel());
-        foodResponse.setUpdatedAt(
-                foodEntity.getStatusUpdatedAt() != null ? foodEntity.getStatusUpdatedAt().toString() : null);
-        foodResponse.setUpdatedBy(foodEntity.getUpdatedBy());
-        foodResponse.setCreatedBy(foodEntity.getCreatedBy());
-        foodResponse.setCreatedAt(foodEntity.getCreatedAt() != null ? foodEntity.getCreatedAt().toString() : null);
+    private FoodResponse convertToFoodResponse(FoodEntity foodEntity) {
+        Objects.requireNonNull(
+                foodEntity,
+                "Food entity must not be null.");
+        FoodResponse foodResponse = foodMapper.toResponse(foodEntity);
+
         return foodResponse;
     }
 
-    @Override
-    public IServiceOutput<FoodEntity> createFoodEntity(IServiceInput<CreateFoodInputDTO> input) {
-        FoodEntity foodEntity = (FoodEntity) EntityFactory.createEntity(EntityName.FOOD_ENTITY);
-        // Map the fields from foodRequest to foodEntity
-        FoodRequest foodRequest = input.getInput().getFoodRequest();
-        MultipartFile imageFile = input.getInput().getImageFile();
-        IServiceInput<CreateFoodInputDTO> foodServiceInput = new ServiceInput<>();
+    /**
+     * Creates and persists a new Food entity.
+     *
+     * <p>
+     * The creation workflow resolves the target restaurant and branch,
+     * validates ownership authorization, maps client-editable food data,
+     * generates system identifiers, processes the food image, applies audit
+     * information and persists the resulting entity.
+     * </p>
+     *
+     * @param input food creation service input
+     *
+     * @return service output containing the persisted food entity
+     */
+    private IServiceOutput<FoodEntity> createFoodEntity(
+            final IServiceInput<CreateFoodInputDTO> input) {
 
-        CreateFoodInputDTO createFoodInputDTO = new CreateFoodInputDTO(foodRequest, imageFile);
-        foodServiceInput.setInput(createFoodInputDTO);
+        Objects.requireNonNull(
+                input,
+                "Food service input must not be null.");
 
-        // Generate Food ID
-        String foodId = generateFoodId(foodServiceInput).getOutput();
+        final CreateFoodInputDTO request = Objects.requireNonNull(
+                input.getInput(),
+                "Create food request must not be null.");
+
+        final FoodRequest foodRequest = Objects.requireNonNull(
+                request.getFoodRequest(),
+                "Food request must not be null.");
+
+        // =========================================================================
+        // Resolve Restaurant
+        // =========================================================================
+
+        final RestaurantEntity restaurant = resolveRestaurantForFoodCreation(
+                request.getRestaurantNumber());
+
+        // =========================================================================
+        // Resolve Restaurant Branch
+        // =========================================================================
+
+        final RestaurantBranchEntity restaurantBranch = resolveRestaurantBranchForFoodCreation(
+                restaurant,
+                request.getRestaurantBranchNumber());
+
+        // =========================================================================
+        // Validate Authorization
+        // =========================================================================
+
+        validateFoodCreationAuthorization(restaurant);
+
+        // =========================================================================
+        // Map Client-Editable Fields
+        // =========================================================================
+
+        final FoodEntity foodEntity = foodMapper.toEntity(foodRequest);
+
+        // =========================================================================
+        // Generate Food Identifiers
+        // =========================================================================
+
+        final IServiceInput<CreateFoodInputDTO> foodServiceInput = new ServiceInput<>();
+
+        foodServiceInput.setInput(request);
+        foodServiceInput.setServiceContext(
+                input.getServiceContext());
+
+        final String foodId = generateFoodId(foodServiceInput).getOutput();
+
+        final String foodNumber = generateFoodNumber(foodServiceInput).getOutput();
+
         foodEntity.setId(foodId);
-
-        // Generate Food Number
-        String foodNumber = generateFoodNumber(foodServiceInput).getOutput();
         foodEntity.setFoodNumber(foodNumber);
 
-        /*
-         * if image is not provided by the user, then add a default image to the food
-         * entity
-         */
-        if (imageFile == null || imageFile.isEmpty()) {
-            ImageSnapshot image = new ImageSnapshot();
-            image.setImageId(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
-            image.setImageName(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
-            image.setImageURL(DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
-            foodEntity.setFoodImage(image);
-        } else {
+        // =========================================================================
+        // Assign Restaurant Ownership
+        // =========================================================================
 
-            IServiceInput<CreateImageInputDTO> imageServiceInput = new ServiceInput<>();
-            CreateImageInputDTO createImageInputDTO = new CreateImageInputDTO();
-            createImageInputDTO.setFile(imageFile);
-            imageServiceInput.setInput(createImageInputDTO);
+        foodEntity.setRestaurantNumber(
+                restaurant.getRestaurantNumber());
 
-            IServiceOutput<ImageEntity> imageEntityOutput = imageService.uploadImageToS3(imageServiceInput);
-            ImageEntity imageEntity = imageEntityOutput.getOutput();
+        foodEntity.setRestaurantBranchNumber(
+                restaurantBranch.getBranchNumber());
 
-            ImageSnapshot image = new ImageSnapshot();
-            image.setImageId(imageEntity.getId());
-            image.setImageName(imageEntity.getImageName());
-            image.setImageURL(imageEntity.getImageUrl());
+        // =========================================================================
+        // Process Food Image
+        // =========================================================================
 
-            foodEntity.setFoodImage(image);
+        applyFoodImage(
+                foodEntity,
+                request.getImageFile());
 
+        // =========================================================================
+        // Audit Information
+        // =========================================================================
+
+        final UserProfile userProfile = serviceContext.getUserProfile();
+
+        if (userProfile != null
+                && userProfile.getUserEntity() != null) {
+
+            foodEntity.setCreatedBy(
+                    userProfile.getUserEntity().getUserNumber());
         }
-        foodEntity.setFoodName(foodRequest.getFoodName());
-        foodEntity.setDescription(foodRequest.getDescription());
-        foodEntity.setPrice(foodRequest.getPrice());
-        foodEntity.setFoodCategories(foodRequest.getFoodCategories());
-        foodEntity.setDietCategory(foodRequest.getDietCategory());
-        foodEntity.setCuisineType(foodRequest.getCuisineType());
-        foodEntity.setCategoryGroups(foodRequest.getFoodCategories().stream()
-                .filter(Objects::nonNull)
-                .map(fc -> Objects.requireNonNull(fc).getGroup())
-                .collect(Collectors.toSet()));
-        foodEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
-        if (serviceContext.getUserProfile() != null) {
-            foodEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
-        } else {
-            foodEntity.setCreatedBy(RoleType.ADMIN.getLabel());
-        }
+
+        foodEntity.setCreatedAt(
+                AppCalendar.getBusinessLocalDateTime());
+
+        // =========================================================================
+        // Initial Availability
+        // =========================================================================
+
         foodEntity.setAvailable(true);
-        /*
-         * Save the food entity to the database
-         */
-        foodRepository.save((FoodEntity) foodEntity);
 
-        IServiceOutput<FoodEntity> output = new ServiceOutput<>();
-        output.setOutput(foodEntity);
-        return output;
+        // =========================================================================
+        // Persist
+        // =========================================================================
+
+        final FoodEntity savedFood = foodRepository.save(foodEntity);
+
+        LOGGER.info(
+                "Food created successfully. foodNumber={}, restaurantNumber={}, restaurantBranchNumber={}",
+                savedFood.getFoodNumber(),
+                savedFood.getRestaurantNumber(),
+                savedFood.getRestaurantBranchNumber());
+
+        return new ServiceOutput<>(savedFood);
     }
 
+    /**
+     * Resolves the active restaurant associated with the supplied restaurant
+     * number.
+     *
+     * <p>
+     * Restaurant numbers are business identifiers and therefore the lookup is
+     * performed using the repository's query-based infrastructure rather than
+     * relying on the MongoDB document identifier.
+     * </p>
+     *
+     * @param restaurantNumber restaurant business number
+     * @return active restaurant entity
+     *
+     * @throws ResourceNotFoundException when the restaurant does not exist
+     */
+    private RestaurantEntity resolveRestaurantForFoodCreation(
+            final String restaurantNumber) {
+
+        if (CommonUtils.isBlank(restaurantNumber)) {
+            throw new ResourceNotFoundException(
+                    RestaurantErrorConstants.RESTAURANT_NOT_FOUND);
+        }
+
+        final Query query = Query.query(
+                Criteria.where("restaurantNumber").is(restaurantNumber));
+
+        return restaurantRepository.findOne(query)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
+    }
+
+    /**
+     * Resolves and validates the restaurant branch associated with a restaurant.
+     *
+     * <p>
+     * The branch is resolved using its business branch number. The resolved branch
+     * must belong to the supplied restaurant; otherwise the request is considered
+     * invalid because a branch from another restaurant cannot be used to create
+     * food for the selected restaurant.
+     * </p>
+     *
+     * @param restaurant             resolved restaurant
+     * @param restaurantBranchNumber restaurant branch business number
+     * @return active restaurant branch
+     *
+     * @throws ResourceNotFoundException when the branch does not exist
+     * @throws BusinessException         when the branch does not belong to the
+     *                                   restaurant
+     */
+    private RestaurantBranchEntity resolveRestaurantBranchForFoodCreation(
+            final RestaurantEntity restaurant,
+            final String restaurantBranchNumber) {
+
+        Objects.requireNonNull(
+                restaurant,
+                "Restaurant must not be null.");
+
+        if (CommonUtils.isBlank(restaurantBranchNumber)) {
+            throw new ResourceNotFoundException(
+                    RestaurantErrorConstants.RESTAURANT_BRANCH_NOT_FOUND);
+        }
+
+        final Query query = Query.query(
+                Criteria.where("branchNumber").is(restaurantBranchNumber));
+
+        final RestaurantBranchEntity restaurantBranch = restaurantBranchRepository.findOne(query)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        RestaurantErrorConstants.RESTAURANT_BRANCH_NOT_FOUND));
+
+        // =========================================================================
+        // Validate Restaurant → Branch Relationship
+        // =========================================================================
+
+        if (!Objects.equals(
+                restaurant.getId(),
+                restaurantBranch.getRestaurantId())) {
+
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_BRANCH_NOT_BELONG_TO_RESTAURANT);
+        }
+
+        return restaurantBranch;
+    }
+
+    /**
+     * Validates whether the currently authenticated user is authorized to create
+     * food for the supplied restaurant.
+     *
+     * <p>
+     * Administrators can manage food for any valid restaurant. Restaurant owners
+     * are restricted to restaurants owned by their authenticated FreshMeal user.
+     * </p>
+     *
+     * @param restaurant target restaurant
+     *
+     * @throws IllegalStateException when the authenticated user context is missing
+     * @throws BusinessException     when the authenticated user is not authorized
+     */
+    private void validateFoodCreationAuthorization(
+            final RestaurantEntity restaurant) {
+
+        Objects.requireNonNull(
+                restaurant,
+                "Restaurant must not be null.");
+
+        final UserProfile userProfile = serviceContext.getUserProfile();
+
+        if (userProfile == null) {
+            throw new IllegalStateException(
+                    "Authenticated user profile is required.");
+        }
+
+        final UserEntity userEntity = userProfile.getUserEntity();
+
+        Objects.requireNonNull(
+                userEntity,
+                "Authenticated user entity must not be null.");
+
+        final List<RoleType> roles = userEntity.getRoles();
+
+        if (roles == null || roles.isEmpty()) {
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+        }
+
+        // -------------------------------------------------------------------------
+        // ADMIN
+        // -------------------------------------------------------------------------
+
+        if (roles.contains(RoleType.ADMIN)) {
+            return;
+        }
+
+        // -------------------------------------------------------------------------
+        // RESTAURANT OWNER
+        // -------------------------------------------------------------------------
+
+        if (roles.contains(RoleType.RESTAURANT_OWNER)
+                && Objects.equals(
+                        userEntity.getUserNumber(),
+                        restaurant.getOwnerUserNumber())) {
+
+            return;
+        }
+
+        throw new BusinessException(
+                RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+    }
+
+    /**
+     * Applies the supplied food image to the food entity.
+     *
+     * <p>
+     * When no image is supplied, the configured FreshMeal default food image is
+     * assigned. When an image is provided, it is uploaded through the existing
+     * image service and the resulting image information is assigned to the food
+     * entity.
+     * </p>
+     *
+     * @param foodEntity food entity receiving the image
+     * @param imageFile  optional uploaded image
+     *
+     * @throws IllegalArgumentException when the food entity is null
+     * @throws IllegalStateException    when the image service does not return an
+     *                                  image entity
+     */
+    private void applyFoodImage(
+            final FoodEntity foodEntity,
+            final MultipartFile imageFile) {
+
+        Objects.requireNonNull(
+                foodEntity,
+                "Food entity must not be null.");
+
+        // =========================================================================
+        // Default Image
+        // =========================================================================
+
+        if (imageFile == null || imageFile.isEmpty()) {
+
+            final ImageSnapshot defaultImage = new ImageSnapshot();
+
+            defaultImage.setImageName(
+                    DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE);
+
+            defaultImage.setImageURL(
+                    DefaultFoodImageConstants.DEFAULT_FOOD_IMAGE_URL);
+
+            foodEntity.setFoodImage(defaultImage);
+
+            return;
+        }
+
+        // =========================================================================
+        // Upload Image
+        // =========================================================================
+
+        final CreateImageInputDTO imageInputDTO = new CreateImageInputDTO();
+
+        imageInputDTO.setFile(imageFile);
+
+        final IServiceInput<CreateImageInputDTO> imageServiceInput = new ServiceInput<>();
+
+        imageServiceInput.setInput(imageInputDTO);
+        imageServiceInput.setServiceContext(serviceContext);
+
+        final IServiceOutput<ImageEntity> imageOutput = imageService.uploadImageToS3(imageServiceInput);
+
+        Objects.requireNonNull(
+                imageOutput,
+                "Image service output must not be null.");
+
+        final ImageEntity imageEntity = Objects.requireNonNull(
+                imageOutput.getOutput(),
+                "Image service image entity must not be null.");
+
+        // =========================================================================
+        // Assign Image Snapshot
+        // =========================================================================
+
+        final ImageSnapshot imageSnapshot = new ImageSnapshot();
+
+        imageSnapshot.setImageName(
+                imageEntity.getImageName());
+
+        imageSnapshot.setImageURL(
+                imageEntity.getImageUrl());
+
+        foodEntity.setFoodImage(imageSnapshot);
+    }
+
+    /**
+     * Retrieves active Food items within the authenticated user's authorized
+     * restaurant scope.
+     *
+     * <p>
+     * Administrators can access Food items across all active restaurants.
+     * Restaurant owners are restricted to Food items belonging to restaurants
+     * owned by the authenticated FreshMeal user.
+     * </p>
+     *
+     * <p>
+     * Restaurant and branch filtering will be applied through the dedicated
+     * restaurant/branch scope contract once that read context is introduced.
+     * Until then, the service enforces the highest-level role ownership scope
+     * available from the current service input.
+     * </p>
+     *
+     * @param input service input containing the current service context
+     *
+     * @return active Food responses within the caller's authorized scope
+     *
+     * @throws NullPointerException when the service input or service context
+     *                              is null
+     * @throws BusinessException    when the authenticated role is not permitted
+     *                              to access Food management data
+     */
     @Override
-    public IServiceOutput<List<FoodResponse>> readFoods(IServiceInput<Void> input) {
-        List<FoodResponse> foodResponses = new ArrayList<>();
+    public IServiceOutput<List<FoodResponse>> readFoods(
+            final IServiceInput<Void> input) {
 
-        foodRepository.findAllActive().stream().forEach(foodEntity -> {
-            LOGGER.info("Food ID: {}, Food Name: {}, Description: {}, Price: {}, Category: {}, Image URL: {}",
-                    foodEntity.getId(),
-                    foodEntity.getFoodName(),
-                    foodEntity.getDescription(),
-                    foodEntity.getPrice(),
-                    foodEntity.getFoodCategories(),
-                    foodEntity.getFoodImage().getImageURL());
-            FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
-            foodResponses.add(foodResponse);
-        });
+        Objects.requireNonNull(
+                input,
+                "Food read service input must not be null.");
 
-        return new ServiceOutput<>(foodResponses);
+        final IServiceContext inputServiceContext = Objects.requireNonNull(
+                input.getServiceContext(),
+                "Food read service context must not be null.");
+
+        // =========================================================================
+        // Resolve Authorized Restaurant Scope
+        // =========================================================================
+
+        final List<String> restaurantNumbers = resolveFoodReadRestaurantNumbers(inputServiceContext);
+
+        // =========================================================================
+        // Load Active Foods
+        // =========================================================================
+
+        final List<FoodEntity> foodEntities;
+
+        if (restaurantNumbers == null) {
+
+            // ---------------------------------------------------------------------
+            // ADMIN
+            // ---------------------------------------------------------------------
+            // Null scope means the authenticated administrator has unrestricted
+            // restaurant scope for this Food management operation.
+
+            foodEntities = foodRepository.findAllActive();
+
+        } else if (restaurantNumbers.isEmpty()) {
+
+            // ---------------------------------------------------------------------
+            // RESTAURANT OWNER WITHOUT RESTAURANTS
+            // ---------------------------------------------------------------------
+            // The authenticated owner currently has no restaurant ownership scope.
+
+            foodEntities = List.of();
+
+        } else {
+
+            // ---------------------------------------------------------------------
+            // RESTAURANT OWNER
+            // ---------------------------------------------------------------------
+
+            final Query query = Query.query(
+                    Criteria.where("restaurantNumber")
+                            .in(restaurantNumbers));
+
+            foodEntities = foodRepository.findAll(query);
+        }
+
+        // =========================================================================
+        // Map Entity → Response
+        // =========================================================================
+
+        final List<FoodResponse> responses = foodEntities.stream()
+                .filter(Objects::nonNull)
+                .map(foodMapper::toResponse)
+                .toList();
+
+        LOGGER.info(
+                "Active Food records retrieved successfully. count={}, restaurantScope={}",
+                responses.size(),
+                restaurantNumbers == null
+                        ? "ALL"
+                        : restaurantNumbers);
+
+        return new ServiceOutput<>(responses);
+    }
+
+    /**
+     * Resolves the restaurant numbers that the authenticated user is authorized
+     * to access for Food management reads.
+     *
+     * <p>
+     * The method deliberately resolves authorization from the authenticated
+     * {@link UserProfile} rather than trusting restaurant identifiers supplied
+     * by the client.
+     * </p>
+     *
+     * <p>
+     * The returned value has three possible meanings:
+     * </p>
+     *
+     * <ul>
+     * <li>{@code null} — unrestricted restaurant scope, currently ADMIN.</li>
+     * <li>empty list — authenticated owner has no restaurants.</li>
+     * <li>non-empty list — explicitly authorized restaurant numbers.</li>
+     * </ul>
+     *
+     * @param inputServiceContext current service execution context
+     *
+     * @return authorized restaurant numbers, or {@code null} for unrestricted
+     *         administrator scope
+     *
+     * @throws BusinessException when the authenticated user does not have a
+     *                           permitted Food management role
+     */
+    private List<String> resolveFoodReadRestaurantNumbers(
+            final IServiceContext inputServiceContext) {
+
+        final UserProfile userProfile = Objects.requireNonNull(
+                inputServiceContext.getUserProfile(),
+                "Authenticated user profile is required.");
+
+        final UserEntity userEntity = Objects.requireNonNull(
+                userProfile.getUserEntity(),
+                "Authenticated user entity is required.");
+
+        final List<RoleType> roles = userEntity.getRoles();
+
+        if (roles == null || roles.isEmpty()) {
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+        }
+
+        // =========================================================================
+        // ADMIN
+        // =========================================================================
+
+        if (roles.contains(RoleType.ADMIN)) {
+            return null;
+        }
+
+        // =========================================================================
+        // RESTAURANT OWNER
+        // =========================================================================
+
+        if (roles.contains(RoleType.RESTAURANT_OWNER)) {
+
+            final Query query = Query.query(
+                    Criteria.where("ownerUserNumber")
+                            .is(userEntity.getUserNumber()));
+
+            return restaurantRepository.findAll(query)
+                    .stream()
+                    .filter(Objects::nonNull)
+                    .map(RestaurantEntity::getRestaurantNumber)
+                    .filter(Objects::nonNull)
+                    .toList();
+        }
+
+        // =========================================================================
+        // Unsupported Food Management Role
+        // =========================================================================
+
+        throw new BusinessException(
+                RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
     }
 
     @Override
@@ -330,128 +814,410 @@ public class FoodServiceImpl implements IFoodService {
         return output;
     }
 
+    /**
+     * ============================================================================
+     * Read Food By ID
+     * ============================================================================
+     *
+     * Reads an active Food by its identifier after validating that the
+     * authenticated user is authorized to access the Food.
+     *
+     * <p>
+     * Food identifiers are resource identifiers only and must never be treated
+     * as authorization credentials. The Food ownership hierarchy is therefore
+     * resolved before the Food response is returned.
+     * </p>
+     *
+     * <p>
+     * The authorization flow is:
+     * </p>
+     *
+     * <pre>
+     * Food
+     *   -> Restaurant
+     *   -> Restaurant Branch
+     *   -> Authenticated User / Role
+     *   -> Authorization
+     * </pre>
+     *
+     * @param input service input containing the Food identifier
+     *
+     * @return service output containing the authorized Food response
+     *
+     * @throws NullPointerException      when the input or request is null
+     * @throws ResourceNotFoundException when the Food, Restaurant, or Branch
+     *                                   cannot be found
+     * @throws BusinessException         when the authenticated user is not
+     *                                   authorized
+     *                                   to access the Food
+     */
     @Override
-    public IServiceOutput<FoodResponse> readFoodByFoodId(IServiceInput<FoodStatusRequest> input) {
+    public IServiceOutput<FoodResponse> readFoodByFoodId(
+            final IServiceInput<FoodStatusRequest> input) {
 
-        FoodStatusRequest foodRequest = input.getInput();
+        Objects.requireNonNull(
+                input,
+                "Food read service input must not be null.");
 
-        FoodEntity foodEntity = foodRepository.findById(foodRequest.getFoodId())
-                .orElseThrow(() -> new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND));
+        final FoodStatusRequest foodRequest = Objects.requireNonNull(
+                input.getInput(),
+                "Food read request must not be null.");
+
+        final FoodEntity foodEntity = loadFoodById(foodRequest.getFoodId());
 
         /*
-         * convert to foodresponse
+         * Resolve and validate the complete Food ownership hierarchy.
+         *
+         * Food
+         * -> Restaurant
+         * -> Restaurant Branch
          */
+        final RestaurantEntity restaurant = resolveRestaurantForFood(foodEntity);
 
-        // FoodStatusConstant currentFoodStatus = null;
-        // if (foodRequest.getUpdateFoodStatusRequest() != null
-        // && foodRequest.getUpdateFoodStatusRequest().getStatus() != null) {
-        // currentFoodStatus = FoodStatusConstant
-        // .valueOf(foodRequest.getUpdateFoodStatusRequest().getStatus().label());
-        // }
-        FoodResponse foodResponse = buildFoodResponse(foodEntity, foodEntity.getStatus());
+        resolveRestaurantBranchForFood(
+                restaurant,
+                foodEntity);
 
-        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+        /*
+         * Validate that the authenticated actor is allowed to access
+         * this Food within the resolved Restaurant scope.
+         */
+        validateFoodAccessAuthorization(restaurant);
+
+        final FoodResponse foodResponse = foodMapper.toResponse(foodEntity);
+
+        final IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+
         output.setOutput(foodResponse);
+
         return output;
     }
 
-    @Override
-    public IServiceOutput<FoodResponse> updateFoodStatus(IServiceInput<FoodStatusRequest> input) {
-        FoodStatusRequest request = input.getInput();
+    /**
+     * ============================================================================
+     * Resolve Restaurant For Food
+     * ============================================================================
+     *
+     * Resolves the active Restaurant associated with the supplied Food.
+     *
+     * <p>
+     * The Restaurant is resolved using the Restaurant business identifier
+     * persisted on the Food entity. The repository's active-query contract
+     * ensures that a logically deleted Restaurant is not returned.
+     * </p>
+     *
+     * <p>
+     * This method is intentionally limited to relationship resolution. It does
+     * not perform role or ownership authorization.
+     * </p>
+     *
+     * @param foodEntity Food entity containing the Restaurant identifier
+     *
+     * @return active Restaurant associated with the Food
+     *
+     * @throws NullPointerException      when the Food entity is null
+     * @throws ResourceNotFoundException when the Restaurant cannot be found
+     */
+    private RestaurantEntity resolveRestaurantForFood(
+            final FoodEntity foodEntity) {
 
-        IServiceInput<FoodIdRequest> inputFoodId = new ServiceInput<>();
-        FoodIdRequest foodIdRequest = new FoodIdRequest();
-        foodIdRequest.setFoodId(request.getFoodId());
-        inputFoodId.setInput(foodIdRequest);
-        IServiceOutput<FoodEntity> output = loadFood(inputFoodId);
+        Objects.requireNonNull(
+                foodEntity,
+                "Food entity must not be null.");
 
-        FoodEntity food = output.getOutput();
-        food.setUpdatedBy("ADMIN");
-        food.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+        final Query query = Query.query(
+                Criteria.where(
+                        RestaurantFieldConstants.RESTAURANT_NUMBER)
+                        .is(foodEntity.getRestaurantNumber()));
 
-        FoodStatusConstant currentStatus = food.getStatus();
-        FoodStatusConstant requestedStatus = null;
-        if (request.getUpdateFoodStatusRequest() != null
-                && request.getUpdateFoodStatusRequest().getStatus() != null
-                && (request.getUpdateFoodStatusRequest().getStatus().value() != null
-                        || request.getUpdateFoodStatusRequest().getStatus().label() != null)) {
+        return restaurantRepository.findOne(query)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                RestaurantErrorConstants.RESTAURANT_NOT_FOUND));
+    }
 
-            String requestedFoodStatus = request.getUpdateFoodStatusRequest().getStatus().value() != null
-                    ? request.getUpdateFoodStatusRequest().getStatus().value()
-                    : request.getUpdateFoodStatusRequest().getStatus().label();
+    /**
+     * ============================================================================
+     * Resolve Restaurant Branch For Food
+     * ============================================================================
+     *
+     * Resolves the active Restaurant Branch associated with the supplied Food.
+     *
+     * <p>
+     * The branch is resolved using the branch identifier persisted on the Food
+     * entity. After resolving the branch, its Restaurant relationship is verified
+     * against the supplied Restaurant.
+     * </p>
+     *
+     * <p>
+     * This relationship validation is important because the Food stores both
+     * Restaurant and Restaurant Branch identifiers. We must never assume that
+     * those identifiers belong to the same ownership hierarchy merely because
+     * they were persisted together.
+     * </p>
+     *
+     * <p>
+     * This method is intentionally limited to relationship resolution and
+     * validation. It does not perform role or ownership authorization.
+     * </p>
+     *
+     * @param restaurant Restaurant associated with the Food
+     * @param foodEntity Food entity containing the branch identifier
+     *
+     * @return active Restaurant Branch associated with the Food
+     *
+     * @throws NullPointerException      when the Restaurant or Food is null
+     * @throws ResourceNotFoundException when the Restaurant Branch cannot
+     *                                   be found
+     * @throws BusinessException         when the branch does not belong to the
+     *                                   supplied Restaurant
+     */
+    private RestaurantBranchEntity resolveRestaurantBranchForFood(
+            final RestaurantEntity restaurant,
+            final FoodEntity foodEntity) {
 
-            requestedStatus = DisplayOptionMapperUtil.fromValue(FoodStatusConstant.class, requestedFoodStatus);
+        Objects.requireNonNull(
+                restaurant,
+                "Restaurant entity must not be null.");
+
+        Objects.requireNonNull(
+                foodEntity,
+                "Food entity must not be null.");
+
+        final Query query = Query.query(
+                Criteria.where(
+                        RestaurantBranchFieldConstants.BRANCH_NUMBER)
+                        .is(foodEntity.getRestaurantBranchNumber()));
+
+        final RestaurantBranchEntity restaurantBranch = restaurantBranchRepository.findOne(query)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                RestaurantErrorConstants.RESTAURANT_BRANCH_NOT_FOUND));
+
+        if (!restaurant.getId().equals(
+                restaurantBranch.getRestaurantId())) {
+
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
         }
-        validateStatusTransition(currentStatus, requestedStatus, input.getServiceContext());
 
-        applyStatus(food, requestedStatus);
-
-        FoodResponse foodResponse = buildFoodResponse(food, currentStatus);
-        System.out.println("ID      : " + food.getId());
-        System.out.println("Version : " + food.getVersion());
-        System.out.println("Status  : " + food.getStatus());
-        foodRepository.save(food);
-
-        IServiceOutput<FoodResponse> foodResponseOutput = new ServiceOutput<>();
-
-        foodResponseOutput.setOutput(foodResponse);
-
-        return foodResponseOutput;
+        return restaurantBranch;
     }
 
-    private FoodResponse buildFoodResponse(FoodEntity food, FoodStatusConstant previousStatus) {
+    /**
+     * ============================================================================
+     * Validate Food Access Authorization
+     * ============================================================================
+     *
+     * Validates whether the authenticated user is authorized to access a Food
+     * belonging to the supplied Restaurant.
+     *
+     * <p>
+     * Administrative users can access Foods across all Restaurants. A
+     * Restaurant Owner can access a Food only when the Food's Restaurant is
+     * owned by the authenticated user.
+     * </p>
+     *
+     * <p>
+     * The Restaurant ownership relationship is resolved from persisted domain
+     * data. No Restaurant identifier supplied by the client is trusted for
+     * authorization.
+     * </p>
+     *
+     * @param restaurant Restaurant associated with the Food
+     *
+     * @throws NullPointerException when the Restaurant is null
+     * @throws BusinessException    when the authenticated user is not authorized
+     *                              to access the Restaurant
+     */
+    private void validateFoodAccessAuthorization(
+            final RestaurantEntity restaurant) {
 
-        FoodResponse response = FoodResponse.builder()
-                .id(food.getId())
-                .foodNumber(food.getFoodNumber())
-                .imageName(food.getFoodImage().getImageName())
-                .foodName(food.getFoodName())
-                .description(food.getDescription())
-                .price(food.getPrice())
-                .imageUrl(food.getFoodImage().getImageURL())
-                .foodCategories(DisplayOptionMapperUtil.fromSet(food.getFoodCategories()))
-                .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
-                .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
-                .categoryGroups(DisplayOptionMapperUtil.fromSet(food.getCategoryGroups()))
-                .foodStatus(DisplayOptionMapperUtil.from(food.getStatus()))
-                .isAvailable(food.getStatus() == FoodStatusConstant.AVAILABLE)
-                .allowedStatuses(food.getStatus().getAllowedTransitionOptions())
-                .updatedAt(food.getStatusUpdatedAt() != null ? food.getStatusUpdatedAt().toString() : null)
-                .updatedBy(food.getStatusUpdatedBy())
-                .build();
+        Objects.requireNonNull(
+                restaurant,
+                "Restaurant entity must not be null.");
 
-        // todo
+        final UserProfile userProfile = serviceContext.getUserProfile();
 
-        //
-        response.setPreviousStatus(previousStatus == null ? food.getStatus().getLabel() : previousStatus.getLabel());
+        if (userProfile == null
+                || userProfile.getUserEntity() == null) {
 
-        return response;
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+        }
 
+        final UserEntity userEntity = userProfile.getUserEntity();
+
+        final List<RoleType> roles = userEntity.getRoles();
+
+        if (roles == null || roles.isEmpty()) {
+
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+        }
+
+        /*
+         * ADMIN has unrestricted Food access.
+         */
+        if (roles.contains(RoleType.ADMIN)) {
+            return;
+        }
+
+        /*
+         * RESTAURANT_OWNER can access Food only when the authenticated
+         * user owns the Restaurant associated with that Food.
+         */
+        if (roles.contains(RoleType.RESTAURANT_OWNER)
+                && userEntity.getUserNumber() != null
+                && userEntity.getUserNumber().equals(
+                        restaurant.getOwnerUserNumber())) {
+
+            return;
+        }
+
+        throw new BusinessException(
+                RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
     }
 
-    private FoodResponse buildFoodResponse(FoodEntity food) {
+    @Override
+    public IServiceOutput<FoodResponse> updateFoodStatus(
+            final IServiceInput<FoodStatusRequest> input) {
 
-        FoodResponse response = FoodResponse.builder()
-                .id(food.getId())
-                .foodNumber(food.getFoodNumber())
-                .imageName(food.getFoodImage().getImageName())
-                .foodName(food.getFoodName())
-                .description(food.getDescription())
-                .price(food.getPrice())
-                .imageUrl(food.getFoodImage().getImageURL())
-                .foodCategories(DisplayOptionMapperUtil.fromSet(food.getFoodCategories()))
-                .dietCategory(DisplayOptionMapperUtil.from(food.getDietCategory()))
-                .cuisineType(DisplayOptionMapperUtil.from(food.getCuisineType()))
-                .categoryGroups(DisplayOptionMapperUtil.fromSet(food.getCategoryGroups()))
-                .foodStatus(DisplayOptionMapperUtil.from(food.getStatus()))
-                .isAvailable(food.getStatus() == FoodStatusConstant.AVAILABLE)
-                .allowedStatuses(food.getStatus().getAllowedTransitionOptions())
-                .updatedAt(food.getStatusUpdatedAt() != null ? food.getStatusUpdatedAt().toString() : null)
-                .updatedBy(food.getStatusUpdatedBy())
-                .build();
+        Objects.requireNonNull(
+                input,
+                "Food status service input must not be null.");
 
-        return response;
+        final FoodStatusRequest request = Objects.requireNonNull(
+                input.getInput(),
+                "Food status request must not be null.");
 
+        // =========================================================================
+        // Load Existing Food
+        // =========================================================================
+
+        final IServiceInput<FoodIdRequest> foodInput = new ServiceInput<>();
+
+        final FoodIdRequest foodIdRequest = new FoodIdRequest();
+
+        foodIdRequest.setFoodId(request.getFoodId());
+
+        foodInput.setInput(foodIdRequest);
+        foodInput.setServiceContext(input.getServiceContext());
+
+        final FoodEntity foodEntity = loadFood(foodInput).getOutput();
+
+        // =========================================================================
+        // Resolve Existing Ownership
+        // =========================================================================
+
+        /*
+         * Food ownership is persisted on the Food entity and cannot be changed
+         * through a status operation.
+         *
+         * The persisted Restaurant and Restaurant Branch therefore remain the
+         * source of truth for authorization.
+         */
+        final RestaurantEntity restaurant = resolveRestaurantForFood(foodEntity);
+
+        resolveRestaurantBranchForFood(
+                restaurant,
+                foodEntity);
+
+        validateFoodAccessAuthorization(restaurant);
+
+        // =========================================================================
+        // Resolve Requested Status
+        // =========================================================================
+
+        final FoodStatusConstant requestedStatus;
+
+        if (request.getUpdateFoodStatusRequest() == null
+                || request.getUpdateFoodStatusRequest().getStatus() == null) {
+
+            throw new InvalidFoodStatusTransitionException(
+                    "Food status is required.");
+        }
+
+        final String requestedFoodStatus = request.getUpdateFoodStatusRequest()
+                .getStatus()
+                .getValue() != null
+                        ? request.getUpdateFoodStatusRequest()
+                                .getStatus()
+                                .getValue()
+                        : request.getUpdateFoodStatusRequest()
+                                .getStatus()
+                                .getLabel();
+
+        if (CommonUtils.isBlank(requestedFoodStatus)) {
+            throw new InvalidFoodStatusTransitionException(
+                    "Food status is required.");
+        }
+
+        requestedStatus = DisplayOptionMapperUtil.fromValue(
+                FoodStatusConstant.class,
+                requestedFoodStatus);
+
+        // =========================================================================
+        // Validate Status Transition
+        // =========================================================================
+
+        final FoodStatusConstant currentStatus = foodEntity.getStatus();
+
+        validateStatusTransition(
+                currentStatus,
+                requestedStatus,
+                input.getServiceContext());
+
+        // =========================================================================
+        // Apply Status
+        // =========================================================================
+
+        applyStatus(
+                foodEntity,
+                requestedStatus);
+
+        // =========================================================================
+        // Update Audit Information
+        // =========================================================================
+
+        final UserProfile userProfile = serviceContext.getUserProfile();
+
+        if (userProfile != null
+                && userProfile.getUserEntity() != null) {
+
+            foodEntity.setUpdatedBy(
+                    userProfile
+                            .getUserEntity()
+                            .getUserNumber());
+        }
+
+        foodEntity.setUpdatedAt(
+                AppCalendar.getBusinessLocalDateTime());
+
+        // =========================================================================
+        // Persist
+        // =========================================================================
+
+        final FoodEntity savedFood = foodRepository.save(foodEntity);
+
+        LOGGER.info(
+                "Food status updated successfully. foodNumber={}, restaurantNumber={}, restaurantBranchNumber={}, previousStatus={}, newStatus={}",
+                savedFood.getFoodNumber(),
+                savedFood.getRestaurantNumber(),
+                savedFood.getRestaurantBranchNumber(),
+                currentStatus,
+                requestedStatus);
+
+        // =========================================================================
+        // Build Response
+        // =========================================================================
+
+        final FoodResponse foodResponse = foodMapper.toResponse(savedFood);
+
+        foodResponse.setPreviousStatus(
+                DisplayOptionMapperUtil.from(currentStatus));
+
+        return new ServiceOutput<>(foodResponse);
     }
 
     private void validateStatusTransition(FoodStatusConstant currentStatus, FoodStatusConstant requestedStatus,
@@ -475,16 +1241,33 @@ public class FoodServiceImpl implements IFoodService {
 
     }
 
-    private void applyStatus(FoodEntity food, FoodStatusConstant newStatus) {
+    private void applyStatus(
+            final FoodEntity food,
+            final FoodStatusConstant newStatus) {
+
+        Objects.requireNonNull(
+                food,
+                "Food entity must not be null.");
+
+        Objects.requireNonNull(
+                newStatus,
+                "New food status must not be null.");
 
         food.setStatus(newStatus);
-        food.setStatusUpdatedAt(AppCalendar.getBusinessLocalDateTime());
 
-        /*
-         * Replace once Spring Security is integrated.
-         */
-        food.setStatusUpdatedBy("ADMIN");
+        food.setStatusUpdatedAt(
+                AppCalendar.getBusinessLocalDateTime());
 
+        final UserProfile userProfile = serviceContext.getUserProfile();
+
+        if (userProfile != null
+                && userProfile.getUserEntity() != null) {
+
+            food.setStatusUpdatedBy(
+                    userProfile
+                            .getUserEntity()
+                            .getUserNumber());
+        }
     }
 
     @Override
@@ -514,7 +1297,7 @@ public class FoodServiceImpl implements IFoodService {
         // Convert Entity to Response
         // =========================================================================
 
-        FoodResponse foodResponse = convertToFoodResponse(foodEntity, new FoodResponse());
+        FoodResponse foodResponse = convertToFoodResponse(foodEntity);
 
         // =========================================================================
         // Build Entity View Response
@@ -542,119 +1325,123 @@ public class FoodServiceImpl implements IFoodService {
     }
 
     @Override
-    public IServiceOutput<FoodResponse> editFood(IServiceInput<CreateFoodInputDTO> input) {
+    public IServiceOutput<FoodResponse> editFood(
+            final IServiceInput<EditFoodInputDTO> input) {
 
-        // =========================================================================
-        // Request
-        // =========================================================================
+        Objects.requireNonNull(
+                input,
+                "Food edit service input must not be null.");
 
-        FoodRequest request = input.getInput().getFoodRequest();
-        MultipartFile imageFile = input.getInput().getImageFile();
+        final EditFoodInputDTO editRequest = Objects.requireNonNull(
+                input.getInput(),
+                "Food edit request must not be null.");
+
+        final FoodRequest foodRequest = Objects.requireNonNull(
+                editRequest.getFoodRequest(),
+                "Food request must not be null.");
 
         // =========================================================================
         // Load Existing Food
         // =========================================================================
 
-        IServiceInput<FoodIdRequest> foodInput = new ServiceInput<>();
+        final IServiceInput<FoodIdRequest> foodInput = new ServiceInput<>();
 
-        FoodIdRequest foodIdRequest = new FoodIdRequest();
-        foodIdRequest.setFoodId(request.getId());
+        final FoodIdRequest foodIdRequest = new FoodIdRequest();
+
+        foodIdRequest.setFoodId(editRequest.getFoodId());
 
         foodInput.setInput(foodIdRequest);
+        foodInput.setServiceContext(input.getServiceContext());
 
-        FoodEntity foodEntity = loadFood(foodInput).getOutput();
-
-        // =========================================================================
-        // Update Basic Fields
-        // =========================================================================
-
-        foodEntity.setFoodName(request.getFoodName());
-        foodEntity.setDescription(request.getDescription());
-        foodEntity.setPrice(request.getPrice());
-
-        foodEntity.setFoodCategories(request.getFoodCategories());
-        foodEntity.setDietCategory(request.getDietCategory());
-        foodEntity.setCuisineType(request.getCuisineType());
-
-        // foodEntity.setCategoryGroups(DisplayOptionMapperUtil.fromSet(request.getFoodCategories());
-        foodEntity.setCategoryGroups(request.getFoodCategories().stream()
-                .filter(Objects::nonNull)
-                .map(fc -> Objects.requireNonNull(fc).getGroup())
-                .collect(Collectors.toSet()));
+        final FoodEntity foodEntity = loadFood(foodInput).getOutput();
 
         // =========================================================================
-        // Update Food Status
+        // Resolve Existing Ownership
         // =========================================================================
 
-        if (request.getFoodStatus() != null) {
+        /*
+         * Food ownership cannot be changed during a normal edit.
+         *
+         * The persisted Restaurant and Restaurant Branch therefore remain
+         * the source of truth for authorization.
+         */
+        final RestaurantEntity restaurant = resolveRestaurantForFood(foodEntity);
 
-            FoodStatusConstant requestedStatus = DisplayOptionMapperUtil.fromValue(
-                    FoodStatusConstant.class,
-                    request.getFoodStatus().getValue());
+        resolveRestaurantBranchForFood(restaurant, foodEntity);
 
-            validateStatusTransition(foodEntity.getStatus(), requestedStatus, input.getServiceContext());
-
-            applyStatus(foodEntity, requestedStatus);
-        }
+        validateFoodAccessAuthorization(restaurant);
 
         // =========================================================================
-        // Update Availability
+        // Update Editable Food Fields
         // =========================================================================
-        if (FoodStatusConstant.AVAILABLE.equals(request.getFoodStatus()))
-            foodEntity.setAvailable(true);
-        else
-            foodEntity.setAvailable(false);
+
+        foodMapper.updateEntity(
+                foodRequest,
+                foodEntity);
+
         // =========================================================================
-        // Upload New Image (Only If Selected)
+        // Update Derived Category Groups
         // =========================================================================
+
+        foodEntity.setCategoryGroups(
+                foodRequest.getFoodCategories()
+                        .stream()
+                        .filter(Objects::nonNull)
+                        .map(fc -> Objects.requireNonNull(fc).getGroup())
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet()));
+
+        // =========================================================================
+        // Update Food Image
+        // =========================================================================
+        // Image is replaced only when a new image is supplied.
+        // Otherwise the existing image remains unchanged.
+
+        final MultipartFile imageFile = editRequest.getImageFile();
 
         if (imageFile != null && !imageFile.isEmpty()) {
-
-            IServiceInput<CreateImageInputDTO> imageInput = new ServiceInput<>();
-
-            CreateImageInputDTO imageDTO = new CreateImageInputDTO();
-            imageDTO.setFile(imageFile);
-
-            imageInput.setInput(imageDTO);
-
-            ImageEntity imageEntity = imageService.uploadImageToS3(imageInput).getOutput();
-
-            ImageSnapshot image = new ImageSnapshot();
-            image.setImageId(imageEntity.getId());
-            image.setImageName(imageEntity.getImageName());
-            image.setImageURL(imageEntity.getImageUrl());
-
-            foodEntity.setFoodImage(image);
+            applyFoodImage(
+                    foodEntity,
+                    imageFile);
         }
 
         // =========================================================================
-        // Audit Fields
+        // Audit Information
         // =========================================================================
 
-        foodEntity.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+        final UserProfile userProfile = serviceContext.getUserProfile();
 
-        if (serviceContext.getUserProfile() != null) {
-            foodEntity.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
-        } else {
-            foodEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+        if (userProfile != null
+                && userProfile.getUserEntity() != null) {
+
+            foodEntity.setUpdatedBy(
+                    userProfile
+                            .getUserEntity()
+                            .getUserNumber());
         }
 
-        // =========================================================================
-        // Save
-        // =========================================================================
-
-        foodRepository.save(foodEntity);
+        foodEntity.setUpdatedAt(
+                AppCalendar.getBusinessLocalDateTime());
 
         // =========================================================================
-        // Response
+        // Persist Updated Food
         // =========================================================================
 
-        FoodResponse response = convertToFoodResponse(foodEntity, new FoodResponse());
+        final FoodEntity savedFood = foodRepository.save(foodEntity);
 
-        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
-        output.setOutput(response);
+        LOGGER.info(
+                "Food updated successfully. foodNumber={}, restaurantNumber={}, restaurantBranchNumber={}",
+                savedFood.getFoodNumber(),
+                savedFood.getRestaurantNumber(),
+                savedFood.getRestaurantBranchNumber());
 
-        return output;
+        // =========================================================================
+        // Build Response
+        // =========================================================================
+
+        final FoodResponse response = foodMapper.toResponse(savedFood);
+
+        return new ServiceOutput<>(response);
     }
 
     // ============================================================================
@@ -662,60 +1449,104 @@ public class FoodServiceImpl implements IFoodService {
     // ============================================================================
 
     /**
-     * {@inheritDoc}
+     * Archives an existing Food item using the application's soft-delete
+     * mechanism.
+     *
+     * <p>
+     * Before archiving, the method validates that:
+     * <ul>
+     * <li>the request is valid,</li>
+     * <li>the Food exists,</li>
+     * <li>its restaurant exists,</li>
+     * <li>its restaurant branch exists and belongs to that restaurant,</li>
+     * <li>the authenticated actor is authorized to manage that restaurant,</li>
+     * <li>the Food is eligible for archiving.</li>
+     * </ul>
+     * </p>
+     *
+     * <p>
+     * Food ownership is derived from the persisted
+     * {@code restaurantNumber} and {@code restaurantBranchNumber}.
+     * These values are never accepted from the archive request itself.
+     * </p>
+     *
+     * @param input service input containing the Food identifier
+     *              and request context
+     * @return archived Food response
      */
     @Override
     public IServiceOutput<FoodResponse> archiveFood(
-            IServiceInput<ArchiveFoodRequest> input) {
+            final IServiceInput<ArchiveFoodRequest> input) {
 
-        // ---------------------------------------------------------------------
-        // Validate Request
-        // ---------------------------------------------------------------------
+        Objects.requireNonNull(
+                input,
+                "Food archive service input must not be null.");
+
+        // =========================================================================
+        // Request Validation
+        // =========================================================================
 
         foodValidator.validateArchiveFood(input);
 
-        // ---------------------------------------------------------------------
+        final ArchiveFoodRequest request = Objects.requireNonNull(
+                input.getInput(),
+                "Archive food request must not be null.");
+
+        // =========================================================================
         // Load Food
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        FoodEntity food = loadFoodById(input.getInput().getFoodId());
+        final FoodEntity foodEntity = loadFoodById(request.getFoodId());
 
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Resolve Existing Ownership
+        // =========================================================================
+
+        /*
+         * Food ownership is persisted on the Food entity and remains the
+         * source of truth for archive authorization.
+         */
+        final RestaurantEntity restaurant = resolveRestaurantForFood(foodEntity);
+
+        resolveRestaurantBranchForFood(
+                restaurant,
+                foodEntity);
+
+        // =========================================================================
+        // Authorization
+        // =========================================================================
+        validateFoodAccessAuthorization(restaurant);
+
+        // =========================================================================
         // Business Validation
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
         validateFoodCanBeArchived(
-                food,
+                foodEntity,
                 input.getServiceContext());
 
-        // ---------------------------------------------------------------------
+        // =========================================================================
         // Archive Food
-        // ---------------------------------------------------------------------
-        RepositoryContext repositoryContext;
-        if (input.getServiceContext().getUserProfile() != null) {
-            repositoryContext = RepositoryContext.of(
-                    input.getServiceContext().getUserProfile().getUsername(),
-                    AppCalendar.getBusinessLocalDateTime());
-        } else {
-            repositoryContext = RepositoryContext.of(
-                    RepositoryConstants.SYSTEM_USER,
-                    AppCalendar.getBusinessLocalDateTime());
-        }
+        // =========================================================================
+
         foodRepository.softDelete(
-                food.getId(),
-                repositoryContext);
+                foodEntity.getId(),
+                createRepositoryContext(
+                        input.getServiceContext()));
 
-        // ---------------------------------------------------------------------
-        // Build Response
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Response
+        // =========================================================================
 
-        FoodResponse response = buildFoodResponse(food);
+        final FoodResponse response = foodMapper.toResponse(foodEntity);
 
-        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+        LOGGER.info(
+                "Food archived successfully. foodNumber={}, restaurantNumber={}, restaurantBranchNumber={}",
+                foodEntity.getFoodNumber(),
+                foodEntity.getRestaurantNumber(),
+                foodEntity.getRestaurantBranchNumber());
 
-        output.setOutput(response);
-
-        return output;
+        return new ServiceOutput<>(response);
     }
 
     // ============================================================================
@@ -723,23 +1554,37 @@ public class FoodServiceImpl implements IFoodService {
     // ============================================================================
 
     /**
-     * Loads a food by its identifier.
+     * ============================================================================
+     * Load Active Food By ID
+     * ============================================================================
      *
-     * @param foodId Food identifier.
+     * Loads an active Food entity using the supplied Food identifier.
      *
-     * @return Food entity.
+     * <p>
+     * This method is an internal entity-loading operation. It is intentionally
+     * not responsible for role-based or ownership authorization. The calling
+     * business operation must perform the appropriate authorization after the
+     * Food has been loaded.
+     * </p>
+     *
+     * <p>
+     * The active repository contract is used so logically deleted Foods are not
+     * returned through active Food operations.
+     * </p>
+     *
+     * @param foodId unique Food identifier
+     *
+     * @return active Food entity
+     *
+     * @throws ResourceNotFoundException when the Food does not exist as an
+     *                                   active record
      */
     private FoodEntity loadFoodById(final String foodId) {
 
-        FoodEntity output = foodRepository
-                .findById(foodId).orElseThrow(
-                        () -> new ResourceNotFoundException(FoodErrorConstants.FOOD_NOT_FOUND));
-
-        return output;
-
-        // return foodRepository.findActiveById(foodId)
-        // .orElseThrow(() -> new ResourceNotFoundException(
-        // "Food not found with Id : " + foodId));
+        return foodRepository.findActiveById(foodId)
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(
+                                FoodErrorConstants.FOOD_NOT_FOUND));
     }
 
     /**
@@ -830,51 +1675,96 @@ public class FoodServiceImpl implements IFoodService {
     // ============================================================================
 
     /**
-     * {@inheritDoc}
+     * Restores an archived Food item.
+     *
+     * <p>
+     * The Food's persisted restaurant and restaurant branch identifiers are used
+     * to resolve its ownership context. The authenticated actor must be
+     * authorized to manage that restaurant before the Food can be restored.
+     * </p>
+     *
+     * <p>
+     * The restore operation only changes the persistence lifecycle state.
+     * Food status, availability, restaurant ownership, and branch ownership are
+     * not modified by this operation.
+     * </p>
+     *
+     * @param input service input containing the Food identifier
+     *              and request context
+     * @return restored Food response
      */
     @Override
     public IServiceOutput<FoodResponse> restoreFood(
-            IServiceInput<RestoreFoodRequest> input) {
+            final IServiceInput<RestoreFoodRequest> input) {
 
-        // ---------------------------------------------------------------------
-        // Validate Request
-        // ---------------------------------------------------------------------
+        Objects.requireNonNull(
+                input,
+                "Food restore service input must not be null.");
+
+        // =========================================================================
+        // Request Validation
+        // =========================================================================
 
         foodValidator.validateRestoreFood(input);
 
-        // ---------------------------------------------------------------------
+        final RestoreFoodRequest request = Objects.requireNonNull(
+                input.getInput(),
+                "Restore food request must not be null.");
+
+        // =========================================================================
         // Load Archived Food
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        FoodEntity food = loadArchivedFoodById(
-                input.getInput().getFoodId());
+        final FoodEntity foodEntity = loadArchivedFoodById(
+                request.getFoodId());
 
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Resolve Existing Ownership
+        // =========================================================================
+
+        /*
+         * The Food is currently archived, but its persisted Restaurant and
+         * Restaurant Branch remain the source of truth for authorization.
+         */
+        final RestaurantEntity restaurant = resolveRestaurantForFood(foodEntity);
+
+        resolveRestaurantBranchForFood(
+                restaurant,
+                foodEntity);
+
+        // =========================================================================
+        // Authorization
+        // =========================================================================
+        validateFoodAccessAuthorization(restaurant);
+
+        // =========================================================================
         // Business Validation
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        validateFoodCanBeRestored(food);
+        validateFoodCanBeRestored(foodEntity);
 
-        // ---------------------------------------------------------------------
+        // =========================================================================
         // Restore Food
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
         foodRepository.restore(
-                food.getId(),
+                foodEntity.getId(),
                 createRepositoryContext(
                         input.getServiceContext()));
 
-        // ---------------------------------------------------------------------
-        // Build Response
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Response
+        // =========================================================================
 
-        FoodResponse response = buildFoodResponse(food);
+        final FoodResponse response = foodMapper.toResponse(foodEntity);
 
-        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+        LOGGER.info(
+                "Food restored successfully. foodNumber={}, restaurantNumber={}, restaurantBranchNumber={}",
+                foodEntity.getFoodNumber(),
+                foodEntity.getRestaurantNumber(),
+                foodEntity.getRestaurantBranchNumber());
 
-        output.setOutput(response);
-
-        return output;
+        return new ServiceOutput<>(response);
     }
 
     /**
@@ -896,55 +1786,99 @@ public class FoodServiceImpl implements IFoodService {
     // ============================================================================
 
     /**
-     * {@inheritDoc}
+     * Permanently deletes an archived Food item.
+     *
+     * <p>
+     * Permanent deletion is only allowed for Food items that have already been
+     * archived. The Food's restaurant and branch ownership are resolved from the
+     * persisted entity before authorization and deletion are performed.
+     * </p>
+     *
+     * <p>
+     * This operation is intentionally destructive and is currently exposed as an
+     * administrator-only operation at the controller/security layer.
+     * </p>
+     *
+     * @param input service input containing the archived Food identifier
+     *              and request context
+     * @return deleted Food response
      */
     @Override
     public IServiceOutput<FoodResponse> permanentDeleteFood(
-            IServiceInput<PermanentDeleteFoodRequest> input) {
+            final IServiceInput<PermanentDeleteFoodRequest> input) {
 
-        // ---------------------------------------------------------------------
-        // Validate Request
-        // ---------------------------------------------------------------------
+        Objects.requireNonNull(
+                input,
+                "Permanent delete service input must not be null.");
+
+        // =========================================================================
+        // Request Validation
+        // =========================================================================
 
         foodValidator.validatePermanentDeleteFood(input);
 
-        // ---------------------------------------------------------------------
+        final PermanentDeleteFoodRequest request = Objects.requireNonNull(
+                input.getInput(),
+                "Permanent delete food request must not be null.");
+
+        // =========================================================================
         // Load Archived Food
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        FoodEntity food = loadArchivedFoodById(
-                input.getInput().getFoodId());
+        final FoodEntity foodEntity = loadArchivedFoodById(
+                request.getFoodId());
 
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Resolve Existing Ownership
+        // =========================================================================
+
+        /*
+         * The Food is archived at this stage, but its persisted Restaurant and
+         * Restaurant Branch remain the source of truth for authorization.
+         */
+        final RestaurantEntity restaurant = resolveRestaurantForFood(foodEntity);
+
+        resolveRestaurantBranchForFood(
+                restaurant,
+                foodEntity);
+
+        // =========================================================================
+        // Authorization
+        // =========================================================================
+        validateFoodAccessAuthorization(restaurant);
+
+        // =========================================================================
         // Business Validation
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        validateFoodCanBeDeleted(food);
+        validateFoodCanBeDeleted(foodEntity);
 
-        // ---------------------------------------------------------------------
+        // =========================================================================
         // Delete Food Image
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        deleteFoodImage(food);
+        deleteFoodImage(foodEntity);
 
-        // ---------------------------------------------------------------------
+        // =========================================================================
         // Permanently Delete Food
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
         foodRepository.deletePermanently(
-                food.getId());
+                foodEntity.getId());
 
-        // ---------------------------------------------------------------------
-        // Build Response
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Response
+        // =========================================================================
 
-        FoodResponse response = buildFoodResponse(food);
+        final FoodResponse response = foodMapper.toResponse(foodEntity);
 
-        IServiceOutput<FoodResponse> output = new ServiceOutput<>();
+        LOGGER.info(
+                "Food permanently deleted. foodNumber={}, restaurantNumber={}, restaurantBranchNumber={}",
+                foodEntity.getFoodNumber(),
+                foodEntity.getRestaurantNumber(),
+                foodEntity.getRestaurantBranchNumber());
 
-        output.setOutput(response);
-
-        return output;
+        return new ServiceOutput<>(response);
     }
 
     /**
@@ -968,39 +1902,70 @@ public class FoodServiceImpl implements IFoodService {
     // ============================================================================
 
     /**
-     * {@inheritDoc}
+     * Archives multiple Food items.
+     *
+     * <p>
+     * Each Food is processed through the standard
+     * {@link #archiveFood(IServiceInput)}
+     * operation so that all individual validation, restaurant/branch ownership
+     * checks, authorization rules, and archive business rules are consistently
+     * applied.
+     * </p>
+     *
+     * <p>
+     * This is intentionally implemented as an orchestration method rather than
+     * directly performing repository bulk deletion. A bulk request may contain
+     * Foods belonging to different restaurants or branches, so each Food must be
+     * independently authorized.
+     * </p>
+     *
+     * @param input service input containing the Food identifiers to archive
+     * @return empty service output after successful processing
      */
     @Override
     public IServiceOutput<Void> bulkArchiveFoods(
-            IServiceInput<BulkArchiveFoodRequest> input) {
+            final IServiceInput<BulkArchiveFoodRequest> input) {
 
-        // ---------------------------------------------------------------------
-        // Validate Request
-        // ---------------------------------------------------------------------
+        Objects.requireNonNull(
+                input,
+                "Bulk archive service input must not be null.");
+
+        // =========================================================================
+        // Request Validation
+        // =========================================================================
 
         foodValidator.validateBulkArchiveFoods(input);
 
-        // ---------------------------------------------------------------------
+        final BulkArchiveFoodRequest request = Objects.requireNonNull(
+                input.getInput(),
+                "Bulk archive request must not be null.");
+
+        // =========================================================================
         // Archive Foods
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        for (String foodId : input.getInput().getFoodIds()) {
+        for (final String foodId : request.getFoodIds()) {
 
-            ArchiveFoodRequest request = new ArchiveFoodRequest();
+            final ArchiveFoodRequest archiveRequest = new ArchiveFoodRequest();
 
-            request.setFoodId(foodId);
+            archiveRequest.setFoodId(foodId);
 
-            IServiceInput<ArchiveFoodRequest> archiveInput = new ServiceInput<>();
+            final IServiceInput<ArchiveFoodRequest> archiveInput = new ServiceInput<>();
 
-            archiveInput.setInput(request);
-            archiveInput.setServiceContext(input.getServiceContext());
+            archiveInput.setInput(archiveRequest);
+            archiveInput.setServiceContext(
+                    input.getServiceContext());
 
             archiveFood(archiveInput);
         }
 
-        // ---------------------------------------------------------------------
-        // Build Response
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Response
+        // =========================================================================
+
+        LOGGER.info(
+                "Bulk food archive completed successfully. foodCount={}",
+                request.getFoodIds().size());
 
         return new ServiceOutput<>();
     }
@@ -1010,39 +1975,67 @@ public class FoodServiceImpl implements IFoodService {
     // ============================================================================
 
     /**
-     * {@inheritDoc}
+     * Restores multiple archived Food items.
+     *
+     * <p>
+     * Each Food is processed through the standard
+     * {@link #restoreFood(IServiceInput)} operation so that restaurant/branch
+     * ownership, authorization, lifecycle validation, and repository behavior
+     * remain consistent with single Food restoration.
+     * </p>
+     *
+     * <p>
+     * Individual authorization is intentional because a bulk request may contain
+     * Food items belonging to different restaurants or branches.
+     * </p>
+     *
+     * @param input service input containing the Food identifiers to restore
+     * @return empty service output after successful processing
      */
     @Override
     public IServiceOutput<Void> bulkRestoreFoods(
-            IServiceInput<BulkRestoreFoodRequest> input) {
+            final IServiceInput<BulkRestoreFoodRequest> input) {
 
-        // ---------------------------------------------------------------------
-        // Validate Request
-        // ---------------------------------------------------------------------
+        Objects.requireNonNull(
+                input,
+                "Bulk restore service input must not be null.");
+
+        // =========================================================================
+        // Request Validation
+        // =========================================================================
 
         foodValidator.validateBulkRestoreFoods(input);
 
-        // ---------------------------------------------------------------------
+        final BulkRestoreFoodRequest request = Objects.requireNonNull(
+                input.getInput(),
+                "Bulk restore request must not be null.");
+
+        // =========================================================================
         // Restore Foods
-        // ---------------------------------------------------------------------
+        // =========================================================================
 
-        for (String foodId : input.getInput().getFoodIds()) {
+        for (final String foodId : request.getFoodIds()) {
 
-            RestoreFoodRequest request = new RestoreFoodRequest();
+            final RestoreFoodRequest restoreRequest = new RestoreFoodRequest();
 
-            request.setFoodId(foodId);
+            restoreRequest.setFoodId(foodId);
 
-            IServiceInput<RestoreFoodRequest> restoreInput = new ServiceInput<>();
+            final IServiceInput<RestoreFoodRequest> restoreInput = new ServiceInput<>();
 
-            restoreInput.setInput(request);
-            restoreInput.setServiceContext(input.getServiceContext());
+            restoreInput.setInput(restoreRequest);
+            restoreInput.setServiceContext(
+                    input.getServiceContext());
 
             restoreFood(restoreInput);
         }
 
-        // ---------------------------------------------------------------------
-        // Build Response
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Response
+        // =========================================================================
+
+        LOGGER.info(
+                "Bulk food restore completed successfully. foodCount={}",
+                request.getFoodIds().size());
 
         return new ServiceOutput<>();
     }
@@ -1052,39 +2045,62 @@ public class FoodServiceImpl implements IFoodService {
     // ============================================================================
 
     /**
-     * {@inheritDoc}
+     * Permanently deletes multiple archived Food items.
+     *
+     * <p>
+     * Each Food is processed individually through
+     * {@link #permanentDeleteFood(IServiceInput)} so that the same ownership,
+     * restaurant-branch validation, authorization, and permanent deletion rules
+     * are consistently applied to every Food item.
+     * </p>
+     *
+     * @param input service input containing Food identifiers and request context
+     * @return empty service output after successful deletion
      */
     @Override
     public IServiceOutput<Void> bulkPermanentDeleteFoods(
-            IServiceInput<BulkDeleteFoodRequest> input) {
+            final IServiceInput<BulkDeleteFoodRequest> input) {
 
-        // ---------------------------------------------------------------------
-        // Validate Request
-        // ---------------------------------------------------------------------
+        Objects.requireNonNull(
+                input,
+                "Bulk permanent delete service input must not be null.");
+
+        // =========================================================================
+        // Request Validation
+        // =========================================================================
 
         foodValidator.validateBulkPermanentDeleteFoods(input);
 
-        // ---------------------------------------------------------------------
-        // Delete Foods
-        // ---------------------------------------------------------------------
+        final BulkDeleteFoodRequest request = Objects.requireNonNull(
+                input.getInput(),
+                "Bulk permanent delete request must not be null.");
 
-        for (String foodId : input.getInput().getFoodIds()) {
+        // =========================================================================
+        // Permanent Delete
+        // =========================================================================
 
-            PermanentDeleteFoodRequest request = new PermanentDeleteFoodRequest();
+        for (final String foodId : request.getFoodIds()) {
 
-            request.setFoodId(foodId);
+            final PermanentDeleteFoodRequest deleteRequest = new PermanentDeleteFoodRequest();
 
-            IServiceInput<PermanentDeleteFoodRequest> deleteInput = new ServiceInput<>();
+            deleteRequest.setFoodId(foodId);
 
-            deleteInput.setInput(request);
-            deleteInput.setServiceContext(input.getServiceContext());
+            final IServiceInput<PermanentDeleteFoodRequest> deleteInput = new ServiceInput<>();
+
+            deleteInput.setInput(deleteRequest);
+            deleteInput.setServiceContext(
+                    input.getServiceContext());
 
             permanentDeleteFood(deleteInput);
         }
 
-        // ---------------------------------------------------------------------
-        // Build Response
-        // ---------------------------------------------------------------------
+        // =========================================================================
+        // Logging
+        // =========================================================================
+
+        LOGGER.info(
+                "Bulk food permanent deletion completed successfully. foodCount={}",
+                request.getFoodIds().size());
 
         return new ServiceOutput<>();
     }
@@ -1115,25 +2131,113 @@ public class FoodServiceImpl implements IFoodService {
 
     /**
      * {@inheritDoc}
+     *
+     * <p>
+     * Reads archived Foods according to the authenticated user's Restaurant
+     * scope.
+     * </p>
+     *
+     * <ul>
+     * <li>ADMIN can read archived Foods across all Restaurants.</li>
+     * <li>RESTAURANT_OWNER can read archived Foods only from Restaurants
+     * owned by the authenticated user.</li>
+     * </ul>
+     *
+     * <p>
+     * Archived state is enforced by the repository's
+     * {@code findAllDeleted(...)} contract.
+     * </p>
+     *
+     * @return service output containing authorized archived Foods
      */
     @Override
     public IServiceOutput<List<FoodResponse>> readArchivedFoods() {
 
         // ---------------------------------------------------------------------
+        // Resolve authenticated user's Restaurant scope
+        // ---------------------------------------------------------------------
+
+        final UserProfile userProfile = serviceContext.getUserProfile();
+
+        if (userProfile == null
+                || userProfile.getUserEntity() == null) {
+
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+        }
+
+        final UserEntity userEntity = userProfile.getUserEntity();
+
+        final List<RoleType> roles = userEntity.getRoles();
+
+        if (roles == null || roles.isEmpty()) {
+
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+        }
+
+        // ---------------------------------------------------------------------
         // Load Archived Foods
         // ---------------------------------------------------------------------
 
-        List<FoodEntity> archivedFoods = foodRepository.findAllDeleted();
+        final List<FoodEntity> archivedFoods;
+
+        if (roles.contains(RoleType.ADMIN)) {
+
+            /*
+             * ADMIN has unrestricted archived-Food visibility.
+             */
+            archivedFoods = foodRepository.findAllDeleted();
+
+        } else if (roles.contains(RoleType.RESTAURANT_OWNER)) {
+
+            /*
+             * Resolve Restaurants owned by the authenticated user.
+             */
+            final Query restaurantQuery = Query.query(
+                    Criteria.where(
+                            RestaurantFieldConstants.OWNER_USER_NUMBER)
+                            .is(userEntity.getUserNumber()));
+
+            final List<String> restaurantNumbers = restaurantRepository.findAll(restaurantQuery)
+                    .stream()
+                    .map(RestaurantEntity::getRestaurantNumber)
+                    .filter(Objects::nonNull)
+                    .toList();
+
+            /*
+             * The owner has no Restaurants, therefore there can be no
+             * archived Foods within the owner's scope.
+             */
+            if (restaurantNumbers.isEmpty()) {
+
+                archivedFoods = List.of();
+
+            } else {
+
+                final Query foodQuery = Query.query(
+                        Criteria.where(
+                                RestaurantFieldConstants.RESTAURANT_NUMBER)
+                                .in(restaurantNumbers));
+
+                archivedFoods = foodRepository.findAllDeleted(foodQuery);
+            }
+
+        } else {
+
+            throw new BusinessException(
+                    RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
+        }
 
         // ---------------------------------------------------------------------
         // Build Response
         // ---------------------------------------------------------------------
 
-        List<FoodResponse> response = archivedFoods.stream()
-                .map(this::buildFoodResponse)
+        final List<FoodResponse> response = archivedFoods.stream()
+                .map(foodMapper::toResponse)
                 .toList();
 
-        IServiceOutput<List<FoodResponse>> output = new ServiceOutput<>();
+        final IServiceOutput<List<FoodResponse>> output = new ServiceOutput<>();
 
         output.setOutput(response);
 

@@ -2,7 +2,6 @@ package com.foodies.freshmeal.food.dto;
 
 import java.util.Set;
 
-import com.foodies.freshmeal.food.constants.CategoryGroupConstant;
 import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
 import com.foodies.freshmeal.food.constants.DietCategoryConstant;
 import com.foodies.freshmeal.food.constants.FoodCategoryConstant;
@@ -77,5 +76,5 @@ public class FoodRequest {
     /**
      * Higher-level category groups derived from the selected food categories.
      */
-    private Set<CategoryGroupConstant> categoryGroups;
+    // private Set<CategoryGroupConstant> categoryGroups;
 }

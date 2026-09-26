@@ -61,6 +61,9 @@ public class FoodEntity extends ABaseEntity {
     @Indexed
     private String restaurantNumber;
 
+    @Indexed
+    private String restaurantBranchNumber;
+
     /**
      * Current lifecycle status of the food.
      *

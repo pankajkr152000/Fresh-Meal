@@ -18,13 +18,15 @@ import lombok.Setter;
  * </p>
  *
  * <p>
- * Combines the food information request with the optional image uploaded for
- * the food item.
+ * Combines the food information request with the target restaurant branch
+ * and the optional image uploaded for the food item.
  * </p>
  *
  * <p>
- * Restaurant ownership is intentionally not part of this DTO. The service
- * layer resolves the restaurant from the authenticated user's context.
+ * Restaurant and branch identifiers are service-operation context rather than
+ * editable food properties. The service layer must validate that the
+ * authenticated user is authorized to create food for the specified
+ * restaurant branch before assigning these identifiers to the FoodEntity.
  * </p>
  *
  * @author Pankaj Kumar
@@ -41,6 +43,16 @@ public class CreateFoodInputDTO {
      * Food information supplied by the caller.
      */
     private FoodRequest foodRequest;
+
+    /**
+     * Restaurant business identifier for which the food is being created.
+     */
+    private String restaurantNumber;
+
+    /**
+     * Restaurant branch business identifier for which the food is being created.
+     */
+    private String restaurantBranchNumber;
 
     /**
      * Image uploaded for the food item.
