@@ -105,6 +105,10 @@ public enum ActionType implements IDisplayOption {
     // =========================================================================
 
     ADD_ADDRESS("Add Address"),
+    VIEW_ADDRESS("View Address"),
+    UPDATE_ADDRESS("Update Address"),
+    SET_DEFAULT_ADDRESS("Set Default Address"),
+    DELETE_ADDRESS("Delete Address"),
 
     // =========================================================================
     // User Operations

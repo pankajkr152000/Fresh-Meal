@@ -238,4 +238,8 @@ public final class ApiMessageConstants {
 
     public static final String ADDRESS_FETCHED = "Address details fetched successfully.";
 
+    public static final String DEFAULT_ADDRESS_UPDATED = "Default address updated successfully.";
+
+    public static final String ADDRESS_DELETED = "Address deleted successfully.";
+
 }

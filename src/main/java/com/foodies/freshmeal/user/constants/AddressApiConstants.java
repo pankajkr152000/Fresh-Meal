@@ -2,26 +2,61 @@ package com.foodies.freshmeal.user.constants;
 
 /**
  * ============================================================================
- * Address API Constants
+ * Constants : AddressApiConstants
  * ============================================================================
  *
- * Centralized API endpoint constants for the Address module.
+ * Defines API endpoint mappings for address management operations.
  *
- * ============================================================================
+ * <p>
+ * This class contains only URI-related constants and does not contain any
+ * business or authorization logic.
+ * </p>
+ *
+ * @author Pankaj Kumar
+ * @since 1.0
  */
 public final class AddressApiConstants {
 
-    private AddressApiConstants() {
-        // Utility class.
-    }
+    /**
+     * Base URI for address APIs.
+     */
+    public static final String BASE_URL = "/api/addresses";
 
     /**
-     * Add a new address.
+     * Creates a new address.
      */
     public static final String ADD = "/add";
 
     /**
-     * Get address by business address number.
+     * Retrieves an address using its business-facing address number.
      */
-    public static final String GET_BY_ID = "/get";
+    public static final String GET_BY_ID = "/view";
+
+    /**
+     * Retrieves all active addresses belonging to the authenticated user.
+     */
+    public static final String GET_MY_ADDRESSES = "/my-addresses";
+
+    /**
+     * Updates an existing address.
+     */
+    public static final String UPDATE = "/update";
+
+    /**
+     * Sets an address as the default address.
+     */
+    public static final String SET_DEFAULT = "/set-default";
+
+    /**
+     * Soft deletes an address.
+     */
+    public static final String DELETE = "/delete";
+
+    /**
+     * Prevents instantiation.
+     */
+    private AddressApiConstants() {
+        throw new UnsupportedOperationException(
+                "AddressApiConstants must not be instantiated.");
+    }
 }

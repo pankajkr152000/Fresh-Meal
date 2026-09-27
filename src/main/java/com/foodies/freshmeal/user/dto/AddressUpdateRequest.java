@@ -14,41 +14,68 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * =============================================================================
- * DTO : AddressRequest
- * =============================================================================
+ * ============================================================================
+ * DTO : AddressUpdateRequest
+ * ============================================================================
  *
  * Purpose
  * -------
- * Represents the address information supplied by the client.
+ * Represents the address information supplied by the client when updating
+ * an existing customer address.
  *
+ * <p>
+ * The business-facing {@code addressNumber} identifies the address to be
+ * updated. The authenticated user's identity is resolved by the service layer
+ * and must not be supplied by the client.
+ * </p>
+ *
+ * <p>
  * Location fields such as district, state and country are intentionally not
  * accepted from the client. They are resolved by PincodeService using the
  * supplied postal code.
- * =============================================================================
+ * </p>
+ *
+ * <p>
+ * The default-address state is intentionally not part of this request.
+ * Changing the default address is handled through a dedicated business
+ * operation so that the service can maintain the invariant that a user has
+ * at most one default address.
+ * </p>
+ *
+ * ============================================================================
+ *
+ * @author Pankaj Kumar
+ * @since 1.0
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddressRequest {
+public class AddressUpdateRequest {
+
+    /**
+     * Business-facing address identifier.
+     *
+     * <p>
+     * Example:
+     * {@code FM-ADR-0000001}
+     * </p>
+     */
+    @NotBlank
+    @Size(max = 50)
+    private String addressNumber;
 
     /**
      * User-defined address label.
      *
+     * <p>
      * Examples:
-     * HOME
-     * WORK
-     * OTHER
+     * HOME, WORK, OTHER
+     * </p>
      */
     @NotNull
     private AddressTypeConstant addressType;
-
-    /**
-     * Indicates whether this address should be the user's default address.
-     */
-    private boolean defaultAddress;
 
     /**
      * Recipient / contact person name.
@@ -60,7 +87,7 @@ public class AddressRequest {
     /**
      * Contact phone number for delivery.
      */
-    @NotBlank
+    @NotNull
     private PhoneNumber phoneNumber;
 
     /**
@@ -73,7 +100,6 @@ public class AddressRequest {
     /**
      * Street, road, locality or area.
      */
-
     @Size(max = 150)
     private String addressLine2;
 
@@ -93,8 +119,10 @@ public class AddressRequest {
     /**
      * Postal / PIN code.
      *
+     * <p>
      * The pincode is used by PincodeService to resolve:
      * country, state and district.
+     * </p>
      */
     @NotBlank
     @Pattern(regexp = "^[0-9]{6}$", message = "Invalid pincode.")

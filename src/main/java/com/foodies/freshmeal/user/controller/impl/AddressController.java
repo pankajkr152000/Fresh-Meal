@@ -1,8 +1,13 @@
 package com.foodies.freshmeal.user.controller.impl;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,45 +27,53 @@ import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
 import com.foodies.freshmeal.user.constants.AddressApiConstants;
 import com.foodies.freshmeal.user.controller.IAddressController;
-import com.foodies.freshmeal.user.dto.AddressIdRequest;
 import com.foodies.freshmeal.user.dto.AddressInputDTO;
+import com.foodies.freshmeal.user.dto.AddressNumberRequest;
 import com.foodies.freshmeal.user.dto.AddressRequest;
 import com.foodies.freshmeal.user.dto.AddressResponse;
-import com.foodies.freshmeal.user.entity.AddressEntity;
+import com.foodies.freshmeal.user.dto.AddressUpdateRequest;
 import com.foodies.freshmeal.user.service.IAddressService;
+
+import jakarta.validation.Valid;
 
 /**
  * ============================================================================
- * Address Controller
+ * Controller : AddressController
  * ============================================================================
  *
- * Responsibilities
- * ----------------
- * • Receive HTTP requests.
- * • Validate request payload.
- * • Prepare IServiceInput.
- * • Delegate business logic to the service layer.
- * • Return standardized ApiResponse.
+ * REST controller responsible for customer address management.
  *
- * The controller should NEVER contain business logic.
+ * <p>
+ * The controller receives HTTP requests, prepares the common
+ * {@code IServiceInput} structure and delegates business processing to the
+ * Address service.
+ * </p>
  *
- * ============================================================================
+ * <p>
+ * The controller does not contain address business rules. Ownership,
+ * pincode resolution, default-address handling and address lifecycle
+ * decisions belong to the service layer.
+ * </p>
  *
- * {@code /api/addresses}
- *
- * ============================================================================
+ * @author Pankaj Kumar
+ * @since 1.0
  */
 @RestController
 @RequestMapping(ApiBaseConstants.ADDRESS_BASE_URL)
 public class AddressController implements IAddressController {
 
     private final IAddressService addressService;
-
     private final IServiceContext serviceContext;
 
+    /**
+     * Creates an AddressController.
+     *
+     * @param addressService address service
+     * @param serviceContext request-scoped service context
+     */
     public AddressController(
-            IAddressService addressService,
-            IServiceContext serviceContext) {
+            final IAddressService addressService,
+            final IServiceContext serviceContext) {
 
         this.addressService = addressService;
         this.serviceContext = serviceContext;
@@ -69,24 +82,24 @@ public class AddressController implements IAddressController {
     /**
      * Creates a new customer address.
      *
-     * @param request address details
+     * @param request address creation request
      * @return created address information
      */
     @Override
     @PreAuthorize(AuthorizationConstants.USER_ONLY)
     @AuditApi(action = ActionType.ADD_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.CREATE)
     @PostMapping(AddressApiConstants.ADD)
-    public ResponseEntity<ApiResponse<AddressResponse>> addAddress(@RequestBody AddressRequest request) {
+    public ResponseEntity<ApiResponse<AddressResponse>> addAddress(
+            @Valid @RequestBody final AddressRequest request) {
 
-        IServiceInput<AddressInputDTO> input = new ServiceInput<>();
-        input.setServiceContext(serviceContext);
-        AddressInputDTO addressInputDTO = new AddressInputDTO();
-
+        final AddressInputDTO addressInputDTO = new AddressInputDTO();
         addressInputDTO.setAddressRequest(request);
 
+        final IServiceInput<AddressInputDTO> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
         input.setInput(addressInputDTO);
 
-        IServiceOutput<AddressResponse> output = addressService.addAddress(input);
+        final IServiceOutput<AddressResponse> output = addressService.addAddress(input);
 
         return ApiResponseBuilder.created(
                 ApiMessageConstants.ADDRESS_CREATED,
@@ -96,41 +109,117 @@ public class AddressController implements IAddressController {
     /**
      * Retrieves an address using its business-facing address number.
      *
-     * @param request address identifier request
+     * @param request address number request
      * @return address information
      */
     @Override
     @PreAuthorize(AuthorizationConstants.USER_ONLY)
+    @AuditApi(action = ActionType.VIEW_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.READ)
     @PostMapping(AddressApiConstants.GET_BY_ID)
-    public ResponseEntity<ApiResponse<AddressResponse>> getAddressByAddressId(@RequestBody AddressIdRequest request) {
+    public ResponseEntity<ApiResponse<AddressResponse>> getAddressByAddressNumber(
+            @Valid @RequestBody final AddressNumberRequest request) {
 
-        IServiceInput<AddressIdRequest> input = new ServiceInput<>();
+        final IServiceInput<AddressNumberRequest> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
         input.setInput(request);
 
-        IServiceOutput<AddressEntity> output = addressService.loadAddress(input);
-
-        AddressEntity addressEntity = output.getOutput();
-
-        AddressResponse response = new AddressResponse();
-
-        response.setAddressNumber(addressEntity.getAddressNumber());
-        response.setAddressType(addressEntity.getAddressType());
-        response.setDefaultAddress(addressEntity.isDefaultAddress());
-        response.setRecipientName(addressEntity.getRecipientName());
-        response.setPhoneNumber(addressEntity.getPhoneNumber());
-        response.setAddressLine1(addressEntity.getAddressLine1());
-        response.setAddressLine2(addressEntity.getAddressLine2());
-        response.setLandmark(addressEntity.getLandmark());
-        response.setCity(addressEntity.getCity());
-        response.setDistrict(addressEntity.getDistrict());
-        response.setState(addressEntity.getState());
-        response.setCountry(addressEntity.getCountry());
-        response.setPostalCode(addressEntity.getPostalCode());
-        response.setLocation(addressEntity.getLocation());
+        final IServiceOutput<AddressResponse> output = addressService.getByAddressNumber(input);
 
         return ApiResponseBuilder.success(
                 ApiMessageConstants.ADDRESS_FETCHED,
-                response);
+                output.getOutput());
+    }
+
+    /**
+     * Retrieves all active addresses belonging to the authenticated customer.
+     *
+     * @return customer's saved addresses
+     */
+    @Override
+    @PreAuthorize(AuthorizationConstants.USER_ONLY)
+    @AuditApi(action = ActionType.VIEW_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.READ)
+    @GetMapping(AddressApiConstants.GET_MY_ADDRESSES)
+    public ResponseEntity<ApiResponse<List<AddressResponse>>> getMyAddresses() {
+
+        final IServiceInput<Void> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
+
+        final IServiceOutput<List<AddressResponse>> output = addressService.getMyAddresses(input);
+
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.ADDRESS_FETCHED,
+                output.getOutput());
+    }
+
+    /**
+     * Updates an existing customer address.
+     *
+     * @param request address update request
+     * @return updated address information
+     */
+    @Override
+    @PreAuthorize(AuthorizationConstants.USER_ONLY)
+    @AuditApi(action = ActionType.UPDATE_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.UPDATE)
+    @PutMapping(AddressApiConstants.UPDATE)
+    public ResponseEntity<ApiResponse<AddressResponse>> updateAddress(
+            @Valid @RequestBody final AddressUpdateRequest request) {
+
+        final IServiceInput<AddressUpdateRequest> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
+        input.setInput(request);
+
+        final IServiceOutput<AddressResponse> output = addressService.updateAddress(input);
+
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.UPDATED_SUCCESSFULLY,
+                output.getOutput());
+    }
+
+    /**
+     * Sets an address as the default address of the authenticated customer.
+     *
+     * @param request address number request
+     * @return updated address information
+     */
+    @Override
+    @PreAuthorize(AuthorizationConstants.USER_ONLY)
+    @AuditApi(action = ActionType.SET_DEFAULT_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.UPDATE)
+    @PutMapping(AddressApiConstants.SET_DEFAULT)
+    public ResponseEntity<ApiResponse<AddressResponse>> setDefaultAddress(
+            @Valid @RequestBody final AddressNumberRequest request) {
+
+        final IServiceInput<AddressNumberRequest> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
+        input.setInput(request);
+
+        final IServiceOutput<AddressResponse> output = addressService.setDefaultAddress(input);
+
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.DEFAULT_ADDRESS_UPDATED,
+                output.getOutput());
+    }
+
+    /**
+     * Deactivates the specified customer address.
+     *
+     * @param request address number request
+     * @return standardized API response
+     */
+    @Override
+    @PreAuthorize(AuthorizationConstants.USER_ONLY)
+    @AuditApi(action = ActionType.DELETE_ADDRESS, module = ModuleType.ADDRESS, method = MethodType.DELETE)
+    @DeleteMapping(AddressApiConstants.DELETE)
+    public ResponseEntity<ApiResponse<Void>> deleteAddress(
+            @Valid @RequestBody final AddressNumberRequest request) {
+
+        final IServiceInput<AddressNumberRequest> input = new ServiceInput<>();
+        input.setServiceContext(serviceContext);
+        input.setInput(request);
+
+        final IServiceOutput<Void> output = addressService.deleteAddress(input);
+
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.ADDRESS_DELETED,
+                output.getOutput());
     }
 }

@@ -138,6 +138,11 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "Invalid new password.",
             HttpStatusCode.BAD_REQUEST),
 
+    PASSWORD_STRENGTH(
+            "FM-AUTH-020",
+            "Strong password is required.",
+            HttpStatusCode.BAD_REQUEST),
+
     // =========================================================================
     // Account Authentication State Errors - 020 to 029
     // =========================================================================
@@ -407,12 +412,12 @@ public enum AuthenticationErrorConstants implements IBusinessError {
 
     PASSWORD_TOO_SHORT(
             "FM-AUTH-105",
-            "Password must contain at least 8 characters.",
+            "Password must contain at least 6 characters.",
             HttpStatusCode.BAD_REQUEST),
 
     PASSWORD_TOO_LONG(
             "FM-AUTH-106",
-            "Password must not contain more than 100 characters.",
+            "Password must not contain more than 16 characters.",
             HttpStatusCode.BAD_REQUEST),
 
     PASSWORD_UPPERCASE_REQUIRED(

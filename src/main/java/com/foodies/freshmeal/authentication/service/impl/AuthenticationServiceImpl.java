@@ -55,6 +55,7 @@ import com.foodies.freshmeal.common.audit.annotation.AuditApi;
 import com.foodies.freshmeal.common.constants.ActionType;
 import com.foodies.freshmeal.common.constants.MethodType;
 import com.foodies.freshmeal.common.constants.ModuleType;
+import com.foodies.freshmeal.common.constants.RepositoryConstants;
 import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
@@ -432,20 +433,25 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
      */
     private void validateRegistrationPasswords(final RegisterRequest registerRequest) {
 
-        if (registerRequest.getPassword() == null || registerRequest.getPassword().isBlank()) {
-
-            throw new IllegalArgumentException("Password is required.");
+        if (registerRequest.getPassword() == null
+                || registerRequest.getPassword().isBlank()) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_REQUIRED);
         }
 
-        if (registerRequest.getConfirmPassword() == null || registerRequest.getConfirmPassword().isBlank()) {
-
-            throw new IllegalArgumentException("Password confirmation is required.");
+        if (registerRequest.getConfirmPassword() == null
+                || registerRequest.getConfirmPassword().isBlank()) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_REQUIRED);
         }
 
-        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
-
-            throw new IllegalArgumentException("Password and confirm password must match.");
+        if (!registerRequest.getPassword()
+                .equals(registerRequest.getConfirmPassword())) {
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_MISMATCH);
         }
+
+        validatePassword(registerRequest.getPassword());
     }
 
     /**
@@ -897,7 +903,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         final String newPassword = inputDTO.getChangePasswordRequest().getNewPassword();
 
         if (currentPassword == null || currentPassword.isBlank()) {
-            throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_REQUIRED);
         }
 
         if (newPassword == null || newPassword.isBlank()) {
@@ -936,7 +942,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
          */
         if (!passwordEncoder.matches(currentPassword, userEntity.getPassword())) {
 
-            throw new BusinessException(AuthenticationErrorConstants.INVALID_NEW_PASSWORD);
+            throw new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD);
         }
 
         /*
@@ -989,6 +995,15 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     public IServiceOutput<Boolean> forgotPassword(final IServiceInput<ForgotPasswordInputDTO> input) {
 
         final ForgotPasswordInputDTO inputDTO = input.getInput();
+
+        if (inputDTO == null
+                || inputDTO.getForgotPasswordRequest() == null
+                || inputDTO.getForgotPasswordRequest().getEmail() == null
+                || !hasText(inputDTO.getForgotPasswordRequest().getEmail().getValue())) {
+
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PASSWORD_RECOVERY_IDENTIFIER_REQUIRED);
+        }
 
         final String requestedEmail = inputDTO.getForgotPasswordRequest().getEmail().getValue();
 
@@ -1055,7 +1070,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             if (input.getServiceContext().getUserProfile() != null) {
                 resetToken.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
             } else {
-                resetToken.setUpdatedBy(RoleType.ADMIN.getLabel());
+                resetToken.setUpdatedBy(RepositoryConstants.SYSTEM_USER);
             }
 
             passwordResetTokenRepository.save(resetToken);
@@ -1113,9 +1128,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
             resetToken.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
         } else {
-            resetToken.setCreatedBy(RoleType.ADMIN.getLabel());
+            resetToken.setCreatedBy(RepositoryConstants.SYSTEM_USER);
 
-            resetToken.setUpdatedBy(RoleType.ADMIN.getLabel());
+            resetToken.setUpdatedBy(RepositoryConstants.SYSTEM_USER);
         }
 
         passwordResetTokenRepository.save(resetToken);
@@ -1258,7 +1273,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         } else {
 
-            resetTokenEntity.setUpdatedBy(RoleType.ADMIN.getLabel());
+            resetTokenEntity.setUpdatedBy(RepositoryConstants.SYSTEM_USER);
         }
 
         passwordResetTokenRepository.save(resetTokenEntity);

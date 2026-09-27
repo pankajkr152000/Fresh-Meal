@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.foodies.freshmeal.common.constants.RepositoryConstants;
 import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
 import com.foodies.freshmeal.common.date.AppCalendar;
@@ -273,18 +274,19 @@ public class UserServiceImpl implements IUserService {
         userEntity.setCredentialsNonExpired(true);
         userEntity.setEnabled(true);
 
-        /*
+        /**
          * Populate creation audit information.
+         *
+         * <p>
+         * Authenticated operations are attributed to the authenticated user.
+         * Public/system-initiated operations are attributed to the system actor
+         * rather than being incorrectly attributed to an administrator.
+         * </p>
          */
-        userEntity.setCreatedAt(AppCalendar.getBusinessLocalDateTime());
-
         if (serviceContext.getUserProfile() != null) {
-
             userEntity.setCreatedBy(serviceContext.getUserProfile().getUserNumber());
-
         } else {
-
-            userEntity.setCreatedBy(RoleType.ADMIN.getLabel());
+            userEntity.setCreatedBy(RepositoryConstants.SYSTEM_USER);
         }
 
         return new ServiceOutput<>(userEntity);
@@ -658,75 +660,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * Creates a new FreshMeal user account specifically through the public
-     * registration workflow.
-     * </p>
-     *
-     * <p>
-     * Unlike {@link #addUser(IServiceInput)}, a newly registered account must
-     * complete email verification before authentication is permitted. Therefore,
-     * the account is created with {@code emailVerified = false} and
-     * {@code enabled = false}.
-     * </p>
-     *
-     * <h3>Registration Security</h3>
-     * <ul>
-     * <li>Username uniqueness is validated.</li>
-     * <li>Email uniqueness is validated.</li>
-     * <li>Phone-number uniqueness is validated.</li>
-     * <li>The default {@link RoleType#USER} role is assigned.</li>
-     * <li>The account remains disabled until email verification succeeds.</li>
-     * <li>Password handling remains outside this User service.</li>
-     * </ul>
-     *
-     * @param input service input containing registration information
-     * @return newly created, unverified user entity
-     */
-    @Override
-    public IServiceOutput<UserEntity> registerUser(IServiceInput<UserInputDTO> input) {
-
-        UserInputDTO userInputDTO = input.getInput();
-        UserRequest userRequest = userInputDTO.getUserRequest();
-
-        /*
-         * Validate unique username before creating the entity.
-         */
-        ensureUsernameAvailable(userRequest.getUsername(), null);
-
-        /*
-         * Validate unique email before creating the entity.
-         */
-        String normalizedEmail = FreshMealUtilities.normalizeEmail(userRequest.getEmail().getValue());
-        ensureEmailAvailable(normalizedEmail, null);
-
-        /*
-         * Validate unique phone number before creating the entity.
-         */
-        ensurePhoneNumberAvailable(userRequest.getPhoneNumber(), null);
-
-        /*
-         * Create the user using the existing UserEntity creation infrastructure.
-         */
-        UserEntity userEntity = createUserEntity(input).getOutput();
-
-        /*
-         * Registration requires email verification before authentication.
-         */
-        userEntity.setEmailVerified(false);
-        userEntity.setEnabled(false);
-
-        /*
-         * Persist the newly registered user.
-         */
-        userEntity = userRepository.save(userEntity);
-
-        return new ServiceOutput<>(userEntity);
-    }
-
-    /**
      * =============================================================================
      * REGISTER USER
      * =============================================================================
@@ -882,7 +815,7 @@ public class UserServiceImpl implements IUserService {
         if (serviceContext.getUserProfile() != null) {
             existingUser.setUpdatedBy(serviceContext.getUserProfile().getUserNumber());
         } else {
-            existingUser.setUpdatedBy(RoleType.ADMIN.getLabel());
+            existingUser.setUpdatedBy(RepositoryConstants.SYSTEM_USER);
         }
 
         final UserEntity savedUserEntity = userRepository.save(existingUser);

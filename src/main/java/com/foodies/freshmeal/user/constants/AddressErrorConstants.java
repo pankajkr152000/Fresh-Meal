@@ -97,6 +97,16 @@ public enum AddressErrorConstants implements IBusinessError {
             "Invalid postal code.",
             HttpStatusCode.BAD_REQUEST),
 
+    ADDRESS_REQUEST_REQUIRED(
+            "FM-USER-108",
+            "Address request required.",
+            HttpStatusCode.BAD_REQUEST),
+
+    ADDRESS_NUMBER_REQUIRED(
+            "FM-USER-109",
+            "Address number required.",
+            HttpStatusCode.BAD_REQUEST),
+
     // =========================================================================
     // Default Address
     // =========================================================================
@@ -115,10 +125,24 @@ public enum AddressErrorConstants implements IBusinessError {
     // Pincode
     // =========================================================================
 
-    PINCODE_DETAILS_NOT_FOUND(
+    INVALID_PINCODE(
             "FM-USER-300",
+            "The requested pincode is not valid..",
+            HttpStatusCode.BAD_REQUEST),
+
+    PINCODE_DETAILS_NOT_FOUND(
+            "FM-USER-301",
             "Unable to resolve address details for the provided postal code.",
-            HttpStatusCode.NOT_FOUND);
+            HttpStatusCode.NOT_FOUND),
+
+    // =========================================================================
+    // Address Operarion
+    // =========================================================================
+
+    ADDRESS_OPERATION_NOT_ALLOWED(
+            "FM-USER-400",
+            "The requested address operation is not allowed.",
+            HttpStatusCode.BAD_REQUEST);
 
     /**
      * Error Code.

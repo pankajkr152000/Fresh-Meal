@@ -148,8 +148,6 @@ public interface IUserService {
      */
     IServiceOutput<UserResponse> addUser(IServiceInput<UserInputDTO> input);
 
-    IServiceOutput<UserEntity> registerUser(IServiceInput<UserInputDTO> input);
-
     /**
      * Updates an existing user.
      *
