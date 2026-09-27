@@ -19,8 +19,7 @@ public enum ModuleType implements IDisplayOption {
     NOTIFICATION("Notification"),
     AUTHENTICATION("Authentication"),
     AUTHORIZATION("Authorization"),
-
-    ;
+    DELIVERY_PARTNER("Delivery Partner");
 
     private final String displayName;
 

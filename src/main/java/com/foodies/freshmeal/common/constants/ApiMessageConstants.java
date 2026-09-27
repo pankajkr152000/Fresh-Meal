@@ -212,7 +212,15 @@ public final class ApiMessageConstants {
 
     public static final String DELIVERY_PARTNER_UPDATED = "Delivery partner updated successfully";
 
+    public static final String DELIVERY_PARTNER_FOUND = "Delivery partner found";
+
     public static final String DELIVERY_PARTNER_NOT_FOUND = "Delivery partner not found";
+
+    public static final String DELIVERY_PARTNER_VERIFICATION_STATUS_UPDATED = "Delivery partner verification status updated successfully";
+
+    public static final String DELIVERY_PARTNER_STATUS_UPDATED = "Delivery partner status updated successfully";
+
+    public static final String DELIVERY_PARTNER_AVAILABILITY_UPDATED = "Delivery partner availability status updated successfully";
 
     // =========================================================
     // Metadata

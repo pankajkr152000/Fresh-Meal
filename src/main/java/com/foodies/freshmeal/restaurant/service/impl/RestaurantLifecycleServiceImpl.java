@@ -127,6 +127,7 @@ public class RestaurantLifecycleServiceImpl
                 restaurant.getRestaurantNumber(),
                 "Restaurant number must not be null.");
 
+        @SuppressWarnings("unused")
         final RepositoryContext repositoryContext = createRepositoryContext(serviceContext);
 
         final Query branchQuery = Query.query(

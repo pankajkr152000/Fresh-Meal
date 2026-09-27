@@ -117,7 +117,18 @@ public enum ActionType implements IDisplayOption {
     ENABLE_USER("Enable User"),
     DISABLE_USER("Disable User"),
     LOCK_USER("Lock User"),
-    UNLOCK_USER("Unlock User");
+    UNLOCK_USER("Unlock User"),
+
+    // =========================================================================
+    // Delivery Partner Operations
+    // =========================================================================
+
+    REGISTER_DELIVERY_PARTNER("Register Delivery Partner"),
+    VIEW_DELIVERY_PARTNER("View Delivery Partner"),
+    UPDATE_DELIVERY_PARTNER("Update Delivery Partner"),
+    UPDATE_DELIVERY_PARTNER_VERIFICATION_STATUS("Update Delivery Partner Verification Status"),
+    UPDATE_DELIVERY_PARTNER_STATUS("Update Delivery Partner Status"),
+    UPDATE_DELIVERY_PARTNER_AVAILABILITY("Update Delivery Partner Availability");
 
     /**
      * Display name.

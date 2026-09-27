@@ -175,6 +175,8 @@ public final class SequenceConstants {
 
     public static final String DELIVERY_PARTNER_NUMBER_PATTERN = "FM-DLP-%07d";
 
+    public static final String DELIVERY_PARTNER_CODE_PATTERN = "FM-DLP-CODE-%07d";
+
     public static final String PAYMENT_NUMBER_PATTERN = "FM-PAY-%07d";
 
     public static final String REFUND_NUMBER_PATTERN = "FM-RFD-%07d";

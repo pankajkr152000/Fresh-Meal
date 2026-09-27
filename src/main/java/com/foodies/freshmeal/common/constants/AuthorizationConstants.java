@@ -6,16 +6,17 @@ public final class AuthorizationConstants {
     }
 
     /**
-     * is authenticated
+     * Access allowed to authenticated users.
      */
     public static final String IS_AUTHENTICATED = "isAuthenticated()";
+
     /**
      * Access restricted to administrators.
      */
     public static final String ADMIN_ONLY = "hasRole('ADMIN')";
 
     /**
-     * access restricted to User only
+     * Access restricted to users.
      */
     public static final String USER_ONLY = "hasRole('USER')";
 
@@ -23,6 +24,11 @@ public final class AuthorizationConstants {
      * Access restricted to restaurant owners.
      */
     public static final String RESTAURANT_OWNER_ONLY = "hasRole('RESTAURANT_OWNER')";
+
+    /**
+     * Access restricted to delivery partners.
+     */
+    public static final String DELIVERY_PARTNER_ONLY = "hasRole('DELIVERY_PARTNER')";
 
     /**
      * Access allowed to administrators and restaurant owners.
