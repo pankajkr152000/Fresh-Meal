@@ -743,7 +743,7 @@ public class FoodServiceImpl implements IFoodService {
             return restaurantRepository.findAll(query)
                     .stream()
                     .filter(Objects::nonNull)
-                    .map(RestaurantEntity::getRestaurantNumber)
+                    .map(restaurant -> restaurant.getRestaurantNumber())
                     .filter(Objects::nonNull)
                     .toList();
         }
@@ -2211,7 +2211,7 @@ public class FoodServiceImpl implements IFoodService {
 
             final List<String> restaurantNumbers = restaurantRepository.findAll(restaurantQuery)
                     .stream()
-                    .map(RestaurantEntity::getRestaurantNumber)
+                    .map(restaurantEntity -> restaurantEntity.getRestaurantNumber())
                     .filter(Objects::nonNull)
                     .toList();
 
