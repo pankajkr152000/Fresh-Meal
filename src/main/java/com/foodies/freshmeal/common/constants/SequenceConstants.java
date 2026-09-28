@@ -94,6 +94,8 @@ public final class SequenceConstants {
 
     public static final String PASSWORD_RESET_TOKEN_SEQUENCE = "password_reset_token_sequence";
 
+    public static final String CART_ENTITY_SEQUENCE = "cart_sequence";
+
     // =========================================================================
     // Internal Database ID Patterns
     // =========================================================================
@@ -140,6 +142,8 @@ public final class SequenceConstants {
     public static final String REVOKED_SESSION_DB_ID_PATTERN = "RSSDB%06d";
 
     public static final String PASSWORD_RESET_TOKEN_DB_ID_PATTERN = "PRTDB%06d";
+
+    public static final String CART_DB_ID_PATTERN = "CRTDB%06d";
 
     // =========================================================================
     // External / Business Identifier Patterns
@@ -194,4 +198,6 @@ public final class SequenceConstants {
     public static final String REVOKED_SESSION_NUMBER_PATTERN = "FM-RSS-%07d";
 
     public static final String PASSWORD_RESET_TOKEN_NUMBER_PATTERN = "FM-PRT-%07d";
+
+    public static final String CART_NUMBER_PATTERN = "FM-CRT-%07d";
 }

@@ -70,6 +70,13 @@ public class Money implements Serializable {
                 .build();
     }
 
+    public static Money of(Double amount) {
+        return Money.builder()
+                .amount(new BigDecimal(amount))
+                .currency("INR")
+                .build();
+    }
+
     public static Money defaultMoney() {
         return Money.builder()
                 .amount(BigDecimal.ZERO)

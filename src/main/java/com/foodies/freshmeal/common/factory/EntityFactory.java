@@ -4,6 +4,7 @@ import com.foodies.freshmeal.authentication.entity.EmailVerificationOtpEntity;
 import com.foodies.freshmeal.authentication.entity.PasswordResetTokenEntity;
 import com.foodies.freshmeal.authentication.entity.RevokedSessionEntity;
 import com.foodies.freshmeal.authentication.entity.RevokedTokenEntity;
+import com.foodies.freshmeal.cart.entity.CartEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.enums.EntityName;
 import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
@@ -74,6 +75,9 @@ public final class EntityFactory {
 
             case FOOD_ENTITY ->
                 FoodEntity.create();
+
+            case CART_ENTITY ->
+                CartEntity.create();
 
             case ORDER_ENTITY ->
                 OrderEntity.create();
