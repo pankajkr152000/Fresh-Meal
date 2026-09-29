@@ -7,6 +7,7 @@ public enum ModuleType implements IDisplayOption {
     AUTH("Authentication"),
     USER("User"),
     FOOD("Food"),
+    CART("Cart"),
     RESTAURANT("Restaurant"),
     CATEGORY("Category"),
     IMAGE("Image"),

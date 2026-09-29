@@ -132,7 +132,23 @@ public enum ActionType implements IDisplayOption {
     UPDATE_DELIVERY_PARTNER("Update Delivery Partner"),
     UPDATE_DELIVERY_PARTNER_VERIFICATION_STATUS("Update Delivery Partner Verification Status"),
     UPDATE_DELIVERY_PARTNER_STATUS("Update Delivery Partner Status"),
-    UPDATE_DELIVERY_PARTNER_AVAILABILITY("Update Delivery Partner Availability");
+    UPDATE_DELIVERY_PARTNER_AVAILABILITY("Update Delivery Partner Availability"),
+
+    // =========================================================================
+    // Cart Operations
+    // =========================================================================
+
+    ADD_CART_ITEM("Add Cart Item"),
+
+    UPDATE_CART_ITEM("Update Cart Item"),
+
+    REMOVE_CART_ITEM("Remove Cart Item"),
+
+    CLEAR_CART("Clear Cart"),
+
+    READ_ACTIVE_CART("Read Active Cart"),
+
+    READ_CART_SUMMARY("Read Cart Summary");
 
     /**
      * Display name.
