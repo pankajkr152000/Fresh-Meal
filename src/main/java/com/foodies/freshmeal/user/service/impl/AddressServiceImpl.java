@@ -487,4 +487,8 @@ public class AddressServiceImpl implements IAddressService {
         output.setOutput(value);
         return output;
     }
+    // TODO: after this checkout i will next refactor address to get current address
+    // from that we can get get exact or
+    // TODO: approximate geolocation from that we have correct longitude and
+    // latitude so rain may apply duration and direction we calculate
 }

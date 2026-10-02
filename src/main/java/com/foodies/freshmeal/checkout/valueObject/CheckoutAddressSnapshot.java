@@ -1,43 +1,45 @@
 
 package com.foodies.freshmeal.checkout.valueObject;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * ============================================================================
- * Class : CheckoutAddressSnapshot
- * ============================================================================
- *
  * Represents a snapshot of the delivery address selected for a checkout.
  *
  * <p>
- * The snapshot preserves the address details presented to the customer
- * during checkout. Changes to the customer's saved address must not
- * modify an existing checkout snapshot.
+ * The snapshot preserves the address information reviewed by the
+ * customer at the time of checkout. Subsequent modifications to the
+ * original saved address must not alter this snapshot.
  * </p>
  *
  * <p>
- * This class is an embedded value object within CheckoutEntity and does
- * not maintain independent persistence or business lifecycle behavior.
+ * The address may originate from a customer's saved address or
+ * from a newly entered delivery address.
  * </p>
  *
- * ============================================================================
+ * @author Pankaj Kumar
  */
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckoutAddressSnapshot {
+public class CheckoutAddressSnapshot implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Business identifier of the saved address, when applicable.
+     * Identifier of the original saved address.
      *
      * <p>
-     * This field is null when the customer provides a new address
-     * without selecting an existing saved address.
+     * Null when the customer provides a new address that has not
+     * been saved in the address module.
      * </p>
      */
     private String addressNumber;
@@ -53,13 +55,12 @@ public class CheckoutAddressSnapshot {
     private String phoneNumber;
 
     /**
-     * Primary address line containing house number, building,
-     * street, or locality details.
+     * Primary address line containing house, building, or street details.
      */
     private String addressLine;
 
     /**
-     * Additional delivery landmark, when provided.
+     * Additional location information, if available.
      */
     private String landmark;
 
@@ -74,7 +75,7 @@ public class CheckoutAddressSnapshot {
     private String district;
 
     /**
-     * State associated with the delivery address.
+     * State or province associated with the delivery address.
      */
     private String state;
 
@@ -84,7 +85,7 @@ public class CheckoutAddressSnapshot {
     private String country;
 
     /**
-     * Postal or PIN code of the delivery address.
+     * Postal or ZIP code associated with the delivery address.
      */
     private String pincode;
 }

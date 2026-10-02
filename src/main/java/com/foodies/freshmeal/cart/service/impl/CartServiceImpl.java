@@ -319,7 +319,7 @@ public class CartServiceImpl implements ICartService {
      */
     private CartEntity createActiveCart(final String userNumber, final IServiceContext context) {
 
-        final long sequence = databaseSequenceService.generateSequence(context, SequenceConstants.CART_ENTITY_SEQUENCE);
+        final long sequence = databaseSequenceService.generateSequence(context, SequenceConstants.CART_SEQUENCE);
 
         final String cartNumber = String.format(SequenceConstants.CART_NUMBER_PATTERN, sequence);
 
@@ -753,54 +753,55 @@ public class CartServiceImpl implements ICartService {
     @Override
     public IServiceOutput<CartResponse> getActiveCart(final IServiceInput<Void> input) {
 
-		Objects.requireNonNull(input, "Get active cart service input must not be null.");
+        Objects.requireNonNull(input, "Get active cart service input must not be null.");
 
-		final IServiceContext context = Objects.requireNonNull(input.getServiceContext(), "Service context must not be null.");
+        final IServiceContext context = Objects.requireNonNull(input.getServiceContext(),
+                "Service context must not be null.");
 
-		/*
-		 * Resolve the authenticated customer.
-		 *
-		 * Cart ownership is derived exclusively from the security context. The client
-		 * must never be allowed to select another user's cart.
-		 */
-		final UserProfile userProfile = resolveAuthenticatedUser(context);
+        /*
+         * Resolve the authenticated customer.
+         *
+         * Cart ownership is derived exclusively from the security context. The client
+         * must never be allowed to select another user's cart.
+         */
+        final UserProfile userProfile = resolveAuthenticatedUser(context);
 
-		final String userNumber = userProfile.getUserNumber();
+        final String userNumber = userProfile.getUserNumber();
 
-		LOGGER.debug("Retrieving active cart for user [{}].", userNumber);
+        LOGGER.debug("Retrieving active cart for user [{}].", userNumber);
 
-		/*
-		 * Retrieve the customer's existing active cart.
-		 *
-		 * This operation is intentionally read-only. It must not create a MongoDB
-		 * document merely because the customer opened the cart.
-		 */
-		final CartEntity cart = findActiveCart(userNumber);
+        /*
+         * Retrieve the customer's existing active cart.
+         *
+         * This operation is intentionally read-only. It must not create a MongoDB
+         * document merely because the customer opened the cart.
+         */
+        final CartEntity cart = findActiveCart(userNumber);
 
-		/*
-		 * A customer without a persisted cart is a normal business state, not an
-		 * application error.
-		 *
-		 * Return a consistent empty-cart response so the frontend can render the cart
-		 * page without special error handling.
-		 */
-		if (cart == null) {
+        /*
+         * A customer without a persisted cart is a normal business state, not an
+         * application error.
+         *
+         * Return a consistent empty-cart response so the frontend can render the cart
+         * page without special error handling.
+         */
+        if (cart == null) {
 
-			LOGGER.debug("No active cart found for user [{}]. " + "Returning an empty cart response.", userNumber);
+            LOGGER.debug("No active cart found for user [{}]. " + "Returning an empty cart response.", userNumber);
 
-			return new ServiceOutput<>(createEmptyCartResponse());
-		}
+            return new ServiceOutput<>(createEmptyCartResponse());
+        }
 
-		/*
-		 * Map the persisted aggregate without modifying it. The stored totals are
-		 * authoritative for this read operation.
-		 */
-		final CartResponse response = cartMapper.toResponse(cart);
+        /*
+         * Map the persisted aggregate without modifying it. The stored totals are
+         * authoritative for this read operation.
+         */
+        final CartResponse response = cartMapper.toResponse(cart);
 
-		LOGGER.debug("Active cart [{}] retrieved successfully for user [{}].", cart.getCartNumber(), userNumber);
+        LOGGER.debug("Active cart [{}] retrieved successfully for user [{}].", cart.getCartNumber(), userNumber);
 
-		return new ServiceOutput<>(response);
-	}
+        return new ServiceOutput<>(response);
+    }
 
     /**
      * Creates a consistent empty-cart response for an authenticated
@@ -831,57 +832,58 @@ public class CartServiceImpl implements ICartService {
 
     @Override
     public IServiceOutput<CartSummaryResponse> getCartSummary(
-			final IServiceInput<Void> input) {
+            final IServiceInput<Void> input) {
 
-		Objects.requireNonNull(input, "Get cart summary service input must not be null.");
+        Objects.requireNonNull(input, "Get cart summary service input must not be null.");
 
-		final IServiceContext context = Objects.requireNonNull(input.getServiceContext(),
-				"Service context must not be null.");
+        final IServiceContext context = Objects.requireNonNull(input.getServiceContext(),
+                "Service context must not be null.");
 
-		/*
-		 * Resolve the authenticated customer.
-		 *
-		 * The service must never trust a user identifier supplied by the client for
-		 * cart ownership.
-		 */
-		final UserProfile userProfile = resolveAuthenticatedUser(context);
+        /*
+         * Resolve the authenticated customer.
+         *
+         * The service must never trust a user identifier supplied by the client for
+         * cart ownership.
+         */
+        final UserProfile userProfile = resolveAuthenticatedUser(context);
 
-		final String userNumber = userProfile.getUserNumber();
+        final String userNumber = userProfile.getUserNumber();
 
-		LOGGER.debug("Retrieving cart summary for user [{}].", userNumber);
+        LOGGER.debug("Retrieving cart summary for user [{}].", userNumber);
 
-		/*
-		 * Retrieve the customer's active cart.
-		 *
-		 * This is a read-only operation and must not create a cart.
-		 */
-		final CartEntity cart = findActiveCart(userNumber);
+        /*
+         * Retrieve the customer's active cart.
+         *
+         * This is a read-only operation and must not create a cart.
+         */
+        final CartEntity cart = findActiveCart(userNumber);
 
-		/*
-		 * No active cart is a valid business state.
-		 *
-		 * Return a consistent empty summary instead of treating this situation as an
-		 * application error.
-		 */
-		if (cart == null) {
+        /*
+         * No active cart is a valid business state.
+         *
+         * Return a consistent empty summary instead of treating this situation as an
+         * application error.
+         */
+        if (cart == null) {
 
-			LOGGER.debug("No active cart found for user [{}]. " + "Returning an empty cart summary.", userNumber);
+            LOGGER.debug("No active cart found for user [{}]. " + "Returning an empty cart summary.", userNumber);
 
-			return new ServiceOutput<>(createEmptyCartSummaryResponse());
-		}
+            return new ServiceOutput<>(createEmptyCartSummaryResponse());
+        }
 
-		/*
-		 * Map only summary information.
-		 *
-		 * The mapper must not load or traverse unrelated entities, perform database
-		 * operations, or recalculate aggregate totals.
-		 */
-		final CartSummaryResponse response = cartMapper.toSummaryResponse(cart);
+        /*
+         * Map only summary information.
+         *
+         * The mapper must not load or traverse unrelated entities, perform database
+         * operations, or recalculate aggregate totals.
+         */
+        final CartSummaryResponse response = cartMapper.toSummaryResponse(cart);
 
-		LOGGER.debug("Cart summary retrieved successfully for cart [{}] " + "and user [{}].", cart.getCartNumber(), userNumber);
+        LOGGER.debug("Cart summary retrieved successfully for cart [{}] " + "and user [{}].", cart.getCartNumber(),
+                userNumber);
 
-		return new ServiceOutput<>(response);
-	}
+        return new ServiceOutput<>(response);
+    }
 
     /**
      * Creates a consistent empty-cart summary for an authenticated

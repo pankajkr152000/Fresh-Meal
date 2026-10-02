@@ -102,7 +102,7 @@ public enum EntityName {
     /**
      * User profile entity.
      */
-    USER_PROFILE_ENTITY("UPR", "User Profile"),
+//    USER_PROFILE_ENTITY("UPR", "User Profile"),
 
     /**
      * Login history entity.
@@ -197,7 +197,12 @@ public enum EntityName {
     /**
      * Password reset token entity.
      */
-    PASSWORD_RESET_TOKEN_ENTITY("PRT", "Password Reset Token");
+    PASSWORD_RESET_TOKEN_ENTITY("PRT", "Password Reset Token"),
+
+    /**
+     * Checkout entity.
+     */
+    CHECKOUT_ENTITY("CHK", "Checkout");
 
     /**
      * Unique entity code.

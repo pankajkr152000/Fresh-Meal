@@ -100,6 +100,9 @@ public final class EntityFactory {
             case PASSWORD_RESET_TOKEN_ENTITY ->
                 PasswordResetTokenEntity.create();
 
+            // case CHECKOUT_ENTITY ->
+            // CheckoutEntity.create();
+
             default ->
                 throw new IllegalArgumentException(
                         "Unsupported entity type : " + entityType);
