@@ -10,7 +10,8 @@ public enum PaymentModeConstant implements IDisplayOption {
     CREDIT_CARD("Credit Card"),
     DEBIT_CARD("Debit Card"),
     NET_BANKING("Net Banking"),
-    WALLET("Wallet");
+    WALLET("Wallet"),
+    GIFT_CARD("Gift Card");
 
     /**
      * User-friendly display label.

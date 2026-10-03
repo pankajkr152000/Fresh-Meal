@@ -188,6 +188,24 @@ public class CheckoutEntity extends ABaseEntity {
      */
     private CheckoutFailureDetails failureDetails;
 
+    /**
+     * <ul>
+     * - checkoutNumber identifies the checkout session.
+     * </ul>
+     * 
+     * <ul>
+     * - confirmationIdempotencyKey identifies the specific confirmation attempt
+     * associated with that checkout.
+     * </ul>
+     * 
+     * <ul>
+     * Think of it this way: one checkout can receive multiple HTTP requests, but
+     * all retries of the same confirmation attempt must be recognized as one
+     * logical operation.
+     * </ul>
+     */
+    private String confirmationIdempotencyKey;
+
     // =========================================================================
     // Constructors
     // =========================================================================
@@ -272,9 +290,7 @@ public class CheckoutEntity extends ABaseEntity {
      */
     public void startValidation() {
 
-        transitionTo(
-                CheckoutStatusConstant.VALIDATING,
-                "Checkout validation started.");
+        transitionTo(CheckoutStatusConstant.VALIDATING, "Checkout validation started.");
     }
 
     /**
@@ -290,31 +306,23 @@ public class CheckoutEntity extends ABaseEntity {
             final CheckoutPricingSnapshot pricing) {
 
         if (status != CheckoutStatusConstant.VALIDATING) {
-            throw new IllegalStateException(
-                    "Checkout must be in VALIDATING status.");
+            throw new IllegalStateException("Checkout must be in VALIDATING status.");
         }
 
         if (validatedItems == null || validatedItems.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "At least one checkout item is required.");
+            throw new IllegalArgumentException("At least one checkout item is required.");
         }
 
-        Objects.requireNonNull(
-                address,
-                "Delivery address snapshot is required.");
+        Objects.requireNonNull(address, "Delivery address snapshot is required.");
 
-        Objects.requireNonNull(
-                pricing,
-                "Checkout pricing snapshot is required.");
+        Objects.requireNonNull(pricing, "Checkout pricing snapshot is required.");
 
         this.items = new ArrayList<>(validatedItems);
         this.deliveryAddress = address;
         this.pricing = pricing;
         this.failureDetails = null;
 
-        transitionTo(
-                CheckoutStatusConstant.READY_FOR_CONFIRMATION,
-                "Checkout validation completed successfully.");
+        transitionTo(CheckoutStatusConstant.READY_FOR_CONFIRMATION, "Checkout validation completed successfully.");
     }
 
     /**
@@ -325,15 +333,43 @@ public class CheckoutEntity extends ABaseEntity {
         ensureNotExpired();
 
         if (status != CheckoutStatusConstant.READY_FOR_CONFIRMATION) {
-            throw new IllegalStateException(
-                    "Checkout is not ready for confirmation.");
+            throw new IllegalStateException("Checkout is not ready for confirmation.");
         }
 
         this.confirmedAt = AppCalendar.getBusinessLocalDateTime();
 
-        transitionTo(
-                CheckoutStatusConstant.CONFIRMATION_IN_PROGRESS,
-                "Checkout confirmation started.");
+        transitionTo(CheckoutStatusConstant.CONFIRMATION_IN_PROGRESS, "Checkout confirmation started.");
+    }
+
+    /**
+     * Binds an idempotency key to the checkout confirmation attempt.
+     *
+     * <p>
+     * The first key assigned to a checkout becomes permanent.
+     * Repeated submissions using the same key are accepted,
+     * while attempts using a different key are rejected.
+     * </p>
+     *
+     * @param idempotencyKey unique key identifying the confirmation request
+     * @return true when the key was assigned for the first time;
+     *         false when the same key was already assigned
+     * @throws IllegalArgumentException when the key is missing
+     * @throws IllegalStateException    when a different key is already assigned
+     */
+    public boolean bindConfirmationIdempotencyKey(final String idempotencyKey) {
+
+        validateRequired(idempotencyKey, "Confirmation idempotency key");
+
+        if (this.confirmationIdempotencyKey == null) {
+            this.confirmationIdempotencyKey = idempotencyKey;
+            return true;
+        }
+
+        if (this.confirmationIdempotencyKey.equals(idempotencyKey)) {
+            return false;
+        }
+
+        throw new IllegalStateException("Checkout is already bound to a different confirmation key.");
     }
 
     /**
@@ -356,13 +392,11 @@ public class CheckoutEntity extends ABaseEntity {
                 return;
             }
 
-            throw new IllegalStateException(
-                    "Checkout is already linked to a different order.");
+            throw new IllegalStateException("Checkout is already linked to a different order.");
         }
 
         if (status != CheckoutStatusConstant.CONFIRMATION_IN_PROGRESS) {
-            throw new IllegalStateException(
-                    "Checkout confirmation is not in progress.");
+            throw new IllegalStateException("Checkout confirmation is not in progress.");
         }
 
         final LocalDateTime now = AppCalendar.getBusinessLocalDateTime();
@@ -371,10 +405,7 @@ public class CheckoutEntity extends ABaseEntity {
         this.completedAt = now;
         this.failureDetails = null;
 
-        transitionTo(
-                CheckoutStatusConstant.ORDER_CREATED,
-                "Order successfully created from checkout.",
-                now);
+        transitionTo(CheckoutStatusConstant.ORDER_CREATED, "Order successfully created from checkout.", now);
     }
 
     /**
@@ -389,27 +420,20 @@ public class CheckoutEntity extends ABaseEntity {
      */
     public void markFailed(final CheckoutFailureDetails failureDetails) {
 
-        Objects.requireNonNull(
-                failureDetails,
-                "Checkout failure details are required.");
+        Objects.requireNonNull(failureDetails, "Checkout failure details are required.");
 
         if (failureDetails.isReconciliationRequired()) {
-            throw new IllegalArgumentException(
-                    "Checkout requires reconciliation before failure can be finalized.");
+            throw new IllegalArgumentException("Checkout requires reconciliation before failure can be finalized.");
         }
 
         // Validate the transition before modifying the entity.
-        if (status == null
-                || !status.canTransitionTo(CheckoutStatusConstant.FAILED)) {
-            throw new IllegalStateException(
-                    "Checkout cannot transition to FAILED from status: " + status);
+        if (status == null || !status.canTransitionTo(CheckoutStatusConstant.FAILED)) {
+            throw new IllegalStateException("Checkout cannot transition to FAILED from status: " + status);
         }
 
         this.failureDetails = failureDetails;
 
-        transitionTo(
-                CheckoutStatusConstant.FAILED,
-                "Checkout processing failed.");
+        transitionTo(CheckoutStatusConstant.FAILED, "Checkout processing failed.");
     }
 
     /**
@@ -421,9 +445,7 @@ public class CheckoutEntity extends ABaseEntity {
             return;
         }
 
-        transitionTo(
-                CheckoutStatusConstant.CANCELLED,
-                "Checkout cancelled.");
+        transitionTo(CheckoutStatusConstant.CANCELLED, "Checkout cancelled.");
     }
 
     /**
@@ -437,9 +459,7 @@ public class CheckoutEntity extends ABaseEntity {
 
         ensureExpired();
 
-        transitionTo(
-                CheckoutStatusConstant.EXPIRED,
-                "Checkout session expired.");
+        transitionTo(CheckoutStatusConstant.EXPIRED, "Checkout session expired.");
     }
 
     // =========================================================================
@@ -453,8 +473,7 @@ public class CheckoutEntity extends ABaseEntity {
      */
     public boolean isExpired() {
 
-        return expiresAt != null
-                && !AppCalendar.getBusinessLocalDateTime().isBefore(expiresAt);
+        return expiresAt != null && !AppCalendar.getBusinessLocalDateTime().isBefore(expiresAt);
     }
 
     /**
@@ -546,18 +565,12 @@ public class CheckoutEntity extends ABaseEntity {
             final String reason,
             final LocalDateTime changedAt) {
 
-        Objects.requireNonNull(
-                targetStatus,
-                "Target checkout status is required.");
+        Objects.requireNonNull(targetStatus, "Target checkout status is required.");
 
-        Objects.requireNonNull(
-                changedAt,
-                "Status transition timestamp is required.");
+        Objects.requireNonNull(changedAt, "Status transition timestamp is required.");
 
         if (status == null || !status.canTransitionTo(targetStatus)) {
-            throw new IllegalStateException(
-                    "Invalid checkout status transition: "
-                            + status + " -> " + targetStatus);
+            throw new IllegalStateException("Invalid checkout status transition: " + status + " -> " + targetStatus);
         }
 
         this.status = targetStatus;
@@ -600,8 +613,7 @@ public class CheckoutEntity extends ABaseEntity {
     private void ensureNotExpired() {
 
         if (isExpired()) {
-            throw new IllegalStateException(
-                    "Checkout session has expired.");
+            throw new IllegalStateException("Checkout session has expired.");
         }
     }
 
@@ -611,8 +623,7 @@ public class CheckoutEntity extends ABaseEntity {
     private void ensureExpired() {
 
         if (!isExpired()) {
-            throw new IllegalStateException(
-                    "Checkout session is not yet eligible for expiration.");
+            throw new IllegalStateException("Checkout session is not yet eligible for expiration.");
         }
     }
 
@@ -631,8 +642,7 @@ public class CheckoutEntity extends ABaseEntity {
             final String fieldName) {
 
         if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(
-                    fieldName + " is required.");
+            throw new IllegalArgumentException(fieldName + " is required.");
         }
     }
 }

@@ -102,7 +102,7 @@ public enum EntityName {
     /**
      * User profile entity.
      */
-//    USER_PROFILE_ENTITY("UPR", "User Profile"),
+    // USER_PROFILE_ENTITY("UPR", "User Profile"),
 
     /**
      * Login history entity.
@@ -133,6 +133,11 @@ public enum EntityName {
      * Restaurant entity.
      */
     RESTAURANT_ENTITY("RST", "Restaurant"),
+
+    /**
+     * Restaurant entity.
+     */
+    RESTAURANT_BRANCH_ENTITY("BRN", "Restaurant Branch"),
 
     /**
      * Delivery partner entity.

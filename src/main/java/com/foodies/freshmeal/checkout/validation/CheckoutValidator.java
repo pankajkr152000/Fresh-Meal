@@ -30,7 +30,7 @@ import com.foodies.freshmeal.common.exception.BusinessException;
  * @since 1.0
  */
 @Component
-public class CheckoutRequestValidator {
+public class CheckoutValidator {
 
     /**
      * Validates a checkout business identifier.

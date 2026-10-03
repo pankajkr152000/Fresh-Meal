@@ -11,6 +11,8 @@ import com.foodies.freshmeal.common.sequence.entity.impl.DatabaseSequence;
 import com.foodies.freshmeal.food.entity.FoodEntity;
 import com.foodies.freshmeal.image.entity.ImageEntity;
 import com.foodies.freshmeal.order.entity.OrderEntity;
+import com.foodies.freshmeal.restaurant.entity.RestaurantBranchEntity;
+import com.foodies.freshmeal.restaurant.entity.RestaurantEntity;
 import com.foodies.freshmeal.user.entity.AddressEntity;
 import com.foodies.freshmeal.user.entity.LoginHistoryEntity;
 import com.foodies.freshmeal.user.entity.UserEntity;
@@ -99,6 +101,12 @@ public final class EntityFactory {
 
             case PASSWORD_RESET_TOKEN_ENTITY ->
                 PasswordResetTokenEntity.create();
+
+            case RESTAURANT_ENTITY ->
+                RestaurantEntity.create();
+
+            case RESTAURANT_BRANCH_ENTITY ->
+                RestaurantBranchEntity.create();
 
             // case CHECKOUT_ENTITY ->
             // CheckoutEntity.create();

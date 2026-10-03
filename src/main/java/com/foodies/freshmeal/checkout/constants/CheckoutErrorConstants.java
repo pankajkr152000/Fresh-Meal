@@ -488,6 +488,11 @@ public enum CheckoutErrorConstants implements IBusinessError {
             "One or more cart item snapshots are invalid.",
             HttpStatusCode.CONFLICT),
 
+    CHECKOUT_ACCESS_DENIED(
+            "FM-CHECKOUT-319",
+            "Access to checkout is denied.",
+            HttpStatusCode.FORBIDDEN),
+
     // =========================================================================
     // Address / Restaurant / Food Validation
     // =========================================================================

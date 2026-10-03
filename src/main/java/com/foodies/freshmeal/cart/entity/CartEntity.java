@@ -384,8 +384,7 @@ public class CartEntity extends ABaseEntity {
      */
     public void startCheckout() {
 
-        transitionTo(
-                CartStatusConstant.CHECKOUT_IN_PROGRESS);
+        transitionTo(CartStatusConstant.CHECKOUT_IN_PROGRESS);
 
         this.checkoutStartedAt = LocalDateTime.now();
     }

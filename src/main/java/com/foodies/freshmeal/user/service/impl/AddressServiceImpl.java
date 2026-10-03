@@ -197,8 +197,7 @@ public class AddressServiceImpl implements IAddressService {
      * @return active customer addresses
      */
     @Override
-    public IServiceOutput<List<AddressResponse>> getMyAddresses(
-            final IServiceInput<Void> input) {
+    public IServiceOutput<List<AddressResponse>> getMyAddresses(final IServiceInput<Void> input) {
 
         validateServiceInput(input);
 
@@ -491,4 +490,6 @@ public class AddressServiceImpl implements IAddressService {
     // from that we can get get exact or
     // TODO: approximate geolocation from that we have correct longitude and
     // latitude so rain may apply duration and direction we calculate
+
+    // TODO: we will calculate distance
 }
