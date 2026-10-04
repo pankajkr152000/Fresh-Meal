@@ -2,6 +2,7 @@
 package com.foodies.freshmeal.checkout.service;
 
 import com.foodies.freshmeal.checkout.dto.CheckoutResponse;
+import com.foodies.freshmeal.checkout.dto.CheckoutReviewRequest;
 import com.foodies.freshmeal.checkout.dto.CheckoutReviewResponse;
 import com.foodies.freshmeal.checkout.dto.ConfirmCheckoutRequest;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
@@ -121,23 +122,21 @@ public interface ICheckoutService {
      * =========================================================================
      * PREPARE CHECKOUT REVIEW
      * =========================================================================
+     * 
+     * Prepares a checkout session for customer review.
      *
      * <p>
-     * Validates the checkout against current business information and prepares
-     * immutable snapshots of the items, delivery address and pricing for
-     * customer review.
+     * The operation validates the checkout session and customer preferences,
+     * performs the required business validations, calculates pricing, and
+     * persists the resulting review snapshots.
      * </p>
      *
-     * <p>
-     * The service must not trust previously captured prices or availability
-     * without revalidation.
-     * </p>
-     *
-     * @param input service input containing the checkout business identifier
+     * @param input service input containing the checkout review request
+     *              and authenticated service context
      * @return service output containing the prepared checkout review
      */
     IServiceOutput<CheckoutReviewResponse> prepareCheckoutReview(
-            IServiceInput<String> input);
+            IServiceInput<CheckoutReviewRequest> input);
 
     /**
      * =========================================================================

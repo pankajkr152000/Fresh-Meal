@@ -21,7 +21,10 @@ import com.foodies.freshmeal.cart.entity.CartItem;
 import com.foodies.freshmeal.cart.repository.ICartRepository;
 import com.foodies.freshmeal.checkout.constants.CheckoutErrorConstants;
 import com.foodies.freshmeal.checkout.constants.CheckoutStatusConstant;
+import com.foodies.freshmeal.checkout.dto.CheckoutItemInstructionRequest;
+import com.foodies.freshmeal.checkout.dto.CheckoutOrderPreferencesRequest;
 import com.foodies.freshmeal.checkout.dto.CheckoutResponse;
+import com.foodies.freshmeal.checkout.dto.CheckoutReviewRequest;
 import com.foodies.freshmeal.checkout.dto.CheckoutReviewResponse;
 import com.foodies.freshmeal.checkout.dto.ConfirmCheckoutRequest;
 import com.foodies.freshmeal.checkout.entity.CheckoutEntity;
@@ -30,7 +33,10 @@ import com.foodies.freshmeal.checkout.repository.ICheckoutRepository;
 import com.foodies.freshmeal.checkout.service.ICheckoutService;
 import com.foodies.freshmeal.checkout.validation.CheckoutValidator;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutAddressSnapshot;
+import com.foodies.freshmeal.checkout.valueObject.CheckoutFailureDetails;
+import com.foodies.freshmeal.checkout.valueObject.CheckoutItemInstructionSnapshot;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutItemSnapshot;
+import com.foodies.freshmeal.checkout.valueObject.CheckoutOrderPreferencesSnapshot;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutPricingSnapshot;
 import com.foodies.freshmeal.common.constants.MoneyPrecision;
 import com.foodies.freshmeal.common.constants.SequenceConstants;
@@ -51,6 +57,7 @@ import com.foodies.freshmeal.food.constants.FoodStatusConstant;
 import com.foodies.freshmeal.food.dto.FoodIdRequest;
 import com.foodies.freshmeal.food.entity.FoodEntity;
 import com.foodies.freshmeal.food.service.IFoodService;
+import com.foodies.freshmeal.order.constants.OrderTypeConstant;
 import com.foodies.freshmeal.restaurant.constants.RestaurantStatusConstant;
 import com.foodies.freshmeal.restaurant.dto.RestaurantBranchDetailsResponse;
 import com.foodies.freshmeal.restaurant.dto.RestaurantBranchIdRequest;
@@ -244,6 +251,13 @@ public class CheckoutServiceImpl implements ICheckoutService {
         // ---------------------------------------------------------------------
 
         CheckoutEntity savedCheckout = checkoutRepository.save(checkout);
+
+        if (savedCheckout == null) {
+            LOGGER.error("Checkout repository returned null after saving review. checkoutNumber={}",
+                    checkout.getCheckoutNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_INITIALIZATION_FAILED);
+        }
 
         cartRepository.save(cart);
 
@@ -455,7 +469,8 @@ public class CheckoutServiceImpl implements ICheckoutService {
      *                           validation fails
      */
     @Override
-    public IServiceOutput<CheckoutReviewResponse> prepareCheckoutReview(final IServiceInput<String> input) {
+    public IServiceOutput<CheckoutReviewResponse> prepareCheckoutReview(
+            final IServiceInput<CheckoutReviewRequest> input) {
 
         Objects.requireNonNull(input, "Checkout service input must not be null.");
 
@@ -479,315 +494,191 @@ public class CheckoutServiceImpl implements ICheckoutService {
         // 3. Validate checkout number
         // ---------------------------------------------------------------------
 
-        String checkoutNumber = input.getInput();
+        CheckoutReviewRequest request = input.getInput();
 
-        checkoutRequestValidator.validateCheckoutNumber(checkoutNumber);
+        validateCheckoutReviewRequest(request);
 
-        // ---------------------------------------------------------------------
-        // 4. Retrieve checkout session
-        // ---------------------------------------------------------------------
+        String checkoutNumber = request.getCheckoutNumber();
+        CheckoutOrderPreferencesRequest orderPreferencesRequest = request.getOrderPreferences();
 
-        CheckoutEntity checkout = checkoutRepository
-                .findByCheckoutNumber(checkoutNumber)
-                .orElseThrow(() -> new BusinessException(CheckoutErrorConstants.CHECKOUT_NOT_FOUND));
-
-        // ---------------------------------------------------------------------
-        // 5. Verify checkout ownership
-        // ---------------------------------------------------------------------
-
-        if (!userNumber.equals(checkout.getUserNumber())) {
-
-            LOGGER.warn("Checkout review access denied. checkoutNumber={}, userNumber={}",
-                    checkoutNumber,
-                    userNumber);
-
-            // Do not reveal whether another customer's checkout exists.
-            throw new BusinessException(AuthenticationErrorConstants.AUTHENTICATION_FAILED);
+        if (orderPreferencesRequest == null) {
+            throw new BusinessException(CheckoutErrorConstants.INVALID_CHECKOUT_REQUEST);
         }
 
         // ---------------------------------------------------------------------
-        // 6. Validate checkout lifecycle state
+        // 4. Retrieve checkout session, Verify checkout ownership and Validate checkout
+        // lifecycle state
         // ---------------------------------------------------------------------
-        validateCheckoutReviewEligibility(checkout);
+        CheckoutEntity checkout = getCheckoutForReview(checkoutNumber, userNumber);
 
-        // ---------------------------------------------------------------------
-        // 7. Begin checkout validation
-        // ---------------------------------------------------------------------
+        try {
+            // ---------------------------------------------------------------------
+            // 5. Begin checkout validation
+            // ---------------------------------------------------------------------
+            checkout.startValidation();
+            checkoutRepository.save(checkout);
 
-        checkout.startValidation();
+            // ---------------------------------------------------------------------
+            // 6. Retrieve the cart associated with this checkout
+            // ---------------------------------------------------------------------
 
-        // ---------------------------------------------------------------------
-        // 7. Retrieve the cart associated with this checkout
-        // ---------------------------------------------------------------------
+            CartEntity cart = getAndValidateCartForReview(checkout, userNumber);
 
-        CartEntity cart = cartRepository
-                .findByCartNumber(checkout.getCartNumber())
-                .orElseThrow(() -> new BusinessException(CheckoutErrorConstants.CART_NOT_FOUND));
+            // ---------------------------------------------------------------------
+            // 8. Verify cart ownership and checkout consistency
+            // ---------------------------------------------------------------------
+            String restaurantId = validateRestaurantForCheckoutReview(checkout, cart, context, input);
 
-        validateCartForCheckoutReview(cart, checkout, userNumber);
+            // ---------------------------------------------------------------------
+            // 15. Retrieve restaurant branch details
+            // ---------------------------------------------------------------------
 
-        // ---------------------------------------------------------------------
-        // 8. Verify cart ownership and checkout consistency
-        // ---------------------------------------------------------------------
+            validateRestaurantBranchForCheckoutReview(cart, restaurantId, context, input);
 
-        if (!userNumber.equals(cart.getUserNumber())) {
+            // ---------------------------------------------------------------------
+            // 17. Revalidate all cart food items and prepare checkout snapshots
+            // ---------------------------------------------------------------------
 
-            LOGGER.error("Checkout-cart ownership mismatch. checkoutNumber={}, cartNumber={}",
-                    checkoutNumber,
-                    cart.getCartNumber());
+            List<CheckoutItemSnapshot> checkoutItems = validateFoodsForCheckoutReview(cart, context, input);
 
-            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
-        }
-
-        if (!checkout.getCartNumber().equals(cart.getCartNumber())) {
-
-            LOGGER.error("Checkout-cart reference mismatch. checkoutNumber={}, cartNumber={}",
-                    checkoutNumber,
-                    cart.getCartNumber());
-
-            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
-        }
-
-        // ---------------------------------------------------------------------
-        // 9. Validate cart contents
-        // ---------------------------------------------------------------------
-
-        if (cart.isEmpty()) {
-            throw new BusinessException(CheckoutErrorConstants.CART_EMPTY);
-        }
-
-        // ---------------------------------------------------------------------
-        // 10. Validate cart lifecycle
-        // ---------------------------------------------------------------------
-
-        if (!cart.isActive() && !cart.isCheckoutInProgress()) {
-
-            LOGGER.warn("Cart is not eligible for checkout review. cartNumber={}, status={}",
-                    cart.getCartNumber(),
-                    cart.getStatus());
-
-            throw new BusinessException(CheckoutErrorConstants.CART_NOT_ACTIVE);
-        }
-
-        // ---------------------------------------------------------------------
-        // 11. Validate restaurant context
-        // ---------------------------------------------------------------------
-
-        if (!cart.hasRestaurantContext()) {
-
-            LOGGER.error("Cart has incomplete restaurant context. cartNumber={}",
-                    cart.getCartNumber());
-
-            throw new BusinessException(CheckoutErrorConstants.CART_CHECKOUT_CONTEXT_INVALID);
-        }
-
-        // ---------------------------------------------------------------------
-        // 12. Verify checkout and cart restaurant context consistency
-        // ---------------------------------------------------------------------
-
-        if (!checkout.getRestaurantNumber().equals(cart.getRestaurantNumber())
-                || !checkout.getRestaurantBranchNumber().equals(cart.getRestaurantBranchNumber())) {
-
-            LOGGER.error("Checkout-cart restaurant context mismatch. checkoutNumber={}, cartNumber={}",
-                    checkoutNumber,
-                    cart.getCartNumber());
-
-            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
-        }
-
-        // ---------------------------------------------------------------------
-        // 13. Retrieve restaurant details
-        // ---------------------------------------------------------------------
-
-        RestaurantIdRequest restaurantRequest = RestaurantIdRequest.builder()
-                .restaurantId(cart.getRestaurantNumber())
-                .build();
-
-        IServiceInput<RestaurantIdRequest> restaurantInput = new ServiceInput<>(
-                restaurantRequest,
-                context,
-                input.getDataContext());
-
-        IServiceOutput<RestaurantDetailsResponse> restaurantOutput = restaurantService.getById(restaurantInput);
-
-        if (restaurantOutput == null || restaurantOutput.getOutput() == null) {
-
-            LOGGER.error("Restaurant service returned an empty response. restaurantNumber={}",
-                    cart.getRestaurantNumber());
-
-            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DEPENDENCY_UNAVAILABLE);
-        }
-
-        RestaurantDetailsResponse restaurant = restaurantOutput.getOutput();
-
-        // ---------------------------------------------------------------------
-        // 14. Validate restaurant lifecycle and availability
-        // ---------------------------------------------------------------------
-
-        validateRestaurantAvailability(restaurant);
-
-        // ---------------------------------------------------------------------
-        // 15. Retrieve restaurant branch details
-        // ---------------------------------------------------------------------
-
-        RestaurantBranchIdRequest branchRequest = RestaurantBranchIdRequest.builder()
-                .branchId(cart.getRestaurantBranchNumber())
-                .build();
-
-        IServiceInput<RestaurantBranchIdRequest> branchInput = new ServiceInput<>(
-                branchRequest,
-                context,
-                input.getDataContext());
-
-        IServiceOutput<RestaurantBranchDetailsResponse> branchOutput = restaurantBranchService.getById(branchInput);
-
-        if (branchOutput == null || branchOutput.getOutput() == null) {
-
-            LOGGER.error("Restaurant branch service returned an empty response. branchNumber={}",
-                    cart.getRestaurantBranchNumber());
-
-            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DEPENDENCY_UNAVAILABLE);
-        }
-
-        RestaurantBranchDetailsResponse branch = branchOutput.getOutput();
-
-        // ---------------------------------------------------------------------
-        // 16. Validate branch lifecycle, availability, and association
-        // ---------------------------------------------------------------------
-
-        validateBranchAvailability(branch, restaurant.getId());
-
-        // ---------------------------------------------------------------------
-        // 17. Revalidate all cart food items and prepare checkout snapshots
-        // ---------------------------------------------------------------------
-
-        List<CheckoutItemSnapshot> checkoutItems = new ArrayList<>();
-
-        for (CartItem cartItem : cart.getItems()) {
-
-            if (cartItem == null
-                    || cartItem.getFoodSnapshot() == null
-                    || cartItem.getFoodSnapshot().getFoodNumber() == null
-                    || cartItem.getFoodSnapshot().getFoodNumber().isBlank()) {
-
-                LOGGER.error("Invalid food snapshot found in cart. cartNumber={}",
-                        cart.getCartNumber());
-
-                throw new BusinessException(CheckoutErrorConstants.FOOD_SNAPSHOT_INVALID);
-            }
-
-            String foodNumber = cartItem.getFoodSnapshot().getFoodNumber();
-
-            // Build the food lookup request.
-            FoodIdRequest foodRequest = new FoodIdRequest();
-            foodRequest.setFoodId(foodNumber);
-
-            IServiceInput<FoodIdRequest> foodInput = new ServiceInput<>(
-                    foodRequest,
+            // ---------------------------------------------------------------------
+            // 18. Retrieve authenticated customer's active addresses
+            // ---------------------------------------------------------------------
+            final CheckoutAddressSnapshot addressSnapshot = resolveAndValidateCheckoutAddress(
+                    userNumber,
+                    orderPreferencesRequest,
                     context,
-                    input.getDataContext());
+                    input);
 
-            // Load the latest food record.
-            IServiceOutput<FoodEntity> foodOutput = foodService.loadFood(foodInput);
+            // ---------------------------------------------------------------------
+            // 21. Calculate checkout pricing
+            // ---------------------------------------------------------------------
+            CheckoutPricingSnapshot pricingSnapshot = calculateAndValidateCheckoutPricing(checkout, cart, checkoutItems,
+                    orderPreferencesRequest);
 
-            if (foodOutput == null || foodOutput.getOutput() == null) {
+            // ---------------------------------------------------------------------
+            // 22. Mark checkout as ready for customer confirmation
+            // ---------------------------------------------------------------------
+            final CheckoutOrderPreferencesSnapshot orderPreferencesSnapshot = buildAndResolveOrderPreferencesSnapshot(
+                    orderPreferencesRequest);
 
-                LOGGER.warn("Food could not be loaded during checkout review. foodNumber={}", foodNumber);
+            // ---------------------------------------------------------------------
+            // 26. Return the prepared checkout review
+            // ---------------------------------------------------------------------
 
-                throw new BusinessException(CheckoutErrorConstants.FOOD_NOT_FOUND);
-            }
+            CheckoutReviewResponse response = persistCheckoutReviewAndBuildResponse(
+                    checkout,
+                    checkoutItems,
+                    addressSnapshot,
+                    pricingSnapshot,
+                    orderPreferencesSnapshot);
 
-            FoodEntity food = validateFoodForCheckout(foodOutput.getOutput(), cartItem, cart);
+            return new ServiceOutput<>(response);
 
-            // Validate quantity before calculating the item total.
-            if (cartItem.getQuantity() <= 0) {
+        } catch (BusinessException exception) {
 
-                LOGGER.error("Invalid cart item quantity. foodNumber={}, quantity={}",
-                        foodNumber,
-                        cartItem.getQuantity());
+            recordCheckoutReviewFailure(checkout, exception);
 
-                throw new BusinessException(CheckoutErrorConstants.FOOD_QUANTITY_UNAVAILABLE);
-            }
-
-            // Use the current server-side price, not the cart's historical price.
-            final CheckoutItemSnapshot checkoutItem = buildCheckoutItemSnapshot(food, cartItem);
-
-            checkoutItems.add(checkoutItem);
+            throw exception;
         }
 
-        // ---------------------------------------------------------------------
-        // 18. Retrieve authenticated customer's active addresses
-        // ---------------------------------------------------------------------
+    }
 
-        IServiceInput<Void> addressInput = new ServiceInput<>(
-                null,
-                context,
-                input.getDataContext());
+    // =========================================================================================
+    // ************* Helper and Validator and Builder methods for main method
+    // *****************
+    // =========================================================================================
 
-        IServiceOutput<List<AddressResponse>> addressOutput = addressService.getMyAddresses(addressInput);
+    /**
+     * Creates an immutable-in-intent snapshot of the customer's order preferences
+     * for persistence with the checkout aggregate.
+     *
+     * @param orderPreferences validated customer order preferences
+     * @return mapped order-preference snapshot
+     */
+    private CheckoutOrderPreferencesSnapshot buildAndResolveOrderPreferencesSnapshot(
+            final CheckoutOrderPreferencesRequest orderPreferences) {
 
-        if (addressOutput == null || addressOutput.getOutput() == null) {
+        Objects.requireNonNull(
+                orderPreferences,
+                "Order preferences are required.");
 
-            LOGGER.error("Address service returned an empty response during checkout review. userNumber={}",
-                    userNumber);
+        CheckoutOrderPreferencesSnapshot orderSnapshot = new CheckoutOrderPreferencesSnapshot();
 
-            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DEPENDENCY_UNAVAILABLE);
-        }
+        orderSnapshot.setOrderType(orderPreferences.getOrderType());
+        orderSnapshot.setPaymentMode(orderPreferences.getPaymentMode());
+        orderSnapshot.setCouponCode(orderPreferences.getCouponCode());
+        orderSnapshot.setTipAmount(orderPreferences.getTipAmount());
+        orderSnapshot.setScheduledOrder(orderPreferences.getScheduledOrder());
+        orderSnapshot.setScheduledDeliveryAt(orderPreferences.getScheduledDeliveryAt());
+        orderSnapshot.setGiftOrder(orderPreferences.getGiftOrder());
+        orderSnapshot.setCustomerNote(orderPreferences.getCustomerNote());
 
-        List<AddressResponse> addresses = addressOutput.getOutput();
+        List<CheckoutItemInstructionRequest> instructionRequests = orderPreferences.getItemInstructions();
 
-        // ---------------------------------------------------------------------
-        // 19. Resolve customer's default delivery address
-        // ---------------------------------------------------------------------
+        List<CheckoutItemInstructionSnapshot> instructionSnapshots = instructionRequests == null
+                ? new ArrayList<>()
+                : instructionRequests.stream()
+                        .map(instruction -> {
+                            CheckoutItemInstructionSnapshot snapshot = new CheckoutItemInstructionSnapshot();
 
-        final AddressResponse defaultAddress = resolveDefaultDeliveryAddress(addresses);
+                            snapshot.setFoodNumber(instruction.getFoodNumber());
+                            snapshot.setSpecialInstruction(
+                                    instruction.getSpecialInstruction());
 
-        // ---------------------------------------------------------------------
-        // 20. Validate and snapshot delivery address
-        // ---------------------------------------------------------------------
+                            return snapshot;
+                        })
+                        .collect(Collectors.toList());
 
-        validateDeliveryAddress(defaultAddress);
+        orderSnapshot.setItemInstructions(instructionSnapshots);
 
-        final CheckoutAddressSnapshot addressSnapshot = buildCheckoutAddressSnapshot(defaultAddress);
+        return orderSnapshot;
+    }
 
-        // ---------------------------------------------------------------------
-        // 21. Calculate checkout pricing
-        // ---------------------------------------------------------------------
+    /**
+     * Reconstructs the order-preference request from the persisted checkout
+     * snapshot for server-side revalidation.
+     *
+     * @param orderSnapshot persisted order-preference snapshot
+     * @return reconstructed order-preference request
+     */
+    private CheckoutOrderPreferencesRequest buildAndResolveOrderPreferencesRequest(
+            final CheckoutOrderPreferencesSnapshot orderSnapshot) {
 
-        final CheckoutPricingSnapshot pricingSnapshot = calculateCheckoutPricing(checkoutItems);
+        Objects.requireNonNull(
+                orderSnapshot,
+                "Order preference snapshot is required.");
 
-        // ---------------------------------------------------------------------
-        // 22. Mark checkout as ready for customer confirmation
-        // ---------------------------------------------------------------------
+        CheckoutOrderPreferencesRequest orderPreferencesRequest = new CheckoutOrderPreferencesRequest();
 
-        checkout.markReadyForConfirmation(checkoutItems, addressSnapshot, pricingSnapshot);
+        orderPreferencesRequest.setOrderType(orderSnapshot.getOrderType());
+        orderPreferencesRequest.setPaymentMode(orderSnapshot.getPaymentMode());
+        orderPreferencesRequest.setCouponCode(orderSnapshot.getCouponCode());
+        orderPreferencesRequest.setTipAmount(orderSnapshot.getTipAmount());
+        orderPreferencesRequest.setScheduledOrder(orderSnapshot.getScheduledOrder());
+        orderPreferencesRequest.setScheduledDeliveryAt(orderSnapshot.getScheduledDeliveryAt());
+        orderPreferencesRequest.setGiftOrder(orderSnapshot.getGiftOrder());
+        orderPreferencesRequest.setCustomerNote(orderSnapshot.getCustomerNote());
 
-        // ---------------------------------------------------------------------
-        // 23. Persist the validated checkout
-        // ---------------------------------------------------------------------
+        List<CheckoutItemInstructionSnapshot> instructionSnapshots = orderSnapshot.getItemInstructions();
 
-        CheckoutEntity savedCheckout = checkoutRepository.save(checkout);
+        List<CheckoutItemInstructionRequest> instructionRequests = instructionSnapshots == null
+                ? new ArrayList<>()
+                : instructionSnapshots.stream()
+                        .map(instruction -> {
+                            CheckoutItemInstructionRequest request = new CheckoutItemInstructionRequest();
 
-        // ---------------------------------------------------------------------
-        // 24. Map the persisted checkout to the review response
-        // ---------------------------------------------------------------------
+                            request.setFoodNumber(instruction.getFoodNumber());
+                            request.setSpecialInstruction(
+                                    instruction.getSpecialInstruction());
 
-        CheckoutReviewResponse response = checkoutMapper.toCheckoutReviewResponse(savedCheckout);
+                            return request;
+                        })
+                        .collect(Collectors.toList());
 
-        // ---------------------------------------------------------------------
-        // 25. Log successful checkout review preparation
-        // ---------------------------------------------------------------------
+        orderPreferencesRequest.setItemInstructions(instructionRequests);
 
-        LOGGER.info("Checkout review prepared successfully. checkoutNumber={}, userNumber={}, status={}",
-                savedCheckout.getCheckoutNumber(),
-                userNumber,
-                savedCheckout.getStatus());
-
-        // ---------------------------------------------------------------------
-        // 26. Return the prepared checkout review
-        // ---------------------------------------------------------------------
-
-        return new ServiceOutput<>(response);
+        return orderPreferencesRequest;
     }
 
     /**
@@ -1035,77 +926,172 @@ public class CheckoutServiceImpl implements ICheckoutService {
     }
 
     /**
-     * Calculates the pricing breakdown for a checkout review.
+     * Calculates and validates the authoritative pricing breakdown for checkout.
      *
      * <p>
-     * The calculation uses validated checkout item snapshots and performs
-     * all monetary operations through {@link MoneyUtil}.
+     * The calculation uses freshly validated item snapshots and customer-selected
+     * order preferences. All monetary operations are performed through
+     * {@link MoneyUtil} to maintain currency consistency and monetary precision.
      * </p>
      *
      * <p>
-     * Unsupported pricing components are initialized to zero until their
-     * respective business rules are implemented.
+     * The backend remains the sole authority for pricing. Client-supplied totals
+     * are never trusted.
      * </p>
      *
      * <p>
-     * This method does not mutate the checkout entity or persist any data.
+     * Coupon codes are preserved in checkout preferences, but discounts are not
+     * applied until coupon validation and redemption are implemented.
+     * Unsupported pricing components are initialized to zero.
      * </p>
      *
-     * @param items validated checkout item snapshots
-     * @return backend-calculated checkout pricing snapshot
+     * <p>
+     * This method does not mutate or persist the checkout entity.
+     * </p>
+     *
+     * @param checkout         validated checkout session
+     * @param cart             validated cart associated with the checkout
+     * @param validatedItems   freshly validated checkout item snapshots
+     * @param orderPreferences customer-selected order preferences
+     * @return backend-calculated pricing snapshot
+     * @throws BusinessException when pricing inputs or monetary values are invalid
      */
-    private CheckoutPricingSnapshot calculateCheckoutPricing(
-            final List<CheckoutItemSnapshot> items) {
+    private CheckoutPricingSnapshot calculateAndValidateCheckoutPricing(
+            final CheckoutEntity checkout,
+            final CartEntity cart,
+            final List<CheckoutItemSnapshot> validatedItems,
+            final CheckoutOrderPreferencesRequest orderPreferences) {
 
-        Objects.requireNonNull(items, "Checkout items must not be null.");
+        // ---------------------------------------------------------------------
+        // 1. Validate required inputs
+        // ---------------------------------------------------------------------
 
-        if (items.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Checkout must contain at least one item.");
+        if (checkout == null
+                || cart == null
+                || validatedItems == null
+                || validatedItems.isEmpty()
+                || orderPreferences == null) {
+
+            throw new BusinessException(
+                    CheckoutErrorConstants.CHECKOUT_PRICING_REQUIRED);
         }
+
+        // ---------------------------------------------------------------------
+        // 2. Validate order preferences
+        // ---------------------------------------------------------------------
+
+        if (orderPreferences.getOrderType() == null
+                || orderPreferences.getPaymentMode() == null) {
+
+            throw new BusinessException(
+                    CheckoutErrorConstants.INVALID_CHECKOUT_REQUEST);
+        }
+
+        /*
+         * Coupon codes are stored in the order preferences snapshot.
+         * No discount is applied until coupon validation and redemption
+         * are supported by the application.
+         */
+
+        // ---------------------------------------------------------------------
+        // 3. Resolve currency
+        // ---------------------------------------------------------------------
 
         final String currency = "INR";
 
+        // ---------------------------------------------------------------------
+        // 4. Validate and calculate item subtotal
+        // ---------------------------------------------------------------------
+
         Money itemSubtotal = Money.defaultMoney(currency);
 
-        /*
-         * Calculate the subtotal using the already validated item totals.
-         * MoneyUtil.add() ensures currency consistency and preserves
-         * intermediate precision.
-         */
-        for (CheckoutItemSnapshot item : items) {
+        for (CheckoutItemSnapshot item : validatedItems) {
 
             if (item == null || item.getItemTotal() == null) {
-                throw new IllegalArgumentException(
-                        "Checkout item total must not be null.");
+
+                LOGGER.error(
+                        "Invalid checkout item total. checkoutNumber={}",
+                        checkout.getCheckoutNumber());
+
+                throw new BusinessException(
+                        CheckoutErrorConstants.CHECKOUT_ITEM_TOTAL_INVALID);
             }
 
-            Money itemTotal = item.getItemTotal();
+            final Money itemTotal = item.getItemTotal();
 
             if (itemTotal.getAmount() == null
                     || itemTotal.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException(
-                        "Checkout item total must be a non-negative amount.");
+
+                LOGGER.error(
+                        "Negative or missing checkout item total. checkoutNumber={}",
+                        checkout.getCheckoutNumber());
+
+                throw new BusinessException(
+                        CheckoutErrorConstants.CHECKOUT_ITEM_TOTAL_INVALID);
             }
 
             if (!currency.equalsIgnoreCase(itemTotal.getCurrency())) {
-                throw new IllegalArgumentException(
-                        "Checkout item currency does not match checkout currency.");
+
+                LOGGER.error(
+                        "Checkout item currency mismatch. checkoutNumber={}, expectedCurrency={}, actualCurrency={}",
+                        checkout.getCheckoutNumber(),
+                        currency,
+                        itemTotal.getCurrency());
+
+                throw new BusinessException(
+                        CheckoutErrorConstants.CHECKOUT_CURRENCY_INVALID);
             }
 
-            itemSubtotal = MoneyUtil.add(itemSubtotal, itemTotal);
+            itemSubtotal = MoneyUtil.add(
+                    itemSubtotal,
+                    itemTotal);
         }
 
-        /*
-         * Apply currency precision at the subtotal boundary.
-         */
         itemSubtotal = MoneyUtil.round(
                 itemSubtotal,
                 MoneyPrecision.TWO);
 
-        /*
-         * Initialize unsupported pricing components.
-         */
+        // ---------------------------------------------------------------------
+        // 5. Validate and normalize customer tip
+        // ---------------------------------------------------------------------
+
+        Money tipAmount = orderPreferences.getTipAmount();
+
+        if (tipAmount == null) {
+            tipAmount = Money.defaultMoney(currency);
+        } else {
+
+            if (tipAmount.getAmount() == null
+                    || tipAmount.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+                LOGGER.warn(
+                        "Invalid customer tip amount. checkoutNumber={}",
+                        checkout.getCheckoutNumber());
+
+                throw new BusinessException(
+                        CheckoutErrorConstants.CHECKOUT_PRICING_INVALID);
+            }
+
+            if (!currency.equalsIgnoreCase(tipAmount.getCurrency())) {
+
+                LOGGER.warn(
+                        "Customer tip currency mismatch. checkoutNumber={}, currency={}",
+                        checkout.getCheckoutNumber(),
+                        tipAmount.getCurrency());
+
+                throw new BusinessException(
+                        CheckoutErrorConstants.CHECKOUT_CURRENCY_INVALID);
+            }
+
+            tipAmount = MoneyUtil.round(
+                    tipAmount,
+                    MoneyPrecision.TWO);
+        }
+
+        // ---------------------------------------------------------------------
+        // 6. Initialize currently unsupported pricing components
+        // ---------------------------------------------------------------------
+
         final Money discountAmount = Money.defaultMoney(currency);
         final Money taxAmount = Money.defaultMoney(currency);
         final Money deliveryFee = Money.defaultMoney(currency);
@@ -1113,9 +1099,11 @@ public class CheckoutServiceImpl implements ICheckoutService {
         final Money platformFee = Money.defaultMoney(currency);
         final Money rainCharge = Money.defaultMoney(currency);
 
+        // ---------------------------------------------------------------------
+        // 7. Calculate final payable amount
+        // ---------------------------------------------------------------------
+
         /*
-         * Calculate the final payable amount.
-         *
          * Formula:
          *
          * Total Payable =
@@ -1126,29 +1114,42 @@ public class CheckoutServiceImpl implements ICheckoutService {
          * + Packaging Charge
          * + Platform Fee
          * + Rain Charge
+         * + Customer Tip
          */
-        Money totalPayable = MoneyUtil.subtract(itemSubtotal, discountAmount);
+
+        Money totalPayable = MoneyUtil.subtract(
+                itemSubtotal,
+                discountAmount);
 
         totalPayable = MoneyUtil.add(totalPayable, taxAmount);
         totalPayable = MoneyUtil.add(totalPayable, deliveryFee);
         totalPayable = MoneyUtil.add(totalPayable, packagingCharge);
         totalPayable = MoneyUtil.add(totalPayable, platformFee);
         totalPayable = MoneyUtil.add(totalPayable, rainCharge);
+        totalPayable = MoneyUtil.add(totalPayable, tipAmount);
 
-        /*
-         * Apply final monetary precision.
-         */
         totalPayable = MoneyUtil.round(
                 totalPayable,
                 MoneyPrecision.TWO);
 
-        /*
-         * Protect the checkout from invalid final pricing.
-         */
-        if (totalPayable.getAmount().compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(
-                    "Checkout total payable cannot be negative.");
+        // ---------------------------------------------------------------------
+        // 8. Validate final payable amount
+        // ---------------------------------------------------------------------
+
+        if (totalPayable.getAmount() == null
+                || totalPayable.getAmount().compareTo(BigDecimal.ZERO) < 0) {
+
+            LOGGER.error(
+                    "Invalid final checkout payable amount. checkoutNumber={}",
+                    checkout.getCheckoutNumber());
+
+            throw new BusinessException(
+                    CheckoutErrorConstants.CHECKOUT_TOTAL_PAYABLE_INVALID);
         }
+
+        // ---------------------------------------------------------------------
+        // 9. Build authoritative pricing snapshot
+        // ---------------------------------------------------------------------
 
         return CheckoutPricingSnapshot.builder()
                 .itemSubtotal(itemSubtotal)
@@ -1158,6 +1159,7 @@ public class CheckoutServiceImpl implements ICheckoutService {
                 .packagingCharge(packagingCharge)
                 .platformFee(platformFee)
                 .rainCharge(rainCharge)
+                .tipAmount(tipAmount)
                 .totalPayable(totalPayable)
                 .build();
     }
@@ -1442,9 +1444,530 @@ public class CheckoutServiceImpl implements ICheckoutService {
                 .build();
     }
 
+    /**
+     * Validates the structural integrity of a checkout review request.
+     *
+     * <p>
+     * This method validates required request fields only. Business validations
+     * involving persisted data, lifecycle rules, pricing, and availability
+     * remain in the checkout service workflow.
+     * </p>
+     *
+     * @param request checkout review request
+     * @throws BusinessException when the request or required fields are missing
+     */
+    private void validateCheckoutReviewRequest(final CheckoutReviewRequest request) {
+
+        if (request == null) {
+            throw new BusinessException(CheckoutErrorConstants.INVALID_CHECKOUT_REQUEST);
+        }
+
+        checkoutRequestValidator.validateCheckoutNumber(request.getCheckoutNumber());
+
+        if (request.getOrderPreferences() == null) {
+            throw new BusinessException(CheckoutErrorConstants.INVALID_CHECKOUT_REQUEST);
+        }
+    }
+
+    /**
+     * Retrieves a checkout session and validates whether the authenticated
+     * customer is eligible to review it.
+     *
+     * <p>
+     * This method enforces checkout existence, ownership, and lifecycle
+     * eligibility before the caller proceeds with cart or pricing operations.
+     * </p>
+     *
+     * @param checkoutNumber checkout business identifier
+     * @param userNumber     authenticated customer business identifier
+     * @return validated checkout entity
+     * @throws BusinessException when the checkout does not exist, ownership
+     *                           validation fails, or the lifecycle state
+     *                           does not permit review
+     */
+    private CheckoutEntity getCheckoutForReview(
+            final String checkoutNumber,
+            final String userNumber) {
+
+        CheckoutEntity checkout = checkoutRepository
+                .findByCheckoutNumber(checkoutNumber)
+                .orElseThrow(() -> new BusinessException(
+                        CheckoutErrorConstants.CHECKOUT_NOT_FOUND));
+
+        if (!userNumber.equals(checkout.getUserNumber())) {
+
+            LOGGER.warn(
+                    "Checkout review access denied. checkoutNumber={}, userNumber={}",
+                    checkoutNumber,
+                    userNumber);
+
+            // Do not reveal whether another customer's checkout exists.
+            throw new BusinessException(
+                    AuthenticationErrorConstants.AUTHENTICATION_FAILED);
+        }
+
+        validateCheckoutReviewEligibility(checkout);
+
+        return checkout;
+    }
+
+    /**
+     * Retrieves and validates the cart associated with a checkout session.
+     *
+     * <p>
+     * The method verifies cart existence, ownership, reference consistency,
+     * checkout-review eligibility, and non-empty contents before returning
+     * the cart for further processing.
+     * </p>
+     *
+     * @param checkout   validated checkout entity
+     * @param userNumber authenticated customer business identifier
+     * @return validated cart entity
+     * @throws BusinessException when the cart is missing, inconsistent,
+     *                           invalid for review, or empty
+     */
+    private CartEntity getAndValidateCartForReview(
+            final CheckoutEntity checkout,
+            final String userNumber) {
+
+        CartEntity cart = cartRepository
+                .findByCartNumber(checkout.getCartNumber())
+                .orElseThrow(() -> new BusinessException(
+                        CheckoutErrorConstants.CART_NOT_FOUND));
+
+        // Verify ownership before performing further cart validations.
+        if (!userNumber.equals(cart.getUserNumber())) {
+
+            LOGGER.error("Checkout-cart ownership mismatch. checkoutNumber={}, cartNumber={}",
+                    checkout.getCheckoutNumber(),
+                    cart.getCartNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
+        }
+
+        // Ensure the checkout references the retrieved cart.
+        if (!checkout.getCartNumber().equals(cart.getCartNumber())) {
+
+            LOGGER.error("Checkout-cart reference mismatch. checkoutNumber={}, cartNumber={}",
+                    checkout.getCheckoutNumber(),
+                    cart.getCartNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
+        }
+
+        validateCartForCheckoutReview(cart, checkout, userNumber);
+
+        if (cart.isEmpty()) {
+            throw new BusinessException(CheckoutErrorConstants.CART_EMPTY);
+        }
+
+        return cart;
+    }
+
+    /**
+     * Revalidates the restaurant and branch associated with the checkout.
+     *
+     * <p>
+     * This validation ensures that the restaurant and branch remain valid
+     * before the checkout review is prepared. The existing business rules and
+     * centralized error handling must be preserved.
+     * </p>
+     *
+     * @param checkout checkout being reviewed
+     * @param cart     cart associated with the checkout
+     */
+    private String validateRestaurantForCheckoutReview(
+            final CheckoutEntity checkout,
+            final CartEntity cart,
+            final IServiceContext context,
+            final IServiceInput<CheckoutReviewRequest> input) {
+
+        String userNumber = context.getUserProfile().getUserNumber();
+        String checkoutNumber = checkout.getCheckoutNumber();
+        if (!userNumber.equals(cart.getUserNumber())) {
+
+            LOGGER.error("Checkout-cart ownership mismatch. checkoutNumber={}, cartNumber={}",
+                    checkoutNumber,
+                    cart.getCartNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
+        }
+
+        if (!checkout.getCartNumber().equals(cart.getCartNumber())) {
+
+            LOGGER.error("Checkout-cart reference mismatch. checkoutNumber={}, cartNumber={}",
+                    checkoutNumber,
+                    cart.getCartNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
+        }
+
+        if (cart.isEmpty()) {
+            throw new BusinessException(CheckoutErrorConstants.CART_EMPTY);
+        }
+
+        if (!cart.isActive() && !cart.isCheckoutInProgress()) {
+
+            LOGGER.warn("Cart is not eligible for checkout review. cartNumber={}, status={}",
+                    cart.getCartNumber(),
+                    cart.getStatus());
+
+            throw new BusinessException(CheckoutErrorConstants.CART_NOT_ACTIVE);
+        }
+
+        if (!cart.hasRestaurantContext()) {
+
+            LOGGER.error("Cart has incomplete restaurant context. cartNumber={}",
+                    cart.getCartNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CART_CHECKOUT_CONTEXT_INVALID);
+        }
+
+        if (!checkout.getRestaurantNumber().equals(cart.getRestaurantNumber())
+                || !checkout.getRestaurantBranchNumber().equals(cart.getRestaurantBranchNumber())) {
+
+            LOGGER.error("Checkout-cart restaurant context mismatch. checkoutNumber={}, cartNumber={}",
+                    checkoutNumber,
+                    cart.getCartNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DATA_INCONSISTENT);
+        }
+
+        RestaurantIdRequest restaurantRequest = RestaurantIdRequest.builder()
+                .restaurantId(cart.getRestaurantNumber())
+                .build();
+
+        IServiceInput<RestaurantIdRequest> restaurantInput = new ServiceInput<>(restaurantRequest, context,
+                input.getDataContext());
+
+        IServiceOutput<RestaurantDetailsResponse> restaurantOutput = restaurantService.getById(restaurantInput);
+
+        if (restaurantOutput == null || restaurantOutput.getOutput() == null) {
+
+            LOGGER.error("Restaurant service returned an empty response. restaurantNumber={}",
+                    cart.getRestaurantNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DEPENDENCY_UNAVAILABLE);
+        }
+
+        RestaurantDetailsResponse restaurant = restaurantOutput.getOutput();
+
+        validateRestaurantAvailability(restaurant);
+
+        return restaurant.getId();
+    }
+
+    private void validateRestaurantBranchForCheckoutReview(final CartEntity cart, final String restaurantId,
+            final IServiceContext context, final IServiceInput<CheckoutReviewRequest> input) {
+        RestaurantBranchIdRequest branchRequest = RestaurantBranchIdRequest.builder()
+                .branchId(cart.getRestaurantBranchNumber())
+                .build();
+
+        IServiceInput<RestaurantBranchIdRequest> branchInput = new ServiceInput<>(branchRequest, context,
+                input.getDataContext());
+
+        IServiceOutput<RestaurantBranchDetailsResponse> branchOutput = restaurantBranchService.getById(branchInput);
+
+        if (branchOutput == null || branchOutput.getOutput() == null) {
+
+            LOGGER.error("Restaurant branch service returned an empty response. branchNumber={}",
+                    cart.getRestaurantBranchNumber());
+
+            throw new BusinessException(CheckoutErrorConstants.CHECKOUT_DEPENDENCY_UNAVAILABLE);
+        }
+
+        RestaurantBranchDetailsResponse branch = branchOutput.getOutput();
+
+        // ---------------------------------------------------------------------
+        // 16. Validate branch lifecycle, availability, and association
+        // ---------------------------------------------------------------------
+
+        validateBranchAvailability(branch, restaurantId);
+    }
+
+    /**
+     * Revalidates the foods associated with the checkout against their
+     * current persisted state.
+     *
+     * <p>
+     * This validation ensures that food availability, status, restaurant
+     * association, branch association, and pricing remain valid before the
+     * checkout review is prepared.
+     * </p>
+     *
+     * <p>
+     * Move the existing food revalidation logic into this method without
+     * changing its business rules, validation order, or centralized errors.
+     * </p>
+     *
+     * @param checkout checkout being reviewed
+     * @param cart     cart associated with the checkout
+     */
+    private List<CheckoutItemSnapshot> validateFoodsForCheckoutReview(
+            final CartEntity cart,
+            final IServiceContext context,
+            final IServiceInput<CheckoutReviewRequest> input) {
+
+        List<CheckoutItemSnapshot> checkoutItems = new ArrayList<>();
+        for (CartItem cartItem : cart.getItems()) {
+
+            if (cartItem == null
+                    || cartItem.getFoodSnapshot() == null
+                    || cartItem.getFoodSnapshot().getFoodNumber() == null
+                    || cartItem.getFoodSnapshot().getFoodNumber().isBlank()) {
+
+                LOGGER.error("Invalid food snapshot found in cart. cartNumber={}",
+                        cart.getCartNumber());
+
+                throw new BusinessException(CheckoutErrorConstants.FOOD_SNAPSHOT_INVALID);
+            }
+
+            String foodNumber = cartItem.getFoodSnapshot().getFoodNumber();
+
+            // Build the food lookup request.
+            FoodIdRequest foodRequest = new FoodIdRequest();
+            foodRequest.setFoodId(foodNumber);
+
+            IServiceInput<FoodIdRequest> foodInput = new ServiceInput<>(
+                    foodRequest,
+                    context,
+                    input.getDataContext());
+
+            // Load the latest food record.
+            IServiceOutput<FoodEntity> foodOutput = foodService.loadFood(foodInput);
+
+            if (foodOutput == null || foodOutput.getOutput() == null) {
+
+                LOGGER.warn("Food could not be loaded during checkout review. foodNumber={}", foodNumber);
+
+                throw new BusinessException(CheckoutErrorConstants.FOOD_NOT_FOUND);
+            }
+
+            FoodEntity food = validateFoodForCheckout(foodOutput.getOutput(), cartItem, cart);
+
+            // Validate quantity before calculating the item total.
+            if (cartItem.getQuantity() <= 0) {
+
+                LOGGER.error("Invalid cart item quantity. foodNumber={}, quantity={}",
+                        foodNumber,
+                        cartItem.getQuantity());
+
+                throw new BusinessException(CheckoutErrorConstants.FOOD_QUANTITY_UNAVAILABLE);
+            }
+
+            // Use the current server-side price, not the cart's historical price.
+            final CheckoutItemSnapshot checkoutItem = buildCheckoutItemSnapshot(food, cartItem);
+
+            checkoutItems.add(checkoutItem);
+        }
+        return checkoutItems;
+    }
+
+    /**
+     * Resolves and validates the customer's delivery address when required by
+     * the selected order type.
+     *
+     * @param userNumber       authenticated customer identifier
+     * @param orderPreferences customer order preferences
+     * @param context          authenticated service context
+     * @param input            original checkout service input
+     * @return validated delivery address snapshot, or null when delivery
+     *         address is not applicable
+     */
+    private CheckoutAddressSnapshot resolveAndValidateCheckoutAddress(
+            final String userNumber,
+            final CheckoutOrderPreferencesRequest orderPreferences,
+            final IServiceContext context,
+            final IServiceInput<CheckoutReviewRequest> input) {
+
+        Objects.requireNonNull(
+                orderPreferences,
+                "Order preferences are required.");
+
+        // A delivery address is only required for delivery orders.
+        if (orderPreferences.getOrderType() != OrderTypeConstant.DELIVERY) {
+            return null;
+        }
+
+        IServiceInput<Void> addressInput = new ServiceInput<>(null, context, input.getDataContext());
+
+        IServiceOutput<List<AddressResponse>> addressOutput = addressService.getMyAddresses(addressInput);
+
+        if (addressOutput == null || addressOutput.getOutput() == null) {
+
+            LOGGER.error(
+                    "Address service returned an empty response during checkout review. "
+                            + "userNumber={}",
+                    userNumber);
+
+            throw new BusinessException(
+                    CheckoutErrorConstants.CHECKOUT_DEPENDENCY_UNAVAILABLE);
+        }
+
+        List<AddressResponse> addresses = addressOutput.getOutput();
+
+        AddressResponse defaultAddress = resolveDefaultDeliveryAddress(addresses);
+
+        validateDeliveryAddress(defaultAddress);
+
+        return buildCheckoutAddressSnapshot(defaultAddress);
+    }
+
+    /**
+     * Persists the validated checkout review and builds the customer-facing
+     * response.
+     *
+     * <p>
+     * This method completes the checkout review workflow by applying the validated
+     * item, address, pricing, and order-preference snapshots to the checkout
+     * aggregate, transitioning it to {@code READY_FOR_CONFIRMATION}, and
+     * persisting the updated state.
+     * </p>
+     *
+     * <p>
+     * The response is mapped from the persisted entity rather than the unsaved
+     * instance, ensuring that the returned representation reflects the state
+     * accepted by the repository.
+     * </p>
+     *
+     * @param checkout         checkout aggregate being reviewed
+     * @param validatedItems   validated food item snapshots
+     * @param addressSnapshot  validated address snapshot
+     * @param pricingSnapshot  server-calculated pricing snapshot
+     * @param orderPreferences validated customer order preferences
+     * @return customer-facing response mapped from the persisted checkout
+     * @throws NullPointerException if any required argument is null
+     */
+    private CheckoutReviewResponse persistCheckoutReviewAndBuildResponse(
+            final CheckoutEntity checkout,
+            final List<CheckoutItemSnapshot> validatedItems,
+            final CheckoutAddressSnapshot addressSnapshot,
+            final CheckoutPricingSnapshot pricingSnapshot,
+            final CheckoutOrderPreferencesSnapshot orderPreferences) {
+
+        Objects.requireNonNull(checkout, "Checkout entity is required.");
+
+        Objects.requireNonNull(validatedItems, "Validated checkout items are required.");
+
+        if (orderPreferences.getOrderType() == OrderTypeConstant.DELIVERY) {
+            Objects.requireNonNull(addressSnapshot, "Delivery address snapshot is required for delivery orders.");
+        }
+
+        Objects.requireNonNull(pricingSnapshot, "Checkout pricing snapshot is required.");
+
+        Objects.requireNonNull(orderPreferences, "Checkout order preferences are required.");
+
+        // ---------------------------------------------------------------------
+        // 1. Apply validated snapshots and complete the lifecycle transition
+        // ---------------------------------------------------------------------
+
+        checkout.markReadyForConfirmation(validatedItems, addressSnapshot, pricingSnapshot, orderPreferences);
+
+        // ---------------------------------------------------------------------
+        // 2. Persist the updated checkout aggregate
+        // ---------------------------------------------------------------------
+
+        CheckoutEntity savedCheckout = checkoutRepository.save(checkout);
+
+        // ---------------------------------------------------------------------
+        // 3. Build the response from the persisted entity
+        // ---------------------------------------------------------------------
+
+        CheckoutReviewResponse response = checkoutMapper.toCheckoutReviewResponse(savedCheckout);
+
+        // ---------------------------------------------------------------------
+        // 4. Log successful review preparation
+        // ---------------------------------------------------------------------
+
+        LOGGER.info(
+                "Checkout review prepared successfully. checkoutNumber={}, "
+                        + "status={}, itemCount={}",
+                savedCheckout.getCheckoutNumber(),
+                savedCheckout.getStatus(),
+                savedCheckout.getItems().size());
+
+        // ---------------------------------------------------------------------
+        // 5. Return service output
+        // ---------------------------------------------------------------------
+
+        return response;
+    }
+
+    /**
+     * Records a definitive business failure encountered while preparing
+     * a checkout review.
+     *
+     * <p>
+     * Failure recording is best-effort. If updating or persisting the
+     * checkout fails, the recording exception is attached to the original
+     * business exception as a suppressed exception. This ensures that
+     * failure-recording problems do not replace the actual business error.
+     * </p>
+     *
+     * @param checkout  the checkout session being validated
+     * @param exception the original business failure
+     */
+    private void recordCheckoutReviewFailure(
+            final CheckoutEntity checkout,
+            final BusinessException exception) {
+
+        Objects.requireNonNull(
+                checkout,
+                "Checkout entity must not be null.");
+
+        if (checkout.getStatus() != CheckoutStatusConstant.VALIDATING) {
+
+            LOGGER.warn(
+                    "Checkout review failure was not recorded because the "
+                            + "checkout is no longer validating. checkoutNumber={}, status={}",
+                    checkout.getCheckoutNumber(),
+                    checkout.getStatus());
+
+            return;
+        }
+
+        try {
+
+            final var error = exception.getErrorCode();
+
+            final CheckoutFailureDetails failureDetails = CheckoutFailureDetails.builder()
+                    .failureCategory(
+                            CheckoutFailureDetails.FailureCategory.BUSINESS_VALIDATION)
+                    .errorCode(error != null ? error.getErrorCode() : null)
+                    .message(error != null
+                            ? error.getErrorMessage()
+                            : exception.getMessage())
+                    .occurredAt(AppCalendar.getBusinessLocalDateTime())
+                    .reconciliationRequired(false)
+                    .remarks("Checkout review validation failed.")
+                    .build();
+
+            checkout.markFailed(failureDetails);
+
+            checkoutRepository.save(checkout);
+
+            LOGGER.warn(
+                    "Checkout review failed. checkoutNumber={}, errorCode={}",
+                    checkout.getCheckoutNumber(),
+                    failureDetails.getErrorCode());
+
+        } catch (RuntimeException recordingException) {
+
+            exception.addSuppressed(recordingException);
+
+            LOGGER.error(
+                    "Unable to persist checkout review failure details. "
+                            + "checkoutNumber={}, originalErrorCode={}",
+                    checkout.getCheckoutNumber(),
+                    exception.getErrorCode() != null
+                            ? exception.getErrorCode().getErrorCode()
+                            : null,
+                    recordingException);
+        }
+    }
+
     @Override
-    public IServiceOutput<CheckoutResponse> confirmCheckout(
-            final IServiceInput<ConfirmCheckoutRequest> input) {
+    public IServiceOutput<CheckoutResponse> confirmCheckout(final IServiceInput<ConfirmCheckoutRequest> input) {
 
         Objects.requireNonNull(input, "Checkout service input must not be null.");
 
@@ -1628,7 +2151,11 @@ public class CheckoutServiceImpl implements ICheckoutService {
         validateBranchAvailability(branchOutput.getOutput(), restaurant.getId());
 
         // 17: Recalculate and verify checkout pricing
-        CheckoutPricingSnapshot currentPricing = calculateCheckoutPricing(currentItems);
+        CheckoutOrderPreferencesRequest orderPreferencesSnapshot = buildAndResolveOrderPreferencesRequest(
+                checkout.getOrderPreferences());
+        CheckoutPricingSnapshot currentPricing = calculateAndValidateCheckoutPricing(checkout, cart,
+                checkout.getItems(),
+                orderPreferencesSnapshot);
 
         CheckoutPricingSnapshot reviewedPricing = checkout.getPricing();
 

@@ -1,5 +1,7 @@
 package com.foodies.freshmeal.order.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.foodies.freshmeal.common.repository.base.IBaseRepository;
@@ -33,4 +35,16 @@ import com.foodies.freshmeal.order.entity.OrderEntity;
 @Repository
 public interface IOrderRepository extends IBaseRepository<OrderEntity, String> {
 
+    /**
+     * Finds an order created from the specified checkout.
+     *
+     * <p>
+     * This lookup supports idempotent order creation and recovery when an order
+     * has been persisted successfully but checkout finalization has not completed.
+     * </p>
+     *
+     * @param checkoutNumber the originating checkout business identifier
+     * @return the existing order, if one has already been created
+     */
+    Optional<OrderEntity> findByCheckoutNumber(String checkoutNumber);
 }

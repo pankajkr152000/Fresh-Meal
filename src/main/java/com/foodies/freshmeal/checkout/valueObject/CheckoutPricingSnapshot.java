@@ -87,6 +87,16 @@ public class CheckoutPricingSnapshot implements Serializable {
     private Money rainCharge;
 
     /**
+     * Tip amount voluntarily added by the customer.
+     *
+     * <p>
+     * The tip is maintained separately from the item subtotal and other
+     * charges for transparent pricing and order reconciliation.
+     * </p>
+     */
+    private Money tipAmount;
+
+    /**
      * Final amount payable by the customer.
      *
      * <p>

@@ -175,6 +175,24 @@ public class OrderEntity extends ABaseEntity {
     @Indexed
     private OrderTypeConstant orderType;
 
+    /**
+     * Reference to the checkout from which this order was created.
+     *
+     * <p>
+     * This field is populated only for orders created through the checkout
+     * workflow. It allows the system to identify an already-created order
+     * when checkout finalization fails or a confirmation request is retried.
+     * </p>
+     *
+     * <p>
+     * The unique sparse index ensures that a checkout can be associated
+     * with at most one order while allowing orders created through other
+     * workflows to omit this field.
+     * </p>
+     */
+    @Indexed(unique = true, sparse = true)
+    private String checkoutNumber;
+
     // =========================================================================
     // Customer Snapshot
     // =========================================================================

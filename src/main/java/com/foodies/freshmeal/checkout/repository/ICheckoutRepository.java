@@ -113,4 +113,20 @@ public interface ICheckoutRepository extends IBaseRepository<CheckoutEntity, Str
      * @return {@code true} if a checkout references the order
      */
     boolean existsByOrderNumber(String orderNumber);
+
+    /**
+     * Retrieves checkout sessions that have remained in the specified
+     * status before the given timestamp.
+     *
+     * <p>
+     * Used by the checkout recovery process to identify stale sessions.
+     * </p>
+     *
+     * @param status     the checkout status to filter by
+     * @param cutoffTime the timestamp before which a checkout is considered stale
+     * @return matching checkout sessions
+     */
+    List<CheckoutEntity> findByStatusAndStatusUpdatedAtBefore(
+            CheckoutStatusConstant status,
+            LocalDateTime cutoffTime);
 }

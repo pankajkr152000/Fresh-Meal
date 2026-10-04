@@ -16,10 +16,12 @@ import com.foodies.freshmeal.checkout.constants.CheckoutStatusConstant;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutAddressSnapshot;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutFailureDetails;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutItemSnapshot;
+import com.foodies.freshmeal.checkout.valueObject.CheckoutOrderPreferencesSnapshot;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutPricingSnapshot;
 import com.foodies.freshmeal.checkout.valueObject.CheckoutStatusHistory;
 import com.foodies.freshmeal.common.date.AppCalendar;
 import com.foodies.freshmeal.common.entity.ABaseEntity;
+import com.foodies.freshmeal.order.constants.OrderTypeConstant;
 
 import lombok.Getter;
 
@@ -179,6 +181,22 @@ public class CheckoutEntity extends ABaseEntity {
     @Indexed(sparse = true)
     private String orderNumber;
 
+    /**
+     * Immutable snapshot of customer-selected order preferences.
+     *
+     * <p>
+     * Captures customer intent independently of server-calculated pricing.
+     * These preferences are preserved for confirmation and subsequent order
+     * creation.
+     * </p>
+     *
+     * <p>
+     * The Order aggregate remains the authoritative owner of the final order
+     * data and lifecycle.
+     * </p>
+     */
+    private CheckoutOrderPreferencesSnapshot orderPreferences;
+
     // =========================================================================
     // Failure Details
     // =========================================================================
@@ -303,7 +321,8 @@ public class CheckoutEntity extends ABaseEntity {
     public void markReadyForConfirmation(
             final List<CheckoutItemSnapshot> validatedItems,
             final CheckoutAddressSnapshot address,
-            final CheckoutPricingSnapshot pricing) {
+            final CheckoutPricingSnapshot pricing,
+            final CheckoutOrderPreferencesSnapshot orderPreferences) {
 
         if (status != CheckoutStatusConstant.VALIDATING) {
             throw new IllegalStateException("Checkout must be in VALIDATING status.");
@@ -313,16 +332,56 @@ public class CheckoutEntity extends ABaseEntity {
             throw new IllegalArgumentException("At least one checkout item is required.");
         }
 
-        Objects.requireNonNull(address, "Delivery address snapshot is required.");
+        if (orderPreferences.getOrderType() == OrderTypeConstant.DELIVERY) {
+            Objects.requireNonNull(address, "Delivery address snapshot is required for delivery orders.");
+        }
 
         Objects.requireNonNull(pricing, "Checkout pricing snapshot is required.");
+
+        Objects.requireNonNull(orderPreferences, "Checkout order preferences snapshot is required.");
 
         this.items = new ArrayList<>(validatedItems);
         this.deliveryAddress = address;
         this.pricing = pricing;
         this.failureDetails = null;
+        this.orderPreferences = orderPreferences;
 
         transitionTo(CheckoutStatusConstant.READY_FOR_CONFIRMATION, "Checkout validation completed successfully.");
+    }
+
+    /**
+     * Marks a checkout as failed when its validation process has exceeded
+     * the permitted duration.
+     *
+     * <p>
+     * A stale validation is treated as a definitive processing failure
+     * because the review operation has not progressed to confirmation.
+     * The checkout can be retried through the existing FAILED-to-INITIATED
+     * lifecycle transition.
+     * </p>
+     *
+     * @param failureDetails details describing the stale validation
+     * @throws IllegalArgumentException if failure details are null
+     * @throws IllegalStateException    if the checkout is not currently validating
+     */
+    public void markValidationTimedOut(
+            final CheckoutFailureDetails failureDetails) {
+
+        Objects.requireNonNull(
+                failureDetails,
+                "Checkout failure details must not be null.");
+
+        if (this.status != CheckoutStatusConstant.VALIDATING) {
+            throw new IllegalStateException(
+                    "Only a checkout in VALIDATING status can be marked as timed out.");
+        }
+
+        if (failureDetails.isReconciliationRequired()) {
+            throw new IllegalArgumentException(
+                    "A definitive validation timeout must not require reconciliation.");
+        }
+
+        markFailed(failureDetails);
     }
 
     /**
@@ -645,4 +704,46 @@ public class CheckoutEntity extends ABaseEntity {
             throw new IllegalArgumentException(fieldName + " is required.");
         }
     }
+
+    /**
+     * Records a failure that requires reconciliation before checkout processing
+     * can safely continue.
+     *
+     * <p>
+     * The checkout remains in its current lifecycle state because the outcome
+     * of the operation has not been conclusively established.
+     * </p>
+     *
+     * <p>
+     * This method does not authorize a retry, perform reconciliation, or
+     * transition the checkout to FAILED. Those responsibilities belong to
+     * the service layer.
+     * </p>
+     *
+     * @param failureDetails structured failure information requiring reconciliation
+     * @throws NullPointerException     if failure details are null
+     * @throws IllegalArgumentException if reconciliation is not required
+     */
+    public void recordReconciliationRequired(
+            final CheckoutFailureDetails failureDetails) {
+
+        Objects.requireNonNull(
+                failureDetails,
+                "Checkout failure details are required.");
+
+        if (!failureDetails.isReconciliationRequired()) {
+            throw new IllegalArgumentException(
+                    "Failure details must require reconciliation.");
+        }
+
+        if (status != CheckoutStatusConstant.VALIDATING
+                && status != CheckoutStatusConstant.CONFIRMATION_IN_PROGRESS) {
+
+            throw new IllegalStateException(
+                    "Reconciliation cannot be recorded from status: " + status);
+        }
+
+        this.failureDetails = failureDetails;
+    }
+
 }
