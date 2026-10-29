@@ -348,7 +348,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         final LoginResponse loginResponse = new LoginResponse();
 
         loginResponse.setToken(tokenResponse);
-
+        if(userProfile.getUserEntity().getRoles() == null || userProfile.getUserEntity().getRoles().size()==0) {
+        	throw new BusinessException(AuthenticationErrorConstants.AUTHORIZATION_FAILED);
+        }
+        loginResponse.setRoles(userProfile.getUserEntity().getRoles());
         return new ServiceOutput<>(loginResponse);
     }
 

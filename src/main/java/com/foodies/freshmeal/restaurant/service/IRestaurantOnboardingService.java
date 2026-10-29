@@ -1,8 +1,11 @@
 package com.foodies.freshmeal.restaurant.service;
 
+import java.util.List;
+
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingInputDTO;
+import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingStatusDTO;
 import com.foodies.freshmeal.restaurant.entity.RestaurantEntity;
 
 /**
@@ -57,4 +60,14 @@ public interface IRestaurantOnboardingService {
      * @return service output containing the created restaurant
      */
     IServiceOutput<RestaurantEntity> onboardRestaurant(IServiceInput<RestaurantOnboardingInputDTO> input);
+
+    /**
+     * Retrieves the onboarding status of all restaurants owned by the
+     * currently authenticated restaurant owner.
+     *
+     * @param input service input containing the authenticated service context
+     * @return service output containing the restaurant onboarding statuses;
+     *         an empty list if the owner has no restaurants
+     */
+    IServiceOutput<List<RestaurantOnboardingStatusDTO>> getOnboardingStatuses(IServiceInput<Void> input);
 }

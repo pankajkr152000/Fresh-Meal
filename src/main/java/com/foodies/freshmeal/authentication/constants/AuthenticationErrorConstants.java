@@ -83,6 +83,11 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "FM-AUTH-003",
             "The requested authentication operation is not allowed.",
             HttpStatusCode.BAD_REQUEST),
+    
+    AUTHORIZATION_FAILED(
+    		"FM-AUTH-004",
+    		"The requested authorization failed.",
+    		HttpStatusCode.NOT_ACCEPTABLE),
 
     // =========================================================================
     // Credential and Password Errors - 010 to 019

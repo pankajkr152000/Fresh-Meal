@@ -208,6 +208,7 @@ public class FoodController implements IFoodController {
 
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+    @AuditApi (action = ActionType.VIEW_FOOD_CATEGORY_METADATA, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.FOOD_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> foodCategories()
             throws JsonProcessingException {
@@ -215,14 +216,15 @@ public class FoodController implements IFoodController {
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
 
-        foodService.getFoodCategories(input);
+        IServiceOutput<List<DisplayOptionResponse>> response = foodService.getFoodCategories(input);
 
         return ApiResponseBuilder.success(
-                ApiMessageConstants.FETCHED_SUCCESSFULLY);
+                ApiMessageConstants.FETCHED_SUCCESSFULLY, response.getOutput());
     }
 
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+    @AuditApi (action = ActionType.VIEW_FOOD_DIET_METADATA, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.DIET_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> dietCategories()
             throws JsonProcessingException {
@@ -230,14 +232,15 @@ public class FoodController implements IFoodController {
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
 
-        foodService.getDietCategories(input);
+        IServiceOutput<List<DisplayOptionResponse>> response = foodService.getDietCategories(input);
 
         return ApiResponseBuilder.success(
-                ApiMessageConstants.FETCHED_SUCCESSFULLY);
+                ApiMessageConstants.FETCHED_SUCCESSFULLY, response.getOutput());
     }
 
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+    @AuditApi (action = ActionType.VIEW_FOOD_CUISINE_METADATA, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.CUISINE_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> cuisineCategories()
             throws JsonProcessingException {
@@ -245,14 +248,15 @@ public class FoodController implements IFoodController {
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
 
-        foodService.getCuisineCategories(input);
+        IServiceOutput<List<DisplayOptionResponse>> response = foodService.getCuisineCategories(input);
 
         return ApiResponseBuilder.success(
-                ApiMessageConstants.FETCHED_SUCCESSFULLY);
+                ApiMessageConstants.FETCHED_SUCCESSFULLY, response.getOutput());
     }
 
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+    @AuditApi(action = ActionType.VIEW_FOOD_CATEGORY_GROUP_METADATA, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.GROUP_CATEGORIES)
     public ResponseEntity<ApiResponse<List<DisplayOptionResponse>>> groupCategories()
             throws JsonProcessingException {
@@ -260,14 +264,15 @@ public class FoodController implements IFoodController {
         IServiceInput<Void> input = new ServiceInput<>();
         input.setServiceContext(serviceContext);
 
-        foodService.getGroupCategories(input);
+        IServiceOutput<List<DisplayOptionResponse>> response = foodService.getGroupCategories(input);
 
         return ApiResponseBuilder.success(
-                ApiMessageConstants.FETCHED_SUCCESSFULLY);
+                ApiMessageConstants.FETCHED_SUCCESSFULLY, response.getOutput());
     }
 
     @Override
     @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+    @AuditApi(action = ActionType.VIEW_FOOD_METADATA, module = ModuleType.FOOD, method = MethodType.READ)
     @GetMapping(FoodApiConstants.FOOD_CATEGORY_METADATA)
     public ResponseEntity<ApiResponse<FoodMetadataResponse>> foodCategoryMetadata()
             throws JsonProcessingException {

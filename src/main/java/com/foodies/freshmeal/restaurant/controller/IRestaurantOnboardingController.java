@@ -1,9 +1,12 @@
 package com.foodies.freshmeal.restaurant.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 import com.foodies.freshmeal.common.dto.ApiResponse;
 import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingInputDTO;
+import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingStatusDTO;
 import com.foodies.freshmeal.restaurant.entity.RestaurantEntity;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -87,4 +90,28 @@ public interface IRestaurantOnboardingController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Restaurant onboarding conflicts with an existing business rule.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
     })
     ResponseEntity<ApiResponse<RestaurantEntity>> onboardRestaurant(RestaurantOnboardingInputDTO request);
+
+    /**
+     * Retrieves the onboarding statuses of all restaurants owned by the
+     * authenticated user.
+     *
+     * <p>
+     * The authenticated user's identity is resolved from the server-side
+     * security context and is never accepted from the request payload.
+     * </p>
+     *
+     * @return list of restaurant onboarding statuses
+     */
+    @Operation(summary = "Get restaurant onboarding statuses", description = """
+            Retrieves the onboarding statuses of all restaurants owned by the
+            authenticated FreshMeal restaurant owner.
+            The authenticated user's identity is resolved from the
+            server-side security context and is never accepted from the
+            request payload.
+            """)
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Restaurant onboarding statuses retrieved successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class))),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "403", description = "Authenticated user is not authorized to retrieve restaurant onboarding statuses.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiResponse.class)))
+    })
+    ResponseEntity<ApiResponse<List<RestaurantOnboardingStatusDTO>>> getOnboardingStatuses();
 }

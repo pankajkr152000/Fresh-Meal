@@ -1,7 +1,10 @@
 package com.foodies.freshmeal.restaurant.controller.impl;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +25,7 @@ import com.foodies.freshmeal.common.io.service.impl.ServiceInput;
 import com.foodies.freshmeal.restaurant.constants.RestaurantApiConstants;
 import com.foodies.freshmeal.restaurant.controller.IRestaurantOnboardingController;
 import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingInputDTO;
+import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingStatusDTO;
 import com.foodies.freshmeal.restaurant.entity.RestaurantEntity;
 import com.foodies.freshmeal.restaurant.service.IRestaurantOnboardingService;
 
@@ -60,8 +64,7 @@ import com.foodies.freshmeal.restaurant.service.IRestaurantOnboardingService;
  */
 @RestController
 @RequestMapping(RestaurantApiConstants.BASE_URL)
-public class RestaurantOnboardingController
-        implements IRestaurantOnboardingController {
+public class RestaurantOnboardingController implements IRestaurantOnboardingController {
 
     /**
      * Restaurant onboarding service.
@@ -111,6 +114,29 @@ public class RestaurantOnboardingController
 
         return ApiResponseBuilder.created(
                 ApiMessageConstants.RESTAURANT_CREATED,
+                serviceOutput.getOutput());
+    }
+
+    /**
+     * Retrieves onboarding statuses for all active restaurants owned by
+     * the currently authenticated restaurant owner.
+     *
+     * @return restaurant onboarding statuses
+     */
+    @Override
+    @PreAuthorize(AuthorizationConstants.IS_AUTHENTICATED)
+    @AuditApi(action = ActionType.VIEW_RESTAURANT_STATUS, module = ModuleType.RESTAURANT, method = MethodType.READ)
+    @GetMapping(RestaurantApiConstants.ONBOARDING_STATUS)
+    public ResponseEntity<ApiResponse<List<RestaurantOnboardingStatusDTO>>> getOnboardingStatuses() {
+
+        final IServiceInput<Void> serviceInput = new ServiceInput<>();
+        serviceInput.setServiceContext(serviceContext);
+
+        final IServiceOutput<List<RestaurantOnboardingStatusDTO>> serviceOutput = restaurantOnboardingService
+                .getOnboardingStatuses(serviceInput);
+
+        return ApiResponseBuilder.success(
+                ApiMessageConstants.RESTAURANT_ONBOARDING_STATUS_RETRIEVED,
                 serviceOutput.getOutput());
     }
 }

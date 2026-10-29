@@ -1,9 +1,13 @@
 package com.foodies.freshmeal.restaurant.service.impl;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +20,10 @@ import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.common.io.service.impl.ServiceOutput;
 import com.foodies.freshmeal.common.sequence.service.IDatabaseSequenceService;
 import com.foodies.freshmeal.restaurant.constants.RestaurantErrorConstants;
+import com.foodies.freshmeal.restaurant.constants.RestaurantOnboardingStatus;
 import com.foodies.freshmeal.restaurant.dto.RestaurantBranchRegistrationRequest;
 import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingInputDTO;
+import com.foodies.freshmeal.restaurant.dto.RestaurantOnboardingStatusDTO;
 import com.foodies.freshmeal.restaurant.dto.RestaurantOwnerRegistrationRequest;
 import com.foodies.freshmeal.restaurant.dto.RestaurantRegistrationRequest;
 import com.foodies.freshmeal.restaurant.entity.RestaurantBranchEntity;
@@ -72,28 +78,29 @@ import com.foodies.freshmeal.user.entity.UserProfile;
  * │
  * ▼
  * 
- *POST /api/restaurants/onboarding
-            │
-            ▼
-RestaurantOnboardingController
-            │
-            ▼
-@Transactional
-RestaurantOnboardingServiceImpl
-            │
-            ├── Create Restaurant
-            │      └── save()
-            │
-            ├── Create Initial Branch
-            │      └── save()
-            │
-            └── return Restaurant
-                  │
-          ┌───────┴────────┐
-          │                │
-       success           failure
-          │                │
-       COMMIT           ROLLBACK
+ * POST /api/restaurants/onboarding
+ * │
+ * ▼
+ * RestaurantOnboardingController
+ * │
+ * ▼
+ * 
+ * @Transactional
+ *                RestaurantOnboardingServiceImpl
+ *                │
+ *                ├── Create Restaurant
+ *                │ └── save()
+ *                │
+ *                ├── Create Initial Branch
+ *                │ └── save()
+ *                │
+ *                └── return Restaurant
+ *                │
+ *                ┌───────┴────────┐
+ *                │ │
+ *                success failure
+ *                │ │
+ *                COMMIT ROLLBACK
  * 
  * @author Pankaj Kumar
  * @since 1.0
@@ -387,5 +394,71 @@ public class RestaurantOnboardingServiceImpl
             throw new BusinessException(
                     RestaurantErrorConstants.RESTAURANT_OPERATION_NOT_ALLOWED);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Retrieves all active restaurants belonging to the authenticated
+     * restaurant owner and determines whether each restaurant has at least
+     * one active branch.
+     * </p>
+     *
+     * @param input service input containing the current service context
+     * @return onboarding statuses for the authenticated owner's restaurants
+     */
+    @Override
+    public IServiceOutput<List<RestaurantOnboardingStatusDTO>> getOnboardingStatuses(
+            final IServiceInput<Void> input) {
+
+        Objects.requireNonNull(
+                input,
+                "Restaurant onboarding status service input must not be null.");
+
+        final UserProfile userProfile = resolveAuthenticatedUser();
+
+        validateRestaurantOwnerRole(userProfile);
+
+        final Query restaurantQuery = new Query(
+                Criteria.where("ownerUserNumber").is(userProfile.getUserNumber()));
+
+        final List<RestaurantEntity> restaurants = restaurantRepository.findAll(restaurantQuery);
+
+        final List<RestaurantOnboardingStatusDTO> onboardingStatuses = restaurants.stream()
+                .map(this::toOnboardingStatus)
+                .collect(Collectors.toList());
+
+        LOGGER.debug(
+                "Retrieved restaurant onboarding statuses. ownerUserNumber=[{}], restaurantCount=[{}]",
+                userProfile.getUserNumber(),
+                onboardingStatuses.size());
+
+        return new ServiceOutput<>(onboardingStatuses);
+    }
+
+    /**
+     * Maps a restaurant entity to its onboarding status DTO.
+     *
+     * @param restaurant restaurant entity
+     * @return restaurant onboarding status
+     */
+    private RestaurantOnboardingStatusDTO toOnboardingStatus(
+            final RestaurantEntity restaurant) {
+
+        final Query branchQuery = new Query(
+                Criteria.where("restaurantId").is(restaurant.getId()));
+
+        final boolean hasActiveBranch = restaurantBranchRepository.exists(branchQuery);
+
+        final RestaurantOnboardingStatus onboardingStatus = hasActiveBranch
+                ? RestaurantOnboardingStatus.COMPLETED
+                : RestaurantOnboardingStatus.INCOMPLETE;
+
+        return new RestaurantOnboardingStatusDTO(
+                restaurant.getId(),
+                restaurant.getRestaurantNumber(),
+                restaurant.getRestaurantName(),
+                onboardingStatus);
     }
 }

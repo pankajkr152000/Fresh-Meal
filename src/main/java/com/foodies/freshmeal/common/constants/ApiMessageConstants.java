@@ -168,6 +168,8 @@ public final class ApiMessageConstants {
 
     public static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
 
+    public static final String RESTAURANT_ONBOARDING_STATUS_RETRIEVED = "Restaurant onboarding statuses retrieved successfully";
+
     // =========================================================
     // Payment
     // =========================================================

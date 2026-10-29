@@ -33,6 +33,12 @@ public enum ActionType implements IDisplayOption {
     READ_ARCHIVED_FOODS("Read Archived Foods"),
     PERMANENT_DELETE_FOOD("Permanent Delete Food"),
 
+    VIEW_FOOD_METADATA("View Food Metadata"),
+    VIEW_FOOD_CUISINE_METADATA("View Food Cuisine Metadata"),
+    VIEW_FOOD_CATEGORY_METADATA("View Food Category Metadata"),
+    VIEW_FOOD_DIET_METADATA("View Food Diet Metadata"),
+    VIEW_FOOD_CATEGORY_GROUP_METADATA("View Food Category Group Metadata"),
+
     // =========================================================================
     // Category Operations
     // =========================================================================
@@ -79,6 +85,7 @@ public enum ActionType implements IDisplayOption {
     UPDATE_RESTAURANT("Update Restaurant"),
     UPDATE_RESTAURANT_STATUS("Update Restaurant Status"),
     UPDATE_RESTAURANT_AVAILABILITY("Update Restaurant Availability"),
+    VIEW_RESTAURANT_STATUS("View Restaurant Status"),
 
     // =========================================================================
     // Restaurant Branch Operations

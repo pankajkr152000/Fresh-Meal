@@ -196,4 +196,12 @@ public final class RestaurantApiConstants {
      */
     public static final String ONBOARD = "/onboarding";
 
+    /**
+     * Retrieves onboarding statuses for restaurants owned by the
+     * authenticated restaurant owner.
+     *
+     * GET /api/restaurants/onboarding/status
+     */
+    public static final String ONBOARDING_STATUS = "/onboarding/status";
+
 }
