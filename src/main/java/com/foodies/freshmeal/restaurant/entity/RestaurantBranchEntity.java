@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.foodies.freshmeal.common.entity.ABaseEntity;
 import com.foodies.freshmeal.common.entity.IEntity;
 import com.foodies.freshmeal.common.valueObject.Address;
+import com.foodies.freshmeal.common.valueObject.EmailAddress;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 import com.foodies.freshmeal.restaurant.valueObject.OperatingHours;
 
 import lombok.Getter;
@@ -64,6 +66,20 @@ public class RestaurantBranchEntity extends ABaseEntity {
      * Regular weekly operating hours of the branch.
      */
     private List<OperatingHours> operatingHours;
+
+    /**
+     * Primary contact phone number for this branch.
+     *
+     * Used for branch-specific customer communication.
+     */
+    private PhoneNumber contactPhoneNumber;
+
+    /**
+     * Primary contact email address for this branch.
+     *
+     * Used for branch-specific customer communication.
+     */
+    private EmailAddress contactEmailAddress;
 
     /**
      * Package-private constructor.

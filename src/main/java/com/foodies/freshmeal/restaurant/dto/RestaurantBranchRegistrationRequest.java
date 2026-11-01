@@ -3,6 +3,8 @@ package com.foodies.freshmeal.restaurant.dto;
 import java.util.List;
 
 import com.foodies.freshmeal.common.valueObject.Address;
+import com.foodies.freshmeal.common.valueObject.EmailAddress;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 import com.foodies.freshmeal.restaurant.valueObject.OperatingHours;
 
 import jakarta.validation.Valid;
@@ -56,6 +58,18 @@ public class RestaurantBranchRegistrationRequest {
     @NotBlank
     @Size(max = 150)
     private String branchName;
+
+    /**
+     * Primary contact phone number for the branch.
+     */
+    @Valid
+    private PhoneNumber contactPhoneNumber;
+
+    /**
+     * Primary contact email address for the branch.
+     */
+    @Valid
+    private EmailAddress contactEmailAddress;
 
     /**
      * Physical address of the restaurant branch.

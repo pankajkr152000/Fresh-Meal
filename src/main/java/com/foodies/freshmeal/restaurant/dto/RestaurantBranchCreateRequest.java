@@ -5,7 +5,9 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.foodies.freshmeal.common.valueObject.Address;
+import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.common.valueObject.GeoLocation;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 import com.foodies.freshmeal.restaurant.valueObject.OperatingHours;
 
 import jakarta.validation.Valid;
@@ -60,6 +62,21 @@ public class RestaurantBranchCreateRequest implements Serializable {
     @NotBlank
     @Size(max = 150)
     private String branchName;
+    
+    // =========================================================================
+    // Contact Details
+    // =========================================================================
+    /**
+     * Primary contact phone number for the branch.
+     */
+    @Valid
+    private PhoneNumber contactPhoneNumber;
+
+    /**
+     * Primary contact email address for the branch.
+     */
+    @Valid
+    private EmailAddress contactEmailAddress;
 
     // =========================================================================
     // Physical Location

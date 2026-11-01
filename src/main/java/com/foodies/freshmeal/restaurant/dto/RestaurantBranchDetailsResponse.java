@@ -9,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.foodies.freshmeal.common.date.DateConstants;
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
 import com.foodies.freshmeal.common.valueObject.Address;
+import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.common.valueObject.GeoLocation;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 import com.foodies.freshmeal.restaurant.valueObject.OperatingHours;
 
 import lombok.AllArgsConstructor;
@@ -143,5 +145,15 @@ public class RestaurantBranchDetailsResponse implements Serializable {
      * User who last updated the branch.
      */
     private String updatedBy;
+
+    /**
+     * Primary contact phone number for the branch.
+     */
+    private PhoneNumber contactPhoneNumber;
+
+    /**
+     * Primary contact email address for the branch.
+     */
+    private EmailAddress contactEmailAddress;
 
 }

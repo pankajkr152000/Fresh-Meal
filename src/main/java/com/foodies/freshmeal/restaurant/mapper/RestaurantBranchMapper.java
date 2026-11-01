@@ -57,6 +57,8 @@ public class RestaurantBranchMapper {
         entity.setBranchName(request.getBranchName());
         entity.setAddress(request.getAddress());
         entity.setOperatingHours(request.getOperatingHours());
+        entity.setContactPhoneNumber(request.getContactPhoneNumber());
+        entity.setContactEmailAddress(request.getContactEmailAddress());
 
         return entity;
     }
@@ -79,6 +81,8 @@ public class RestaurantBranchMapper {
                 .addressSummary(buildAddressSummary(entity))
                 .status(DisplayOptionMapperUtil.from(entity.getRecordStatus()))
                 .isAvailable(!entity.isDeleted())
+                .contactEmailAddress(entity.getContactEmailAddress())
+                .contactPhoneNumber(entity.getContactPhoneNumber())
                 .build();
     }
 
@@ -107,6 +111,8 @@ public class RestaurantBranchMapper {
                 .createdBy(entity.getCreatedBy())
                 .updatedAt(entity.getUpdatedAt())
                 .updatedBy(entity.getUpdatedBy())
+                .contactEmailAddress(entity.getContactEmailAddress())
+                .contactPhoneNumber(entity.getContactPhoneNumber())
                 .build();
     }
 

@@ -4,7 +4,9 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import com.foodies.freshmeal.common.dto.DisplayOptionResponse;
+import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.common.valueObject.GeoLocation;
+import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -95,5 +97,17 @@ public class RestaurantBranchListResponse implements Serializable {
      * Indicates whether the branch is currently operationally available.
      */
     private boolean isAvailable;
+
+    /**
+     * Primary contact phone number for the branch.
+     */
+
+    private PhoneNumber contactPhoneNumber;
+
+    /**
+     * Primary contact email address for the branch.
+     */
+
+    private EmailAddress contactEmailAddress;
 
 }
