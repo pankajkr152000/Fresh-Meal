@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.foodies.freshmeal.user.entity.UserProfile;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -250,22 +251,24 @@ public class JwtTokenService implements ITokenService {
 	 *
 	 * @return {@code true} when the token is valid for the requested purpose.
 	 */
-	private boolean isTokenValid(String token, TokenType expectedType) {
+	private boolean isTokenValid(final String token, final TokenType expectedType) {
 
-		if (token == null || token.isBlank() || expectedType == null) {
-			return false;
-		}
+	    if (token == null || token.isBlank() || expectedType == null) {
+	        return false;
+	    }
 
-		try {
-			Claims claims = parseClaims(token);
+	    try {
 
-			String tokenType = claims.get("tokenType", String.class);
+	        final Claims claims = parseClaims(token);
 
-			return expectedType.name().equals(tokenType);
+	        final String tokenType = claims.get("tokenType", String.class);
 
-		} catch (Exception exception) {
-			return false;
-		}
+	        return expectedType.name().equals(tokenType);
+
+	    } catch (JwtException | IllegalArgumentException exception) {
+
+	        return false;
+	    }
 	}
 
 	// =========================================================================

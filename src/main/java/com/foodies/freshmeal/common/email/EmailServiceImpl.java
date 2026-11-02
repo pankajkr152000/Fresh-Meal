@@ -1,49 +1,25 @@
+
 package com.foodies.freshmeal.common.email;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 
 /**
  * ============================================================================
  * Service : EmailServiceImpl
  * ============================================================================
  *
- * <p>
  * Default FreshMeal email delivery implementation based on Spring's
- * {@link JavaMailSender}.
- * </p>
+ * JavaMailSender.
  *
- * <p>
- * This service isolates the application from the underlying SMTP or mail
- * provider implementation. Business modules interact with {@link IEmailService}
- * rather than directly using {@link JavaMailSender}.
- * </p>
- *
- * <h3>Responsibilities</h3>
- *
- * <ul>
- * <li>Validate basic email delivery input.</li>
- * <li>Create the outgoing email message.</li>
- * <li>Delegate delivery to {@link JavaMailSender}.</li>
- * </ul>
- *
- * <h3>Provider Independence</h3>
- *
- * <p>
- * The rest of FreshMeal depends only on {@link IEmailService}. The underlying
- * SMTP configuration or future email provider can therefore be changed without
- * requiring changes to authentication or other business modules.
- * </p>
- *
- * <h3>Message Responsibility</h3>
- *
- * <p>
- * This implementation currently sends plain-text messages. Authentication
- * specific subjects and message content should be constructed by the
- * corresponding application service or a future email-template component,
- * rather than being embedded into this infrastructure service.
- * </p>
+ * Responsibilities: - Deliver plain-text email messages. - Deliver HTML email
+ * messages. - Validate email delivery inputs. - Keep mail-provider
+ * implementation details within the infrastructure layer.
  *
  * ============================================================================
  *
@@ -71,29 +47,65 @@ public class EmailServiceImpl implements IEmailService {
 	 *
 	 * @param mailSender configured Spring mail sender.
 	 */
-	public EmailServiceImpl(JavaMailSender mailSender) {
+	public EmailServiceImpl(final JavaMailSender mailSender) {
 		this.mailSender = mailSender;
 	}
 
 	// =========================================================================
-	// Email Delivery
+	// Plain-text Email Delivery
 	// =========================================================================
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void sendEmail(String recipient, String subject, String body) {
+	public void sendEmail(final String recipient, final String subject, final String body) {
 
 		validateInput(recipient, subject, body);
 
-		SimpleMailMessage message = new SimpleMailMessage();
+		final SimpleMailMessage message = new SimpleMailMessage();
 
 		message.setTo(recipient);
 		message.setSubject(subject);
 		message.setText(body);
 
 		mailSender.send(message);
+	}
+
+	// =========================================================================
+	// HTML Email Delivery
+	// =========================================================================
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>
+	 * Sends an HTML email using MIME message support.
+	 * </p>
+	 *
+	 * @throws RuntimeException when message construction or delivery fails.
+	 */
+	@Override
+	public void sendHtmlEmail(final String recipient, final String subject, final String htmlBody) {
+
+		validateInput(recipient, subject, htmlBody);
+
+		try {
+
+			final MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+			final MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+
+			messageHelper.setTo(recipient);
+			messageHelper.setSubject(subject);
+			messageHelper.setText(htmlBody, true);
+
+			mailSender.send(mimeMessage);
+
+		} catch (final MessagingException exception) {
+
+			throw new IllegalStateException("Unable to construct the HTML email message.", exception);
+		}
 	}
 
 	// =========================================================================
@@ -109,7 +121,7 @@ public class EmailServiceImpl implements IEmailService {
 	 *
 	 * @throws IllegalArgumentException when any required value is blank.
 	 */
-	private void validateInput(String recipient, String subject, String body) {
+	private void validateInput(final String recipient, final String subject, final String body) {
 
 		if (recipient == null || recipient.isBlank()) {
 			throw new IllegalArgumentException("Email recipient must not be empty.");

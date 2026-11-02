@@ -42,6 +42,9 @@ import com.foodies.freshmeal.common.repository.base.IBaseRepository;
  * @author Pankaj Kumar
  * @since 1.0
  */
-public interface IPasswordResetTokenRepository extends IBaseRepository<PasswordResetTokenEntity, String> {
+
+public interface IPasswordResetTokenRepository
+        extends IBaseRepository<PasswordResetTokenEntity, String>,
+        IPasswordResetTokenRepositoryCustom {
 
 }

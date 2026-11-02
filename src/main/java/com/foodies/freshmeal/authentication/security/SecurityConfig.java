@@ -108,6 +108,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final IUserDetailsService userDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     /**
      * Creates the security configuration.
@@ -115,10 +118,16 @@ public class SecurityConfig {
      * @param jwtAuthenticationFilter JWT request authentication filter.
      * @param userDetailsService      FreshMeal user-details service.
      */
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, IUserDetailsService userDetailsService) {
+    public SecurityConfig(
+            final JwtAuthenticationFilter jwtAuthenticationFilter,
+            final IUserDetailsService userDetailsService,
+            final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+            final JwtAccessDeniedHandler jwtAccessDeniedHandler) {
 
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.userDetailsService = userDetailsService;
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
     // =========================================================================
@@ -270,6 +279,10 @@ public class SecurityConfig {
                 // Stateless Authentication
                 // =============================================================
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler))
 
                 // =============================================================
                 // JWT Authentication Filter

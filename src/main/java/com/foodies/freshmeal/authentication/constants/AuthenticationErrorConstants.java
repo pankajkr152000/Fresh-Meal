@@ -147,6 +147,11 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "FM-AUTH-020",
             "Strong password is required.",
             HttpStatusCode.BAD_REQUEST),
+    
+    CONFIRM_PASSWORD_REQUIRED(
+    		"FM-AUTH-021",
+    		"Confirm password is required.",
+    		HttpStatusCode.BAD_REQUEST),
 
     // =========================================================================
     // Account Authentication State Errors - 020 to 029

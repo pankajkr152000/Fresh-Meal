@@ -2,7 +2,10 @@ package com.foodies.freshmeal.authentication.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.foodies.freshmeal.authentication.token.ITokenRevocationService;
 import com.foodies.freshmeal.authentication.token.ITokenService;
 import com.foodies.freshmeal.common.constants.RoleType;
+import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
 import com.foodies.freshmeal.common.io.DataContext;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
@@ -120,6 +124,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     // =========================================================================
     // Constants
@@ -239,10 +245,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 DataContext.CURRENT_ACCESS_TOKEN,
                 token);
 
-        Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if (currentAuthentication != null
+//                && currentAuthentication.isAuthenticated()) {
+//
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+        
+        final Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (currentAuthentication != null
-                && currentAuthentication.isAuthenticated()) {
+        if (currentAuthentication != null && currentAuthentication.isAuthenticated()) {
+
+            final Object principal = currentAuthentication.getPrincipal();
+
+            if (principal instanceof UserProfile userProfile) {
+                serviceContext.setUserProfile(userProfile);
+            }
 
             filterChain.doFilter(request, response);
             return;
@@ -257,25 +277,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Authentication
     // =========================================================================
 
-    /**
-     * Establishes authentication when the supplied access token is valid.
-     *
-     * <p>
-     * The token is first validated and checked against server-side token and
-     * session revocation state. The verified user number is then used to
-     * resolve the current {@link UserEntity}. A {@link UserProfile} is created
-     * from that entity and the verified JWT authorities.
-     * </p>
-     *
-     * <p>
-     * The resulting authentication is stored in Spring Security and the
-     * resulting {@link UserProfile} is also stored in the current request-scoped
-     * {@link IServiceContext}.
-     * </p>
-     *
-     * @param request HTTP request.
-     * @param token   bearer access token.
-     */
+	/**
+	 *
+	 * Establishes authentication using a cryptographically validated access token.
+	 *
+	 * <p>
+	 * Token and session revocation states are checked before resolving the current
+	 * user. Spring Security authorities are derived from the user's latest
+	 * persisted roles, ensuring that role changes take effect on subsequent
+	 * authenticated requests.
+	 * </p>
+	 *
+	 *
+	 * @param request HTTP request.
+	 * @param token   bearer access token.
+	 */
     private void authenticateRequest(
             HttpServletRequest request,
             String token) {
@@ -320,8 +336,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String userNumber = tokenService.getUserNumber(token);
 
-            if (!hasText(username)
-                    || !hasText(userNumber)) {
+            if (!hasText(username) || !hasText(userNumber)) {
                 return;
             }
 
@@ -329,57 +344,78 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Extract and Convert Roles
             // -----------------------------------------------------------------
 
-            List<SimpleGrantedAuthority> authorities = buildAuthorities(tokenService.getRoles(token));
-
             // -----------------------------------------------------------------
             // Resolve FreshMeal User
             // -----------------------------------------------------------------
 
-            UserEntity userEntity = loadUserByUserNumber(userNumber);
+            UserEntity userEntity = loadUserByUserNumber(userNumber, serviceContext);
 
             if (userEntity == null) {
                 return;
             }
+            
+            if (!username.equals(userEntity.getUsername())) {
+                return;
+            }
+            
+            if (!isAccountEligibleForAuthentication(userEntity)) {
+                return;
+            }
+            
+            final List<SimpleGrantedAuthority> authorities = buildAuthorities(userEntity);
 
+            if (authorities.isEmpty()) {
+                return;
+            }
             // -----------------------------------------------------------------
             // Create FreshMeal User Profile
             // -----------------------------------------------------------------
 
-            UserProfile userProfile = UserProfile.create(userEntity, authorities);
-
-            // -----------------------------------------------------------------
-            // Populate Request Service Context
-            // -----------------------------------------------------------------
-
-            serviceContext.setUserProfile(userProfile);
-
+            final UserProfile userProfile = UserProfile.create(userEntity, authorities);
+            
             // -----------------------------------------------------------------
             // Establish Spring Security Authentication
             // -----------------------------------------------------------------
-
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userProfile,
-                    null,
-                    authorities);
+            
+            final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+            		userProfile,
+            		null,
+            		authorities);
 
             authentication.setDetails(
-                    new WebAuthenticationDetailsSource()
-                            .buildDetails(request));
+            		new WebAuthenticationDetailsSource()
+            		.buildDetails(request));
+
 
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);
+            
+            // -----------------------------------------------------------------
+            // Populate Request Service Context
+            // -----------------------------------------------------------------
+            
+            serviceContext.setUserProfile(userProfile);
 
-        } catch (Exception exception) {
+        } catch (ResourceNotFoundException exception) {
 
-            /*
-             * Invalid JWTs or user-resolution failures must never establish
-             * authentication.
-             *
-             * The request is intentionally allowed to continue so that the
-             * normal Spring Security authorization mechanism can determine
-             * whether the requested resource requires authentication.
-             */
+            // The user associated with the JWT no longer exists.
+            // Authentication must not be established.
+
             SecurityContextHolder.clearContext();
+
+        } catch (RuntimeException exception) {
+
+            // Unexpected authentication infrastructure or application failure.
+            // Log the failure and allow the exception to propagate.
+
+            SecurityContextHolder.clearContext();
+
+            LOGGER.error(
+                    "Unexpected error occurred while authenticating JWT request. HTTP method: {}",
+                    request.getMethod(),
+                    exception);
+
+            throw exception;
         }
     }
 
@@ -401,23 +437,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @return resolved active user entity, or {@code null} when the user cannot
      *         be resolved.
      */
-    private UserEntity loadUserByUserNumber(String userNumber) {
+    private UserEntity loadUserByUserNumber(
+            final String userNumber,
+            final IServiceContext serviceContext) {
 
-        UserNumberRequest request = new UserNumberRequest();
+        final UserNumberRequest userNumberRequest = new UserNumberRequest();
+        userNumberRequest.setUserNumber(userNumber);
 
-        request.setUserNumber(userNumber);
+        final IServiceInput<UserNumberRequest> input =
+                new ServiceInput<>(userNumberRequest, serviceContext);
 
-        IServiceInput<UserNumberRequest> input = new ServiceInput<>();
+        final IServiceOutput<UserEntity> output =
+                userService.loadUserByUserNumber(input);
 
-        input.setInput(request);
-
-        IServiceOutput<UserEntity> output = userService.loadUserByUserNumber(input);
-
-        if (output == null) {
-            return null;
-        }
-
-        return output.getOutput();
+        return output != null ? output.getOutput() : null;
     }
 
     // =========================================================================
@@ -488,4 +521,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private boolean hasText(String value) {
         return value != null && !value.isBlank();
     }
+
+    /**
+     * Builds Spring Security authorities from the user's current persisted roles.
+     *
+     * <p>
+     * The database is the authoritative source for authorization. JWT role
+     * claims must not be used to grant permissions because roles may have
+     * changed since the token was issued.
+     * </p>
+     *
+     * @param userEntity currently persisted FreshMeal user.
+     * @return supported Spring Security authorities.
+     */
+    private List<SimpleGrantedAuthority> buildAuthorities(
+            final UserEntity userEntity) {
+
+        if (userEntity == null || userEntity.isRolesEmpty()) {
+            return List.of();
+        }
+
+        return userEntity.getRoles().stream()
+                .filter(Objects::nonNull)
+                .distinct()
+                .map(RoleType::name)
+                .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
+                .toList();
+    }
+
+    private boolean isAccountEligibleForAuthentication(
+            final UserEntity userEntity) {
+
+        return userEntity != null
+                && userEntity.isEnabled()
+                && userEntity.isAccountNonExpired()
+                && userEntity.isAccountNonLocked()
+                && userEntity.isCredentialsNonExpired();
+    }
+
 }

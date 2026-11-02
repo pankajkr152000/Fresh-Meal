@@ -6,11 +6,13 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -44,12 +46,14 @@ import com.foodies.freshmeal.authentication.dto.TokenResponse;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpInputDTO;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpRequest;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpResponse;
+import com.foodies.freshmeal.authentication.email.PasswordResetEmailTemplate;
 import com.foodies.freshmeal.authentication.entity.PasswordResetTokenEntity;
 import com.foodies.freshmeal.authentication.repository.IPasswordResetTokenRepository;
 import com.foodies.freshmeal.authentication.service.IAuthenticationService;
 import com.foodies.freshmeal.authentication.service.IOtpService;
 import com.foodies.freshmeal.authentication.token.ITokenRevocationService;
 import com.foodies.freshmeal.authentication.token.ITokenService;
+import com.foodies.freshmeal.authentication.util.PasswordResetUrlBuilder;
 import com.foodies.freshmeal.authentication.valueObject.OtpGenerationResult;
 import com.foodies.freshmeal.common.audit.annotation.AuditApi;
 import com.foodies.freshmeal.common.constants.ActionType;
@@ -225,8 +229,19 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
      */
     private final ITokenRevocationService tokenRevocationService;
 
-    final IPasswordResetTokenRepository passwordResetTokenRepository;
-    final IDatabaseSequenceService databaseSequenceService;
+    private final IPasswordResetTokenRepository passwordResetTokenRepository;
+
+    private final IDatabaseSequenceService databaseSequenceService;
+
+    /**
+     * Builds frontend password-reset URLs.
+     */
+    private final PasswordResetUrlBuilder passwordResetUrlBuilder;
+
+    /**
+     * Generates the HTML password-reset email content.
+     */
+    private final PasswordResetEmailTemplate passwordResetEmailTemplate;
 
     // =========================================================================
     // Constructor
@@ -245,12 +260,19 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
      * @param tokenRevocationService server-side JWT token and
      *                               authentication-session revocation service
      */
-    public AuthenticationServiceImpl(final AuthenticationManager authenticationManager,
-            final ITokenService tokenService, final IUserService userService, final PasswordEncoder passwordEncoder,
-            final IOtpService otpService, final IEmailService emailService,
-            final ILoginHistoryService loginHistoryService, final ITokenRevocationService tokenRevocationService,
+    public AuthenticationServiceImpl(
+            final AuthenticationManager authenticationManager,
+            final ITokenService tokenService,
+            final IUserService userService,
+            final PasswordEncoder passwordEncoder,
+            final IOtpService otpService,
+            final IEmailService emailService,
+            final ILoginHistoryService loginHistoryService,
+            final ITokenRevocationService tokenRevocationService,
             final IPasswordResetTokenRepository passwordResetTokenRepository,
-            final IDatabaseSequenceService databaseSequenceService) {
+            final IDatabaseSequenceService databaseSequenceService,
+            final PasswordResetUrlBuilder passwordResetUrlBuilder,
+            final PasswordResetEmailTemplate passwordResetEmailTemplate) {
 
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
@@ -262,6 +284,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         this.tokenRevocationService = tokenRevocationService;
         this.passwordResetTokenRepository = passwordResetTokenRepository;
         this.databaseSequenceService = databaseSequenceService;
+        this.passwordResetUrlBuilder = passwordResetUrlBuilder;
+        this.passwordResetEmailTemplate = passwordResetEmailTemplate;
     }
 
     // =========================================================================
@@ -348,8 +372,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         final LoginResponse loginResponse = new LoginResponse();
 
         loginResponse.setToken(tokenResponse);
-        if(userProfile.getUserEntity().getRoles() == null || userProfile.getUserEntity().getRoles().size()==0) {
-        	throw new BusinessException(AuthenticationErrorConstants.AUTHORIZATION_FAILED);
+        if (userProfile.getUserEntity().getRoles() == null || userProfile.getUserEntity().getRoles().size() == 0) {
+            throw new BusinessException(AuthenticationErrorConstants.AUTHORIZATION_FAILED);
         }
         loginResponse.setRoles(userProfile.getUserEntity().getRoles());
         return new ServiceOutput<>(loginResponse);
@@ -680,6 +704,23 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
                 SecurityContextHolder.clearContext();
 
                 return new ServiceOutput<>(Boolean.TRUE);
+            }
+
+            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            if (authentication == null
+                    || !authentication.isAuthenticated()
+                    || !(authentication.getPrincipal() instanceof UserProfile userProfile)) {
+
+                SecurityContextHolder.clearContext();
+                return new ServiceOutput<>(Boolean.TRUE);
+            }
+
+            if (!userNumber.equals(userProfile.getUserNumber())) {
+                SecurityContextHolder.clearContext();
+
+                throw new AccessDeniedException(
+                        "Authenticated user identity does not match the access token.");
             }
 
             /*
@@ -1143,19 +1184,76 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
          *
          * The raw token is never persisted or logged.
          */
-        final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
+        // final String firstName =
+        // FreshMealUtilities.hasText(userEntity.getFirstName()) ?
+        // userEntity.getFirstName()
+        // : userEntity.getUsername();
+        /*
+         * Resolve the recipient's display name.
+         */
+        final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName())
+                ? userEntity.getFirstName()
                 : userEntity.getUsername();
 
-        final String emailBody = buildPasswordResetEmailBody(firstName, rawResetToken);
+        /*
+         * Build the frontend password-reset URL.
+         *
+         * The raw token is included only in the email URL.
+         * It is never persisted or logged.
+         */
+        final String resetUrl = passwordResetUrlBuilder.buildResetUrl(rawResetToken);
 
         /*
-         * Mark sentAt only after successful email dispatch.
+         * Generate the HTML email using the dedicated email template.
          */
-        emailService.sendEmail(email, "FreshMeal Password Reset", emailBody);
+        final String emailBody = passwordResetEmailTemplate.buildHtml(firstName, resetUrl);
 
-        resetToken.setSentAt(AppCalendar.getBusinessLocalDateTime());
+        /*
+         * Send the password-reset email.
+         *
+         * If delivery fails, revoke the newly generated token so that an
+         * undelivered reset credential does not remain active.
+         */
+        try {
 
-        resetToken.setUpdatedAt(AppCalendar.getBusinessLocalDateTime());
+            emailService.sendHtmlEmail(email, "FreshMeal Password Reset", emailBody);
+
+        } catch (RuntimeException emailException) {
+
+            /*
+             * Invalidate the token when email delivery fails.
+             */
+            final LocalDateTime failureTime = AppCalendar.getBusinessLocalDateTime();
+
+            resetToken.setRevoked(true);
+            resetToken.setRevokedAt(failureTime);
+            resetToken.setUpdatedAt(failureTime);
+            resetToken.setUpdatedBy(RepositoryConstants.SYSTEM_USER);
+
+            try {
+
+                passwordResetTokenRepository.save(resetToken);
+
+            } catch (RuntimeException persistenceException) {
+
+                /*
+                 * Preserve the original email-delivery exception while
+                 * retaining the token-revocation failure for diagnostics.
+                 */
+                emailException.addSuppressed(persistenceException);
+            }
+
+            throw emailException;
+        }
+
+        /*
+         * Mark the token as successfully sent only after email delivery succeeds.
+         */
+        final LocalDateTime sentAt = AppCalendar.getBusinessLocalDateTime();
+
+        resetToken.setSentAt(sentAt);
+        resetToken.setUpdatedAt(sentAt);
+        resetToken.setUpdatedBy(RepositoryConstants.SYSTEM_USER);
 
         passwordResetTokenRepository.save(resetToken);
 
@@ -1184,6 +1282,14 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         if (!hasText(newPassword)) {
             throw new BusinessException(AuthenticationErrorConstants.NEW_PASSWORD_REQUIRED);
         }
+        final String confirmPassword = inputDTO.getResetPasswordRequest().getConfirmPassword();
+        if (!hasText(confirmPassword)) {
+            throw new BusinessException(AuthenticationErrorConstants.CONFIRM_PASSWORD_REQUIRED);
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new BusinessException(AuthenticationErrorConstants.PASSWORD_MISMATCH);
+        }
 
         /*
          * Hash the supplied raw token before performing the database lookup.
@@ -1196,6 +1302,14 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         final PasswordResetTokenEntity resetTokenEntity = passwordResetTokenRepository.findOne(tokenQuery)
                 .orElseThrow(() -> new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN));
+
+        /*
+         * A password-reset token must not be accepted unless its email
+         * dispatch was successfully recorded.
+         */
+        if (resetTokenEntity.getSentAt() == null) {
+            throw new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN);
+        }
 
         /*
          * Explicitly reject tokens that have already been revoked.
@@ -1253,6 +1367,42 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         /*
          * Encode the new password before handing it to the User module.
          */
+        // final String encodedPassword = passwordEncoder.encode(newPassword);
+        //
+        // final UpdatePasswordInputDTO updatePasswordInput = new
+        // UpdatePasswordInputDTO(userEntity.getUserNumber(),
+        // encodedPassword);
+        //
+        // userService.updatePassword(new ServiceInput<>(updatePasswordInput,
+        // input.getServiceContext()));
+
+        /*
+         * Consume the reset token.
+         *
+         * It is marked as used rather than physically deleted so that the security
+         * lifecycle remains auditable.
+         *
+         * Determine the audit actor for the atomic token-claim operation.
+         */
+        final String updatedBy = Optional.ofNullable(input.getServiceContext())
+                .map(IServiceContext::getUserProfile)
+                .map(UserProfile::getUserEntity)
+                .map(UserEntity::getUserNumber)
+                .orElse(RepositoryConstants.SYSTEM_USER);
+
+        /*
+         * Atomically claim the reset token.
+         *
+         * Only one concurrent request can successfully consume this token.
+         * The repository also verifies that the token is active, unused,
+         * unrevoked, dispatched, and not expired.
+         */
+        passwordResetTokenRepository.claimPasswordResetToken(tokenHash, now, updatedBy)
+                .orElseThrow(() -> new BusinessException(AuthenticationErrorConstants.INVALID_PASSWORD_RESET_TOKEN));
+
+        /*
+         * Encode the new password before handing it to the User module.
+         */
         final String encodedPassword = passwordEncoder.encode(newPassword);
 
         final UpdatePasswordInputDTO updatePasswordInput = new UpdatePasswordInputDTO(userEntity.getUserNumber(),
@@ -1260,26 +1410,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
         userService.updatePassword(new ServiceInput<>(updatePasswordInput, input.getServiceContext()));
 
-        /*
-         * Consume the reset token.
-         *
-         * It is marked as used rather than physically deleted so that the security
-         * lifecycle remains auditable.
-         */
-        resetTokenEntity.setUsed(true);
-        resetTokenEntity.setUsedAt(now);
-        resetTokenEntity.setUpdatedAt(now);
-
-        if (input.getServiceContext().getUserProfile() != null) {
-
-            resetTokenEntity.setUpdatedBy(input.getServiceContext().getUserProfile().getUserNumber());
-
-        } else {
-
-            resetTokenEntity.setUpdatedBy(RepositoryConstants.SYSTEM_USER);
-        }
-
-        passwordResetTokenRepository.save(resetTokenEntity);
+        // passwordResetTokenRepository.save(claimedToken);
 
         /*
          * Password reset invalidates every existing authentication session.
@@ -1654,29 +1785,33 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
      * @param resetToken raw password-reset token
      * @return password-reset email body
      */
-    private String buildPasswordResetEmailBody(final String firstName, final String resetToken) {
-
-        final String recipientName = FreshMealUtilities.hasText(firstName) ? firstName : "there";
-
-        return """
-                Hello %s,
-
-                We received a request to reset your FreshMeal password.
-
-                Your password reset token is:
-
-                %s
-
-                This token is valid for 15 minutes and can be used only once.
-
-                If you did not request a password reset, please ignore this email.
-                Your password will not be changed unless the reset process is
-                successfully completed.
-
-                Regards,
-                FreshMeal Team
-                """.formatted(recipientName, resetToken);
-    }
+    /*
+     * private String buildPasswordResetEmailBody(final String firstName, final
+     * String resetToken) {
+     * 
+     * final String recipientName = FreshMealUtilities.hasText(firstName) ?
+     * firstName : "there";
+     * 
+     * return """
+     * Hello %s,
+     * 
+     * We received a request to reset your FreshMeal password.
+     * 
+     * Your password reset token is:
+     * 
+     * %s
+     * 
+     * This token is valid for 15 minutes and can be used only once.
+     * 
+     * If you did not request a password reset, please ignore this email.
+     * Your password will not be changed unless the reset process is
+     * successfully completed.
+     * 
+     * Regards,
+     * FreshMeal Team
+     * """.formatted(recipientName, resetToken);
+     * }
+     */
 
     /**
      * Validates whether the requested role is permitted through public

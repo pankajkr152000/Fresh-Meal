@@ -6,8 +6,7 @@ package com.foodies.freshmeal.common.email;
  * ============================================================================
  *
  * <p>
- * Defines the common email-delivery contract used by the FreshMeal
- * application.
+ * Defines the common email-delivery contract used by the FreshMeal application.
  * </p>
  *
  * <p>
@@ -29,8 +28,8 @@ package com.foodies.freshmeal.common.email;
  *
  * <p>
  * The email service is responsible for message delivery only. It does not
- * authenticate users, generate authentication tokens, generate OTPs, or
- * manage password-reset tokens.
+ * authenticate users, generate authentication tokens, generate OTPs, or manage
+ * password-reset tokens.
  * </p>
  *
  * <h3>Usage</h3>
@@ -47,24 +46,38 @@ package com.foodies.freshmeal.common.email;
  */
 public interface IEmailService {
 
-    /**
-     * Sends an email message.
-     *
-     * <p>
-     * The implementation is responsible for constructing and delivering the
-     * underlying mail message through the configured email provider.
-     * </p>
-     *
-     * @param recipient recipient email address.
-     * @param subject   email subject.
-     * @param body      email body.
-     *
-     * @throws IllegalArgumentException when required email information is
-     *                                  missing.
-     * @throws RuntimeException         when the email cannot be delivered.
-     */
-    void sendEmail(
-            String recipient,
-            String subject,
-            String body);
+	/**
+	 * Sends an email message.
+	 *
+	 * <p>
+	 * The implementation is responsible for constructing and delivering the
+	 * underlying mail message through the configured email provider.
+	 * </p>
+	 *
+	 * @param recipient recipient email address.
+	 * @param subject   email subject.
+	 * @param body      email body.
+	 *
+	 * @throws IllegalArgumentException when required email information is missing.
+	 * @throws RuntimeException         when the email cannot be delivered.
+	 */
+	void sendEmail(String recipient, String subject, String body);
+
+	/**
+	 * Sends an HTML email message.
+	 *
+	 * <p>
+	 * The implementation is responsible for constructing and delivering the HTML
+	 * email through the configured email provider.
+	 * </p>
+	 *
+	 * @param recipient recipient email address.
+	 * @param subject   email subject.
+	 * @param htmlBody  HTML email content.
+	 *
+	 * @throws IllegalArgumentException when required email information is missing.
+	 * @throws RuntimeException         when the email cannot be delivered.
+	 */
+	void sendHtmlEmail(String recipient, String subject, String htmlBody);
+
 }
