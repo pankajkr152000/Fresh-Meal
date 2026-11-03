@@ -42,11 +42,11 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <h3>Security responsibilities</h3>
  * <ul>
- *   <li>Never persist raw JWT values.</li>
- *   <li>Use cryptographically verified JWT claims.</li>
- *   <li>Make revocation operations idempotent.</li>
- *   <li>Prevent one user from revoking another user's session.</li>
- *   <li>Retain revocation records for audit and security enforcement.</li>
+ * <li>Never persist raw JWT values.</li>
+ * <li>Use cryptographically verified JWT claims.</li>
+ * <li>Make revocation operations idempotent.</li>
+ * <li>Prevent one user from revoking another user's session.</li>
+ * <li>Retain revocation records for audit and security enforcement.</li>
  * </ul>
  *
  * <h3>Database requirements</h3>
@@ -136,13 +136,11 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
                 tokenTypeValue,
                 expiresAt);
 
-        final LocalDateTime revokedAt =
-                AppCalendar.getBusinessLocalDateTime();
+        final LocalDateTime revokedAt = AppCalendar.getBusinessLocalDateTime();
 
         final TokenType tokenType = parseTokenType(tokenTypeValue);
 
-        final RevokedTokenEntity entity =
-                (RevokedTokenEntity) RevokedTokenEntity.create();
+        final RevokedTokenEntity entity = (RevokedTokenEntity) RevokedTokenEntity.create();
 
         entity.setTokenId(tokenId);
         entity.setSessionId(sessionId);
@@ -164,14 +162,13 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
              * Treat it as successful only if the same token identifier
              * is already persisted with matching ownership information.
              */
-            final RevokedTokenEntity existingEntity =
-                    findRevokedToken(tokenId)
-                            .orElseThrow(() -> exception);
+            final RevokedTokenEntity existingEntity = findRevokedToken(tokenId)
+                    .orElseThrow(() -> exception);
 
             if (!Objects.equals(
                     existingEntity.getUserNumber(), userNumber)
                     || !Objects.equals(
-                    existingEntity.getSessionId(), sessionId)) {
+                            existingEntity.getSessionId(), sessionId)) {
 
                 throw new IllegalStateException(
                         "Token revocation identifier is associated with "
@@ -281,8 +278,7 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
          * Verify whether the session has already been revoked.
          * A session identifier must always belong to the same user.
          */
-        final Optional<RevokedSessionEntity> existingEntity =
-                findRevokedSession(sessionId);
+        final Optional<RevokedSessionEntity> existingEntity = findRevokedSession(sessionId);
 
         if (existingEntity.isPresent()) {
             validateSessionOwnership(
@@ -292,11 +288,9 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
             return;
         }
 
-        final LocalDateTime revokedAt =
-                AppCalendar.getBusinessLocalDateTime();
+        final LocalDateTime revokedAt = AppCalendar.getBusinessLocalDateTime();
 
-        final RevokedSessionEntity entity =
-                (RevokedSessionEntity) RevokedSessionEntity.create();
+        final RevokedSessionEntity entity = (RevokedSessionEntity) RevokedSessionEntity.create();
 
         entity.setSessionId(sessionId);
         entity.setUserNumber(userNumber);
@@ -313,9 +307,8 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
              * Verify the persisted record before treating the operation
              * as an idempotent success.
              */
-            final RevokedSessionEntity persistedEntity =
-                    findRevokedSession(sessionId)
-                            .orElseThrow(() -> exception);
+            final RevokedSessionEntity persistedEntity = findRevokedSession(sessionId)
+                    .orElseThrow(() -> exception);
 
             validateSessionOwnership(
                     persistedEntity,
@@ -368,7 +361,7 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
     /**
      * Ensures that an existing revoked session belongs to the expected user.
      *
-     * @param entity            persisted revoked session.
+     * @param entity             persisted revoked session.
      * @param expectedUserNumber expected session owner.
      */
     private void validateSessionOwnership(
@@ -392,10 +385,10 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
      * Validates the security-sensitive claims required to persist a
      * token revocation record.
      *
-     * @param sessionId    authentication-session identifier.
-     * @param userNumber   token owner.
-     * @param tokenType    token-type claim.
-     * @param expiresAt    token expiration timestamp.
+     * @param sessionId  authentication-session identifier.
+     * @param userNumber token owner.
+     * @param tokenType  token-type claim.
+     * @param expiresAt  token expiration timestamp.
      */
     private void validateTokenClaims(
             final String sessionId,
@@ -440,16 +433,14 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
     @Override
     public void cleanupExpiredRevocations() {
 
-        final LocalDateTime now =
-                AppCalendar.getBusinessLocalDateTime();
+        final LocalDateTime now = AppCalendar.getBusinessLocalDateTime();
 
         final Query query = Query.query(
                 Criteria.where("expiresAt").lte(now));
 
         revokedTokenRepository.findAll(query)
-                .forEach(entity ->
-                        revokedTokenRepository.deletePermanently(
-                                entity.getId()));
+                .forEach(entity -> revokedTokenRepository.deletePermanently(
+                        entity.getId()));
     }
 
     // =========================================================================
@@ -495,7 +486,7 @@ public class TokenRevocationServiceImpl implements ITokenRevocationService {
             final LocalDateTime timestamp) {
 
         final String auditActor = Optional.ofNullable(serviceContext)
-                .map(IServiceContext::getUserProfile)
+                .map(context -> context.getUserProfile())
                 .filter(Objects::nonNull)
                 .map(profile -> profile.getUsername())
                 .filter(StringUtils::hasText)

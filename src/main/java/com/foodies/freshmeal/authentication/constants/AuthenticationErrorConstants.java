@@ -531,7 +531,11 @@ public enum AuthenticationErrorConstants implements IBusinessError {
     PASSWORD_SPECIAL_CHARACTER_REQUIRED(
             "FM-AUTH-119",
             "Password must contain at least one special character.",
-            HttpStatusCode.BAD_REQUEST);
+            HttpStatusCode.BAD_REQUEST),
+    
+    EMAIL_OTP_INCORRECT("FM-AUTH-120",
+    		"Incorrect otp. EMAIL verification failed.",
+    		HttpStatusCode.BAD_REQUEST);
 
     /**
      * Error code.

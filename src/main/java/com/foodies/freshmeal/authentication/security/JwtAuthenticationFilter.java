@@ -16,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.foodies.freshmeal.authentication.token.ITokenRevocationService;
 import com.foodies.freshmeal.authentication.token.ITokenService;
-import com.foodies.freshmeal.common.constants.RoleType;
 import com.foodies.freshmeal.common.exception.ResourceNotFoundException;
 import com.foodies.freshmeal.common.io.DataContext;
 import com.foodies.freshmeal.common.io.service.IServiceContext;
@@ -124,8 +123,8 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     // =========================================================================
     // Constants
@@ -245,15 +244,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 DataContext.CURRENT_ACCESS_TOKEN,
                 token);
 
-//        Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
-//
-//        if (currentAuthentication != null
-//                && currentAuthentication.isAuthenticated()) {
-//
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-        
+        // Authentication currentAuthentication =
+        // SecurityContextHolder.getContext().getAuthentication();
+        //
+        // if (currentAuthentication != null
+        // && currentAuthentication.isAuthenticated()) {
+        //
+        // filterChain.doFilter(request, response);
+        // return;
+        // }
+
         final Authentication currentAuthentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (currentAuthentication != null && currentAuthentication.isAuthenticated()) {
@@ -277,21 +277,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Authentication
     // =========================================================================
 
-	/**
-	 *
-	 * Establishes authentication using a cryptographically validated access token.
-	 *
-	 * <p>
-	 * Token and session revocation states are checked before resolving the current
-	 * user. Spring Security authorities are derived from the user's latest
-	 * persisted roles, ensuring that role changes take effect on subsequent
-	 * authenticated requests.
-	 * </p>
-	 *
-	 *
-	 * @param request HTTP request.
-	 * @param token   bearer access token.
-	 */
+    /**
+     *
+     * Establishes authentication using a cryptographically validated access token.
+     *
+     * <p>
+     * Token and session revocation states are checked before resolving the current
+     * user. Spring Security authorities are derived from the user's latest
+     * persisted roles, ensuring that role changes take effect on subsequent
+     * authenticated requests.
+     * </p>
+     *
+     *
+     * @param request HTTP request.
+     * @param token   bearer access token.
+     */
     private void authenticateRequest(
             HttpServletRequest request,
             String token) {
@@ -353,15 +353,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (userEntity == null) {
                 return;
             }
-            
+
             if (!username.equals(userEntity.getUsername())) {
                 return;
             }
-            
+
             if (!isAccountEligibleForAuthentication(userEntity)) {
                 return;
             }
-            
+
             final List<SimpleGrantedAuthority> authorities = buildAuthorities(userEntity);
 
             if (authorities.isEmpty()) {
@@ -372,28 +372,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // -----------------------------------------------------------------
 
             final UserProfile userProfile = UserProfile.create(userEntity, authorities);
-            
+
             // -----------------------------------------------------------------
             // Establish Spring Security Authentication
             // -----------------------------------------------------------------
-            
+
             final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            		userProfile,
-            		null,
-            		authorities);
+                    userProfile,
+                    null,
+                    authorities);
 
             authentication.setDetails(
-            		new WebAuthenticationDetailsSource()
-            		.buildDetails(request));
-
+                    new WebAuthenticationDetailsSource()
+                            .buildDetails(request));
 
             SecurityContextHolder.getContext()
                     .setAuthentication(authentication);
-            
+
             // -----------------------------------------------------------------
             // Populate Request Service Context
             // -----------------------------------------------------------------
-            
+
             serviceContext.setUserProfile(userProfile);
 
         } catch (ResourceNotFoundException exception) {
@@ -444,11 +443,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final UserNumberRequest userNumberRequest = new UserNumberRequest();
         userNumberRequest.setUserNumber(userNumber);
 
-        final IServiceInput<UserNumberRequest> input =
-                new ServiceInput<>(userNumberRequest, serviceContext);
+        final IServiceInput<UserNumberRequest> input = new ServiceInput<>(userNumberRequest, serviceContext);
 
-        final IServiceOutput<UserEntity> output =
-                userService.loadUserByUserNumber(input);
+        final IServiceOutput<UserEntity> output = userService.loadUserByUserNumber(input);
 
         return output != null ? output.getOutput() : null;
     }
@@ -464,19 +461,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      *
      * @return Spring Security role authorities.
      */
-    private List<SimpleGrantedAuthority> buildAuthorities(
-            List<String> roles) {
-
-        if (roles == null || roles.isEmpty()) {
-            return List.of();
-        }
-
-        return roles.stream()
-                .filter(this::isValidRole)
-                .map(role -> new SimpleGrantedAuthority(
-                        ROLE_PREFIX + role))
-                .toList();
-    }
+    /*
+     * private List<SimpleGrantedAuthority> buildAuthorities(
+     * List<String> roles) {
+     * 
+     * if (roles == null || roles.isEmpty()) {
+     * return List.of();
+     * }
+     * 
+     * return roles.stream()
+     * .filter(this::isValidRole)
+     * .map(role -> new SimpleGrantedAuthority(
+     * ROLE_PREFIX + role))
+     * .toList();
+     * }
+     */
 
     // =========================================================================
     // Role Validation
@@ -489,22 +488,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      *
      * @return {@code true} when the role is a known FreshMeal role.
      */
-    private boolean isValidRole(String role) {
-
-        if (!hasText(role)) {
-            return false;
-        }
-
-        try {
-
-            RoleType.valueOf(role);
-            return true;
-
-        } catch (IllegalArgumentException exception) {
-
-            return false;
-        }
-    }
+    /*
+     * private boolean isValidRole(String role) {
+     * 
+     * if (!hasText(role)) {
+     * return false;
+     * }
+     * 
+     * try {
+     * 
+     * RoleType.valueOf(role);
+     * return true;
+     * 
+     * } catch (IllegalArgumentException exception) {
+     * 
+     * return false;
+     * }
+     * }
+     */
 
     // =========================================================================
     // Text Validation
@@ -544,7 +545,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return userEntity.getRoles().stream()
                 .filter(Objects::nonNull)
                 .distinct()
-                .map(RoleType::name)
+                .map(role -> role.name())
                 .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
                 .toList();
     }

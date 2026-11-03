@@ -277,7 +277,9 @@ public class OtpServiceImpl implements IOtpService {
 		 */
 		if (!passwordEncoder.matches(otp, otpEntity.getOtpHash())) {
 
-			return handleInvalidOtpAttempt(otpEntity, now);
+			handleInvalidOtpAttempt(otpEntity, now);
+			
+			throw new BusinessException(AuthenticationErrorConstants.EMAIL_OTP_INCORRECT);
 		}
 
 		/*

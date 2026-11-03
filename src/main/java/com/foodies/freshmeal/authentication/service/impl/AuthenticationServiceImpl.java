@@ -6,7 +6,6 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,10 @@ import com.foodies.freshmeal.authentication.dto.TokenResponse;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpInputDTO;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpRequest;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpResponse;
+import com.foodies.freshmeal.authentication.email.EmailVerificationOtpTemplate;
 import com.foodies.freshmeal.authentication.email.PasswordResetEmailTemplate;
+import com.foodies.freshmeal.authentication.email.PasswordResetSuccessEmailTemplate;
+import com.foodies.freshmeal.authentication.email.WelcomeEmailTemplate;
 import com.foodies.freshmeal.authentication.entity.PasswordResetTokenEntity;
 import com.foodies.freshmeal.authentication.repository.IPasswordResetTokenRepository;
 import com.foodies.freshmeal.authentication.service.IAuthenticationService;
@@ -243,6 +245,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
      */
     private final PasswordResetEmailTemplate passwordResetEmailTemplate;
 
+    private final PasswordResetSuccessEmailTemplate passwordResetSuccessEmailTemplate;
+
+    private final EmailVerificationOtpTemplate emailVerificationOtpTemplate;
+
+    private final WelcomeEmailTemplate welcomeEmailTemplate;
+
     // =========================================================================
     // Constructor
     // =========================================================================
@@ -272,7 +280,10 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             final IPasswordResetTokenRepository passwordResetTokenRepository,
             final IDatabaseSequenceService databaseSequenceService,
             final PasswordResetUrlBuilder passwordResetUrlBuilder,
-            final PasswordResetEmailTemplate passwordResetEmailTemplate) {
+            final PasswordResetEmailTemplate passwordResetEmailTemplate,
+            final PasswordResetSuccessEmailTemplate passwordResetSuccessEmailTemplate,
+            final EmailVerificationOtpTemplate emailVerificationOtpTemplate,
+            final WelcomeEmailTemplate welcomeEmailTemplate) {
 
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
@@ -286,6 +297,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         this.databaseSequenceService = databaseSequenceService;
         this.passwordResetUrlBuilder = passwordResetUrlBuilder;
         this.passwordResetEmailTemplate = passwordResetEmailTemplate;
+        this.passwordResetSuccessEmailTemplate = passwordResetSuccessEmailTemplate;
+        this.emailVerificationOtpTemplate = emailVerificationOtpTemplate;
+        this.welcomeEmailTemplate = welcomeEmailTemplate;
     }
 
     // =========================================================================
@@ -432,7 +446,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             final OtpGenerationResult otpGenerationResult = otpService
                     .generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
 
-            final String emailBody = buildVerificationEmailBody(userEntity.getFirstName(),
+            final String emailBody = emailVerificationOtpTemplate.buildHtml(userEntity.getFirstName(),
                     otpGenerationResult.rawOtp());
 
             /*
@@ -575,7 +589,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
                 : userEntity.getUsername();
 
-        final String welcomeEmailBody = buildWelcomeEmailBody(firstName);
+        final String welcomeEmailBody = welcomeEmailTemplate.buildHtml(firstName);
 
         emailService.sendEmail(email, "Welcome to FreshMeal", welcomeEmailBody);
 
@@ -1384,11 +1398,22 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
          *
          * Determine the audit actor for the atomic token-claim operation.
          */
-        final String updatedBy = Optional.ofNullable(input.getServiceContext())
-                .map(IServiceContext::getUserProfile)
-                .map(UserProfile::getUserEntity)
-                .map(UserEntity::getUserNumber)
-                .orElse(RepositoryConstants.SYSTEM_USER);
+        // final String updatedBy = Optional.ofNullable(input.getServiceContext())
+        // .map(IServiceContext::getUserProfile)
+        // .map(UserProfile::getUserEntity)
+        // .map(UserEntity::getUserNumber)
+        // .orElse(RepositoryConstants.SYSTEM_USER);
+        String updatedBy = RepositoryConstants.SYSTEM_USER;
+        final IServiceContext serviceContext = input.getServiceContext();
+        if (serviceContext != null) {
+            final UserProfile userProfile = serviceContext.getUserProfile();
+            if (userProfile != null) {
+                final UserEntity auditUserEntity = userProfile.getUserEntity();
+                if (auditUserEntity != null && auditUserEntity.getUserNumber() != null) {
+                    updatedBy = auditUserEntity.getUserNumber();
+                }
+            }
+        }
 
         /*
          * Atomically claim the reset token.
@@ -1411,7 +1436,12 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         userService.updatePassword(new ServiceInput<>(updatePasswordInput, input.getServiceContext()));
 
         // passwordResetTokenRepository.save(claimedToken);
-
+        /*
+         * send a mail for password reset confirmation
+         */
+        emailService.sendHtmlEmail(userEntity.getEmail().getValue(),
+                "Your FreshMeal Password Has Been Reset Successfully", passwordResetSuccessEmailTemplate.buildHtml(
+                        userEntity.getFirstName() != null ? userEntity.getFirstName() : userEntity.getUsername()));
         /*
          * Password reset invalidates every existing authentication session.
          *
@@ -1451,22 +1481,24 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
      * @param firstName user's first name
      * @return welcome email body
      */
-    private String buildWelcomeEmailBody(final String firstName) {
-
-        return String.format("""
-                Hello %s,
-
-                Welcome to FreshMeal!
-
-                Your email address has been successfully verified and your
-                FreshMeal account is now active.
-
-                You can now log in and start using FreshMeal.
-
-                Regards,
-                FreshMeal Team
-                """, firstName);
-    }
+    /*
+     * private String buildWelcomeEmailBody(final String firstName) {
+     * 
+     * return String.format("""
+     * Hello %s,
+     * 
+     * Welcome to FreshMeal!
+     * 
+     * Your email address has been successfully verified and your
+     * FreshMeal account is now active.
+     * 
+     * You can now log in and start using FreshMeal.
+     * 
+     * Regards,
+     * FreshMeal Team
+     * """, firstName);
+     * }
+     */
 
     /**
      * Builds the email body used for email verification.
