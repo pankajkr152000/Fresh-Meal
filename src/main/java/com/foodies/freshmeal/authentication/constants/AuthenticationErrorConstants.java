@@ -1,3 +1,4 @@
+
 package com.foodies.freshmeal.authentication.constants;
 
 import com.foodies.freshmeal.common.constants.HttpStatusCode;
@@ -24,29 +25,28 @@ import com.foodies.freshmeal.common.exception.IBusinessError;
  * <li>Login and logout operations</li>
  * <li>Login history</li>
  * <li>Password recovery and password reset</li>
+ * <li>Email verification and OTP management</li>
+ * <li>Pending registration lifecycle</li>
  * </ul>
  *
  * <p>
  * Authentication-specific errors are maintained here rather than in the
- * User module. The User module remains responsible for user lifecycle and
- * account-management operations, while Authentication is responsible for
- * establishing and maintaining authenticated identity.
+ * User module. The User module remains responsible for permanent user
+ * lifecycle and account-management operations, while Authentication
+ * manages identity verification and authentication workflows.
  * </p>
  *
  * <p>
  * Authorization-specific errors such as access denied, insufficient
- * permissions, and role/permission violations are intentionally excluded.
- * Those errors will belong to the Authorization module.
+ * permissions, and role/permission violations belong to the Authorization
+ * module.
  * </p>
  *
  * ============================================================================
- *
  * Error Code Convention
- * ---------------------
+ * ============================================================================
  *
- * <p>
  * Authentication module errors follow the format:
- * </p>
  *
  * <pre>
  * FM - AUTH - XXXX
@@ -83,14 +83,14 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "FM-AUTH-003",
             "The requested authentication operation is not allowed.",
             HttpStatusCode.BAD_REQUEST),
-    
+
     AUTHORIZATION_FAILED(
-    		"FM-AUTH-004",
-    		"The requested authorization failed.",
-    		HttpStatusCode.NOT_ACCEPTABLE),
+            "FM-AUTH-004",
+            "The requested authorization failed.",
+            HttpStatusCode.NOT_ACCEPTABLE),
 
     // =========================================================================
-    // Credential and Password Errors - 010 to 019
+    // Credential and Password Errors - 010 to 021
     // =========================================================================
 
     CREDENTIALS_REQUIRED(
@@ -147,25 +147,15 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "FM-AUTH-020",
             "Strong password is required.",
             HttpStatusCode.BAD_REQUEST),
-    
+
     CONFIRM_PASSWORD_REQUIRED(
-    		"FM-AUTH-021",
-    		"Confirm password is required.",
-    		HttpStatusCode.BAD_REQUEST),
-
-    // =========================================================================
-    // Account Authentication State Errors - 020 to 029
-    // =========================================================================
-
-    ACCOUNT_DISABLED(
-            "FM-AUTH-020",
-            "User account is disabled.",
-            HttpStatusCode.FORBIDDEN),
-
-    ACCOUNT_LOCKED(
             "FM-AUTH-021",
-            "User account is locked.",
-            HttpStatusCode.FORBIDDEN),
+            "Confirm password is required.",
+            HttpStatusCode.BAD_REQUEST),
+
+    // =========================================================================
+    // Account Authentication State Errors - 022 to 029
+    // =========================================================================
 
     ACCOUNT_EXPIRED(
             "FM-AUTH-022",
@@ -180,6 +170,16 @@ public enum AuthenticationErrorConstants implements IBusinessError {
     ACCOUNT_NOT_ACTIVE(
             "FM-AUTH-024",
             "User account is not active.",
+            HttpStatusCode.FORBIDDEN),
+
+    ACCOUNT_DISABLED(
+            "FM-AUTH-025",
+            "User account is disabled.",
+            HttpStatusCode.FORBIDDEN),
+
+    ACCOUNT_LOCKED(
+            "FM-AUTH-026",
+            "User account is locked.",
             HttpStatusCode.FORBIDDEN),
 
     // =========================================================================
@@ -445,84 +445,50 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "Password must contain at least one digit.",
             HttpStatusCode.BAD_REQUEST),
 
-    /**
-     * ============================================================================
-     * Email Verification / OTP Errors
-     * ============================================================================
-     */
+    // =========================================================================
+    // Email Verification / OTP Errors - 110 to 120
+    // =========================================================================
 
-    /**
-     * Indicates that account verification must be completed before the requested
-     * authentication operation can proceed.
-     */
     ACCOUNT_VERIFICATION_REQUIRED(
             "FM-AUTH-110",
             "Account verification is required.",
             HttpStatusCode.UNAUTHORIZED),
 
-    /**
-     * Indicates that an email verification OTP was not supplied.
-     */
     EMAIL_OTP_REQUIRED(
             "FM-AUTH-111",
             "Email verification OTP is required.",
             HttpStatusCode.BAD_REQUEST),
 
-    /**
-     * Indicates that the supplied email verification OTP is invalid.
-     */
     INVALID_EMAIL_OTP(
             "FM-AUTH-112",
             "Invalid email verification OTP.",
             HttpStatusCode.BAD_REQUEST),
 
-    /**
-     * Indicates that the email verification OTP has expired.
-     */
     EMAIL_OTP_EXPIRED(
             "FM-AUTH-113",
             "Email verification OTP has expired.",
             HttpStatusCode.BAD_REQUEST),
 
-    /**
-     * Indicates that the email verification OTP has already been successfully
-     * consumed.
-     */
     EMAIL_OTP_ALREADY_USED(
             "FM-AUTH-114",
             "Email verification OTP has already been used.",
             HttpStatusCode.BAD_REQUEST),
 
-    /**
-     * Indicates that the maximum number of verification attempts has been
-     * exceeded for the current email verification OTP.
-     */
     EMAIL_OTP_ATTEMPTS_EXCEEDED(
             "FM-AUTH-115",
             "Maximum email verification OTP attempts exceeded.",
             HttpStatusCode.TOO_MANY_REQUESTS),
 
-    /**
-     * Indicates that the email verification operation could not be completed.
-     */
     EMAIL_VERIFICATION_FAILED(
             "FM-AUTH-116",
             "Email verification failed.",
             HttpStatusCode.BAD_REQUEST),
 
-    /**
-     * Indicates that another email verification OTP cannot be requested yet
-     * because the resend cooldown period has not elapsed.
-     */
     EMAIL_OTP_RESEND_COOLDOWN(
             "FM-AUTH-117",
             "Please wait before requesting another email verification OTP.",
             HttpStatusCode.TOO_MANY_REQUESTS),
 
-    /**
-     * Indicates that email verification is temporarily locked because the
-     * maximum number of OTP verification attempts has been exceeded.
-     */
     EMAIL_OTP_LOCKED(
             "FM-AUTH-118",
             "Email verification is temporarily locked. Please try again later.",
@@ -532,32 +498,95 @@ public enum AuthenticationErrorConstants implements IBusinessError {
             "FM-AUTH-119",
             "Password must contain at least one special character.",
             HttpStatusCode.BAD_REQUEST),
-    
-    EMAIL_OTP_INCORRECT("FM-AUTH-120",
-    		"Incorrect otp. EMAIL verification failed.",
-    		HttpStatusCode.BAD_REQUEST);
+
+    EMAIL_OTP_INCORRECT(
+            "FM-AUTH-120",
+            "Incorrect email verification OTP.",
+            HttpStatusCode.BAD_REQUEST),
+
+    // =========================================================================
+    // Pending Registration Errors - 121 to 130
+    // =========================================================================
+
+    PENDING_REGISTRATION_NOT_FOUND(
+            "FM-AUTH-121",
+            "Pending registration not found.",
+            HttpStatusCode.NOT_FOUND),
+
+    PENDING_REGISTRATION_EXPIRED(
+            "FM-AUTH-122",
+            "Pending registration has expired.",
+            HttpStatusCode.GONE),
+
+    PENDING_REGISTRATION_ALREADY_COMPLETED(
+            "FM-AUTH-123",
+            "Pending registration has already been completed.",
+            HttpStatusCode.CONFLICT),
+
+    PENDING_REGISTRATION_ALREADY_CANCELLED(
+            "FM-AUTH-124",
+            "Pending registration has already been cancelled.",
+            HttpStatusCode.CONFLICT),
+
+    PENDING_REGISTRATION_NOT_PENDING(
+            "FM-AUTH-125",
+            "The requested operation is not allowed for the current registration status.",
+            HttpStatusCode.CONFLICT),
+
+    PENDING_REGISTRATION_CREATION_FAILED(
+            "FM-AUTH-126",
+            "Pending registration creation failed.",
+            HttpStatusCode.INTERNAL_SERVER_ERROR),
+
+    PENDING_REGISTRATION_COMPLETION_FAILED(
+            "FM-AUTH-127",
+            "Pending registration completion failed.",
+            HttpStatusCode.INTERNAL_SERVER_ERROR),
+
+    PENDING_REGISTRATION_CANCELLATION_FAILED(
+            "FM-AUTH-128",
+            "Pending registration cancellation failed.",
+            HttpStatusCode.INTERNAL_SERVER_ERROR),
+
+    PENDING_REGISTRATION_ALREADY_EXISTS(
+            "FM-AUTH-129",
+            "An active pending registration already exists.",
+            HttpStatusCode.CONFLICT),
+
+    PENDING_REGISTRATION_INVALID(
+            "FM-AUTH-130",
+            "Invalid pending registration information.",
+            HttpStatusCode.BAD_REQUEST);
+
+    // =========================================================================
+    // Error Properties
+    // =========================================================================
 
     /**
-     * Error code.
+     * Unique authentication business error code.
      */
     private final String errorCode;
 
     /**
-     * User-friendly error message.
+     * User-friendly business error message.
      */
     private final String errorMessage;
 
     /**
-     * HTTP status code associated with the business error.
+     * HTTP status associated with the business error.
      */
     private final HttpStatusCode httpStatusCode;
+
+    // =========================================================================
+    // Constructor
+    // =========================================================================
 
     /**
      * Creates an Authentication business error.
      *
-     * @param errorCode      unique authentication error code
-     * @param errorMessage   user-friendly error message
-     * @param httpStatusCode HTTP status code
+     * @param errorCode      unique authentication error code.
+     * @param errorMessage   user-friendly error message.
+     * @param httpStatusCode associated HTTP status code.
      */
     AuthenticationErrorConstants(
             final String errorCode,
@@ -569,12 +598,15 @@ public enum AuthenticationErrorConstants implements IBusinessError {
         this.httpStatusCode = httpStatusCode;
     }
 
+    // =========================================================================
+    // IBusinessError Implementation
+    // =========================================================================
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String getErrorCode() {
-
         return errorCode;
     }
 
@@ -583,7 +615,6 @@ public enum AuthenticationErrorConstants implements IBusinessError {
      */
     @Override
     public String getErrorMessage() {
-
         return errorMessage;
     }
 
@@ -592,7 +623,6 @@ public enum AuthenticationErrorConstants implements IBusinessError {
      */
     @Override
     public HttpStatusCode getHttpStatusCode() {
-
         return httpStatusCode;
     }
 }

@@ -207,7 +207,12 @@ public enum EntityName {
     /**
      * Checkout entity.
      */
-    CHECKOUT_ENTITY("CHK", "Checkout");
+    CHECKOUT_ENTITY("CHK", "Checkout"),
+
+    /**
+     * Pending registration entity.
+     */
+    PENDING_REGISTRATION_ENTITY("PND", "Pending Registration");
 
     /**
      * Unique entity code.

@@ -98,6 +98,9 @@ public final class SequenceConstants {
 
     public static final String CHECKOUT_SEQUENCE = "checkout_sequence";
 
+    // MongoDB Sequence Collection Names
+    public static final String PENDING_REGISTRATION_SEQUENCE = "pending_registration_sequence";
+
     // =========================================================================
     // Internal Database ID Patterns
     // =========================================================================
@@ -148,6 +151,8 @@ public final class SequenceConstants {
     public static final String CART_DB_ID_PATTERN = "CRTDB%06d";
 
     public static final String CHECKOUT_DB_ID_PATTERN = "CHKDB%06d";
+
+    public static final String PENDING_REGISTRATION_DB_ID_PATTERN = "PREGDB%06d";
 
     // =========================================================================
     // External / Business Identifier Patterns
@@ -206,4 +211,6 @@ public final class SequenceConstants {
     public static final String CART_NUMBER_PATTERN = "FM-CRT-%07d";
 
     public static final String CHECKOUT_NUMBER_PATTERN = "FM-CHK-%07d";
+
+    public static final String PENDING_REGISTRATION_NUMBER_PATTERN = "FM-PREG-%07d";
 }

@@ -2,6 +2,7 @@ package com.foodies.freshmeal.common.factory;
 
 import com.foodies.freshmeal.authentication.entity.EmailVerificationOtpEntity;
 import com.foodies.freshmeal.authentication.entity.PasswordResetTokenEntity;
+import com.foodies.freshmeal.authentication.entity.PendingRegistrationEntity;
 import com.foodies.freshmeal.authentication.entity.RevokedSessionEntity;
 import com.foodies.freshmeal.authentication.entity.RevokedTokenEntity;
 import com.foodies.freshmeal.cart.entity.CartEntity;
@@ -107,6 +108,9 @@ public final class EntityFactory {
 
             case RESTAURANT_BRANCH_ENTITY ->
                 RestaurantBranchEntity.create();
+
+            case PENDING_REGISTRATION_ENTITY ->
+                PendingRegistrationEntity.create();
 
             // case CHECKOUT_ENTITY ->
             // CheckoutEntity.create();
