@@ -68,11 +68,27 @@ public class EmailVerificationOtpEntity extends ABaseEntity {
 
     private static final long serialVersionUID = -8389961188127573660L;
 
-	/**
+    /**
      * Business identifier assigned to the OTP verification record.
      */
     @Indexed(unique = true)
     private String verificationNumber;
+
+    /**
+     * Business identifier of the pending registration associated with this OTP.
+     *
+     * <p>
+     * This field is populated for the V2 new-user registration workflow.
+     * It remains {@code null} for OTP records associated with existing users.
+     * </p>
+     *
+     * <p>
+     * Exactly one of {@code userNumber} or {@code registrationNumber} must
+     * identify the OTP owner.
+     * </p>
+     */
+    @Indexed
+    private String registrationNumber;
 
     /**
      * FreshMeal user number associated with this verification request.
@@ -161,6 +177,11 @@ public class EmailVerificationOtpEntity extends ABaseEntity {
     /**
      * Creates a new email verification OTP entity through the standard
      * FreshMeal entity factory.
+     *
+     * <p>
+     * Retained for backward compatibility with the existing V1 workflow.
+     * New implementations should use an ownership-specific factory.
+     * </p>
      *
      * @return New email verification OTP entity.
      */
@@ -270,5 +291,97 @@ public class EmailVerificationOtpEntity extends ABaseEntity {
 
     public void setRevokedAt(final LocalDateTime revokedAt) {
         this.revokedAt = revokedAt;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(final String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
+    /**
+     * Creates an email verification OTP entity associated with an existing user.
+     *
+     * @param userNumber Business identifier of the existing user.
+     * @return New OTP entity associated with the specified user.
+     * @throws IllegalArgumentException if the user number is null or blank.
+     */
+    public static EmailVerificationOtpEntity createForUser(final String userNumber) {
+
+        validateOwnerIdentifier(userNumber, "userNumber");
+
+        final EmailVerificationOtpEntity entity = new EmailVerificationOtpEntity();
+
+        entity.setUserNumber(userNumber);
+
+        return entity;
+    }
+
+    /**
+     * Creates an email verification OTP entity associated with a pending
+     * registration.
+     *
+     * @param registrationNumber Business identifier of the pending registration.
+     * @return New OTP entity associated with the specified registration.
+     * @throws IllegalArgumentException if the registration number is null or blank.
+     */
+    public static EmailVerificationOtpEntity createForRegistration(final String registrationNumber) {
+
+        validateOwnerIdentifier(registrationNumber, "registrationNumber");
+
+        final EmailVerificationOtpEntity entity = new EmailVerificationOtpEntity();
+
+        entity.setRegistrationNumber(registrationNumber);
+
+        return entity;
+    }
+
+    /**
+     * Validates that this OTP entity has exactly one valid ownership identifier.
+     *
+     * <p>
+     * An OTP must belong either to an existing user or to a pending registration,
+     * but never to both or neither.
+     * </p>
+     *
+     * @throws IllegalStateException if the ownership information is invalid.
+     */
+    public void validateOwnership() {
+
+        if (userNumber != null && userNumber.isBlank()) {
+            throw new IllegalStateException("OTP user number cannot be blank.");
+        }
+
+        if (registrationNumber != null && registrationNumber.isBlank()) {
+            throw new IllegalStateException("OTP registration number cannot be blank.");
+        }
+
+        final boolean hasUserOwner = userNumber != null;
+        final boolean hasRegistrationOwner = registrationNumber != null;
+
+        if (hasUserOwner == hasRegistrationOwner) {
+            throw new IllegalStateException(
+                    "An email verification OTP must belong to exactly one owner: "
+                            + "either a user or a pending registration.");
+        }
+    }
+
+    /**
+     * Validates a business identifier used as an OTP ownership reference.
+     *
+     * @param identifier Business identifier.
+     * @param fieldName  Name of the field being validated.
+     * @throws IllegalArgumentException if the identifier is null or blank.
+     */
+    private static void validateOwnerIdentifier(
+            final String identifier,
+            final String fieldName) {
+
+        if (identifier == null || identifier.isBlank()) {
+            throw new IllegalArgumentException(
+                    fieldName + " cannot be null or blank.");
+        }
     }
 }

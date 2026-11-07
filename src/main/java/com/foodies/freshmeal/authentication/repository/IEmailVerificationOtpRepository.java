@@ -38,6 +38,7 @@ import com.foodies.freshmeal.common.repository.base.IBaseRepository;
  * @author Pankaj Kumar
  * @since 1.0
  */
-public interface IEmailVerificationOtpRepository extends IBaseRepository<EmailVerificationOtpEntity, String> {
+public interface IEmailVerificationOtpRepository
+        extends IBaseRepository<EmailVerificationOtpEntity, String>, IEmailVerificationOtpRepositoryCustom {
 
 }
