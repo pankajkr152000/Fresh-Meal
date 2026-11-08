@@ -556,7 +556,85 @@ public enum AuthenticationErrorConstants implements IBusinessError {
     PENDING_REGISTRATION_INVALID(
             "FM-AUTH-130",
             "Invalid pending registration information.",
-            HttpStatusCode.BAD_REQUEST);
+            HttpStatusCode.BAD_REQUEST),
+
+    REGISTRATION_INVALID(
+            "FM-AUTH-131",
+            "Invalid registration information.",
+            HttpStatusCode.BAD_REQUEST),
+
+    // =========================================================================
+    // Registration Identity Reservation Errors - 132 to 139
+    // =========================================================================
+
+    /**
+     * Username is already reserved by another pending registration or
+     * permanently registered user.
+     */
+    REGISTRATION_USERNAME_ALREADY_RESERVED(
+            "FM-AUTH-132",
+            "Username is already registered or reserved.",
+            HttpStatusCode.CONFLICT),
+
+    /**
+     * Email address is already reserved by another pending registration or
+     * permanently registered user.
+     */
+    REGISTRATION_EMAIL_ALREADY_RESERVED(
+            "FM-AUTH-133",
+            "Email address is already registered or reserved.",
+            HttpStatusCode.CONFLICT),
+
+    /**
+     * Phone number is already reserved by another pending registration or
+     * permanently registered user.
+     */
+    REGISTRATION_PHONE_NUMBER_ALREADY_RESERVED(
+            "FM-AUTH-134",
+            "Phone number is already registered or reserved.",
+            HttpStatusCode.CONFLICT),
+
+    /**
+     * Required registration identity reservation does not exist.
+     */
+    REGISTRATION_IDENTITY_RESERVATION_NOT_FOUND(
+            "FM-AUTH-135",
+            "Registration identity reservation not found.",
+            HttpStatusCode.NOT_FOUND),
+
+    /**
+     * Reservation is not owned by the expected pending registration or user.
+     */
+    REGISTRATION_IDENTITY_RESERVATION_OWNERSHIP_MISMATCH(
+            "FM-AUTH-136",
+            "Registration identity reservation ownership mismatch.",
+            HttpStatusCode.CONFLICT),
+
+    /**
+     * Identity reservation has already been transferred to a permanent user.
+     */
+    REGISTRATION_IDENTITY_RESERVATION_ALREADY_TRANSFERRED(
+            "FM-AUTH-137",
+            "Registration identity reservation has already been transferred.",
+            HttpStatusCode.CONFLICT),
+
+    /**
+     * Identity reservation ownership transfer failed.
+     */
+    REGISTRATION_IDENTITY_RESERVATION_TRANSFER_FAILED(
+            "FM-AUTH-138",
+            "Registration identity reservation transfer failed.",
+            HttpStatusCode.INTERNAL_SERVER_ERROR),
+
+    /**
+     * Identity reservation release failed.
+     */
+    REGISTRATION_IDENTITY_RESERVATION_RELEASE_FAILED(
+            "FM-AUTH-139",
+            "Registration identity reservation release failed.",
+            HttpStatusCode.INTERNAL_SERVER_ERROR),
+
+    ;
 
     // =========================================================================
     // Error Properties

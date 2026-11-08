@@ -849,9 +849,6 @@ public class OtpServiceImpl implements IOtpService {
 
             /*
              * Atomically increment the failed attempt count.
-             *
-             * The repository also activates the lockout timestamp when the
-             * configured maximum attempt count is reached.
              */
             final EmailVerificationOtpEntity updatedOtp = otpRepository
                     .incrementFailedAttempt(
@@ -863,16 +860,19 @@ public class OtpServiceImpl implements IOtpService {
                             AuthenticationErrorConstants.INVALID_EMAIL_OTP));
 
             /*
-             * The maximum-attempt policy has now been exhausted.
+             * Return zero remaining attempts when the maximum has been reached.
              */
             if (isAttemptsExceeded(updatedOtp)) {
-
-                throw new BusinessException(
-                        AuthenticationErrorConstants.EMAIL_OTP_ATTEMPTS_EXCEEDED);
+                return new OtpVerificationResult(false, 0);
             }
 
-            throw new BusinessException(
-                    AuthenticationErrorConstants.EMAIL_OTP_INCORRECT);
+            /*
+             * Return an unsuccessful result so the failed-attempt update
+             * can be committed by the enclosing transaction.
+             */
+            return new OtpVerificationResult(
+                    false,
+                    updatedOtp.getMaxAttempts() - updatedOtp.getAttemptCount());
         }
 
         /*
@@ -889,6 +889,8 @@ public class OtpServiceImpl implements IOtpService {
          */
         otpRepository.consumeEmailVerificationOtp(
                 otpEntity.getVerificationNumber(),
+                registrationNumber,
+                normalizedEmail,
                 now,
                 auditUser)
                 .orElseThrow(() -> new BusinessException(

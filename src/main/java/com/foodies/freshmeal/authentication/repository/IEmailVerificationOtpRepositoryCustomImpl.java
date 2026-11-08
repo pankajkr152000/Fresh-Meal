@@ -61,12 +61,17 @@ public class IEmailVerificationOtpRepositoryCustomImpl
      */
     @Override
     public Optional<EmailVerificationOtpEntity> consumeEmailVerificationOtp(
-            final String verificationNumber,
-            final LocalDateTime now,
-            final String updatedBy) {
+            String verificationNumber,
+            String registrationNumber,
+            String email,
+            LocalDateTime now,
+            String updatedBy) {
 
         final Document criteria = new Document()
                 .append("verificationNumber", verificationNumber)
+                .append("registrationNumber", registrationNumber)
+                .append("userNumber", null)
+                .append("email", email)
                 .append("used", false)
                 .append("revoked", false)
                 .append("sentAt", new Document("$ne", null))

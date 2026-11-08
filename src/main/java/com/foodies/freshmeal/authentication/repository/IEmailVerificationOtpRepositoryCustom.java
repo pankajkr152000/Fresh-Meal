@@ -27,6 +27,8 @@ public interface IEmailVerificationOtpRepositoryCustom {
      */
     Optional<EmailVerificationOtpEntity> consumeEmailVerificationOtp(
             String verificationNumber,
+            String registrationNumber,
+            String email,
             LocalDateTime now,
             String updatedBy);
 

@@ -34,14 +34,17 @@ import com.foodies.freshmeal.authentication.dto.LoginHistoryNumberRequest;
 import com.foodies.freshmeal.authentication.dto.LoginInputDTO;
 import com.foodies.freshmeal.authentication.dto.LoginResponse;
 import com.foodies.freshmeal.authentication.dto.LogoutInputDTO;
+import com.foodies.freshmeal.authentication.dto.PendingRegistrationCreationInput;
 import com.foodies.freshmeal.authentication.dto.RefreshTokenInputDTO;
 import com.foodies.freshmeal.authentication.dto.RegisterInputDTO;
 import com.foodies.freshmeal.authentication.dto.RegisterRequest;
 import com.foodies.freshmeal.authentication.dto.RegisterResponse;
+import com.foodies.freshmeal.authentication.dto.RegistrationVerificationResult;
 import com.foodies.freshmeal.authentication.dto.ResendEmailOtpInputDTO;
 import com.foodies.freshmeal.authentication.dto.ResendEmailOtpRequest;
 import com.foodies.freshmeal.authentication.dto.ResetPasswordInputDTO;
 import com.foodies.freshmeal.authentication.dto.TokenResponse;
+import com.foodies.freshmeal.authentication.dto.VerifiedRegistrationResult;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpInputDTO;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpRequest;
 import com.foodies.freshmeal.authentication.dto.VerifyEmailOtpResponse;
@@ -50,9 +53,12 @@ import com.foodies.freshmeal.authentication.email.PasswordResetEmailTemplate;
 import com.foodies.freshmeal.authentication.email.PasswordResetSuccessEmailTemplate;
 import com.foodies.freshmeal.authentication.email.WelcomeEmailTemplate;
 import com.foodies.freshmeal.authentication.entity.PasswordResetTokenEntity;
+import com.foodies.freshmeal.authentication.entity.PendingRegistrationEntity;
 import com.foodies.freshmeal.authentication.repository.IPasswordResetTokenRepository;
 import com.foodies.freshmeal.authentication.service.IAuthenticationService;
 import com.foodies.freshmeal.authentication.service.IOtpService;
+import com.foodies.freshmeal.authentication.service.IPendingRegistrationService;
+import com.foodies.freshmeal.authentication.service.IRegistrationVerificationService;
 import com.foodies.freshmeal.authentication.token.ITokenRevocationService;
 import com.foodies.freshmeal.authentication.token.ITokenService;
 import com.foodies.freshmeal.authentication.util.PasswordResetUrlBuilder;
@@ -84,8 +90,7 @@ import com.foodies.freshmeal.user.constants.UserErrorConstants;
 import com.foodies.freshmeal.user.dto.EmailRequest;
 import com.foodies.freshmeal.user.dto.UpdatePasswordInputDTO;
 import com.foodies.freshmeal.user.dto.UserNumberRequest;
-import com.foodies.freshmeal.user.dto.UserRegistrationInputDTO;
-import com.foodies.freshmeal.user.dto.UserRequest;
+import com.foodies.freshmeal.user.dto.UserRegistrationIdentityInput;
 import com.foodies.freshmeal.user.dto.UsernameRequest;
 import com.foodies.freshmeal.user.entity.LoginHistoryEntity;
 import com.foodies.freshmeal.user.entity.UserEntity;
@@ -251,6 +256,14 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     private final WelcomeEmailTemplate welcomeEmailTemplate;
 
+    private final IPendingRegistrationService pendingRegistrationService;
+
+    /**
+     * Coordinates transactional verification of pending registrations
+     * and permanent user account creation.
+     */
+    private final IRegistrationVerificationService registrationVerificationService;
+
     // =========================================================================
     // Constructor
     // =========================================================================
@@ -283,7 +296,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             final PasswordResetEmailTemplate passwordResetEmailTemplate,
             final PasswordResetSuccessEmailTemplate passwordResetSuccessEmailTemplate,
             final EmailVerificationOtpTemplate emailVerificationOtpTemplate,
-            final WelcomeEmailTemplate welcomeEmailTemplate) {
+            final WelcomeEmailTemplate welcomeEmailTemplate,
+            final IPendingRegistrationService pendingRegistrationService,
+            final IRegistrationVerificationService registrationVerificationService) {
 
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
@@ -300,6 +315,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         this.passwordResetSuccessEmailTemplate = passwordResetSuccessEmailTemplate;
         this.emailVerificationOtpTemplate = emailVerificationOtpTemplate;
         this.welcomeEmailTemplate = welcomeEmailTemplate;
+        this.pendingRegistrationService = pendingRegistrationService;
+        this.registrationVerificationService = registrationVerificationService;
     }
 
     // =========================================================================
@@ -395,74 +412,118 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     @Override
     @AuditApi(action = ActionType.REGISTER, module = ModuleType.AUTHENTICATION, method = MethodType.CREATE)
-    public IServiceOutput<RegisterResponse> register(final IServiceInput<RegisterInputDTO> input) {
+    public IServiceOutput<RegisterResponse> register(
+            final IServiceInput<RegisterInputDTO> input) {
 
-        final RegisterRequest registerRequest = input.getInput().getRegisterRequest();
-
-        validateRegistrationPasswords(registerRequest);
-        validatePublicRegistrationRole(registerRequest.getRequestedRole());
-
-        final String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
-
-        final UserRequest userRequest = new UserRequest();
-
-        userRequest.setUsername(registerRequest.getUsername());
-        userRequest.setFirstName(registerRequest.getFirstName());
-        userRequest.setLastName(registerRequest.getLastName());
-        userRequest.setEmail(registerRequest.getEmail());
-        userRequest.setPhoneNumber(registerRequest.getPhoneNumber());
-
-        /*
-         * Registration-specific information is intentionally separated from the generic
-         * UserInputDTO.
-         *
-         * The requested role is part of the public registration workflow and must not
-         * become part of generic user operations.
-         */
-        final UserRegistrationInputDTO registrationInput = new UserRegistrationInputDTO();
-
-        registrationInput.setUserRequest(userRequest);
-        registrationInput.setRequestedRole(registerRequest.getRequestedRole());
-
-        final ServiceInput<UserRegistrationInputDTO> userServiceInput = new ServiceInput<>();
-
-        userServiceInput.setInput(registrationInput);
-        userServiceInput.setServiceContext(input.getServiceContext());
-        userServiceInput.setDataContext(input.getDataContext());
-
-        final UserEntity userEntity = userService.registerUser(userServiceInput, encodedPassword).getOutput();
-
-        final String email = userEntity.getEmail().getValue();
-
-        /*
-         * An existing verified user registering for an additional role does not need to
-         * verify the same email address again.
-         *
-         * New users and existing users whose email is still unverified continue through
-         * the normal email-verification workflow.
-         */
-        if (!userEntity.isEmailVerified()) {
-
-            final OtpGenerationResult otpGenerationResult = otpService
-                    .generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
-
-            final String emailBody = emailVerificationOtpTemplate.buildHtml(userEntity.getFirstName(),
-                    otpGenerationResult.rawOtp());
-
-            /*
-             * sentAt is intentionally updated only after the email service successfully
-             * accepts the email for delivery.
-             */
-            emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
-
-            otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(),
-                    input.getServiceContext());
+        if (input == null
+                || input.getInput() == null
+                || input.getInput().getRegisterRequest() == null) {
+            throw new BusinessException(AuthenticationErrorConstants.REGISTRATION_INVALID);
         }
 
+        final RegisterRequest registerRequest = input.getInput().getRegisterRequest();
+        final IServiceContext serviceContext = input.getServiceContext();
+
+        // Step 1: Validate password and resolve the requested public role.
+        validateRegistrationPasswords(registerRequest);
+
+        final RoleType requestedRole = resolvePublicRegistrationRole(registerRequest.getRequestedRole());
+
+        // Step 2: Validate identity against existing permanent users.
+        final UserRegistrationIdentityInput identityInput = new UserRegistrationIdentityInput();
+
+        identityInput.setUsername(registerRequest.getUsername());
+        identityInput.setEmail(registerRequest.getEmail());
+        identityInput.setPhoneNumber(registerRequest.getPhoneNumber());
+
+        final ServiceInput<UserRegistrationIdentityInput> identityServiceInput = new ServiceInput<>();
+
+        identityServiceInput.setInput(identityInput);
+        identityServiceInput.setServiceContext(serviceContext);
+        identityServiceInput.setDataContext(input.getDataContext());
+
+        userService.validateRegistrationIdentity(identityServiceInput);
+
+        // Step 3: Encode the password before storing the pending registration.
+        final String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
+
+        // Step 4: Prepare pending registration data.
+        final PendingRegistrationCreationInput pendingRegistrationInput = new PendingRegistrationCreationInput();
+
+        pendingRegistrationInput.setUsername(registerRequest.getUsername());
+
+        pendingRegistrationInput.setFirstName(
+                FreshMealUtilities.formatName(registerRequest.getFirstName()));
+
+        pendingRegistrationInput.setLastName(
+                FreshMealUtilities.formatName(registerRequest.getLastName()));
+
+        pendingRegistrationInput.setEmail(registerRequest.getEmail());
+        pendingRegistrationInput.setPhoneNumber(registerRequest.getPhoneNumber());
+        pendingRegistrationInput.setEncodedPassword(encodedPassword);
+        pendingRegistrationInput.setRequestedRole(requestedRole);
+
+        // Step 5: Create the temporary registration.
+        final PendingRegistrationEntity pendingRegistration = pendingRegistrationService.createPendingRegistration(
+                pendingRegistrationInput, serviceContext);
+
+        OtpGenerationResult otpGenerationResult = null;
+
+        try {
+
+            // Step 6: Generate an OTP associated with this registration.
+            final String email = pendingRegistration.getEmail().getValue();
+
+            otpGenerationResult = otpService.generateRegistrationEmailVerificationOtp(
+                    pendingRegistration.getRegistrationNumber(),
+                    email,
+                    serviceContext);
+
+            // Step 7: Build and send the verification email.
+            final String emailBody = emailVerificationOtpTemplate.buildHtml(
+                    pendingRegistration.getFirstName(),
+                    otpGenerationResult.rawOtp());
+
+            emailService.sendEmail(
+                    email,
+                    "FreshMeal Email Verification",
+                    emailBody);
+
+            // Step 8: Mark the OTP as successfully sent.
+            otpService.markEmailVerificationOtpSent(
+                    otpGenerationResult.verificationNumber(),
+                    serviceContext);
+
+        } catch (final RuntimeException exception) {
+
+            // Revoke any active registration OTP, even if generation failed
+            // after persisting the OTP but before returning its result.
+            try {
+                otpService.revokeActiveRegistrationEmailVerificationOtp(
+                        pendingRegistration.getRegistrationNumber(),
+                        serviceContext);
+            } catch (final RuntimeException cleanupException) {
+                exception.addSuppressed(cleanupException);
+            }
+
+            // Cancel the pending registration so it cannot be verified later.
+            try {
+                pendingRegistrationService.cancelPendingRegistration(
+                        pendingRegistration.getRegistrationNumber(),
+                        serviceContext);
+            } catch (final RuntimeException cleanupException) {
+                exception.addSuppressed(cleanupException);
+            }
+
+            throw exception;
+        }
+
+        // Step 9: Return the registration response.
         final RegisterResponse response = new RegisterResponse();
 
-        response.setEmail(email);
-        response.setVerificationRequired(!userEntity.isEmailVerified());
+        response.setRegistrationNumber(pendingRegistration.getRegistrationNumber());
+        response.setEmail(pendingRegistration.getEmail().getValue());
+        response.setVerificationRequired(Boolean.TRUE);
 
         return new ServiceOutput<>(response);
     }
@@ -501,182 +562,292 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
      * =================================================================================================
      *
      * <p>
-     * Verifies the email verification OTP submitted by a newly registered user.
+     * Verifies the email verification OTP submitted during the V2 registration
+     * process.
      * </p>
      *
      * <p>
-     * A successful verification activates the user account through
-     * {@link IUserService#activateUser(IServiceInput)} and sends the user a welcome
-     * email.
+     * The registration is identified by its registration number rather than by an
+     * existing
+     * permanent user account. A successful OTP verification triggers the creation
+     * of the
+     * permanent user account through {@link RegistrationVerificationService}.
      * </p>
      *
      * <h3>Verification Flow</h3>
      * <ul>
-     * <li>Find the user using the normalized email address.</li>
-     * <li>Verify the submitted OTP through {@link IOtpService}.</li>
-     * <li>Activate the user through {@link IUserService}.</li>
-     * <li>Send the welcome email.</li>
+     * <li>Extract the registration number and submitted OTP.</li>
+     * <li>Delegate OTP verification and permanent user creation to
+     * {@link RegistrationVerificationService}.</li>
+     * <li>Reject unsuccessful OTP verification.</li>
+     * <li>Send the welcome email after successful registration completion.</li>
      * <li>Return the email verification result.</li>
      * </ul>
      *
      * <p>
-     * OTP validation, expiration, attempt limits and lockout remain the
-     * responsibility of the OTP service.
+     * OTP validation, expiration, attempt limits, lockout, registration completion
+     * and
+     * permanent user creation are handled by their respective services.
      * </p>
      *
-     * @param input service input containing email and verification OTP
+     * <p>
+     * No JWT generation or automatic login is performed by this method.
+     * </p>
+     *
+     * @param input service input containing the registration number and
+     *              verification OTP
      * @return email verification response
      */
     @Override
-    public IServiceOutput<VerifyEmailOtpResponse> verifyEmailOtp(final IServiceInput<VerifyEmailOtpInputDTO> input) {
+    public IServiceOutput<VerifyEmailOtpResponse> verifyEmailOtp(
+            final IServiceInput<VerifyEmailOtpInputDTO> input) {
 
         final VerifyEmailOtpInputDTO verifyInput = input.getInput();
 
         final VerifyEmailOtpRequest request = verifyInput.getVerifyEmailOtpRequest();
 
         /*
-         * Normalize the email before performing the user lookup.
+         * Delegate the complete verification workflow to
+         * RegistrationVerificationService.
          *
-         * Email normalization belongs to the Authentication workflow boundary; the
-         * EmailAddress value object remains responsible only for representing an email
-         * address.
+         * This service verifies the registration-specific OTP, creates the permanent
+         * user account and completes the pending registration transactionally.
          */
-        final String email = FreshMealUtilities.normalizeEmail(request.getEmail().getValue());
-
-        /*
-         * Locate the user associated with the verification request.
-         */
-        final EmailRequest emailRequest = new EmailRequest();
-
-        emailRequest.setEmail(EmailAddress.toEmailAddress(email));
-
-        final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>();
-
-        userServiceInput.setInput(emailRequest);
-        userServiceInput.setServiceContext(input.getServiceContext());
-
-        final UserEntity userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
-
-        /*
-         * Verify the OTP using the user's business identifier.
-         *
-         * OTP expiration, used-state, attempt limits and lockout are handled entirely
-         * by the OTP service.
-         */
-        otpService.verifyEmailVerificationOtp(userEntity.getUserNumber(), email, request.getOtp(),
+        final RegistrationVerificationResult verificationResult = registrationVerificationService.verifyAndCreateUser(
+                request.getRegistrationNumber(),
+                request.getOtp(),
                 input.getServiceContext());
 
         /*
-         * The OTP has been successfully verified.
+         * Reject unsuccessful verification.
          *
-         * Delegate account activation to the User module rather than modifying
-         * UserEntity directly from AuthenticationService.
+         * The verification service returns an unsuccessful result normally so that
+         * failed OTP attempts can be committed to the database.
          */
-        final UserNumberRequest userNumberRequest = new UserNumberRequest();
-
-        userNumberRequest.setUserNumber(userEntity.getUserNumber());
-
-        final IServiceInput<UserNumberRequest> activationInput = new ServiceInput<>();
-
-        activationInput.setInput(userNumberRequest);
-        activationInput.setServiceContext(input.getServiceContext());
-
-        userService.activateUser(activationInput);
+        if (!verificationResult.isVerified()) {
+            throw new BusinessException(AuthenticationErrorConstants.INVALID_EMAIL_OTP);
+        }
 
         /*
-         * Send the welcome email only after successful account activation.
+         * Retrieve the permanent registration details created after successful
+         * verification.
          */
-        final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
-                : userEntity.getUsername();
-
-        final String welcomeEmailBody = welcomeEmailTemplate.buildHtml(firstName);
-
-        emailService.sendEmail(email, "Welcome to FreshMeal", welcomeEmailBody);
+        final VerifiedRegistrationResult registration = verificationResult.getRegistration();
 
         /*
-         * Build the authentication response.
+         * Send the welcome email only after the registration verification transaction
+         * has successfully completed.
+         */
+        final String recipientName = FreshMealUtilities.hasText(registration.getFirstName())
+                ? registration.getFirstName()
+                : "there";
+
+        final String welcomeEmailBody = welcomeEmailTemplate.buildHtml(recipientName);
+
+        emailService.sendEmail(
+                registration.getEmail(),
+                "Welcome to FreshMeal",
+                welcomeEmailBody);
+
+        /*
+         * Build the email verification response.
          *
-         * No JWT or automatic login is performed here.
+         * No authentication token is generated and no automatic login is performed.
          */
         final VerifyEmailOtpResponse response = new VerifyEmailOtpResponse();
 
-        response.setEmail(email);
-
+        response.setEmail(registration.getEmail());
         response.setEmailVerified(true);
 
         return new ServiceOutput<>(response);
     }
 
+    /**
+     * ============================================================================
+     * RESEND EMAIL OTP
+     * ============================================================================
+     *
+     * <p>
+     * Generates and sends a new email verification OTP for an existing pending
+     * registration.
+     * </p>
+     *
+     * <p>
+     * The pending registration is identified by its registration number.
+     * The email address and recipient information are retrieved from the
+     * pending registration rather than supplied independently by the client.
+     * </p>
+     *
+     * <h3>Resend Flow</h3>
+     * <ul>
+     * <li>Validate the registration number.</li>
+     * <li>Retrieve the pending registration.</li>
+     * <li>Validate its lifecycle status and expiration.</li>
+     * <li>Generate a registration-specific OTP.</li>
+     * <li>Send the verification email.</li>
+     * <li>Mark the exact OTP as successfully sent.</li>
+     * <li>Return the registration verification response.</li>
+     * </ul>
+     *
+     * <p>
+     * OTP generation, resend cooldown, expiration, attempt limits and active OTP
+     * replacement remain the responsibility of {@link IOtpService}.
+     * </p>
+     *
+     * <p>
+     * A failed resend must not cancel the pending registration. Only the newly
+     * generated registration OTP is revoked during failure cleanup.
+     * </p>
+     *
+     * @param input service input containing the registration number
+     * @return registration verification response
+     */
     @Override
-    public IServiceOutput<RegisterResponse> resendEmailOtp(final IServiceInput<ResendEmailOtpInputDTO> input) {
+    public IServiceOutput<RegisterResponse> resendEmailOtp(
+            final IServiceInput<ResendEmailOtpInputDTO> input) {
 
-        final ResendEmailOtpInputDTO resendInput = input.getInput();
+        if (input == null
+                || input.getInput() == null
+                || input.getInput().getResendEmailOtpRequest() == null
+                || input.getServiceContext() == null) {
 
-        final ResendEmailOtpRequest request = resendInput.getResendEmailOtpRequest();
+            throw new BusinessException(
+                    AuthenticationErrorConstants.REGISTRATION_INVALID);
+        }
 
-        /*
-         * Normalize the email before performing the user lookup.
-         */
-        final String email = FreshMealUtilities.normalizeEmail(request.getEmail().getValue());
+        final ResendEmailOtpRequest request = input.getInput().getResendEmailOtpRequest();
 
-        /*
-         * Find the user associated with the email address.
-         */
-        final EmailRequest emailRequest = new EmailRequest();
+        final IServiceContext serviceContext = input.getServiceContext();
 
-        emailRequest.setEmail(EmailAddress.toEmailAddress(email));
-
-        final IServiceInput<EmailRequest> userServiceInput = new ServiceInput<>();
-
-        userServiceInput.setInput(emailRequest);
-        userServiceInput.setServiceContext(input.getServiceContext());
-
-        final UserEntity userEntity = userService.loadUserByEmail(userServiceInput).getOutput();
+        final String registrationNumber = request.getRegistrationNumber();
 
         /*
-         * An already verified account must not receive another email-verification OTP.
+         * Step 1: Retrieve the pending registration.
          */
-        if (userEntity.isEmailVerified()) {
+        final PendingRegistrationEntity pendingRegistration = pendingRegistrationService.getPendingRegistration(
+                registrationNumber,
+                serviceContext);
 
-            throw new BusinessException(AuthenticationErrorConstants.EMAIL_VERIFICATION_FAILED);
+        /*
+         * Step 2: Capture the business timestamp once.
+         *
+         * Using one timestamp ensures consistent lifecycle evaluation throughout
+         * this operation.
+         */
+        final LocalDateTime currentTime = AppCalendar.getBusinessLocalDateTime();
+
+        /*
+         * Step 3: Validate the registration lifecycle.
+         */
+        if (!pendingRegistration.isPending()) {
+
+            switch (pendingRegistration.getRegistrationStatus()) {
+
+                case COMPLETED:
+                    throw new BusinessException(
+                            AuthenticationErrorConstants.PENDING_REGISTRATION_ALREADY_COMPLETED);
+
+                case EXPIRED:
+                    throw new BusinessException(
+                            AuthenticationErrorConstants.PENDING_REGISTRATION_EXPIRED);
+
+                case CANCELLED:
+                    throw new BusinessException(
+                            AuthenticationErrorConstants.PENDING_REGISTRATION_ALREADY_CANCELLED);
+
+                default:
+                    throw new BusinessException(
+                            AuthenticationErrorConstants.PENDING_REGISTRATION_INVALID);
+            }
         }
 
         /*
-         * Generate a new OTP.
+         * Step 4: Reject expired registrations.
          *
-         * IOtpService owns the resend cooldown, active OTP replacement, expiration and
-         * attempt-limit policies.
+         * The registration expiration is independent of OTP expiration.
          */
-        final OtpGenerationResult otpGenerationResult = otpService
-                .generateEmailVerificationOtp(userEntity.getUserNumber(), email, input.getServiceContext());
+        if (pendingRegistration.isExpired(currentTime)) {
+
+            pendingRegistrationService.expirePendingRegistration(
+                    registrationNumber,
+                    serviceContext);
+
+            throw new BusinessException(
+                    AuthenticationErrorConstants.PENDING_REGISTRATION_EXPIRED);
+        }
 
         /*
-         * Send the newly generated OTP to the user's email address.
+         * Step 5: Retrieve registration-owned email information.
          */
-        final String firstName = FreshMealUtilities.hasText(userEntity.getFirstName()) ? userEntity.getFirstName()
-                : userEntity.getUsername();
+        final String email = pendingRegistration.getEmail().getValue();
 
-        final String emailBody = buildVerificationEmailBody(firstName, otpGenerationResult.rawOtp());
+        final String recipientName = FreshMealUtilities.hasText(
+                pendingRegistration.getFirstName())
+                        ? pendingRegistration.getFirstName()
+                        : "there";
 
-        emailService.sendEmail(email, "FreshMeal Email Verification", emailBody);
+        try {
+
+            /*
+             * Step 6: Generate a new registration-specific OTP.
+             */
+            final OtpGenerationResult otpGenerationResult = otpService.generateRegistrationEmailVerificationOtp(
+                    registrationNumber,
+                    email,
+                    serviceContext);
+
+            /*
+             * Step 7: Build and send the verification email.
+             */
+            final String emailBody = emailVerificationOtpTemplate.buildHtml(
+                    recipientName,
+                    otpGenerationResult.rawOtp());
+
+            emailService.sendEmail(
+                    email,
+                    "FreshMeal Email Verification",
+                    emailBody);
+
+            /*
+             * Step 8: Mark the exact OTP as successfully sent.
+             */
+            otpService.markEmailVerificationOtpSent(
+                    otpGenerationResult.verificationNumber(),
+                    serviceContext);
+
+        } catch (final RuntimeException exception) {
+
+            /*
+             * Step 9: Revoke any active OTP belonging to this registration.
+             *
+             * This also handles the possibility that OTP generation persisted
+             * an OTP before throwing an exception.
+             */
+            try {
+
+                otpService.revokeActiveRegistrationEmailVerificationOtp(
+                        registrationNumber,
+                        serviceContext);
+
+            } catch (final RuntimeException cleanupException) {
+
+                exception.addSuppressed(cleanupException);
+            }
+
+            /*
+             * Do not cancel the pending registration during resend failure.
+             */
+            throw exception;
+        }
 
         /*
-         * Mark the exact OTP as successfully sent.
-         *
-         * sentAt must only be populated after the email dispatch succeeds.
-         */
-        otpService.markEmailVerificationOtpSent(otpGenerationResult.verificationNumber(), input.getServiceContext());
-
-        /*
-         * Return the same registration-oriented response structure.
-         *
-         * The raw OTP is never returned to the client.
+         * Step 10: Return the registration verification response.
          */
         final RegisterResponse response = new RegisterResponse();
 
+        response.setRegistrationNumber(registrationNumber);
         response.setEmail(email);
-
-        response.setVerificationRequired(true);
+        response.setVerificationRequired(Boolean.TRUE);
 
         return new ServiceOutput<>(response);
     }
@@ -1476,66 +1647,6 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     }
 
     /**
-     * Builds the welcome email sent after successful email verification.
-     *
-     * @param firstName user's first name
-     * @return welcome email body
-     */
-    /*
-     * private String buildWelcomeEmailBody(final String firstName) {
-     * 
-     * return String.format("""
-     * Hello %s,
-     * 
-     * Welcome to FreshMeal!
-     * 
-     * Your email address has been successfully verified and your
-     * FreshMeal account is now active.
-     * 
-     * You can now log in and start using FreshMeal.
-     * 
-     * Regards,
-     * FreshMeal Team
-     * """, firstName);
-     * }
-     */
-
-    /**
-     * Builds the email body used for email verification.
-     *
-     * <p>
-     * The raw OTP is intentionally used only while constructing the transient email
-     * body. It must never be persisted or logged.
-     * </p>
-     *
-     * @param firstName user's first name
-     * @param otp       generated raw OTP
-     * @return email body
-     */
-    private String buildVerificationEmailBody(final String firstName, final String otp) {
-
-        final String recipientName = firstName == null || firstName.isBlank() ? "there" : firstName;
-
-        return """
-                Hello %s,
-
-                Welcome to FreshMeal!
-
-                Your email verification OTP is:
-
-                %s
-
-                This OTP is valid for 10 minutes.
-
-                If you did not create a FreshMeal account,
-                please ignore this email.
-
-                Regards,
-                FreshMeal Team
-                """.formatted(recipientName, otp);
-    }
-
-    /**
      * ============================================================================
      * LOGIN HISTORY
      * ============================================================================
@@ -1879,5 +1990,16 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
             throw new BusinessException(UserErrorConstants.INVALID_USER_ROLE);
         }
+    }
+
+    private RoleType resolvePublicRegistrationRole(final RoleType requestedRole) {
+
+        final RoleType resolvedRole = requestedRole == null
+                ? RoleType.USER
+                : requestedRole;
+
+        validatePublicRegistrationRole(resolvedRole);
+
+        return resolvedRole;
     }
 }

@@ -61,4 +61,20 @@ public interface IUserRepository extends IBaseRepository<UserEntity, String> {
      * @return matching user entity, if present.
      */
     Optional<UserEntity> findByUsername(String username);
+
+    /**
+     * Finds a user by their email address.
+     *
+     * @param email normalized email address.
+     * @return matching user, if present.
+     */
+    Optional<UserEntity> findByEmail_Value(String email);
+
+    /**
+     * Finds a user by their phone number.
+     *
+     * @param phoneNumber normalized phone number value.
+     * @return matching user, if present.
+     */
+    Optional<UserEntity> findByPhoneNumber_Value(String phoneNumber);
 }

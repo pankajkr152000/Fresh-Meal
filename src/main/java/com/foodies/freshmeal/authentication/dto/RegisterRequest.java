@@ -157,7 +157,7 @@ public class RegisterRequest {
      * must never be accepted from this request.
      * </p>
      */
-    @NotNull(message = "Registration role is required.")
+
     private RoleType requestedRole;
 
     /**

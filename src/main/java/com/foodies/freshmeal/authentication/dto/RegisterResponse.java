@@ -50,6 +50,8 @@ public class RegisterResponse {
      */
     private boolean verificationRequired;
 
+    private String registrationNumber;
+
     /**
      * Returns the email address associated with the registration.
      *
@@ -85,5 +87,13 @@ public class RegisterResponse {
      */
     public void setVerificationRequired(final boolean verificationRequired) {
         this.verificationRequired = verificationRequired;
+    }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 }

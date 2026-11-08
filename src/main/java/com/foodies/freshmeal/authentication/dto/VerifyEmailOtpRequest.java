@@ -50,6 +50,10 @@ public class VerifyEmailOtpRequest {
     @Pattern(regexp = "^[0-9]{6}$", message = "Email verification OTP must be a 6-digit number.")
     private String otp;
 
+    // pattern FM-PREG-%07d FM-PREG-0000001
+    @Pattern(regexp = "^FM-PREG-[0-9]{7}$", message = "Registration number must be in the format FM-PREG-XXXXXXX, where XXXXXXX is a 7-digit number.")
+    private String registrationNumber;
+
     /**
      * Returns the email address.
      *
@@ -85,4 +89,13 @@ public class VerifyEmailOtpRequest {
     public void setOtp(final String otp) {
         this.otp = otp;
     }
+
+    public String getRegistrationNumber() {
+        return registrationNumber;
+    }
+
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
 }

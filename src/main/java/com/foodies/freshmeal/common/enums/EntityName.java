@@ -212,7 +212,11 @@ public enum EntityName {
     /**
      * Pending registration entity.
      */
-    PENDING_REGISTRATION_ENTITY("PND", "Pending Registration");
+    PENDING_REGISTRATION_ENTITY("PND", "Pending Registration"),
+
+    REGISTRATION_IDENTITY_RESERVATION_ENTITY("RIR", "Registration Identity Reservation"),
+
+    ;
 
     /**
      * Unique entity code.

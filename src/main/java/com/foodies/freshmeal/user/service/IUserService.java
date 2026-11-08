@@ -1,13 +1,16 @@
 package com.foodies.freshmeal.user.service;
 
+import com.foodies.freshmeal.common.exception.BusinessException;
 import com.foodies.freshmeal.common.io.service.IServiceInput;
 import com.foodies.freshmeal.common.io.service.IServiceOutput;
 import com.foodies.freshmeal.user.dto.EmailRequest;
+import com.foodies.freshmeal.user.dto.EmailVerifiedUserCreationInput;
 import com.foodies.freshmeal.user.dto.UpdatePasswordInputDTO;
 import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
 import com.foodies.freshmeal.user.dto.UserNumberRequest;
+import com.foodies.freshmeal.user.dto.UserRegistrationIdentityInput;
 import com.foodies.freshmeal.user.dto.UserRegistrationInputDTO;
 import com.foodies.freshmeal.user.dto.UserResponse;
 import com.foodies.freshmeal.user.dto.UsernameRequest;
@@ -282,5 +285,36 @@ public interface IUserService {
      * @return service output containing the persisted {@link UserEntity}
      */
     IServiceOutput<UserEntity> registerUser(IServiceInput<UserRegistrationInputDTO> input, String encodedPassword);
+
+    /**
+     * Validates that the supplied registration identity is not already
+     * associated with an existing user.
+     *
+     * <p>
+     * Username, email and phone number are checked independently.
+     * If any identity attribute already exists, registration is rejected.
+     * Existing identities remain reserved regardless of account status
+     * or soft-deletion state.
+     * </p>
+     *
+     * @param input service input containing registration identity information.
+     * @return service output indicating successful validation.
+     * @throws BusinessException if any supplied identity attribute already exists.
+     */
+    IServiceOutput<Boolean> validateRegistrationIdentity(IServiceInput<UserRegistrationIdentityInput> input);
+
+    /**
+     * Creates a permanent user after successful email verification.
+     *
+     * <p>
+     * The newly created user is assigned only the USER role.
+     * Additional roles must be granted through their respective
+     * onboarding and approval workflows.
+     * </p>
+     *
+     * @param input verified user creation details
+     * @return the newly created user
+     */
+    IServiceOutput<UserEntity> createEmailVerifiedUser(IServiceInput<EmailVerifiedUserCreationInput> input);
 
 }

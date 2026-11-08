@@ -30,11 +30,13 @@ import com.foodies.freshmeal.common.util.FreshMealUtilities;
 import com.foodies.freshmeal.common.valueObject.EmailAddress;
 import com.foodies.freshmeal.user.constants.UserErrorConstants;
 import com.foodies.freshmeal.user.dto.EmailRequest;
+import com.foodies.freshmeal.user.dto.EmailVerifiedUserCreationInput;
 import com.foodies.freshmeal.user.dto.UpdatePasswordInputDTO;
 import com.foodies.freshmeal.user.dto.UpdateUserInputDTO;
 import com.foodies.freshmeal.user.dto.UserIdRequest;
 import com.foodies.freshmeal.user.dto.UserInputDTO;
 import com.foodies.freshmeal.user.dto.UserNumberRequest;
+import com.foodies.freshmeal.user.dto.UserRegistrationIdentityInput;
 import com.foodies.freshmeal.user.dto.UserRegistrationInputDTO;
 import com.foodies.freshmeal.user.dto.UserRequest;
 import com.foodies.freshmeal.user.dto.UserResponse;
@@ -1009,6 +1011,195 @@ public class UserServiceImpl implements IUserService {
         if (!alreadyMatched) {
             matchedUsers.add(user);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Validates the uniqueness of all identity attributes supplied during
+     * public registration.
+     * </p>
+     *
+     * <p>
+     * Existing identities remain reserved regardless of account status,
+     * enabled state, or soft-deletion status.
+     * </p>
+     *
+     * @param input service input containing registration identity information.
+     * @return service output containing {@code true} when all identities
+     *         are available.
+     * @throws BusinessException when any supplied identity already exists.
+     */
+    @Override
+    public IServiceOutput<Boolean> validateRegistrationIdentity(
+            final IServiceInput<UserRegistrationIdentityInput> input) {
+
+        if (input == null || input.getInput() == null) {
+            throw new BusinessException(UserErrorConstants.USER_INVALID);
+        }
+
+        final UserRegistrationIdentityInput identityInput = input.getInput();
+
+        if (identityInput.getUsername() == null || identityInput.getUsername().isBlank()
+                || identityInput.getEmail() == null
+                || !FreshMealUtilities.hasText(identityInput.getEmail().getValue())
+                || identityInput.getPhoneNumber() == null
+                || !FreshMealUtilities.hasText(identityInput.getPhoneNumber().getValue())) {
+
+            throw new BusinessException(UserErrorConstants.USER_INVALID);
+        }
+
+        /*
+         * Normalize the email address before checking uniqueness.
+         */
+        final String normalizedEmail = FreshMealUtilities
+                .normalizeEmail(identityInput.getEmail().getValue());
+
+        /*
+         * Validate username uniqueness.
+         *
+         * All persisted users are considered, including soft-deleted users.
+         */
+        if (userRepository.findByUsername(identityInput.getUsername()).isPresent()) {
+            throw new BusinessException(UserErrorConstants.USERNAME_ALREADY_EXISTS);
+        }
+
+        /*
+         * Validate email uniqueness using the embedded value-object property.
+         */
+        if (userRepository.findByEmail_Value(normalizedEmail).isPresent()) {
+            throw new BusinessException(UserErrorConstants.EMAIL_ALREADY_EXISTS);
+        }
+
+        /*
+         * Validate phone-number uniqueness using the embedded value-object property.
+         */
+        if (userRepository.findByPhoneNumber_Value(
+                identityInput.getPhoneNumber().getValue()).isPresent()) {
+
+            throw new BusinessException(UserErrorConstants.PHONE_NUMBER_ALREADY_EXISTS);
+        }
+
+        return new ServiceOutput<>(Boolean.TRUE);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Creates a permanent user after successful email verification.
+     * Only the standard USER role is assigned during this operation.
+     * </p>
+     *
+     * @param input verified user creation details
+     * @return service output containing the persisted user
+     */
+    @Override
+    public IServiceOutput<UserEntity> createEmailVerifiedUser(
+            final IServiceInput<EmailVerifiedUserCreationInput> input) {
+
+        /*
+         * Validate service input.
+         */
+        if (input == null || input.getInput() == null) {
+            throw new BusinessException(UserErrorConstants.USER_INVALID);
+        }
+
+        final EmailVerifiedUserCreationInput creationInput = input.getInput();
+
+        /*
+         * Validate mandatory user information.
+         */
+        if (!FreshMealUtilities.hasText(creationInput.getUsername())
+                || !FreshMealUtilities.hasText(creationInput.getFirstName())
+                || !FreshMealUtilities.hasText(creationInput.getLastName())
+                || creationInput.getEmail() == null
+                || !FreshMealUtilities.hasText(creationInput.getEmail().getValue())
+                || creationInput.getPhoneNumber() == null
+                || !FreshMealUtilities.hasText(creationInput.getPhoneNumber().getValue())
+                || !FreshMealUtilities.hasText(creationInput.getEncodedPassword())) {
+
+            throw new BusinessException(UserErrorConstants.USER_INVALID);
+        }
+
+        /*
+         * Normalize email before identity validation and persistence.
+         */
+        final String normalizedEmail = FreshMealUtilities
+                .normalizeEmail(creationInput.getEmail().getValue());
+
+        /*
+         * Revalidate all registration identities.
+         *
+         * These checks include existing accounts regardless of their
+         * enabled, locked, expired or soft-deleted state.
+         */
+        if (userRepository.findByUsername(creationInput.getUsername()).isPresent()) {
+            throw new BusinessException(UserErrorConstants.USERNAME_ALREADY_EXISTS);
+        }
+
+        if (userRepository.findByEmail_Value(normalizedEmail).isPresent()) {
+            throw new BusinessException(UserErrorConstants.EMAIL_ALREADY_EXISTS);
+        }
+
+        if (userRepository.findByPhoneNumber_Value(
+                creationInput.getPhoneNumber().getValue()).isPresent()) {
+
+            throw new BusinessException(UserErrorConstants.PHONE_NUMBER_ALREADY_EXISTS);
+        }
+
+        /*
+         * Build the existing UserRequest structure.
+         *
+         * Reusing createUserEntity() keeps user identification and
+         * audit initialization centralized.
+         */
+        final UserRequest userRequest = new UserRequest();
+
+        userRequest.setUsername(creationInput.getUsername());
+        userRequest.setFirstName(creationInput.getFirstName());
+        userRequest.setLastName(creationInput.getLastName());
+        userRequest.setEmail(EmailAddress.builder().value(normalizedEmail).build());
+        userRequest.setPhoneNumber(creationInput.getPhoneNumber());
+
+        final UserInputDTO userInputDTO = new UserInputDTO();
+        userInputDTO.setUserRequest(userRequest);
+
+        final IServiceInput<UserInputDTO> userServiceInput = new ServiceInput<>(userInputDTO,
+                input.getServiceContext());
+
+        /*
+         * Create the permanent UserEntity using existing infrastructure.
+         */
+        final UserEntity userEntity = createUserEntity(userServiceInput).getOutput();
+
+        /*
+         * Assign only the standard USER role.
+         *
+         * Requested restaurant-owner or delivery-partner roles must
+         * be granted only after their respective onboarding approvals.
+         */
+        userEntity.addRole(RoleType.USER);
+
+        /*
+         * The password is already encoded by AuthenticationService.
+         * Never encode it again inside UserService.
+         */
+        userEntity.setPassword(creationInput.getEncodedPassword());
+
+        /*
+         * This operation is invoked only after successful OTP verification.
+         */
+        userEntity.setEmailVerified(true);
+        userEntity.setEnabled(true);
+
+        /*
+         * Persist the permanent user.
+         */
+        final UserEntity savedUserEntity = userRepository.save(userEntity);
+
+        return new ServiceOutput<>(savedUserEntity);
     }
 
 }

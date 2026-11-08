@@ -122,51 +122,49 @@ public final class FreshMealUtilities {
     // =========================================================================
 
     /**
-     * Formats an individual name field.
+     * Formats an individual name field into a consistent title-style format.
      *
      * <p>
-     * This method is intended for already-separated fields such as a User's
-     * {@code firstName} or {@code lastName}.
+     * Leading and trailing whitespace is removed, consecutive whitespace
+     * characters are normalized, and each word is converted to lowercase
+     * before its first character is capitalized.
      * </p>
      *
      * <p>
-     * Multiple words are individually capitalized.
+     * Examples:
      * </p>
      *
      * <pre>
-     * "pankaj"             → "Pankaj"
-     * "kUMAR"              → "KUMAR"
-     * "pankaj kumar"       → "Pankaj Kumar"
-     * "  pankaj   kumar "  → "Pankaj Kumar"
+     * "pankaj"              → "Pankaj"
+     * "PANKAJ"              → "Pankaj"
+     * "pAnKaJ"              → "Pankaj"
+     * "pankaj kumar"        → "Pankaj Kumar"
+     * "PANKAJ KUMAR"        → "Pankaj Kumar"
+     * "  pankaj   kumar "   → "Pankaj Kumar"
      * </pre>
-     *
-     * <p>
-     * The method intentionally does not force the remaining characters to
-     * lowercase. This avoids corrupting names containing meaningful casing.
-     * </p>
      *
      * @param name individual name field
      * @return formatted name, or {@code null} when blank
      */
     public static String formatName(final String name) {
 
-        String normalizedName = normalizeWhitespace(name);
+        final String normalizedName = normalizeWhitespace(name);
 
         if (normalizedName == null) {
             return null;
         }
 
-        String[] parts = normalizedName.split(" ");
+        final String[] parts = normalizedName.split(" ");
 
-        StringBuilder formattedName = new StringBuilder();
+        final StringBuilder formattedName = new StringBuilder();
 
-        for (String part : parts) {
+        for (final String part : parts) {
 
             if (formattedName.length() > 0) {
                 formattedName.append(" ");
             }
 
-            formattedName.append(capitalizeFirstLetter(part));
+            formattedName.append(capitalizeFirstLetter(part.toLowerCase(Locale.ROOT)));
         }
 
         return formattedName.toString();

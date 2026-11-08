@@ -1,9 +1,7 @@
+
 package com.foodies.freshmeal.authentication.dto;
 
-import com.foodies.freshmeal.common.valueObject.EmailAddress;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,36 +10,37 @@ import lombok.Setter;
  * Resend Email OTP Request
  * ============================================================================
  *
- * Represents the API request used to request a new email verification OTP.
+ * Represents the API request used to request a new email verification OTP
+ * for an existing pending registration.
  *
  * <p>
- * The request identifies the account through its email address. The actual
- * OTP generation, invalidation of previous OTPs, expiration handling, and
- * delivery workflow remain responsibilities of the authentication service.
+ * The request identifies the pending registration using its business-facing
+ * registration number. The registered email address is retrieved from the
+ * pending registration rather than accepted from the client.
  * </p>
  *
  * <h3>Security Considerations</h3>
- *
  * <ul>
  * <li>The request does not contain an OTP.</li>
- * <li>OTP generation is handled by the authentication service.</li>
- * <li>Raw OTP values must never be persisted.</li>
- * <li>Resend limits must be enforced by the authentication business rules.</li>
+ * <li>The request does not accept an email address as an identity.</li>
+ * <li>OTP generation and replacement remain responsibilities of the
+ * authentication and OTP services.</li>
+ * <li>Raw OTP values must never be persisted or returned to the client.</li>
+ * <li>Resend cooldown and attempt limits must be enforced.</li>
  * </ul>
  *
  * ============================================================================
  *
  * @author Pankaj Kumar
- * @since 1.0
+ * @since 2.0
  */
 @Getter
 @Setter
 public class ResendEmailOtpRequest {
 
     /**
-     * Email address for which a new verification OTP is requested.
+     * Business-facing identifier of the pending registration.
      */
-    @NotNull(message = "Email is required.")
-    @Valid
-    private EmailAddress email;
+    @NotBlank(message = "Registration number is required.")
+    private String registrationNumber;
 }
