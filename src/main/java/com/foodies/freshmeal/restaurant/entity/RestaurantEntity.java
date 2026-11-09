@@ -13,6 +13,7 @@ import com.foodies.freshmeal.common.valueObject.PhoneNumber;
 import com.foodies.freshmeal.food.constants.CuisineTypeConstant;
 import com.foodies.freshmeal.image.dto.ImageSnapshot;
 import com.foodies.freshmeal.restaurant.constants.RestaurantStatusConstant;
+import com.foodies.freshmeal.restaurant.constants.RestaurantVerificationStatus;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -111,6 +112,9 @@ public class RestaurantEntity extends ABaseEntity {
      */
     @Field("status")
     private RestaurantStatusConstant status = RestaurantStatusConstant.ACTIVE;
+
+    @Field("verification_status")
+    private RestaurantVerificationStatus verificationStatus = RestaurantVerificationStatus.PENDING;
 
     /**
      * Indicates whether the restaurant is currently operationally
