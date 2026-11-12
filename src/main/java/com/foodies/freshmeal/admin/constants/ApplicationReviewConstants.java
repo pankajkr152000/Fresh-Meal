@@ -35,6 +35,8 @@ public final class ApplicationReviewConstants {
 
     public static final String FIELD_REVIEW_HISTORY = "reviewHistory";
 
+    public static final String FIELD_IS_ACTIVE_APPLICATION = "isActiveApplication";
+
     private ApplicationReviewConstants() {
         throw new UnsupportedOperationException("Utility class cannot be instantiated.");
     }

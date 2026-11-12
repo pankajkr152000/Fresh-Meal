@@ -103,6 +103,8 @@ public final class SequenceConstants {
 
     public static final String REGISTRATION_IDENTITY_RESERVATION_SEQUENCE = "registration_identity_reservation_sequence";
 
+    public static final String APPLICATION_REVIEW_SEQUENCE = "application_review_sequence";
+
     // =========================================================================
     // Internal Database ID Patterns
     // =========================================================================
@@ -157,6 +159,8 @@ public final class SequenceConstants {
     public static final String PENDING_REGISTRATION_DB_ID_PATTERN = "PREGDB%06d";
 
     public static final String REGISTRATION_IDENTITY_RESERVATION_DB_ID_PATTERN = "RIRDB%06d";
+
+    public static final String APPLICATION_REVIEW_DB_ID_PATTERN = "APRVDB%06d";
 
     // =========================================================================
     // External / Business Identifier Patterns
@@ -219,4 +223,6 @@ public final class SequenceConstants {
     public static final String PENDING_REGISTRATION_NUMBER_PATTERN = "FM-PREG-%07d";
 
     public static final String REGISTRATION_IDENTITY_RESERVATION_NUMBER_PATTERN = "FM-RIR-%07d";
+
+    public static final String APPLICATION_REVIEW_NUMBER_PATTERN = "FM-APRV-%07d";
 }

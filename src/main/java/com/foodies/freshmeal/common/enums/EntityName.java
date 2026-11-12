@@ -216,6 +216,8 @@ public enum EntityName {
 
     REGISTRATION_IDENTITY_RESERVATION_ENTITY("RIR", "Registration Identity Reservation"),
 
+    APPLICATION_REVIEW_ENTITY("APRV", "Application Review")
+
     ;
 
     /**

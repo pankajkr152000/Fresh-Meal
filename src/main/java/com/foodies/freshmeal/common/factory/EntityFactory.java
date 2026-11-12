@@ -1,5 +1,6 @@
 package com.foodies.freshmeal.common.factory;
 
+import com.foodies.freshmeal.admin.entity.ApplicationReviewEntity;
 import com.foodies.freshmeal.authentication.entity.EmailVerificationOtpEntity;
 import com.foodies.freshmeal.authentication.entity.PasswordResetTokenEntity;
 import com.foodies.freshmeal.authentication.entity.PendingRegistrationEntity;
@@ -115,6 +116,9 @@ public final class EntityFactory {
 
             case REGISTRATION_IDENTITY_RESERVATION_ENTITY ->
                 RegistrationIdentityReservationEntity.create();
+
+            case APPLICATION_REVIEW_ENTITY ->
+                ApplicationReviewEntity.create();
 
             // case CHECKOUT_ENTITY ->
             // CheckoutEntity.create();
